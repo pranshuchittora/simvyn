@@ -1,0 +1,329 @@
+# Requirements: Simvyn
+
+**Defined:** 2026-02-26
+**Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
+
+## v1 Requirements
+
+Requirements for initial release. Each maps to roadmap phases.
+
+### Infrastructure
+
+- [ ] **INFRA-01**: TypeScript monorepo with npm workspaces — shared types, core, server, dashboard, CLI packages
+- [ ] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
+- [ ] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
+- [ ] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
+- [ ] **INFRA-05**: CLI entry point via commander.js — `simvyn` starts server + opens dashboard, subcommands for headless use
+- [ ] **INFRA-06**: Published as `simvyn` npm package, invocable via `npx simvyn`
+- [ ] **INFRA-07**: State persistence in `~/.simvyn/` for module state, device preferences, favorites
+- [ ] **INFRA-08**: Process lifecycle manager for safe child process spawning/cleanup (simctl, adb calls)
+- [ ] **INFRA-09**: Cross-platform support — macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
+
+### Device Management
+
+- [ ] **DEV-01**: Detect all iOS simulators via `simctl list devices --json` with booted status, device type, OS version
+- [ ] **DEV-02**: Detect all Android emulators via `emulator -list-avds` and connected Android devices via `adb devices`
+- [ ] **DEV-03**: Unified device model across iOS and Android platforms
+- [ ] **DEV-04**: Boot, shutdown, and erase iOS simulators from dashboard and CLI
+- [ ] **DEV-05**: Boot and kill Android emulators from dashboard and CLI
+- [ ] **DEV-06**: Real-time device status updates via polling with configurable interval
+- [ ] **DEV-07**: Device selector in UI — pick a single device or target all (broadcast mode)
+- [ ] **DEV-08**: Platform capability detection — report which features are available per device type
+
+### Location
+
+- [ ] **LOC-01**: Migrate sim-location codebase into simvyn monorepo as Location module (copy and refactor to module architecture)
+- [ ] **LOC-02**: Set GPS coordinates on iOS simulators via `simctl location set`
+- [ ] **LOC-03**: Set GPS coordinates on Android emulators via `adb emu geo fix`
+- [ ] **LOC-04**: Simulate routes from GPX/KML files with playback controls (play, pause, resume, stop, speed)
+- [ ] **LOC-05**: iOS route simulation via native `simctl location start` (pipe waypoints to stdin)
+- [ ] **LOC-06**: Android route simulation via tick-based `geo fix` calls at configurable intervals
+- [ ] **LOC-07**: Interactive map UI for picking coordinates and drawing routes (Leaflet)
+- [ ] **LOC-08**: Geocoding search (forward and reverse) via Nominatim proxy with rate limiting
+- [ ] **LOC-09**: Save favorite locations and routes with persistence
+- [ ] **LOC-10**: CLI subcommands: `simvyn location set <device> <lat> <lng>`, `simvyn location route <device> <file>`
+
+### File System
+
+- [ ] **FS-01**: Browse iOS simulator app sandboxes via `simctl get_app_container` + direct filesystem access
+- [ ] **FS-02**: Browse Android app files via `adb pull`/`adb push` and `adb shell run-as` for debug apps
+- [ ] **FS-03**: Download files from device to host
+- [ ] **FS-04**: Upload files from host to device
+- [ ] **FS-05**: Edit text files inline in the dashboard with save-back to device
+- [ ] **FS-06**: CLI subcommands: `simvyn fs ls <device> <path>`, `simvyn fs pull <device> <path>`, `simvyn fs push <device> <src> <dest>`
+
+### Database Inspector
+
+- [ ] **DB-01**: Detect and list SQLite databases within app containers
+- [ ] **DB-02**: Browse SQLite tables — show schema, row counts, column types
+- [ ] **DB-03**: View table data with pagination and sorting
+- [ ] **DB-04**: Edit individual cell values and write back to database
+- [ ] **DB-05**: Run arbitrary SQL queries with results display
+- [ ] **DB-06**: View SharedPreferences (Android) as key-value table
+- [ ] **DB-07**: View NSUserDefaults (iOS) as key-value table via plist reading
+- [ ] **DB-08**: CLI subcommands: `simvyn db list <device>`, `simvyn db query <device> <db> <sql>`
+
+### Logs
+
+- [ ] **LOG-01**: Stream iOS simulator logs in real-time via `simctl spawn log stream`
+- [ ] **LOG-02**: Stream Android device logs in real-time via `adb logcat`
+- [ ] **LOG-03**: Filter logs by level (verbose, debug, info, warning, error, fatal) with color coding
+- [ ] **LOG-04**: Search/filter logs by text pattern with regex support
+- [ ] **LOG-05**: Filter logs by process/app name
+- [ ] **LOG-06**: Export logs to file (plain text or JSON)
+- [ ] **LOG-07**: Server-side log batching to prevent WebSocket flooding
+- [ ] **LOG-08**: CLI subcommand: `simvyn logs <device> [--level <level>] [--filter <pattern>]`
+
+### Push Notifications
+
+- [ ] **PUSH-01**: Compose push notification payload via JSON editor in dashboard
+- [ ] **PUSH-02**: Send push notifications to iOS simulators via `simctl push <device> <bundle-id> <payload>`
+- [ ] **PUSH-03**: Save favorite push payloads for reuse
+- [ ] **PUSH-04**: Template library for common push payload structures
+- [ ] **PUSH-05**: CLI subcommand: `simvyn push <device> --bundle <id> --payload <json>`
+
+### Deep Links
+
+- [ ] **LINK-01**: Launch URLs/deep links on iOS via `simctl openurl`
+- [ ] **LINK-02**: Launch URLs/deep links on Android via `adb shell am start -a VIEW -d <url>`
+- [ ] **LINK-03**: Support custom URL schemes and universal links
+- [ ] **LINK-04**: Save favorite deep links per app for quick access
+- [ ] **LINK-05**: CLI subcommand: `simvyn link <device> <url>`
+
+### Screenshots & Recording
+
+- [ ] **SCRN-01**: Capture screenshots on iOS via `simctl io screenshot`
+- [ ] **SCRN-02**: Capture screenshots on Android via `adb shell screencap` + `adb pull`
+- [ ] **SCRN-03**: Record screen on iOS via `simctl io recordVideo` with start/stop controls
+- [ ] **SCRN-04**: Record screen on Android via `adb shell screenrecord` with start/stop controls
+- [ ] **SCRN-05**: Save screenshot/recording history with timestamps and device info
+- [ ] **SCRN-06**: Copy screenshot to host clipboard from dashboard
+- [ ] **SCRN-07**: CLI subcommands: `simvyn screenshot <device> [--output <path>]`, `simvyn record <device> [--output <path>]`
+
+### Device Settings
+
+- [ ] **SET-01**: Toggle dark/light mode on iOS via `simctl ui appearance`
+- [ ] **SET-02**: Toggle dark/light mode on Android via `adb shell cmd uimode night`
+- [ ] **SET-03**: Override iOS status bar (time, battery, network type, carrier) via `simctl status_bar override`
+- [ ] **SET-04**: Grant/revoke/reset app permissions on iOS via `simctl privacy`
+- [ ] **SET-05**: Grant/revoke app permissions on Android via `adb shell pm grant/revoke`
+- [ ] **SET-06**: Change locale/language settings where platform supports
+- [ ] **SET-07**: CLI subcommands: `simvyn settings dark-mode <device> <on|off>`, `simvyn settings permission <device> <grant|revoke|reset> <permission>`
+
+### Accessibility
+
+- [ ] **A11Y-01**: Toggle accessibility content size presets on iOS via `simctl ui content_size`
+- [ ] **A11Y-02**: Toggle increase contrast on iOS via `simctl ui increase_contrast`
+- [ ] **A11Y-03**: Toggle TalkBack on Android via `adb shell settings put secure enabled_accessibility_services`
+- [ ] **A11Y-04**: Quick preset panel for common accessibility test configurations
+- [ ] **A11Y-05**: CLI subcommand: `simvyn a11y <device> <setting> <value>`
+
+### Crash Logs
+
+- [ ] **CRASH-01**: List and view iOS crash logs from `~/Library/Logs/DiagnosticReports/`
+- [ ] **CRASH-02**: List and view Android crash logs via `adb logcat *:E` and tombstone access
+- [ ] **CRASH-03**: Filter crash logs by app/process and time range
+- [ ] **CRASH-04**: CLI subcommand: `simvyn crashes <device> [--app <bundle-id>]`
+
+### App Management
+
+- [ ] **APP-01**: List all installed apps on iOS via `simctl listapps`
+- [ ] **APP-02**: List all installed apps on Android via `adb shell pm list packages`
+- [ ] **APP-03**: Install apps — IPAs on iOS via `simctl install`, APKs on Android via `adb install`
+- [ ] **APP-04**: Uninstall apps on iOS via `simctl uninstall`, on Android via `adb uninstall`
+- [ ] **APP-05**: Launch apps on iOS via `simctl launch`, on Android via `adb shell am start`
+- [ ] **APP-06**: Terminate apps on iOS via `simctl terminate`, on Android via `adb shell am force-stop`
+- [ ] **APP-07**: Clear app data on Android via `adb shell pm clear`
+- [ ] **APP-08**: Show app info — bundle ID, version, container paths via `simctl appinfo` / `adb shell dumpsys package`
+- [ ] **APP-09**: CLI subcommands: `simvyn app list <device>`, `simvyn app install <device> <path>`, `simvyn app launch <device> <bundle-id>`
+
+### Media Injection
+
+- [ ] **MED-01**: Push photos and videos to iOS simulator camera roll via `simctl addmedia`
+- [ ] **MED-02**: Push photos and videos to Android device via `adb push` + media scanner broadcast
+- [ ] **MED-03**: Drag-and-drop media files in dashboard for injection
+- [ ] **MED-04**: CLI subcommand: `simvyn media add <device> <file>`
+
+### Clipboard
+
+- [ ] **CLIP-01**: Read iOS simulator clipboard via `simctl pbpaste`
+- [ ] **CLIP-02**: Write to iOS simulator clipboard via `simctl pbcopy`
+- [ ] **CLIP-03**: Write to Android device clipboard via `adb shell input text` or `adb shell am broadcast`
+- [ ] **CLIP-04**: CLI subcommands: `simvyn clipboard get <device>`, `simvyn clipboard set <device> <text>`
+
+### Dashboard UI
+
+- [ ] **UI-01**: Apple Liquid Glass design — dark background with deep gradients, frosted glass panels (backdrop-filter: blur + saturate)
+- [ ] **UI-02**: Muted accent colors (soft blue, purple, teal), no harsh neons
+- [ ] **UI-03**: Spring animations via Framer Motion for panel transitions and interactions
+- [ ] **UI-04**: Inter font, light-medium weights, thin translucent scrollbars, rounded corners (12-16px)
+- [ ] **UI-05**: Top bar with device selector dropdown + connection status indicators
+- [ ] **UI-06**: Sidebar listing all modules with icons, active module highlighted
+- [ ] **UI-07**: Main content area rendering active module panel — module state persists when switching
+- [ ] **UI-08**: Responsive layout that works on various screen sizes
+- [ ] **UI-09**: Toast notifications for async operations (location set, screenshot captured, etc.)
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Performance Monitoring
+
+- **PERF-01**: CPU usage monitoring via `adb shell dumpsys cpuinfo` (Android)
+- **PERF-02**: Memory usage monitoring via `adb shell dumpsys meminfo` (Android)
+- **PERF-03**: FPS monitoring where platform exposes it
+- **PERF-04**: Performance graphs over time in dashboard
+
+### Network
+
+- **NET-01**: Network link conditioner integration for throttling/latency simulation
+- **NET-02**: Proxy setup wizard — configure device to route through mitmproxy/Charles
+- **NET-03**: SSL pinning bypass helpers via `simctl keychain add-root-cert` (iOS)
+- **NET-04**: Recommend external tools (mitmproxy, Charles Proxy) with setup instructions
+
+### Extended Features
+
+- **EXT-01**: Multi-device view — see and control multiple devices simultaneously
+- **EXT-02**: Keychain management on iOS via `simctl keychain`
+- **EXT-03**: iCloud sync trigger on iOS via `simctl icloud_sync`
+- **EXT-04**: Batch operations / CI profiles for automated test environment setup
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| In-app SDK / bridge | Violates core "zero SDK" principle. This is what killed Flipper. The constraint is the feature. |
+| Full network inspector | Requires MITM proxy or SDK. Recommend mitmproxy/Charles Proxy instead. |
+| Layout inspector / view hierarchy | Requires SDK or fragile accessibility tree parsing. Xcode/Android Studio do this better. |
+| React Native / Flutter devtools | Framework-specific lock-in. Framework teams build better tools. Stay agnostic. |
+| Screen mirroring | Requires native code (C/FFmpeg/SDL2). scrcpy already does this perfectly. |
+| Windows native support | Use WSL. No Windows-specific code paths. |
+| iOS real device support | simctl only works with simulators. USB iPhone requires entirely different tooling. |
+| Remote device access | Security nightmare, tunneling infrastructure. Keep it local. |
+| Emulator/simulator creation | Complex (AVD management, runtime downloads), rarely a pain point, IDEs handle this. |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| INFRA-01 | — | Pending |
+| INFRA-02 | — | Pending |
+| INFRA-03 | — | Pending |
+| INFRA-04 | — | Pending |
+| INFRA-05 | — | Pending |
+| INFRA-06 | — | Pending |
+| INFRA-07 | — | Pending |
+| INFRA-08 | — | Pending |
+| INFRA-09 | — | Pending |
+| DEV-01 | — | Pending |
+| DEV-02 | — | Pending |
+| DEV-03 | — | Pending |
+| DEV-04 | — | Pending |
+| DEV-05 | — | Pending |
+| DEV-06 | — | Pending |
+| DEV-07 | — | Pending |
+| DEV-08 | — | Pending |
+| LOC-01 | — | Pending |
+| LOC-02 | — | Pending |
+| LOC-03 | — | Pending |
+| LOC-04 | — | Pending |
+| LOC-05 | — | Pending |
+| LOC-06 | — | Pending |
+| LOC-07 | — | Pending |
+| LOC-08 | — | Pending |
+| LOC-09 | — | Pending |
+| LOC-10 | — | Pending |
+| FS-01 | — | Pending |
+| FS-02 | — | Pending |
+| FS-03 | — | Pending |
+| FS-04 | — | Pending |
+| FS-05 | — | Pending |
+| FS-06 | — | Pending |
+| DB-01 | — | Pending |
+| DB-02 | — | Pending |
+| DB-03 | — | Pending |
+| DB-04 | — | Pending |
+| DB-05 | — | Pending |
+| DB-06 | — | Pending |
+| DB-07 | — | Pending |
+| DB-08 | — | Pending |
+| LOG-01 | — | Pending |
+| LOG-02 | — | Pending |
+| LOG-03 | — | Pending |
+| LOG-04 | — | Pending |
+| LOG-05 | — | Pending |
+| LOG-06 | — | Pending |
+| LOG-07 | — | Pending |
+| LOG-08 | — | Pending |
+| PUSH-01 | — | Pending |
+| PUSH-02 | — | Pending |
+| PUSH-03 | — | Pending |
+| PUSH-04 | — | Pending |
+| PUSH-05 | — | Pending |
+| LINK-01 | — | Pending |
+| LINK-02 | — | Pending |
+| LINK-03 | — | Pending |
+| LINK-04 | — | Pending |
+| LINK-05 | — | Pending |
+| SCRN-01 | — | Pending |
+| SCRN-02 | — | Pending |
+| SCRN-03 | — | Pending |
+| SCRN-04 | — | Pending |
+| SCRN-05 | — | Pending |
+| SCRN-06 | — | Pending |
+| SCRN-07 | — | Pending |
+| SET-01 | — | Pending |
+| SET-02 | — | Pending |
+| SET-03 | — | Pending |
+| SET-04 | — | Pending |
+| SET-05 | — | Pending |
+| SET-06 | — | Pending |
+| SET-07 | — | Pending |
+| A11Y-01 | — | Pending |
+| A11Y-02 | — | Pending |
+| A11Y-03 | — | Pending |
+| A11Y-04 | — | Pending |
+| A11Y-05 | — | Pending |
+| CRASH-01 | — | Pending |
+| CRASH-02 | — | Pending |
+| CRASH-03 | — | Pending |
+| CRASH-04 | — | Pending |
+| APP-01 | — | Pending |
+| APP-02 | — | Pending |
+| APP-03 | — | Pending |
+| APP-04 | — | Pending |
+| APP-05 | — | Pending |
+| APP-06 | — | Pending |
+| APP-07 | — | Pending |
+| APP-08 | — | Pending |
+| APP-09 | — | Pending |
+| MED-01 | — | Pending |
+| MED-02 | — | Pending |
+| MED-03 | — | Pending |
+| MED-04 | — | Pending |
+| CLIP-01 | — | Pending |
+| CLIP-02 | — | Pending |
+| CLIP-03 | — | Pending |
+| CLIP-04 | — | Pending |
+| UI-01 | — | Pending |
+| UI-02 | — | Pending |
+| UI-03 | — | Pending |
+| UI-04 | — | Pending |
+| UI-05 | — | Pending |
+| UI-06 | — | Pending |
+| UI-07 | — | Pending |
+| UI-08 | — | Pending |
+| UI-09 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 103 total
+- Mapped to phases: 0
+- Unmapped: 103
+
+---
+*Requirements defined: 2026-02-26*
+*Last updated: 2026-02-26 after initial definition*
