@@ -1,0 +1,25 @@
+{
+	"name": "simvyn-monorepo",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"packages/types",
+		"packages/core",
+		"packages/server",
+		"packages/cli",
+		"packages/dashboard"
+	],
+	"scripts": {
+		"dev": "npm run dev -w @simvyn/cli",
+		"build": "npm run build --workspaces --if-present",
+		"typecheck": "tsc --build",
+		"lint": "biome check ."
+	},
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2",
+		"typescript": "^5.9.3"
+	}
+}

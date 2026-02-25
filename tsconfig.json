@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "NodeNext",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"declaration": true,
+		"declarationMap": true,
+		"sourceMap": true,
+		"composite": true,
+		"outDir": "dist",
+		"rootDir": "src"
+	},
+	"references": [
+		{ "path": "packages/types" },
+		{ "path": "packages/core" },
+		{ "path": "packages/server" },
+		{ "path": "packages/cli" }
+	]
+}
