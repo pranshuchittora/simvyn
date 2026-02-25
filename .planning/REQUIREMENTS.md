@@ -210,120 +210,120 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | — | Pending |
-| INFRA-02 | — | Pending |
-| INFRA-03 | — | Pending |
-| INFRA-04 | — | Pending |
-| INFRA-05 | — | Pending |
-| INFRA-06 | — | Pending |
-| INFRA-07 | — | Pending |
-| INFRA-08 | — | Pending |
-| INFRA-09 | — | Pending |
-| DEV-01 | — | Pending |
-| DEV-02 | — | Pending |
-| DEV-03 | — | Pending |
-| DEV-04 | — | Pending |
-| DEV-05 | — | Pending |
-| DEV-06 | — | Pending |
-| DEV-07 | — | Pending |
-| DEV-08 | — | Pending |
-| LOC-01 | — | Pending |
-| LOC-02 | — | Pending |
-| LOC-03 | — | Pending |
-| LOC-04 | — | Pending |
-| LOC-05 | — | Pending |
-| LOC-06 | — | Pending |
-| LOC-07 | — | Pending |
-| LOC-08 | — | Pending |
-| LOC-09 | — | Pending |
-| LOC-10 | — | Pending |
-| FS-01 | — | Pending |
-| FS-02 | — | Pending |
-| FS-03 | — | Pending |
-| FS-04 | — | Pending |
-| FS-05 | — | Pending |
-| FS-06 | — | Pending |
-| DB-01 | — | Pending |
-| DB-02 | — | Pending |
-| DB-03 | — | Pending |
-| DB-04 | — | Pending |
-| DB-05 | — | Pending |
-| DB-06 | — | Pending |
-| DB-07 | — | Pending |
-| DB-08 | — | Pending |
-| LOG-01 | — | Pending |
-| LOG-02 | — | Pending |
-| LOG-03 | — | Pending |
-| LOG-04 | — | Pending |
-| LOG-05 | — | Pending |
-| LOG-06 | — | Pending |
-| LOG-07 | — | Pending |
-| LOG-08 | — | Pending |
-| PUSH-01 | — | Pending |
-| PUSH-02 | — | Pending |
-| PUSH-03 | — | Pending |
-| PUSH-04 | — | Pending |
-| PUSH-05 | — | Pending |
-| LINK-01 | — | Pending |
-| LINK-02 | — | Pending |
-| LINK-03 | — | Pending |
-| LINK-04 | — | Pending |
-| LINK-05 | — | Pending |
-| SCRN-01 | — | Pending |
-| SCRN-02 | — | Pending |
-| SCRN-03 | — | Pending |
-| SCRN-04 | — | Pending |
-| SCRN-05 | — | Pending |
-| SCRN-06 | — | Pending |
-| SCRN-07 | — | Pending |
-| SET-01 | — | Pending |
-| SET-02 | — | Pending |
-| SET-03 | — | Pending |
-| SET-04 | — | Pending |
-| SET-05 | — | Pending |
-| SET-06 | — | Pending |
-| SET-07 | — | Pending |
-| A11Y-01 | — | Pending |
-| A11Y-02 | — | Pending |
-| A11Y-03 | — | Pending |
-| A11Y-04 | — | Pending |
-| A11Y-05 | — | Pending |
-| CRASH-01 | — | Pending |
-| CRASH-02 | — | Pending |
-| CRASH-03 | — | Pending |
-| CRASH-04 | — | Pending |
-| APP-01 | — | Pending |
-| APP-02 | — | Pending |
-| APP-03 | — | Pending |
-| APP-04 | — | Pending |
-| APP-05 | — | Pending |
-| APP-06 | — | Pending |
-| APP-07 | — | Pending |
-| APP-08 | — | Pending |
-| APP-09 | — | Pending |
-| MED-01 | — | Pending |
-| MED-02 | — | Pending |
-| MED-03 | — | Pending |
-| MED-04 | — | Pending |
-| CLIP-01 | — | Pending |
-| CLIP-02 | — | Pending |
-| CLIP-03 | — | Pending |
-| CLIP-04 | — | Pending |
-| UI-01 | — | Pending |
-| UI-02 | — | Pending |
-| UI-03 | — | Pending |
-| UI-04 | — | Pending |
-| UI-05 | — | Pending |
-| UI-06 | — | Pending |
-| UI-07 | — | Pending |
-| UI-08 | — | Pending |
-| UI-09 | — | Pending |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Pending |
+| INFRA-03 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Pending |
+| INFRA-05 | Phase 1 | Pending |
+| INFRA-06 | Phase 1 | Pending |
+| INFRA-07 | Phase 1 | Pending |
+| INFRA-08 | Phase 1 | Pending |
+| INFRA-09 | Phase 1 | Pending |
+| DEV-01 | Phase 1 | Pending |
+| DEV-02 | Phase 1 | Pending |
+| DEV-03 | Phase 1 | Pending |
+| DEV-04 | Phase 1 | Pending |
+| DEV-05 | Phase 1 | Pending |
+| DEV-06 | Phase 1 | Pending |
+| DEV-07 | Phase 1 | Pending |
+| DEV-08 | Phase 1 | Pending |
+| LOC-01 | Phase 2 | Pending |
+| LOC-02 | Phase 2 | Pending |
+| LOC-03 | Phase 2 | Pending |
+| LOC-04 | Phase 2 | Pending |
+| LOC-05 | Phase 2 | Pending |
+| LOC-06 | Phase 2 | Pending |
+| LOC-07 | Phase 2 | Pending |
+| LOC-08 | Phase 2 | Pending |
+| LOC-09 | Phase 2 | Pending |
+| LOC-10 | Phase 2 | Pending |
+| APP-01 | Phase 3 | Pending |
+| APP-02 | Phase 3 | Pending |
+| APP-03 | Phase 3 | Pending |
+| APP-04 | Phase 3 | Pending |
+| APP-05 | Phase 3 | Pending |
+| APP-06 | Phase 3 | Pending |
+| APP-07 | Phase 3 | Pending |
+| APP-08 | Phase 3 | Pending |
+| APP-09 | Phase 3 | Pending |
+| LOG-01 | Phase 4 | Pending |
+| LOG-02 | Phase 4 | Pending |
+| LOG-03 | Phase 4 | Pending |
+| LOG-04 | Phase 4 | Pending |
+| LOG-05 | Phase 4 | Pending |
+| LOG-06 | Phase 4 | Pending |
+| LOG-07 | Phase 4 | Pending |
+| LOG-08 | Phase 4 | Pending |
+| UI-01 | Phase 5 | Pending |
+| UI-02 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Pending |
+| UI-04 | Phase 5 | Pending |
+| UI-05 | Phase 5 | Pending |
+| UI-06 | Phase 5 | Pending |
+| UI-07 | Phase 5 | Pending |
+| UI-08 | Phase 5 | Pending |
+| UI-09 | Phase 5 | Pending |
+| SCRN-01 | Phase 6 | Pending |
+| SCRN-02 | Phase 6 | Pending |
+| SCRN-03 | Phase 6 | Pending |
+| SCRN-04 | Phase 6 | Pending |
+| SCRN-05 | Phase 6 | Pending |
+| SCRN-06 | Phase 6 | Pending |
+| SCRN-07 | Phase 6 | Pending |
+| LINK-01 | Phase 6 | Pending |
+| LINK-02 | Phase 6 | Pending |
+| LINK-03 | Phase 6 | Pending |
+| LINK-04 | Phase 6 | Pending |
+| LINK-05 | Phase 6 | Pending |
+| PUSH-01 | Phase 6 | Pending |
+| PUSH-02 | Phase 6 | Pending |
+| PUSH-03 | Phase 6 | Pending |
+| PUSH-04 | Phase 6 | Pending |
+| PUSH-05 | Phase 6 | Pending |
+| FS-01 | Phase 7 | Pending |
+| FS-02 | Phase 7 | Pending |
+| FS-03 | Phase 7 | Pending |
+| FS-04 | Phase 7 | Pending |
+| FS-05 | Phase 7 | Pending |
+| FS-06 | Phase 7 | Pending |
+| DB-01 | Phase 7 | Pending |
+| DB-02 | Phase 7 | Pending |
+| DB-03 | Phase 7 | Pending |
+| DB-04 | Phase 7 | Pending |
+| DB-05 | Phase 7 | Pending |
+| DB-06 | Phase 7 | Pending |
+| DB-07 | Phase 7 | Pending |
+| DB-08 | Phase 7 | Pending |
+| SET-01 | Phase 8 | Pending |
+| SET-02 | Phase 8 | Pending |
+| SET-03 | Phase 8 | Pending |
+| SET-04 | Phase 8 | Pending |
+| SET-05 | Phase 8 | Pending |
+| SET-06 | Phase 8 | Pending |
+| SET-07 | Phase 8 | Pending |
+| A11Y-01 | Phase 8 | Pending |
+| A11Y-02 | Phase 8 | Pending |
+| A11Y-03 | Phase 8 | Pending |
+| A11Y-04 | Phase 8 | Pending |
+| A11Y-05 | Phase 8 | Pending |
+| CRASH-01 | Phase 9 | Pending |
+| CRASH-02 | Phase 9 | Pending |
+| CRASH-03 | Phase 9 | Pending |
+| CRASH-04 | Phase 9 | Pending |
+| MED-01 | Phase 9 | Pending |
+| MED-02 | Phase 9 | Pending |
+| MED-03 | Phase 9 | Pending |
+| MED-04 | Phase 9 | Pending |
+| CLIP-01 | Phase 9 | Pending |
+| CLIP-02 | Phase 9 | Pending |
+| CLIP-03 | Phase 9 | Pending |
+| CLIP-04 | Phase 9 | Pending |
 
 **Coverage:**
-- v1 requirements: 103 total
-- Mapped to phases: 0
-- Unmapped: 103
+- v1 requirements: 108 total
+- Mapped to phases: 108
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-26 after initial definition*
+*Last updated: 2026-02-26 after roadmap creation*
