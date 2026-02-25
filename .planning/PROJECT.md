@@ -39,7 +39,7 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - [ ] Apple Liquid Glass inspired UI — dark background, frosted glass panels, spring animations
 - [ ] CLI with `simvyn` starting dashboard; every module exposes headless CLI subcommands
 - [ ] Published as `simvyn` npm package, invocable via `npx simvyn`
-- [ ] Cross-platform: macOS (full iOS+Android), Linux/Windows (Android-only, graceful degradation)
+- [ ] Cross-platform: macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
 
 ### Out of Scope
 
@@ -47,11 +47,12 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - App-side SDK/integration — the entire point is zero-instrumentation
 - Cloud/remote device management — local-only tool
 - iOS real device support — simctl only works with simulators; USB iPhone control requires different tooling
-- Windows/Linux iOS support — simctl is macOS-only, no workaround
+- Windows native support — use WSL; no Windows-specific code paths
+- Linux iOS support — simctl is macOS-only, no workaround
 
 ## Context
 
-**Existing work:** `sim-location` at `/Users/pranshu/github/sim-location` is a working CLI that starts a web UI for setting GPS location/routes on simulators. It uses:
+**Migration strategy:** `sim-location` at `/Users/pranshu/github/sim-location` will be directly migrated into this project — code copied and refactored to fit simvyn's monorepo/module architecture. Not a rewrite from scratch. It uses:
 - Raw `node:http` server with `ws` WebSocket library
 - React 19 + Vite 7 + Zustand for the web UI
 - Platform adapter pattern: `PlatformAdapter` interface with `createIosAdapter()` and `createAndroidAdapter()` factory functions
@@ -84,7 +85,7 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - **WebSocket**: Required for real-time device status, log streaming, playback updates
 - **UI design**: Apple Liquid Glass inspired (WWDC 2025) — dark backgrounds with deep gradients, frosted glass panels (backdrop-filter: blur + saturate), muted accent colors (soft blue, purple, teal), spring animations (Framer Motion), SF Pro / Inter font, thin translucent scrollbars, rounded corners (12-16px)
 - **Layout**: Top bar (device selector + status) → Sidebar (module list with icons) → Main content area. Module state persists when switching.
-- **Cross-platform**: macOS = full iOS+Android, Linux/Windows = Android-only with graceful degradation when simctl unavailable
+- **Cross-platform**: macOS = full iOS+Android, Linux = Android-only with graceful degradation when simctl unavailable. No Windows-specific code (WSL covers it).
 - **npm package**: Published as `simvyn`, invocable via `npx simvyn`
 
 ## Key Decisions
@@ -95,7 +96,8 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 | Fastify or Express for HTTP server | sim-location's raw node:http won't scale with many module endpoints | — Pending |
 | Tailwind CSS over hand-written CSS | sim-location's 1200-line CSS file shows hand-written won't scale for 16+ modules | — Pending |
 | Module/plugin architecture | Each feature self-contained; auto-discovery; easy to add new tools | — Pending |
-| Port sim-location as Location module | Proven patterns, working code to absorb rather than rewrite from scratch | — Pending |
+| Migrate sim-location code directly | Copy and refactor into simvyn's module architecture — not a rewrite | — Pending |
+| macOS + Linux only, no Windows | Windows users use WSL; avoids Windows-specific code paths | — Pending |
 | Framer Motion for animations | Spring animations central to Liquid Glass aesthetic | — Pending |
 | File-based persistence at ~/.simvyn/ | Simple, no database dependency; JSON files like sim-location | — Pending |
 
