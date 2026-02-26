@@ -9,12 +9,17 @@
 	},
 	"dependencies": {
 		"@simvyn/types": "*",
+		"@tmcw/togeojson": "^7.1.2",
+		"leaflet": "^1.9.4",
 		"react": "^19",
 		"react-dom": "^19",
+		"react-leaflet": "^5.0.0",
+		"sonner": "^2.0.7",
 		"zustand": "^5"
 	},
 	"devDependencies": {
 		"@tailwindcss/vite": "^4",
+		"@types/leaflet": "^1.9.21",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"@vitejs/plugin-react": "^5",

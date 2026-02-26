@@ -1,0 +1,323 @@
+@import "leaflet/dist/leaflet.css";
+
+/* Panel layout */
+.location-panel {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	position: relative;
+}
+
+.location-map {
+	flex: 1;
+	min-height: 0;
+	position: relative;
+}
+
+.location-toolbar {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: oklch(0.15 0.02 260 / 0.6);
+	border-bottom: 1px solid oklch(0.35 0.02 260 / 0.15);
+	z-index: 1000;
+}
+
+/* Marker icons */
+.marker-location {
+	width: 24px;
+	height: 36px;
+	position: relative;
+}
+
+.marker-location::before {
+	content: "";
+	display: block;
+	width: 24px;
+	height: 24px;
+	border-radius: 50% 50% 50% 0;
+	background: oklch(0.7 0.12 240);
+	transform: rotate(-45deg);
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-shadow: 0 2px 8px oklch(0.7 0.12 240 / 0.4);
+}
+
+.marker-location::after {
+	content: "";
+	display: block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+	position: absolute;
+	top: 5px;
+	left: 8px;
+}
+
+.marker-playback {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: oklch(0.7 0.12 240);
+	box-shadow: 0 0 0 4px oklch(0.7 0.12 240 / 0.3);
+	animation: playback-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes playback-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 4px oklch(0.7 0.12 240 / 0.3);
+	}
+	50% {
+		box-shadow: 0 0 0 8px oklch(0.7 0.12 240 / 0.1);
+	}
+}
+
+.marker-waypoint {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: oklch(0.65 0.12 290);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-size: 11px;
+	font-weight: 600;
+	box-shadow: 0 2px 6px oklch(0.65 0.12 290 / 0.4);
+}
+
+.marker-search {
+	width: 24px;
+	height: 36px;
+	position: relative;
+}
+
+.marker-search::before {
+	content: "";
+	display: block;
+	width: 24px;
+	height: 24px;
+	border-radius: 50% 50% 50% 0;
+	background: oklch(0.6 0.2 25);
+	transform: rotate(-45deg);
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-shadow: 0 2px 8px oklch(0.6 0.2 25 / 0.4);
+}
+
+.marker-search::after {
+	content: "";
+	display: block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+	position: absolute;
+	top: 5px;
+	left: 8px;
+}
+
+/* Leaflet control overrides */
+.location-map .leaflet-control-zoom a {
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: oklch(0.15 0.02 260 / 0.8) !important;
+	border: 1px solid oklch(0.35 0.02 260 / 0.15) !important;
+	color: oklch(0.92 0.01 260) !important;
+	width: 32px !important;
+	height: 32px !important;
+	line-height: 32px !important;
+	font-size: 16px !important;
+}
+
+.location-map .leaflet-control-zoom a:hover {
+	background: oklch(0.2 0.02 260 / 0.9) !important;
+}
+
+.location-map .leaflet-control-zoom {
+	border: none !important;
+	box-shadow: none !important;
+}
+
+.location-map .leaflet-control-attribution {
+	background: oklch(0.1 0.015 260 / 0.6) !important;
+	color: oklch(0.45 0.01 260) !important;
+	font-size: 10px !important;
+	backdrop-filter: blur(10px);
+}
+
+.location-map .leaflet-control-attribution a {
+	color: oklch(0.55 0.01 260) !important;
+}
+
+/* Playback controls overlay */
+.playback-controls {
+	position: absolute;
+	bottom: 16px;
+	left: 16px;
+	right: 16px;
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: oklch(0.15 0.02 260 / 0.8);
+	border: 1px solid oklch(0.35 0.02 260 / 0.15);
+	border-radius: 10px;
+}
+
+.playback-controls button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: oklch(0.2 0.02 260 / 0.6);
+	border: 1px solid oklch(0.35 0.02 260 / 0.15);
+	color: oklch(0.92 0.01 260);
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.playback-controls button:hover {
+	background: oklch(0.25 0.02 260 / 0.8);
+}
+
+.playback-progress {
+	flex: 1;
+	height: 4px;
+	border-radius: 2px;
+	background: oklch(0.25 0.02 260);
+	overflow: hidden;
+}
+
+.playback-progress-bar {
+	height: 100%;
+	background: oklch(0.7 0.12 240);
+	border-radius: 2px;
+	transition: width 0.2s linear;
+}
+
+/* Search results dropdown */
+.search-dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 1001;
+	max-height: 240px;
+	overflow-y: auto;
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: oklch(0.12 0.015 260 / 0.95);
+	border: 1px solid oklch(0.35 0.02 260 / 0.15);
+	border-radius: 0 0 10px 10px;
+	border-top: none;
+}
+
+.search-dropdown-item {
+	padding: 8px 12px;
+	cursor: pointer;
+	font-size: 13px;
+	color: oklch(0.85 0.01 260);
+	transition: background 0.1s;
+	border-bottom: 1px solid oklch(0.25 0.02 260 / 0.3);
+}
+
+.search-dropdown-item:last-child {
+	border-bottom: none;
+}
+
+.search-dropdown-item:hover {
+	background: oklch(0.2 0.02 260 / 0.5);
+}
+
+.search-dropdown-item .search-coords {
+	font-size: 11px;
+	color: oklch(0.45 0.01 260);
+	margin-top: 2px;
+}
+
+/* Favorites sidebar */
+.favorites-sidebar {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 280px;
+	z-index: 1000;
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: oklch(0.12 0.015 260 / 0.95);
+	border-left: 1px solid oklch(0.35 0.02 260 / 0.15);
+	overflow-y: auto;
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.favorites-section-title {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: oklch(0.45 0.01 260);
+	margin-bottom: 6px;
+}
+
+.favorites-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 13px;
+	color: oklch(0.85 0.01 260);
+	transition: background 0.1s;
+}
+
+.favorites-item:hover {
+	background: oklch(0.2 0.02 260 / 0.5);
+}
+
+.favorites-item-meta {
+	font-size: 11px;
+	color: oklch(0.45 0.01 260);
+}
+
+.favorites-item-delete {
+	opacity: 0;
+	color: oklch(0.6 0.2 25);
+	cursor: pointer;
+	font-size: 14px;
+	padding: 2px 4px;
+	transition: opacity 0.1s;
+}
+
+.favorites-item:hover .favorites-item-delete {
+	opacity: 1;
+}
+
+/* Speed selector */
+.speed-selector {
+	appearance: none;
+	background: oklch(0.2 0.02 260 / 0.6);
+	border: 1px solid oklch(0.35 0.02 260 / 0.15);
+	border-radius: 6px;
+	color: oklch(0.85 0.01 260);
+	font-size: 12px;
+	padding: 4px 6px;
+	cursor: pointer;
+}
+
+.speed-selector:focus {
+	outline: none;
+	border-color: oklch(0.7 0.12 240 / 0.5);
+}
