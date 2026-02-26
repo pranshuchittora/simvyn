@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-	--color-bg-base: oklch(0.05 0.01 270);
-	--color-bg-surface: oklch(0.12 0.012 270);
-	--color-bg-elevated: oklch(0.16 0.015 270);
-	--color-glass: oklch(0.14 0.015 270 / 0.55);
-	--color-glass-hover: oklch(0.18 0.015 270 / 0.7);
+	--color-bg-base: oklch(0.10 0.012 270);
+	--color-bg-surface: oklch(0.17 0.014 270);
+	--color-bg-elevated: oklch(0.21 0.016 270);
+	--color-glass: oklch(0.19 0.015 270 / 0.50);
+	--color-glass-hover: oklch(0.24 0.015 270 / 0.65);
 	--color-glass-border: oklch(1 0 0 / 0.08);
 	--color-glass-border-hover: oklch(1 0 0 / 0.18);
 	--color-accent-blue: oklch(0.7 0.12 240);
@@ -13,7 +13,7 @@
 	--color-accent-teal: oklch(0.72 0.1 190);
 	--color-text-primary: oklch(0.93 0.005 260);
 	--color-text-secondary: oklch(0.65 0.005 260);
-	--color-text-muted: oklch(0.4 0.005 260);
+	--color-text-muted: oklch(0.45 0.005 260);
 	--color-border: oklch(1 0 0 / 0.08);
 	--radius-panel: 14px;
 	--radius-button: 10px;
@@ -27,10 +27,10 @@ body {
 	height: 100%;
 	background: linear-gradient(
 		145deg,
-		oklch(0.04 0.02 280) 0%,
-		oklch(0.05 0.015 260) 30%,
-		oklch(0.045 0.012 240) 60%,
-		oklch(0.06 0.02 270) 100%
+		oklch(0.09 0.02 280) 0%,
+		oklch(0.1 0.016 260) 30%,
+		oklch(0.085 0.013 240) 60%,
+		oklch(0.11 0.02 270) 100%
 	);
 	color: var(--color-text-primary);
 	font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,12 +43,12 @@ body {
 .glass-panel {
 	backdrop-filter: blur(20px) saturate(1.4);
 	-webkit-backdrop-filter: blur(20px) saturate(1.4);
-	background: var(--color-glass);
+	background: rgba(40, 40, 55, 0.5);
 	border: 1px solid var(--color-glass-border);
 	border-radius: var(--radius-panel);
 	box-shadow:
 		0 4px 24px rgba(0, 0, 0, 0.3),
-		inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
+		inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
 	color: var(--color-text-primary);
 }
 
@@ -56,14 +56,14 @@ body {
 .top-bar {
 	backdrop-filter: blur(20px) saturate(1.4);
 	-webkit-backdrop-filter: blur(20px) saturate(1.4);
-	background: rgba(16, 16, 24, 0.7);
+	background: rgba(28, 28, 40, 0.65);
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Glass button */
 .glass-button {
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: var(--radius-button);
 	padding: 6px 12px;
 	color: var(--color-text-primary);
@@ -76,8 +76,8 @@ body {
 }
 
 .glass-button:hover {
-	background: rgba(255, 255, 255, 0.14);
-	border-color: rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.16);
+	border-color: rgba(255, 255, 255, 0.2);
 }
 
 .glass-button:disabled {
@@ -87,9 +87,9 @@ body {
 
 /* Glass form elements */
 .glass-input {
-	background: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.2);
 	color: var(--color-text-primary);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	padding: 8px 12px;
 	border-radius: var(--radius-button);
 	font-size: 0.85rem;
@@ -107,9 +107,9 @@ body {
 }
 
 .glass-select {
-	background: rgba(0, 0, 0, 0.25);
+	background: rgba(0, 0, 0, 0.2);
 	color: var(--color-text-primary);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	padding: 6px 10px;
 	border-radius: var(--radius-button);
 	font-size: 0.8rem;
@@ -133,12 +133,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-	background: oklch(0.4 0.015 260 / 0.3);
+	background: oklch(0.45 0.015 260 / 0.35);
 	border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-	background: oklch(0.5 0.015 260 / 0.45);
+	background: oklch(0.55 0.015 260 / 0.5);
 }
 
 ::-webkit-scrollbar-corner {
@@ -148,7 +148,7 @@ body {
 /* Firefox scrollbar */
 * {
 	scrollbar-width: thin;
-	scrollbar-color: oklch(0.4 0.015 260 / 0.3) transparent;
+	scrollbar-color: oklch(0.45 0.015 260 / 0.35) transparent;
 }
 
 /* Dock sidebar */
@@ -162,7 +162,7 @@ body {
 	gap: 4px;
 	width: 60px;
 	backdrop-filter: blur(20px) saturate(1.4);
-	background: rgba(16, 16, 24, 0.7);
+	background: rgba(28, 28, 40, 0.65);
 	border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -236,7 +236,7 @@ body {
 
 /* Sonner toast overrides */
 [data-sonner-toaster] [data-sonner-toast] {
-	background: rgba(30, 30, 40, 0.7) !important;
+	background: rgba(40, 40, 55, 0.65) !important;
 	backdrop-filter: blur(20px) saturate(1.4) !important;
 	-webkit-backdrop-filter: blur(20px) saturate(1.4) !important;
 	border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -253,4 +253,180 @@ body {
 
 [data-sonner-toaster] [data-sonner-toast] [data-description] {
 	color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ─── Primary action button (blue) ─── */
+.glass-button-primary {
+	background: rgba(0, 122, 255, 0.25);
+	border: 1px solid rgba(0, 122, 255, 0.35);
+	border-radius: var(--radius-button);
+	padding: 6px 12px;
+	color: rgba(100, 180, 255, 1);
+	cursor: pointer;
+	font-size: 0.75rem;
+	font-family: inherit;
+	transition: background 0.15s ease;
+}
+
+.glass-button-primary:hover {
+	background: rgba(0, 122, 255, 0.4);
+}
+
+.glass-button-primary:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* ─── Destructive button (red) ─── */
+.glass-button-destructive {
+	background: rgba(255, 107, 107, 0.12);
+	color: #ff6b6b;
+	border: 1px solid rgba(255, 107, 107, 0.2);
+	border-radius: var(--radius-button);
+	padding: 6px 12px;
+	cursor: pointer;
+	font-size: 0.75rem;
+	font-family: inherit;
+	transition: background 0.15s ease;
+}
+
+.glass-button-destructive:hover {
+	background: rgba(255, 107, 107, 0.25);
+}
+
+.glass-button-destructive:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+
+/* ─── Tab bar (segmented control container) ─── */
+.glass-tab-bar {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	padding: 2px;
+	border-radius: 12px;
+	background: rgba(255, 255, 255, 0.03);
+	border: 1px solid rgba(255, 255, 255, 0.04);
+	width: fit-content;
+}
+
+/* ─── Individual tab ─── */
+.glass-tab {
+	padding: 6px 16px;
+	border-radius: 10px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--color-text-secondary);
+	cursor: pointer;
+	transition: all 0.15s ease;
+	border: none;
+	background: transparent;
+	font-family: inherit;
+}
+
+.glass-tab.active {
+	background: var(--color-glass);
+	color: var(--color-text-primary);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.glass-tab:hover:not(.active) {
+	color: var(--color-text-primary);
+}
+
+/* ─── Data table ─── */
+.glass-table {
+	width: 100%;
+	font-size: 0.875rem;
+}
+
+.glass-table thead tr {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	text-align: left;
+}
+
+.glass-table thead th {
+	padding: 8px 16px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--color-text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.glass-table tbody tr {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+	transition: background 0.1s ease;
+}
+
+.glass-table tbody tr:hover {
+	background: rgba(255, 255, 255, 0.02);
+}
+
+.glass-table td {
+	padding: 6px 16px;
+}
+
+/* ─── Badge (colored pill) ─── */
+.glass-badge {
+	display: inline-flex;
+	align-items: center;
+	border-radius: 9999px;
+	border: 1px solid;
+	padding: 2px 8px;
+	font-size: 0.6875rem;
+	font-weight: 500;
+}
+
+/* ─── Drop zone (file upload area) ─── */
+.glass-drop-zone {
+	border: 2px dashed rgba(255, 255, 255, 0.08);
+	border-radius: var(--radius-panel);
+	padding: 48px;
+	text-align: center;
+	transition:
+		border-color 0.15s ease,
+		background 0.15s ease;
+}
+
+.glass-drop-zone.drag-over {
+	border-color: rgba(0, 122, 255, 0.4);
+	background: rgba(0, 122, 255, 0.04);
+}
+
+/* ─── Textarea (code/JSON editor) ─── */
+.glass-textarea {
+	width: 100%;
+	background: transparent;
+	color: var(--color-text-primary);
+	font-family: "SF Mono", "Fira Code", ui-monospace, monospace;
+	font-size: 0.875rem;
+	resize: none;
+	outline: none;
+	padding: 12px;
+}
+
+/* ─── Empty state (no data placeholder) ─── */
+.glass-empty-state {
+	text-align: center;
+	padding: 48px;
+	color: var(--color-text-secondary);
+	font-size: 0.875rem;
+}
+
+/* ─── Accessibility ─── */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+	.glass-panel,
+	.top-bar,
+	.dock-sidebar {
+		backdrop-filter: blur(8px) saturate(1.1);
+		-webkit-backdrop-filter: blur(8px) saturate(1.1);
+	}
 }
