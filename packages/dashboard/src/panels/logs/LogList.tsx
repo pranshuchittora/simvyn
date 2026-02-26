@@ -1,5 +1,7 @@
 import type { LogEntry, LogLevel } from "@simvyn/types";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
+import { selectFilteredEntries, useLogStore } from "./stores/log-store";
 
 const levelColors: Record<LogLevel, string> = {
 	verbose: "text-gray-500",
@@ -24,28 +26,15 @@ function formatTime(ts: string): string {
 }
 
 interface LogListProps {
-	entries: LogEntry[];
+	onLoadMore: () => void;
 }
 
-export default function LogList({ entries }: LogListProps) {
-	const containerRef = useRef<HTMLDivElement>(null);
-	const userScrolledUp = useRef(false);
-
-	function handleScroll() {
-		const el = containerRef.current;
-		if (!el) return;
-		const threshold = 40;
-		userScrolledUp.current = el.scrollTop + el.clientHeight < el.scrollHeight - threshold;
-	}
-
-	const entryCount = entries.length;
-	// biome-ignore lint/correctness/useExhaustiveDependencies: scroll on new entries
-	useEffect(() => {
-		const el = containerRef.current;
-		if (el && !userScrolledUp.current) {
-			el.scrollTop = el.scrollHeight;
-		}
-	}, [entryCount]);
+export default function LogList({ onLoadMore }: LogListProps) {
+	const virtuosoRef = useRef<VirtuosoHandle>(null);
+	const entries = useLogStore(selectFilteredEntries);
+	const firstItemIndex = useLogStore((s) => s.firstItemIndex);
+	const hasMore = useLogStore((s) => s.hasMore);
+	const isLoadingHistory = useLogStore((s) => s.isLoadingHistory);
 
 	if (entries.length === 0) {
 		return (
@@ -56,14 +45,22 @@ export default function LogList({ entries }: LogListProps) {
 	}
 
 	return (
-		<div
-			ref={containerRef}
-			onScroll={handleScroll}
-			className="glass-panel h-full overflow-y-auto font-mono text-xs leading-relaxed"
-		>
-			{entries.map((entry, i) => (
-				// biome-ignore lint/suspicious/noArrayIndexKey: append-only log entries
-				<div key={i} className="flex gap-2 px-3 py-0.5 hover:bg-white/[0.02]">
+		<Virtuoso
+			ref={virtuosoRef}
+			firstItemIndex={firstItemIndex}
+			initialTopMostItemIndex={0}
+			data={entries}
+			startReached={() => {
+				if (hasMore && !isLoadingHistory) {
+					onLoadMore();
+				}
+			}}
+			followOutput="smooth"
+			increaseViewportBy={200}
+			computeItemKey={(index, entry) => `${entry.timestamp}-${entry.pid}-${index}`}
+			className="glass-panel h-full font-mono text-xs leading-relaxed"
+			itemContent={(_index, entry) => (
+				<div className="flex gap-2 px-3 py-0.5 hover:bg-white/[0.02]">
 					<span className="text-text-muted shrink-0 w-[90px]">{formatTime(entry.timestamp)}</span>
 					<span className={`shrink-0 w-[56px] uppercase ${levelColors[entry.level]}`}>
 						{entry.level.slice(0, 5).padEnd(5)}
@@ -73,7 +70,7 @@ export default function LogList({ entries }: LogListProps) {
 					</span>
 					<span className="text-text-primary break-all">{entry.message}</span>
 				</div>
-			))}
-		</div>
+			)}
+		/>
 	);
 }
