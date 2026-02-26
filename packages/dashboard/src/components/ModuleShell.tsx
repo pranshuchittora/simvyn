@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Suspense, useEffect } from "react";
 import { useModuleStore } from "../stores/module-store";
 import { usePanelRegistry } from "../stores/panel-registry";
+import HomeScreen from "./HomeScreen";
 
 const UNMOUNT_WHEN_HIDDEN = new Set(["logs"]);
 
@@ -50,10 +51,8 @@ export default function ModuleShell() {
 
 	if (!activeModule) {
 		return (
-			<div className="flex flex-1 items-center justify-center">
-				<div className="text-center">
-					<p className="text-sm text-text-secondary">Select a module from the dock</p>
-				</div>
+			<div className="flex flex-1 overflow-hidden">
+				<HomeScreen />
 			</div>
 		);
 	}
