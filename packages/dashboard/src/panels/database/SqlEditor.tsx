@@ -77,7 +77,7 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 							key={i}
 							type="button"
 							onClick={() => setSql(q)}
-							className="rounded-full bg-bg-surface/60 border border-border px-2.5 py-0.5 text-[11px] text-text-muted hover:text-text-secondary truncate max-w-[200px] transition-colors"
+							className="glass-badge bg-bg-surface/60 px-2.5 py-0.5 text-[11px] text-text-muted hover:text-text-secondary truncate max-w-[200px] transition-colors cursor-pointer"
 						>
 							{q}
 						</button>

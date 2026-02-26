@@ -67,8 +67,7 @@ export default function InstallDropZone({ deviceId, onInstallComplete }: Install
 			}}
 			onDragLeave={() => setDragOver(false)}
 			onDrop={handleDrop}
-			className={`glass-drop-zone ${dragOver ? "drag-over" : ""}`}
-			style={{ padding: "16px" }}
+			className={`glass-drop-zone p-4 ${dragOver ? "drag-over" : ""}`}
 		>
 			{uploading ? (
 				<div className="flex items-center justify-center gap-2 text-sm text-text-secondary">
