@@ -12,7 +12,7 @@
 - [x] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
 - [x] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
 - [x] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
-- [ ] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
+- [x] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
 - [ ] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
 - [ ] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [ ] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
@@ -119,13 +119,13 @@ Plans:
   3. User can type a URL or custom scheme into the deep links panel and launch it on the selected device; frequently used links can be saved as favorites per app
   4. User can compose a push notification payload in a JSON editor (or pick from a template library), send it to an iOS simulator, and save the payload for reuse
   5. All three modules expose CLI subcommands (`simvyn screenshot`, `simvyn record`, `simvyn link`, `simvyn push`) that work headlessly
-**Plans:** 3/4 plans executed
+**Plans:** 4 plans (4 executed)
 
 Plans:
 - [x] 06-01-PLAN.md — Screenshot/recording module (adapters, routes, WS, CLI)
 - [x] 06-02-PLAN.md — Deep links module (open URLs, favorites, CLI)
 - [x] 06-03-PLAN.md — Push notifications module (send, templates, saved payloads, CLI)
-- [ ] 06-04-PLAN.md — Dashboard panels for all 3 modules + Sidebar integration
+- [x] 06-04-PLAN.md — Dashboard panels for all 3 modules + Sidebar integration
 
 ### Phase 7: File System & Database Inspector
 **Goal:** Developers can browse app files, inspect SQLite databases, and view key-value stores without leaving the dashboard
@@ -170,7 +170,7 @@ Plans:
 | 3. App Management Module | 4/4 | Complete | 2026-02-26 |
 | 4. Log Viewer Module | 4/4 | Complete | 2026-02-26 |
 | 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
-| 6. Quick-Action Modules | 3/4 | In Progress|  |
+| 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
 | 7. File System & Database Inspector | 0/? | Not started | — |
 | 8. Device Settings & Accessibility | 0/? | Not started | — |
 | 9. Utility Modules | 0/? | Not started | — |
