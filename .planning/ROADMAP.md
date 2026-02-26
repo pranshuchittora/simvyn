@@ -274,8 +274,8 @@ Plans:
 **Plans:** 1/7 plans executed
 
 Plans:
-- [ ] 12-01-PLAN.md — Design tokens (lighter palette), 8 new glass utility classes, location-panel.css cleanup
-- [ ] 12-02-PLAN.md — Floating macOS Liquid Glass dock + shell components polish
+- [x] 12-01-PLAN.md — Design tokens (lighter palette), 8 new glass utility classes, location-panel.css cleanup
+- [x] 12-02-PLAN.md — Floating macOS Liquid Glass dock + shell components polish
 - [ ] 12-03-PLAN.md — Screenshot, CrashLogs, Media, Clipboard, DeepLinks, Push panels
 - [ ] 12-04-PLAN.md — Device, App, Log panels (tables, drop zones, toolbars)
 - [ ] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)

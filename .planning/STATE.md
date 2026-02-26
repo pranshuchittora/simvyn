@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 12 of 12 — Liquid Glass UI Refactor
-**Plan:** 2 of 7
+**Plan:** 3 of 7
 **Status:** Executing
-**Progress:** [████████░░] 79%
+**Progress:** [████████░░] 81%
 
 ## Phase Overview
 
@@ -28,7 +28,7 @@
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
-| 12. Liquid Glass UI Refactor | 🔄 Executing (1/7 plans) |
+| 12. Liquid Glass UI Refactor | 🔄 Executing (2/7 plans) |
 
 ## Performance Metrics
 
@@ -78,6 +78,7 @@
 | Phase 11 P03 | 7min | 2 tasks | 6 files |
 | Phase 11 P04 | 2min | 2 tasks | 4 files |
 | Phase 12 P01 | 3min | 2 tasks | 2 files |
+| Phase 12 P02 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -176,6 +177,9 @@
 - Lightened @theme oklch tokens by +0.04-0.06 — bg-base 0.05→0.10, body gradient 0.04-0.06→0.09-0.11, glass-panel uses rgba(40,40,55,0.50)
 - 9 glass utility classes in main.css: glass-button-primary, glass-button-destructive, glass-tab-bar, glass-tab, glass-table, glass-badge, glass-drop-zone, glass-textarea, glass-empty-state
 - prefers-reduced-motion reduces transitions to 0.01ms and backdrop-filter blur to 8px
+- Dock sidebar transformed from full-height flush panel to floating pill shape (52px wide, 16px border-radius, 12px margin)
+- Active module indicator dot moved from bottom-center to left-center per locked user decision
+- Shell components (DeviceSelector, TopBar) inline styles removed — only ModuleShell display toggle remains (architectural)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -206,9 +210,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T15:56:15.581Z
-**Stopped at:** Completed 12-01-PLAN.md (design tokens + utility classes)
-**Context for next session:** Phase 12 executing. 7 plans across 3 waves. Wave 1: Plan 01 (design tokens + utility classes). Wave 2: Plans 02-06 parallel (dock, panels). Wave 3: Plan 07 (audit + verify).
+**Last session:** 2026-02-26T15:59:17Z
+**Stopped at:** Completed 12-02-PLAN.md (dock + shell components)
+**Context for next session:** Phase 12 executing. 7 plans across 3 waves. Wave 2 in progress: Plans 02-06 parallel (dock done, panels next). Wave 3: Plan 07 (audit + verify).
 
 ---
 *State initialized: 2026-02-26*
