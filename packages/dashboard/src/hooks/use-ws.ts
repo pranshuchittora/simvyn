@@ -39,7 +39,7 @@ export function WsProvider({ children }: { children: ReactNode }) {
 		socket.onopen = () => {
 			setConnected(true);
 			retriesRef.current = 0;
-			socket.send(JSON.stringify({ channel: "devices", type: "subscribe", payload: null }));
+			socket.send(JSON.stringify({ channel: "system", type: "subscribe", payload: { channel: "devices" } }));
 		};
 
 		socket.onclose = () => {
