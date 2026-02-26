@@ -101,7 +101,13 @@ Plans:
   2. Top bar shows the device selector dropdown with connection status; sidebar lists all discovered modules with icons; clicking a module renders its panel in the main content area
   3. Switching between modules preserves each module's state — navigating away from logs and back shows the same scroll position and filters
   4. Layout adapts to different screen widths without breaking, and toast notifications appear for async operations (screenshot captured, location set, etc.)
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Liquid Glass design system, Inter font, macOS Dock sidebar with Lucide icons
+- [ ] 05-02-PLAN.md — TopBar polish, DeviceSelector glass dropdown, ModuleShell loading/empty states
+- [ ] 05-03-PLAN.md — Framer Motion spring animations + Sonner toast notifications
+- [ ] 05-04-PLAN.md — Polish all module panels (device, app, log, location) for visual consistency
 
 ### Phase 6: Quick-Action Modules
 **Goal:** Developers can capture screenshots, record screens, open deep links, and send push notifications as one-click actions
