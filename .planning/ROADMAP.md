@@ -253,7 +253,10 @@ Plans:
   2. User can wipe all saved data (favorites, history, preferences) from the settings page with confirmation
   3. User can configure the server port and toggle whether the browser auto-opens on launch
   4. User can see total storage usage (disk space consumed by `~/.simvyn/`) displayed on the settings page
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 17-01-PLAN.md — Tool settings API endpoints, sidebar panel with config, storage usage, and data wipe
 
 ## Progress
 
