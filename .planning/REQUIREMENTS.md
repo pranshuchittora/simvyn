@@ -84,11 +84,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Deep Links
 
-- [ ] **LINK-01**: Launch URLs/deep links on iOS via `simctl openurl`
-- [ ] **LINK-02**: Launch URLs/deep links on Android via `adb shell am start -a VIEW -d <url>`
-- [ ] **LINK-03**: Support custom URL schemes and universal links
-- [ ] **LINK-04**: Save favorite deep links per app for quick access
-- [ ] **LINK-05**: CLI subcommand: `simvyn link <device> <url>`
+- [x] **LINK-01**: Launch URLs/deep links on iOS via `simctl openurl`
+- [x] **LINK-02**: Launch URLs/deep links on Android via `adb shell am start -a VIEW -d <url>`
+- [x] **LINK-03**: Support custom URL schemes and universal links
+- [x] **LINK-04**: Save favorite deep links per app for quick access
+- [x] **LINK-05**: CLI subcommand: `simvyn link <device> <url>`
 
 ### Screenshots & Recording
 
@@ -270,11 +270,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCRN-05 | Phase 6 | Pending |
 | SCRN-06 | Phase 6 | Pending |
 | SCRN-07 | Phase 6 | Pending |
-| LINK-01 | Phase 6 | Pending |
-| LINK-02 | Phase 6 | Pending |
-| LINK-03 | Phase 6 | Pending |
-| LINK-04 | Phase 6 | Pending |
-| LINK-05 | Phase 6 | Pending |
+| LINK-01 | Phase 6 | Complete |
+| LINK-02 | Phase 6 | Complete |
+| LINK-03 | Phase 6 | Complete |
+| LINK-04 | Phase 6 | Complete |
+| LINK-05 | Phase 6 | Complete |
 | PUSH-01 | Phase 6 | Complete |
 | PUSH-02 | Phase 6 | Complete |
 | PUSH-03 | Phase 6 | Complete |
