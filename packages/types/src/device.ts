@@ -25,7 +25,8 @@ export type PlatformCapability =
 	| "addMedia"
 	| "logs"
 	| "deepLinks"
-	| "appManagement";
+	| "appManagement"
+	| "fileSystem";
 
 export interface AppInfo {
 	bundleId: string;
