@@ -30,9 +30,9 @@ const LEVELS: {
 		key: "info",
 		label: "I",
 		activeStyle: {
-			background: "rgba(255,255,255,0.1)",
-			color: "#fff",
-			borderColor: "rgba(255,255,255,0.2)",
+			background: "rgba(59,130,246,0.2)",
+			color: "#93c5fd",
+			borderColor: "rgba(59,130,246,0.3)",
 		},
 	},
 	{
