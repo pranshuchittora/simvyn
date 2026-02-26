@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 15 — Command Palette
+**Phase:** Phase 16 — Home Screen & Capture Management
 **Plan:** 01 (complete)
-**Status:** Phase 15 complete (1/1 plans)
-**Progress:** [█████████░] 93%
+**Status:** Phase 16 complete (1/1 plans)
+**Progress:** [█████████░] 91%
 
 ## Phase Overview
 
@@ -35,17 +35,17 @@
 | 13. URL Routing | ✅ Complete (1/1 plans) |
 | 14. Module Icons | ✅ Complete (1/1 plans) |
 | 15. Command Palette | ✅ Complete (1/1 plans) |
-| 16. Home Screen & Capture Management | ⬜ Not started |
+| 16. Home Screen & Capture Management | ✅ Complete (1/1 plans) |
 | 17. Tool Settings | ⬜ Not started |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 14/17 (v1.0: 11/12, v1.1: 3/5) |
-| Plans completed | 44/44 (v1.0: 41, v1.1: 3) |
+| Phases completed | 15/17 (v1.0: 11/12, v1.1: 4/5) |
+| Plans completed | 45/45 (v1.0: 41, v1.1: 4) |
 | v1.0 requirements delivered | 126/126 |
-| v1.1 requirements delivered | 10/20 |
+| v1.1 requirements delivered | 15/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -100,6 +100,7 @@
 | Phase 13 P01 | 2min | 2 tasks | 5 files |
 | Phase 14 P01 | 2min | 2 tasks | 2 files |
 | Phase 15 P01 | 3min | 2 tasks | 6 files |
+| Phase 16 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -228,6 +229,10 @@
 - cmdk Command.Dialog with Radix overlay — handles keyboard navigation, Escape, outside click natively without custom implementations
 - Zustand store (useCommandPaletteStore) for command palette open state — simplest sharing between TopBar hint and CommandPalette
 - Platform-aware shortcut label (⌘K on macOS, Ctrl+K on Linux) via navigator.platform check
+- HomeScreen uses glass-panel cards with hover:brightness-110 and hover:scale for module grid — consistent with existing glass UI
+- Clear All captures uses window.confirm guard — lightweight destructive action confirmation without modal component
+- Landing page pattern: render HomeScreen component in ModuleShell !activeModule branch instead of placeholder text
+- Server DELETE endpoints for screenshot history try/catch each file unlink — tolerant of already-deleted files
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -261,10 +266,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T21:12:14Z
-**Stopped at:** Completed 15-01-PLAN.md (Phase 15 Command Palette complete)
-**Context for next session:** Phase 15 (Command Palette) complete — Cmd+K palette with cmdk, 13 modules with custom icons, device actions, Liquid Glass styling, TopBar hint. Next action: Phase 16 (Home Screen & Capture Management) or remaining Phase 12 plans.
+**Last session:** 2026-02-26T21:19:00Z
+**Stopped at:** Completed 16-01-PLAN.md (Phase 16 Home Screen & Capture Management complete)
+**Context for next session:** Phase 16 complete — HomeScreen landing page with device summary, module grid, quick-start tips; screenshot capture deletion and clear-all. Next action: Phase 17 (Tool Settings) or remaining Phase 12 plans.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — v1.1 roadmap phases 13-17*
+*Last updated: 2026-02-27 — Phase 16 Home Screen & Capture Management complete*

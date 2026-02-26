@@ -342,9 +342,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Home Screen
 
-- [ ] **HOME-01**: When no module is selected (or on first load), a welcome/home screen is displayed
-- [ ] **HOME-02**: Home screen shows keyboard shortcuts, quick-start tips, and recently used modules
-- [ ] **HOME-03**: Home screen shows connected device summary (count, names, states)
+- [x] **HOME-01**: When no module is selected (or on first load), a welcome/home screen is displayed
+- [x] **HOME-02**: Home screen shows keyboard shortcuts, quick-start tips, and recently used modules
+- [x] **HOME-03**: Home screen shows connected device summary (count, names, states)
 
 ### Module Icons
 
@@ -353,8 +353,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Capture Management
 
-- [ ] **CAP-01**: User can delete individual screenshots or recordings from capture history
-- [ ] **CAP-02**: User can clear all capture history at once
+- [x] **CAP-01**: User can delete individual screenshots or recordings from capture history
+- [x] **CAP-02**: User can clear all capture history at once
 
 ### Tool Settings
 
@@ -376,13 +376,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CMDK-03 | Phase 15 | Complete |
 | CMDK-04 | Phase 15 | Complete |
 | CMDK-05 | Phase 15 | Complete |
-| HOME-01 | Phase 16 | Pending |
-| HOME-02 | Phase 16 | Pending |
-| HOME-03 | Phase 16 | Pending |
+| HOME-01 | Phase 16 | Complete |
+| HOME-02 | Phase 16 | Complete |
+| HOME-03 | Phase 16 | Complete |
 | ICON-01 | Phase 14 | Complete |
 | ICON-02 | Phase 14 | Complete |
-| CAP-01 | Phase 16 | Pending |
-| CAP-02 | Phase 16 | Pending |
+| CAP-01 | Phase 16 | Complete |
+| CAP-02 | Phase 16 | Complete |
 | TSET-01 | Phase 17 | Pending |
 | TSET-02 | Phase 17 | Pending |
 | TSET-03 | Phase 17 | Pending |

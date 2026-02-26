@@ -26,7 +26,7 @@
 - [x] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
 - [x] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen (completed 2026-02-26)
 - [x] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling (completed 2026-02-26)
-- [ ] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion
+- [x] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion (completed 2026-02-26)
 - [ ] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage
 
 ## Phase Details
@@ -239,7 +239,7 @@ Plans:
   3. The home screen displays a connected device summary — count of connected devices, their names, and current states (booted/shutdown)
   4. User can delete individual screenshots or recordings from the capture history panel
   5. User can clear all capture history at once with a single action
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 16-01-PLAN.md — Home screen welcome page + capture delete/clear-all functionality
@@ -276,7 +276,7 @@ Plans:
 | 13. URL Routing | 1/1 | Complete | 2026-02-27 |
 | 14. Module Icons | 1/1 | Complete   | 2026-02-26 |
 | 15. Command Palette | 1/1 | Complete   | 2026-02-26 |
-| 16. Home Screen & Capture Management | 0/? | Not started | - |
+| 16. Home Screen & Capture Management | 1/1 | Complete   | 2026-02-26 |
 | 17. Tool Settings | 0/? | Not started | - |
 
 ## Coverage Map
