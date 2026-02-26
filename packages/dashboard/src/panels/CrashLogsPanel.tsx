@@ -44,7 +44,8 @@ function CrashLogsPanel() {
 			);
 			if (!res.ok) throw new Error("Failed to fetch crash logs");
 			const data = await res.json();
-			setLogs(data as CrashLogEntry[]);
+			const list = Array.isArray(data) ? data : ((data as { logs: CrashLogEntry[] }).logs ?? []);
+			setLogs(list);
 		} catch (err) {
 			toast.error((err as Error).message);
 			setLogs([]);
