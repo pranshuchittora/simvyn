@@ -328,6 +328,104 @@ export function createAndroidAdapter(): PlatformAdapter {
 			await execFileAsync("adb", ["-s", did, "shell", "rm", "/sdcard/simvyn_recording.mp4"]);
 		},
 
+		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for settings operations");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"cmd",
+				"uimode",
+				"night",
+				mode === "dark" ? "yes" : "no",
+			]);
+		},
+
+		async grantPermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for permission operations");
+			const fullPermission = permission.startsWith("android.permission.")
+				? permission
+				: `android.permission.${permission}`;
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"pm",
+				"grant",
+				bundleId,
+				fullPermission,
+			]);
+		},
+
+		async revokePermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for permission operations");
+			const fullPermission = permission.startsWith("android.permission.")
+				? permission
+				: `android.permission.${permission}`;
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"pm",
+				"revoke",
+				bundleId,
+				fullPermission,
+			]);
+		},
+
+		resetPermissions: undefined,
+
+		async setLocale(deviceId: string, locale: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for locale operations");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"setprop",
+				"persist.sys.locale",
+				locale,
+			]);
+			await execFileAsync("adb", ["-s", deviceId, "shell", "setprop", "ctl.restart", "zygote"]);
+			console.log("Warning: locale change restarts the Android runtime");
+		},
+
+		async setTalkBack(deviceId: string, enabled: boolean): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for accessibility operations");
+			const service = enabled
+				? "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
+				: "";
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"settings",
+				"put",
+				"secure",
+				"enabled_accessibility_services",
+				service,
+			]);
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"settings",
+				"put",
+				"secure",
+				"accessibility_enabled",
+				enabled ? "1" : "0",
+			]);
+		},
+
+		setStatusBar: undefined,
+		clearStatusBar: undefined,
+		setContentSize: undefined,
+		setIncreaseContrast: undefined,
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
@@ -337,6 +435,8 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"deepLinks",
 				"appManagement",
 				"addMedia",
+				"settings",
+				"accessibility",
 			];
 		},
 	};

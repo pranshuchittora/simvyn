@@ -258,6 +258,87 @@ export function createIosAdapter(): PlatformAdapter {
 			});
 		},
 
+		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "ui", deviceId, "appearance", mode]);
+		},
+
+		async setStatusBar(deviceId: string, overrides: Record<string, string>): Promise<void> {
+			const flagMap: Record<string, string> = {
+				time: "--time",
+				batteryLevel: "--batteryLevel",
+				batteryState: "--batteryState",
+				cellularBars: "--cellularBars",
+				wifiBars: "--wifiBars",
+				operatorName: "--operatorName",
+				dataNetwork: "--dataNetwork",
+			};
+			const args = ["simctl", "status_bar", deviceId, "override"];
+			for (const [key, value] of Object.entries(overrides)) {
+				const flag = flagMap[key];
+				if (flag) args.push(flag, value);
+			}
+			await execFileAsync("xcrun", args);
+		},
+
+		async clearStatusBar(deviceId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "status_bar", deviceId, "clear"]);
+		},
+
+		async grantPermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "grant", permission, bundleId]);
+		},
+
+		async revokePermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "revoke", permission, bundleId]);
+		},
+
+		async resetPermissions(deviceId: string, bundleId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "reset", "all", bundleId]);
+		},
+
+		async setLocale(deviceId: string, locale: string): Promise<void> {
+			await execFileAsync("xcrun", [
+				"simctl",
+				"spawn",
+				deviceId,
+				"defaults",
+				"write",
+				"Apple Global Domain",
+				"AppleLocale",
+				"-string",
+				locale,
+			]);
+			const langCode = locale.split("_")[0];
+			await execFileAsync("xcrun", [
+				"simctl",
+				"spawn",
+				deviceId,
+				"defaults",
+				"write",
+				"Apple Global Domain",
+				"AppleLanguages",
+				"-array",
+				langCode,
+			]);
+			console.log("Note: locale change requires a device reboot to take effect");
+		},
+
+		async setContentSize(deviceId: string, size: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "ui", deviceId, "content_size", size]);
+		},
+
+		async setIncreaseContrast(deviceId: string, enabled: boolean): Promise<void> {
+			await execFileAsync("xcrun", [
+				"simctl",
+				"ui",
+				deviceId,
+				"increase_contrast",
+				enabled ? "enabled" : "disabled",
+			]);
+		},
+
+		setTalkBack: undefined,
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
@@ -273,6 +354,8 @@ export function createIosAdapter(): PlatformAdapter {
 				"logs",
 				"deepLinks",
 				"appManagement",
+				"settings",
+				"accessibility",
 			];
 		},
 	};

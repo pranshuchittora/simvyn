@@ -27,7 +27,9 @@ export type PlatformCapability =
 	| "deepLinks"
 	| "appManagement"
 	| "fileSystem"
-	| "database";
+	| "database"
+	| "settings"
+	| "accessibility";
 
 export interface AppInfo {
 	bundleId: string;
@@ -77,5 +79,15 @@ export interface PlatformAdapter {
 		deviceId: string,
 		outputPath: string,
 	): Promise<void>;
+	setAppearance?(deviceId: string, mode: "light" | "dark"): Promise<void>;
+	setStatusBar?(deviceId: string, overrides: Record<string, string>): Promise<void>;
+	clearStatusBar?(deviceId: string): Promise<void>;
+	grantPermission?(deviceId: string, bundleId: string, permission: string): Promise<void>;
+	revokePermission?(deviceId: string, bundleId: string, permission: string): Promise<void>;
+	resetPermissions?(deviceId: string, bundleId: string): Promise<void>;
+	setLocale?(deviceId: string, locale: string): Promise<void>;
+	setContentSize?(deviceId: string, size: string): Promise<void>;
+	setIncreaseContrast?(deviceId: string, enabled: boolean): Promise<void>;
+	setTalkBack?(deviceId: string, enabled: boolean): Promise<void>;
 	capabilities(): PlatformCapability[];
 }
