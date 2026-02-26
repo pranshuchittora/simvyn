@@ -47,7 +47,10 @@ export default function DeviceSelector() {
 			<button
 				type="button"
 				onClick={() => setOpen(!open)}
-				className="flex items-center gap-2 rounded-[var(--radius-button)] bg-bg-surface/50 border border-glass-border hover:border-glass-border-hover hover:bg-glass-hover px-3 py-1.5 text-sm text-text-primary transition-all duration-150"
+				className="glass-button flex items-center gap-2 px-3 py-1.5 text-sm"
+				style={{
+					boxShadow: "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 0.5px 0 rgba(255, 255, 255, 0.06)",
+				}}
 			>
 				<span>{label}</span>
 				<svg
@@ -71,7 +74,7 @@ export default function DeviceSelector() {
 						className={`flex w-full items-center gap-2 rounded-[var(--radius-button)] px-3 py-2 text-left text-sm transition-colors ${
 							broadcastMode
 								? "bg-accent-blue/20 text-accent-blue"
-								: "text-text-secondary hover:bg-bg-surface"
+								: "text-text-secondary hover:bg-[rgba(255,255,255,0.08)]"
 						}`}
 					>
 						<span className="inline-block h-2 w-2 rounded-full bg-accent-purple" />
@@ -96,7 +99,7 @@ export default function DeviceSelector() {
 									className={`flex w-full items-center gap-2 rounded-[var(--radius-button)] px-3 py-2 text-left text-sm transition-colors ${
 										!broadcastMode && d.id === selectedDeviceId
 											? "bg-accent-blue/20 text-accent-blue"
-											: "text-text-primary hover:bg-bg-surface"
+											: "text-text-primary hover:bg-[rgba(255,255,255,0.08)]"
 									}`}
 								>
 									<StateIndicator state={d.state} />

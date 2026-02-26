@@ -5,7 +5,7 @@ export default function TopBar() {
 	const { connected } = useWs();
 
 	return (
-		<header className="relative z-30 flex h-12 shrink-0 items-center justify-between border-b border-glass-border/60 bg-[oklch(0.11_0.018_265_/_0.7)] px-4 backdrop-blur-2xl backdrop-saturate-[1.3]">
+		<header className="top-bar relative z-30 flex h-12 shrink-0 items-center justify-between px-4">
 			<div className="text-base font-semibold tracking-tight bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
 				simvyn
 			</div>

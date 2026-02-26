@@ -67,13 +67,15 @@ export default function App() {
 				position="bottom-right"
 				toastOptions={{
 					style: {
-						background: "oklch(0.14 0.02 260 / 0.85)",
-						backdropFilter: "blur(24px) saturate(1.3)",
-						border: "1px solid oklch(0.35 0.02 260 / 0.15)",
+						background: "rgba(30, 30, 40, 0.7)",
+						backdropFilter: "blur(20px) saturate(1.4)",
+						WebkitBackdropFilter: "blur(20px) saturate(1.4)",
+						border: "1px solid rgba(255, 255, 255, 0.08)",
 						borderRadius: "12px",
-						color: "oklch(0.92 0.01 260)",
+						color: "#e8e8ed",
 						fontSize: "13px",
-						fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+						fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif",
+						boxShadow: "0 4px 24px rgba(0, 0, 0, 0.3), inset 0 0.5px 0 rgba(255, 255, 255, 0.06)",
 					},
 				}}
 				theme="dark"
