@@ -29,7 +29,16 @@ export type PlatformCapability =
 	| "fileSystem"
 	| "database"
 	| "settings"
-	| "accessibility";
+	| "accessibility"
+	| "crashLogs";
+
+export interface CrashLogEntry {
+	id: string;
+	process: string;
+	timestamp: string;
+	path?: string;
+	preview: string;
+}
 
 export interface AppInfo {
 	bundleId: string;
@@ -68,6 +77,7 @@ export interface PlatformAdapter {
 	terminateApp?(deviceId: string, bundleId: string): Promise<void>;
 	getAppInfo?(deviceId: string, bundleId: string): Promise<AppInfo | null>;
 	clearAppData?(deviceId: string, bundleId: string): Promise<void>;
+	addMedia?(deviceId: string, filePath: string): Promise<void>;
 	openUrl?(deviceId: string, url: string): Promise<void>;
 	screenshot?(deviceId: string, outputPath: string): Promise<void>;
 	startRecording?(
