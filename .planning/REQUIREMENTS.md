@@ -38,7 +38,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **LOC-04**: Simulate routes from GPX/KML files with playback controls (play, pause, resume, stop, speed)
 - [x] **LOC-05**: iOS route simulation via native `simctl location start` (pipe waypoints to stdin)
 - [x] **LOC-06**: Android route simulation via tick-based `geo fix` calls at configurable intervals
-- [ ] **LOC-07**: Interactive map UI for picking coordinates and drawing routes (Leaflet)
+- [x] **LOC-07**: Interactive map UI for picking coordinates and drawing routes (Leaflet)
 - [x] **LOC-08**: Geocoding search (forward and reverse) via Nominatim proxy with rate limiting
 - [x] **LOC-09**: Save favorite locations and routes with persistence
 - [x] **LOC-10**: CLI subcommands: `simvyn location set <device> <lat> <lng>`, `simvyn location route <device> <file>`
@@ -233,7 +233,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOC-04 | Phase 2 | Complete |
 | LOC-05 | Phase 2 | Complete |
 | LOC-06 | Phase 2 | Complete |
-| LOC-07 | Phase 2 | Pending |
+| LOC-07 | Phase 2 | Complete |
 | LOC-08 | Phase 2 | Complete |
 | LOC-09 | Phase 2 | Complete |
 | LOC-10 | Phase 2 | Complete |
