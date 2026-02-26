@@ -295,7 +295,7 @@ Plans:
   4. User can clear device logs via dashboard button (runs `adb logcat -c` / equivalent) and separately clear UI-only logs
   5. Search works efficiently on the current paginated dataset without needing all logs loaded
   6. Navigating away from the Logs panel unmounts the component and releases all log data from memory
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 12.1-01-PLAN.md — Server-side paginated history retrieval + device log clearing WS handlers
