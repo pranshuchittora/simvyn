@@ -15,6 +15,7 @@
 	--color-text-secondary: oklch(0.65 0.005 260);
 	--color-text-muted: oklch(0.45 0.005 260);
 	--color-border: oklch(1 0 0 / 0.08);
+	--font-brand: "Cascadia Code", "SF Mono", ui-monospace, monospace;
 	--radius-panel: 14px;
 	--radius-button: 10px;
 }
