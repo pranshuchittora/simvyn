@@ -186,17 +186,17 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 				type="button"
 				onClick={handleClearDevice}
 				className="glass-button-destructive"
-				title="Clear device log buffer"
+				title="Purge device log buffer (logcat -c)"
 			>
-				Clear Device
+				Purge Device
 			</button>
 			<button
 				type="button"
 				onClick={clear}
 				className="glass-button"
-				title="Clear loaded entries (UI only)"
+				title="Clear screen (logs still on device)"
 			>
-				Clear UI
+				Clear
 			</button>
 
 			{/* Entry count */}
