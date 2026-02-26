@@ -48,9 +48,6 @@ export default function DeviceSelector() {
 				type="button"
 				onClick={() => setOpen(!open)}
 				className="glass-button flex items-center gap-2 px-3 py-1.5 text-sm"
-				style={{
-					boxShadow: "0 2px 12px rgba(0, 0, 0, 0.2), inset 0 0.5px 0 rgba(255, 255, 255, 0.06)",
-				}}
 			>
 				<span>{label}</span>
 				<svg

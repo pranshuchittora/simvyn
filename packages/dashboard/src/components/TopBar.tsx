@@ -15,9 +15,10 @@ export default function TopBar() {
 				<div className="flex items-center gap-2">
 					<span
 						className={`h-2 w-2 rounded-full ${
-							connected ? "bg-green-500 ring-2 ring-green-500/20 animate-pulse" : "bg-red-500"
+							connected
+								? "bg-green-500 ring-2 ring-green-500/20 animate-pulse [animation-duration:2s]"
+								: "bg-red-500"
 						}`}
-						style={connected ? { animationDuration: "2s" } : undefined}
 					/>
 					<span className="text-xs text-text-muted">
 						{connected ? "Connected" : "Disconnected"}
