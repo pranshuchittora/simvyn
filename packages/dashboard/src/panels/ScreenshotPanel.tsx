@@ -69,7 +69,7 @@ function CaptureCard({
 				<button
 					type="button"
 					onClick={() => onDownload(entry.filename)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 p-1.5 text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+					className="glass-button p-1.5"
 					title="Download"
 				>
 					<Download size={14} strokeWidth={1.8} />
@@ -78,7 +78,7 @@ function CaptureCard({
 					<button
 						type="button"
 						onClick={() => onCopy(entry.filename)}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 p-1.5 text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+						className="glass-button p-1.5"
 						title="Copy to clipboard"
 					>
 						<Copy size={14} strokeWidth={1.8} />
@@ -183,7 +183,7 @@ function ScreenshotPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -196,8 +196,8 @@ function ScreenshotPanel() {
 
 			{/* No device */}
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">
+				<div className="glass-panel">
+					<p className="glass-empty-state">
 						Select a booted device to capture screenshots or record
 					</p>
 				</div>
@@ -209,7 +209,7 @@ function ScreenshotPanel() {
 					<button
 						type="button"
 						onClick={handleCapture}
-						className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-sm text-accent-blue hover:bg-accent-blue/30 transition-colors"
+						className="glass-button-primary flex items-center gap-2"
 					>
 						<Camera size={16} strokeWidth={1.8} />
 						Capture Screenshot
@@ -217,10 +217,8 @@ function ScreenshotPanel() {
 					<button
 						type="button"
 						onClick={handleToggleRecording}
-						className={`flex items-center gap-2 rounded-[var(--radius-button)] px-3 py-1.5 text-sm transition-colors ${
-							deviceRecording
-								? "bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30"
-								: "bg-bg-surface/60 border border-border text-text-secondary hover:text-text-primary hover:bg-glass"
+						className={`flex items-center gap-2 ${
+							deviceRecording ? "glass-button-destructive" : "glass-button"
 						}`}
 					>
 						{deviceRecording ? (
@@ -245,14 +243,14 @@ function ScreenshotPanel() {
 			{selectedDeviceId && (
 				<>
 					{loading && (
-						<div className="glass-panel p-8 text-center">
-							<p className="text-sm text-text-muted">Loading captures...</p>
+						<div className="glass-panel">
+							<p className="glass-empty-state">Loading captures...</p>
 						</div>
 					)}
 
 					{!loading && captures.length === 0 && (
-						<div className="glass-panel p-8 text-center">
-							<p className="text-sm text-text-secondary">
+						<div className="glass-panel">
+							<p className="glass-empty-state">
 								No captures yet — take a screenshot or start recording
 							</p>
 						</div>

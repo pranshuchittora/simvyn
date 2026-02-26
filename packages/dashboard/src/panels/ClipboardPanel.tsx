@@ -86,7 +86,7 @@ function ClipboardPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -98,8 +98,8 @@ function ClipboardPanel() {
 			</div>
 
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to bridge clipboard</p>
+				<div className="glass-panel">
+					<p className="glass-empty-state">Select a booted device to bridge clipboard</p>
 				</div>
 			)}
 
@@ -113,7 +113,7 @@ function ClipboardPanel() {
 								type="button"
 								onClick={readClipboard}
 								disabled={readLoading}
-								className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40"
+								className="glass-button-primary"
 							>
 								{readLoading ? "Reading..." : "Read Clipboard"}
 							</button>
@@ -122,7 +122,7 @@ function ClipboardPanel() {
 							readOnly
 							value={clipboardContent}
 							placeholder="Device clipboard content will appear here..."
-							className="w-full h-24 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-xs text-text-primary font-mono placeholder:text-text-muted focus:outline-none resize-none"
+							className="glass-textarea h-24 text-xs"
 						/>
 						{clipboardContent && (
 							<button
@@ -144,14 +144,14 @@ function ClipboardPanel() {
 							value={writeText}
 							onChange={(e) => setWriteText(e.target.value)}
 							placeholder="Enter text to write to device clipboard..."
-							className="w-full h-24 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-xs text-text-primary font-mono placeholder:text-text-muted focus:outline-none resize-none"
+							className="glass-textarea h-24 text-xs"
 						/>
 						<div className="flex items-center gap-2">
 							<button
 								type="button"
 								onClick={() => writeClipboard(writeText)}
 								disabled={writeLoading || !writeText.trim()}
-								className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+								className="glass-button-primary"
 							>
 								{writeLoading ? "Writing..." : "Write to Device"}
 							</button>

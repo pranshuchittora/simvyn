@@ -89,7 +89,7 @@ function MediaPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -101,8 +101,8 @@ function MediaPanel() {
 			</div>
 
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to inject media</p>
+				<div className="glass-panel">
+					<p className="glass-empty-state">Select a booted device to inject media</p>
 				</div>
 			)}
 
@@ -118,9 +118,7 @@ function MediaPanel() {
 					}}
 					onDragLeave={() => setDragOver(false)}
 					onDrop={handleDrop}
-					className={`glass-panel p-12 text-center transition-colors border-2 border-dashed ${
-						dragOver ? "border-accent-blue/40 bg-accent-blue/[0.04]" : "border-border/50"
-					}`}
+					className={`glass-drop-zone ${dragOver ? "drag-over" : ""}`}
 				>
 					{uploading ? (
 						<div className="flex flex-col items-center gap-2">
@@ -136,7 +134,7 @@ function MediaPanel() {
 							<button
 								type="button"
 								onClick={() => fileInputRef.current?.click()}
-								className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-4 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors"
+								className="glass-button-primary"
 							>
 								Browse files
 							</button>

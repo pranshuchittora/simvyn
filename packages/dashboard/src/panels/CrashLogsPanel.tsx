@@ -123,7 +123,7 @@ function CrashLogsPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -135,8 +135,8 @@ function CrashLogsPanel() {
 			</div>
 
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to view crash logs</p>
+				<div className="glass-panel">
+					<p className="glass-empty-state">Select a booted device to view crash logs</p>
 				</div>
 			)}
 
@@ -150,20 +150,20 @@ function CrashLogsPanel() {
 								value={appFilter}
 								onChange={(e) => setAppFilter(e.target.value)}
 								placeholder="Filter by app name..."
-								className="flex-1 min-w-[140px] rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+								className="glass-input flex-1 min-w-[140px] text-xs"
 							/>
 							<input
 								type="text"
 								value={sinceFilter}
 								onChange={(e) => setSinceFilter(e.target.value)}
 								placeholder="Since (ISO date)..."
-								className="flex-1 min-w-[140px] rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+								className="glass-input flex-1 min-w-[140px] text-xs"
 							/>
 							<button
 								type="button"
 								onClick={fetchLogs}
 								disabled={loading}
-								className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40"
+								className="glass-button-primary flex items-center gap-1.5"
 							>
 								<RefreshCw size={12} strokeWidth={1.8} className={loading ? "animate-spin" : ""} />
 								Refresh
@@ -179,7 +179,7 @@ function CrashLogsPanel() {
 							</div>
 						)}
 						{!loading && logs.length === 0 && (
-							<div className="p-8 text-center text-text-secondary text-sm">No crash logs found</div>
+							<div className="glass-empty-state">No crash logs found</div>
 						)}
 						{logs.map((log) => (
 							<button
