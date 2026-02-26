@@ -9,7 +9,7 @@
 
 - [x] **Phase 1: Foundation & Device Management** — Monorepo, module system, server, dashboard shell, CLI, device discovery and lifecycle
 - [x] **Phase 2: Location Module (sim-location Migration)** — Migrate sim-location into module architecture, validating the module system end-to-end
-- [ ] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
+- [x] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
 - [ ] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
 - [ ] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
 - [ ] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
@@ -69,10 +69,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — AppInfo type + iOS/Android adapter app management methods
-- [ ] 03-02-PLAN.md — Module scaffold, Fastify routes, WS handler, @fastify/multipart
-- [ ] 03-03-PLAN.md — CLI subcommands (simvyn app list/install/launch/...)
-- [ ] 03-04-PLAN.md — Dashboard panel with app list, drag-and-drop install, action buttons
+- [x] 03-01-PLAN.md — AppInfo type + iOS/Android adapter app management methods
+- [x] 03-02-PLAN.md — Module scaffold, Fastify routes, WS handler, @fastify/multipart
+- [x] 03-03-PLAN.md — CLI subcommands (simvyn app list/install/launch/...)
+- [x] 03-04-PLAN.md — Dashboard panel with app list, drag-and-drop install, action buttons
 
 ### Phase 4: Log Viewer Module
 **Goal:** Developers can stream, search, and filter device logs in real-time for debugging
@@ -149,7 +149,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation & Device Management | 7/7 | Complete | 2026-02-26 |
 | 2. Location Module | 4/4 | Complete | 2026-02-26 |
-| 3. App Management Module | 0/? | Not started | — |
+| 3. App Management Module | 4/4 | Complete | 2026-02-26 |
 | 4. Log Viewer Module | 0/? | Not started | — |
 | 5. Dashboard UI | 0/? | Not started | — |
 | 6. Quick-Action Modules | 0/? | Not started | — |

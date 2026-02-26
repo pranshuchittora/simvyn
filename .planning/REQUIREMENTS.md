@@ -127,15 +127,15 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### App Management
 
-- [ ] **APP-01**: List all installed apps on iOS via `simctl listapps`
-- [ ] **APP-02**: List all installed apps on Android via `adb shell pm list packages`
-- [ ] **APP-03**: Install apps — IPAs on iOS via `simctl install`, APKs on Android via `adb install`
-- [ ] **APP-04**: Uninstall apps on iOS via `simctl uninstall`, on Android via `adb uninstall`
-- [ ] **APP-05**: Launch apps on iOS via `simctl launch`, on Android via `adb shell am start`
-- [ ] **APP-06**: Terminate apps on iOS via `simctl terminate`, on Android via `adb shell am force-stop`
-- [ ] **APP-07**: Clear app data on Android via `adb shell pm clear`
-- [ ] **APP-08**: Show app info — bundle ID, version, container paths via `simctl appinfo` / `adb shell dumpsys package`
-- [ ] **APP-09**: CLI subcommands: `simvyn app list <device>`, `simvyn app install <device> <path>`, `simvyn app launch <device> <bundle-id>`
+- [x] **APP-01**: List all installed apps on iOS via `simctl listapps`
+- [x] **APP-02**: List all installed apps on Android via `adb shell pm list packages`
+- [x] **APP-03**: Install apps — IPAs on iOS via `simctl install`, APKs on Android via `adb install`
+- [x] **APP-04**: Uninstall apps on iOS via `simctl uninstall`, on Android via `adb uninstall`
+- [x] **APP-05**: Launch apps on iOS via `simctl launch`, on Android via `adb shell am start`
+- [x] **APP-06**: Terminate apps on iOS via `simctl terminate`, on Android via `adb shell am force-stop`
+- [x] **APP-07**: Clear app data on Android via `adb shell pm clear`
+- [x] **APP-08**: Show app info — bundle ID, version, container paths via `simctl appinfo` / `adb shell dumpsys package`
+- [x] **APP-09**: CLI subcommands: `simvyn app list <device>`, `simvyn app install <device> <path>`, `simvyn app launch <device> <bundle-id>`
 
 ### Media Injection
 
@@ -237,15 +237,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOC-08 | Phase 2 | Complete |
 | LOC-09 | Phase 2 | Complete |
 | LOC-10 | Phase 2 | Complete |
-| APP-01 | Phase 3 | Pending |
-| APP-02 | Phase 3 | Pending |
-| APP-03 | Phase 3 | Pending |
-| APP-04 | Phase 3 | Pending |
-| APP-05 | Phase 3 | Pending |
-| APP-06 | Phase 3 | Pending |
-| APP-07 | Phase 3 | Pending |
-| APP-08 | Phase 3 | Pending |
-| APP-09 | Phase 3 | Pending |
+| APP-01 | Phase 3 | Complete |
+| APP-02 | Phase 3 | Complete |
+| APP-03 | Phase 3 | Complete |
+| APP-04 | Phase 3 | Complete |
+| APP-05 | Phase 3 | Complete |
+| APP-06 | Phase 3 | Complete |
+| APP-07 | Phase 3 | Complete |
+| APP-08 | Phase 3 | Complete |
+| APP-09 | Phase 3 | Complete |
 | LOG-01 | Phase 4 | Pending |
 | LOG-02 | Phase 4 | Pending |
 | LOG-03 | Phase 4 | Pending |

@@ -1,18 +1,17 @@
 export type {
-	Platform,
-	DeviceState,
+	AppInfo,
 	Device,
-	PlatformCapability,
+	DeviceState,
+	Platform,
 	PlatformAdapter,
+	PlatformCapability,
 } from "./device.js";
 
 export type { SimvynModule } from "./module.js";
-
+export type { ModuleStorage } from "./storage.js";
 export type {
+	DeviceChannel,
+	WsClientMessage,
 	WsEnvelope,
 	WsServerMessage,
-	WsClientMessage,
-	DeviceChannel,
 } from "./ws.js";
-
-export type { ModuleStorage } from "./storage.js";

@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 2 Complete — Ready for Phase 3
+**Current Focus:** Phase 3 Complete — Ready for Phase 4
 
 ## Current Position
 
-**Phase:** 2 of 9 — Location Module
-**Plan:** 4 of 4 in Phase 2 ✅
+**Phase:** 3 of 9 — App Management Module
+**Plan:** 4 of 4 in Phase 3 ✅
 **Status:** Milestone complete
-**Progress:** [██████████] 100% (Phase 2)
+**Progress:** [██████████] 100% (Phase 3)
 
 ## Phase Overview
 
@@ -19,7 +19,7 @@
 |-------|--------|
 | 1. Foundation & Device Management | ✅ Complete (7/7 plans) |
 | 2. Location Module | ✅ Complete (4/4 plans) |
-| 3. App Management Module | ⬜ Not started |
+| 3. App Management Module | ✅ Complete (4/4 plans) |
 | 4. Log Viewer Module | ⬜ Not started |
 | 5. Dashboard UI | ⬜ Not started |
 | 6. Quick-Action Modules | ⬜ Not started |
@@ -31,9 +31,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 2/9 |
-| Plans completed | 11/11 (Phase 1: 7, Phase 2: 4) |
-| Requirements delivered | 23/108 |
+| Phases completed | 3/9 |
+| Plans completed | 15/15 (Phase 1: 7, Phase 2: 4, Phase 3: 4) |
+| Requirements delivered | 32/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -44,6 +44,10 @@
 | Phase 02 P02 | 3min | 3 tasks | 5 files |
 | Phase 02 P03 | 5min | 2 tasks | 4 files |
 | Phase 02 P04 | 5min | 3 tasks | 19 files |
+| Phase 03 P01 | 3min | 2 tasks | 4 files |
+| Phase 03 P02 | 3min | 2 tasks | 5 files |
+| Phase 03 P03 | 2min | 1 task | 1 file |
+| Phase 03 P04 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -77,6 +81,11 @@
 - Four zustand stores per location feature domain (location, playback, route, favorites) — clean separation of concerns
 - Custom CSS DivIcon factories for Leaflet markers — allows glass-panel aesthetic and CSS animations
 - Client-side GPX/KML parsing with @tmcw/togeojson + browser DOMParser — avoids server round-trip
+- iOS listapps outputs NeXT-step plist — pipe through `plutil -convert json` for reliable JSON parsing
+- `@fastify/multipart` scoped to app-management module routes only (not global) — 500MB file limit for large APKs
+- Android `monkey` for app launch — avoids needing to know the launcher activity name
+- IPA install requires unzip to extract `Payload/*.app` — simctl only accepts `.app` bundles
+- Android app commands guard against `avd:` prefix device IDs — these are synthetic and can't run adb shell
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -92,17 +101,17 @@
 - Phase 7: better-sqlite3 WAL-mode locking behavior with actively-written databases
 
 ### TODOs
-(None yet)
+(None)
 
 ### Blockers
 (None)
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T08:26:49Z
-**Next action:** Plan Phase 3 (App Management Module)
-**Context for next session:** Phase 2 (Location Module) complete — all 4 plans executed. Full module architecture validated end-to-end: server routes, WS handler, PlaybackEngine, CLI subcommands, and interactive dashboard panel with Leaflet map. Ready for Phase 3 planning.
+**Last session:** 2026-02-26
+**Next action:** Plan Phase 4 (Log Viewer Module)
+**Context for next session:** Phase 3 (App Management Module) complete — all 4 plans executed. AppInfo type added to @simvyn/types. iOS and Android adapters implement full app lifecycle methods (list, install, uninstall, launch, terminate, info, clear-data). Module scaffold at packages/modules/app-management/ with Fastify routes (including multipart upload), WS handler, and CLI subcommands. Dashboard panel with app list table, filter buttons, drag-and-drop install zone, and per-app action buttons. Ready for Phase 4 planning.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T08:26:49Z*
+*Last updated: 2026-02-26*

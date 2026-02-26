@@ -10,6 +10,7 @@ import { useModuleStore } from "./stores/module-store";
 // Module panel side-effect registrations
 import "./panels/DevicePanel";
 import "./panels/LocationPanel";
+import "./panels/AppPanel";
 
 function AppContent() {
 	const setDevices = useDeviceStore((s) => s.setDevices);

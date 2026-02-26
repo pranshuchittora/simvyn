@@ -1,6 +1,6 @@
 import { execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
-import type { Device, PlatformAdapter, PlatformCapability } from "@simvyn/types";
+import type { AppInfo, Device, PlatformAdapter, PlatformCapability } from "@simvyn/types";
 
 const execFileAsync = promisify(execFile);
 
@@ -171,6 +171,97 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async clearLocation(deviceId: string): Promise<void> {
 			await execFileAsync("adb", ["-s", deviceId, "emu", "geo", "fix", "0", "0"]);
+		},
+
+		async listApps(deviceId: string): Promise<AppInfo[]> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			const { stdout } = await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"pm",
+				"list",
+				"packages",
+				"-f",
+				"-3",
+			]);
+			const apps: AppInfo[] = [];
+			for (const line of stdout.trim().split("\n")) {
+				if (!line) continue;
+				const match = line.match(/^package:(.+?)=([^\s]+)$/);
+				if (!match) continue;
+				apps.push({
+					bundleId: match[2],
+					name: match[2],
+					version: "unknown",
+					type: "user",
+					appPath: match[1],
+				});
+			}
+			return apps;
+		},
+
+		async installApp(deviceId: string, appPath: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			await execFileAsync("adb", ["-s", deviceId, "install", appPath]);
+		},
+
+		async uninstallApp(deviceId: string, bundleId: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			await execFileAsync("adb", ["-s", deviceId, "uninstall", bundleId]);
+		},
+
+		async launchApp(deviceId: string, bundleId: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"monkey",
+				"-p",
+				bundleId,
+				"-c",
+				"android.intent.category.LAUNCHER",
+				"1",
+			]);
+		},
+
+		async terminateApp(deviceId: string, bundleId: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "am", "force-stop", bundleId]);
+		},
+
+		async getAppInfo(deviceId: string, bundleId: string): Promise<AppInfo | null> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			try {
+				const { stdout } = await execFileAsync("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys",
+					"package",
+					bundleId,
+				]);
+				const versionName = stdout.match(/versionName=(.+)/)?.[1]?.trim() ?? "unknown";
+				const versionCode = stdout.match(/versionCode=(\d+)/)?.[1] ?? "";
+				const dataDir = stdout.match(/dataDir=(.+)/)?.[1]?.trim() ?? undefined;
+				const codePath = stdout.match(/codePath=(.+)/)?.[1]?.trim() ?? undefined;
+				return {
+					bundleId,
+					name: bundleId,
+					version: versionName + (versionCode ? ` (${versionCode})` : ""),
+					type: "user",
+					dataContainer: dataDir,
+					appPath: codePath,
+				};
+			} catch {
+				return null;
+			}
+		},
+
+		async clearAppData(deviceId: string, bundleId: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "pm", "clear", bundleId]);
 		},
 
 		capabilities(): PlatformCapability[] {

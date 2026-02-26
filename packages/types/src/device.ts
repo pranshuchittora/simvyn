@@ -27,6 +27,15 @@ export type PlatformCapability =
 	| "deepLinks"
 	| "appManagement";
 
+export interface AppInfo {
+	bundleId: string;
+	name: string;
+	version: string;
+	type: "user" | "system";
+	dataContainer?: string;
+	appPath?: string;
+}
+
 export interface PlatformAdapter {
 	platform: Platform;
 	isAvailable(): Promise<boolean>;
@@ -36,5 +45,12 @@ export interface PlatformAdapter {
 	erase?(id: string): Promise<void>;
 	setLocation?(deviceId: string, lat: number, lon: number): Promise<void>;
 	clearLocation?(deviceId: string): Promise<void>;
+	listApps?(deviceId: string): Promise<AppInfo[]>;
+	installApp?(deviceId: string, appPath: string): Promise<void>;
+	uninstallApp?(deviceId: string, bundleId: string): Promise<void>;
+	launchApp?(deviceId: string, bundleId: string): Promise<void>;
+	terminateApp?(deviceId: string, bundleId: string): Promise<void>;
+	getAppInfo?(deviceId: string, bundleId: string): Promise<AppInfo | null>;
+	clearAppData?(deviceId: string, bundleId: string): Promise<void>;
 	capabilities(): PlatformCapability[];
 }

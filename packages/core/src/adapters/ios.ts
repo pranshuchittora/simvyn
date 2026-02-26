@@ -1,6 +1,15 @@
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
+import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { promisify } from "node:util";
-import type { Device, DeviceState, PlatformAdapter, PlatformCapability } from "@simvyn/types";
+import type {
+	AppInfo,
+	Device,
+	DeviceState,
+	PlatformAdapter,
+	PlatformCapability,
+} from "@simvyn/types";
 
 const execFileAsync = promisify(execFile);
 
@@ -43,6 +52,25 @@ function parseDeviceType(identifier?: string): string {
 	const parts = identifier.split(".");
 	const last = parts[parts.length - 1];
 	return last.replace(/-/g, " ");
+}
+
+function plistToJson(plistStr: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const proc = spawn("plutil", ["-convert", "json", "-r", "-o", "-", "--", "-"]);
+		let out = "";
+		let err = "";
+		proc.stdout.on("data", (d: Buffer) => {
+			out += d.toString();
+		});
+		proc.stderr.on("data", (d: Buffer) => {
+			err += d.toString();
+		});
+		proc.on("close", (code) =>
+			code === 0 ? resolve(out) : reject(new Error(`plutil exit ${code}: ${err}`)),
+		);
+		proc.stdin.write(plistStr);
+		proc.stdin.end();
+	});
 }
 
 export function createIosAdapter(): PlatformAdapter {
@@ -116,6 +144,98 @@ export function createIosAdapter(): PlatformAdapter {
 		async clearLocation(deviceId: string): Promise<void> {
 			await execFileAsync("xcrun", ["simctl", "location", deviceId, "clear"]);
 		},
+
+		async listApps(deviceId: string): Promise<AppInfo[]> {
+			const { stdout: plist } = await execFileAsync("xcrun", ["simctl", "listapps", deviceId]);
+			const json = await plistToJson(plist);
+			const data = JSON.parse(json) as Record<
+				string,
+				{
+					CFBundleIdentifier: string;
+					CFBundleDisplayName?: string;
+					CFBundleName?: string;
+					CFBundleVersion?: string;
+					CFBundleShortVersionString?: string;
+					ApplicationType: string;
+					DataContainer?: string;
+					Path?: string;
+				}
+			>;
+			return Object.values(data).map((info) => ({
+				bundleId: info.CFBundleIdentifier,
+				name: info.CFBundleDisplayName ?? info.CFBundleName ?? info.CFBundleIdentifier,
+				version: info.CFBundleShortVersionString ?? info.CFBundleVersion ?? "unknown",
+				type: info.ApplicationType.toLowerCase() as "user" | "system",
+				dataContainer: info.DataContainer?.replace("file://", "") ?? undefined,
+				appPath: info.Path ?? undefined,
+			}));
+		},
+
+		async installApp(deviceId: string, appPath: string): Promise<void> {
+			let installPath = appPath;
+			let tmpDir: string | undefined;
+
+			if (appPath.endsWith(".ipa")) {
+				tmpDir = await mkdtemp(join(tmpdir(), "simvyn-ipa-"));
+				await execFileAsync("unzip", ["-q", appPath, "-d", tmpDir]);
+				const entries = await readdir(join(tmpDir, "Payload"));
+				const appBundle = entries.find((e) => e.endsWith(".app"));
+				if (!appBundle) throw new Error("No .app found in IPA");
+				installPath = join(tmpDir, "Payload", appBundle);
+			}
+
+			try {
+				await execFileAsync("xcrun", ["simctl", "install", deviceId, installPath]);
+			} finally {
+				if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
+			}
+		},
+
+		async uninstallApp(deviceId: string, bundleId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "uninstall", deviceId, bundleId]);
+		},
+
+		async launchApp(deviceId: string, bundleId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "launch", deviceId, bundleId]);
+		},
+
+		async terminateApp(deviceId: string, bundleId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "terminate", deviceId, bundleId]);
+		},
+
+		async getAppInfo(deviceId: string, bundleId: string): Promise<AppInfo | null> {
+			try {
+				const { stdout: plist } = await execFileAsync("xcrun", [
+					"simctl",
+					"appinfo",
+					deviceId,
+					bundleId,
+				]);
+				const json = await plistToJson(plist);
+				const info = JSON.parse(json) as {
+					CFBundleIdentifier: string;
+					CFBundleDisplayName?: string;
+					CFBundleName?: string;
+					CFBundleVersion?: string;
+					CFBundleShortVersionString?: string;
+					ApplicationType: string;
+					DataContainer?: string;
+					Path?: string;
+				};
+				return {
+					bundleId: info.CFBundleIdentifier,
+					name: info.CFBundleDisplayName ?? info.CFBundleName ?? info.CFBundleIdentifier,
+					version: info.CFBundleShortVersionString ?? info.CFBundleVersion ?? "unknown",
+					type: info.ApplicationType.toLowerCase() as "user" | "system",
+					dataContainer: info.DataContainer?.replace("file://", "") ?? undefined,
+					appPath: info.Path ?? undefined,
+				};
+			} catch {
+				return null;
+			}
+		},
+
+		clearAppData: undefined,
 
 		capabilities(): PlatformCapability[] {
 			return [
