@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 12 of 12 — Liquid Glass UI Refactor
-**Plan:** 3 of 7
+**Plan:** 7 of 7
 **Status:** Executing
-**Progress:** [████████░░] 81%
+**Progress:** [█████████░] 85%
 
 ## Phase Overview
 
@@ -28,7 +28,7 @@
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
-| 12. Liquid Glass UI Refactor | 🔄 Executing (2/7 plans) |
+| 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
 
 ## Performance Metrics
 
@@ -79,6 +79,8 @@
 | Phase 11 P04 | 2min | 2 tasks | 4 files |
 | Phase 12 P01 | 3min | 2 tasks | 2 files |
 | Phase 12 P02 | 2min | 2 tasks | 5 files |
+| Phase 12 P04 | 3min | 2 tasks | 8 files |
+| Phase 12 P06 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -180,6 +182,9 @@
 - Dock sidebar transformed from full-height flush panel to floating pill shape (52px wide, 16px border-radius, 12px margin)
 - Active module indicator dot moved from bottom-center to left-center per locked user decision
 - Shell components (DeviceSelector, TopBar) inline styles removed — only ModuleShell display toggle remains (architectural)
+- Log entries remain non-glass (content, not navigation) per Apple Liquid Glass guideline
+- Badge color customization via glass-badge class + inline style for color/borderColor/background
+- Level filter buttons use glass-button as base class with conditional Tailwind overrides for active state colors
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -210,9 +215,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T15:59:17Z
-**Stopped at:** Completed 12-02-PLAN.md (dock + shell components)
-**Context for next session:** Phase 12 executing. 7 plans across 3 waves. Wave 2 in progress: Plans 02-06 parallel (dock done, panels next). Wave 3: Plan 07 (audit + verify).
+**Last session:** 2026-02-26T16:03:30Z
+**Stopped at:** Completed 12-04-PLAN.md (Device, App, and Log panels glass conversion)
+**Context for next session:** Phase 12 executing. 7 plans across 3 waves. Wave 2 in progress: Plans 02-06 parallel. Wave 3: Plan 07 (audit + verify).
 
 ---
 *State initialized: 2026-02-26*

@@ -271,7 +271,7 @@ Plans:
   2. Shell components (TopBar, Sidebar, DeviceSelector, ModuleShell) are visually consistent with the glass panels and match the location panel's quality level
   3. main.css design tokens are the single source of truth — no hardcoded colors or backdrop-filter values in individual panel files
   4. The dashboard looks and feels like a native Apple Liquid Glass application with consistent spacing, typography, and animation patterns across all modules
-**Plans:** 1/7 plans executed
+**Plans:** 4/7 plans executed
 
 Plans:
 - [x] 12-01-PLAN.md — Design tokens (lighter palette), 8 new glass utility classes, location-panel.css cleanup
