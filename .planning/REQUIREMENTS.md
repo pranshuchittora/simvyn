@@ -394,6 +394,37 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Mapped to phases: 20
 - Unmapped: 0
 
+## v1.2 Requirements — Interactive Command Palette
+
+### Multi-Step Actions
+
+- [ ] **IPAL-01**: Command palette supports multi-step flows (action → parameters → device → execute) with step transitions inside the palette
+- [ ] **IPAL-02**: Inline device picker step — user can select one or multiple target devices within the palette without changing global selection
+- [ ] **IPAL-03**: Set Locale action — searchable/autocomplete locale list → device picker → apply locale
+- [ ] **IPAL-04**: Set Location action — select from bookmarked locations or free-text geocoding search → device picker → set point location
+- [ ] **IPAL-05**: Toggle Dark/Light Mode action — device picker → toggle appearance
+- [ ] **IPAL-06**: Erase Device action — device picker → confirmation step → erase
+- [ ] **IPAL-07**: Take Screenshot action — device picker → capture (existing action upgraded with device selection)
+- [ ] **IPAL-08**: Expanded action catalog with additional useful actions beyond the core 5
+
+## v1.2 Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| IPAL-01 | Phase 18 | Pending |
+| IPAL-02 | Phase 18 | Pending |
+| IPAL-03 | Phase 18 | Pending |
+| IPAL-04 | Phase 18 | Pending |
+| IPAL-05 | Phase 18 | Pending |
+| IPAL-06 | Phase 18 | Pending |
+| IPAL-07 | Phase 18 | Pending |
+| IPAL-08 | Phase 18 | Pending |
+
+**Coverage:**
+- v1.2 requirements: 8 total
+- Mapped to phases: 8
+- Unmapped: 0
+
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-27 after milestone v1.1 requirements*
+*Last updated: 2026-02-27 after v1.2 interactive command palette requirements*

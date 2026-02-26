@@ -362,10 +362,12 @@ TSET-05 → Phase 17
 
 **Goal:** Transform one-shot command palette actions into multi-step interactive flows with parameter selection, device targeting, and inline autocomplete
 **Depends on:** Phase 15 (command palette), Phase 8 (settings/accessibility APIs)
-**Plans:** 0 plans
+**Requirements:** IPAL-01, IPAL-02, IPAL-03, IPAL-04, IPAL-05, IPAL-06, IPAL-07, IPAL-08
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 18 to break down)
+- [ ] 18-01-PLAN.md — Multi-step flow architecture, device picker, simple actions (screenshot, dark mode, erase)
+- [ ] 18-02-PLAN.md — Complex actions (set locale, set location with geocoding), expanded action catalog
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
