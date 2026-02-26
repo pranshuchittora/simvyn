@@ -14,6 +14,7 @@ import {
 	Settings2,
 } from "lucide-react";
 import type { ComponentType } from "react";
+import { useNavigate } from "react-router";
 import { useModuleStore } from "../stores/module-store";
 
 const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
@@ -49,7 +50,9 @@ const labelMap: Record<string, string> = {
 };
 
 export default function Sidebar() {
-	const { modules, activeModule, setActiveModule } = useModuleStore();
+	const modules = useModuleStore((s) => s.modules);
+	const activeModule = useModuleStore((s) => s.activeModule);
+	const navigate = useNavigate();
 
 	return (
 		<aside className="dock-sidebar">
@@ -62,7 +65,7 @@ export default function Sidebar() {
 					<button
 						key={mod.name}
 						type="button"
-						onClick={() => setActiveModule(mod.name)}
+						onClick={() => navigate(`/${mod.name}`)}
 						className={`dock-icon ${isActive ? "active" : ""}`}
 					>
 						{Icon ? (

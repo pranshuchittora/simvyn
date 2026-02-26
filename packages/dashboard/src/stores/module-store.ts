@@ -12,6 +12,7 @@ interface ModuleStore {
 	activeModule: string | null;
 	setModules: (modules: ModuleInfo[]) => void;
 	setActiveModule: (name: string) => void;
+	clearActiveModule: () => void;
 	fetchModules: () => Promise<void>;
 }
 
@@ -22,6 +23,8 @@ export const useModuleStore = create<ModuleStore>((set) => ({
 	setModules: (modules) => set({ modules }),
 
 	setActiveModule: (name) => set({ activeModule: name }),
+
+	clearActiveModule: () => set({ activeModule: null }),
 
 	fetchModules: async () => {
 		try {
