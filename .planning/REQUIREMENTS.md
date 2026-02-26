@@ -146,10 +146,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Clipboard
 
-- [ ] **CLIP-01**: Read iOS simulator clipboard via `simctl pbpaste`
-- [ ] **CLIP-02**: Write to iOS simulator clipboard via `simctl pbcopy`
-- [ ] **CLIP-03**: Write to Android device clipboard via `adb shell input text` or `adb shell am broadcast`
-- [ ] **CLIP-04**: CLI subcommands: `simvyn clipboard get <device>`, `simvyn clipboard set <device> <text>`
+- [x] **CLIP-01**: Read iOS simulator clipboard via `simctl pbpaste`
+- [x] **CLIP-02**: Write to iOS simulator clipboard via `simctl pbcopy`
+- [x] **CLIP-03**: Write to Android device clipboard via `adb shell input text` or `adb shell am broadcast`
+- [x] **CLIP-04**: CLI subcommands: `simvyn clipboard get <device>`, `simvyn clipboard set <device> <text>`
 
 ### Dashboard UI
 
@@ -314,10 +314,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | MED-02 | Phase 9 | Complete |
 | MED-03 | Phase 9 | Complete |
 | MED-04 | Phase 9 | Complete |
-| CLIP-01 | Phase 9 | Pending |
-| CLIP-02 | Phase 9 | Pending |
-| CLIP-03 | Phase 9 | Pending |
-| CLIP-04 | Phase 9 | Pending |
+| CLIP-01 | Phase 9 | Complete |
+| CLIP-02 | Phase 9 | Complete |
+| CLIP-03 | Phase 9 | Complete |
+| CLIP-04 | Phase 9 | Complete |
 
 **Coverage:**
 - v1 requirements: 108 total
