@@ -1,21 +1,36 @@
 import { Marker, Popup } from "react-leaflet";
-import { createLocationIcon } from "./markers";
+import { createLocationPinIcon } from "./markers";
 import { useLocationStore } from "./stores/location-store";
+import { usePlaybackStore } from "./stores/playback-store";
 
-export default function LocationMarker() {
-	const lat = useLocationStore((s) => s.currentLat);
-	const lon = useLocationStore((s) => s.currentLon);
+const locationPinIcon = createLocationPinIcon();
 
-	if (lat === null || lon === null) return null;
+export function LocationMarker() {
+	const position = useLocationStore((s) => s.markerPosition);
+	const reverseGeocode = useLocationStore((s) => s.reverseGeocode);
+	const playbackStatus = usePlaybackStore((s) => s.status);
+
+	if (!position || playbackStatus !== "idle") return null;
 
 	return (
-		<Marker position={[lat, lon]} icon={createLocationIcon()}>
+		<Marker position={position} icon={locationPinIcon} zIndexOffset={1000}>
 			<Popup>
-				<div className="text-xs">
-					<div className="font-medium">
-						{lat.toFixed(6)}, {lon.toFixed(6)}
-					</div>
+				<div>
+					{position[0].toFixed(6)}, {position[1].toFixed(6)}
 				</div>
+				{reverseGeocode && (
+					<div
+						style={{
+							fontSize: "0.75rem",
+							color: "rgba(255, 255, 255, 0.5)",
+							marginTop: "4px",
+							maxWidth: "200px",
+							wordWrap: "break-word",
+						}}
+					>
+						{reverseGeocode}
+					</div>
+				)}
 			</Popup>
 		</Marker>
 	);
