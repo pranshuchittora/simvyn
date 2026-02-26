@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
 import FileBrowser from "./file-system/FileBrowser";
@@ -11,21 +11,11 @@ interface AppOption {
 }
 
 function FileSystemPanel() {
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const [selectedApp, setSelectedApp] = useState<string | null>(null);
 	const [apps, setApps] = useState<AppOption[]>([]);
 	const editingFile = useFsStore((s) => s.editingFile);
 	const fetchEntries = useFsStore((s) => s.fetchEntries);
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	// Fetch apps when device changes
 	useEffect(() => {
@@ -53,10 +43,14 @@ function FileSystemPanel() {
 		}
 	}, [selectedDeviceId, selectedApp, fetchEntries]);
 
-	const handleDeviceChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-		setSelectedDeviceId(e.target.value || null);
-		setSelectedApp(null);
-	}, []);
+	// reset app selection when device changes
+	const prevDeviceRef = useRef(selectedDeviceId);
+	useEffect(() => {
+		if (prevDeviceRef.current !== selectedDeviceId) {
+			setSelectedApp(null);
+			prevDeviceRef.current = selectedDeviceId;
+		}
+	}, [selectedDeviceId]);
 
 	const handleAppChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
 		setSelectedApp(e.target.value || null);
@@ -67,32 +61,18 @@ function FileSystemPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">File System</h1>
-				<div className="flex items-center gap-3">
-					<select
-						value={selectedDeviceId ?? ""}
-						onChange={handleDeviceChange}
-						className="glass-select max-w-[200px] truncate"
-					>
-						<option value="">No device</option>
-						{devices.map((d) => (
-							<option key={d.id} value={d.id}>
-								{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-							</option>
-						))}
-					</select>
-					<select
-						value={selectedApp ?? ""}
-						onChange={handleAppChange}
-						className="glass-select max-w-[220px] truncate"
-					>
-						<option value="">No app</option>
-						{apps.map((a) => (
-							<option key={a.bundleId} value={a.bundleId}>
-								{a.bundleId}
-							</option>
-						))}
-					</select>
-				</div>
+				<select
+					value={selectedApp ?? ""}
+					onChange={handleAppChange}
+					className="glass-select max-w-[220px] truncate"
+				>
+					<option value="">No app</option>
+					{apps.map((a) => (
+						<option key={a.bundleId} value={a.bundleId}>
+							{a.bundleId}
+						</option>
+					))}
+				</select>
 			</div>
 
 			{/* No selection */}

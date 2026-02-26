@@ -139,12 +139,14 @@ function LocationPanel() {
 
 	useEffect(() => {
 		if (markerPosition) {
-			const deviceId = useDeviceStore.getState().selectedDeviceId;
-			sendLocation("set-location", {
-				lat: markerPosition[0],
-				lon: markerPosition[1],
-				deviceId,
-			});
+			const deviceIds = useDeviceStore.getState().selectedDeviceIds;
+			for (const deviceId of deviceIds) {
+				sendLocation("set-location", {
+					lat: markerPosition[0],
+					lon: markerPosition[1],
+					deviceId,
+				});
+			}
 
 			const requestId = ++reverseGeocodeCounter.current;
 			fetch(`/api/modules/location/reverse?lat=${markerPosition[0]}&lon=${markerPosition[1]}`)
@@ -184,15 +186,17 @@ function LocationPanel() {
 		if (wps.length < 2) return;
 
 		const { speedKmh, multiplier, loop } = usePlaybackStore.getState();
-		const deviceId = useDeviceStore.getState().selectedDeviceId;
+		const deviceIds = useDeviceStore.getState().selectedDeviceIds;
 
-		sendLocation("start-playback", {
-			waypoints: wps,
-			speedMs: kmhToMs(speedKmh),
-			multiplier,
-			loop,
-			deviceId,
-		});
+		for (const deviceId of deviceIds) {
+			sendLocation("start-playback", {
+				waypoints: wps,
+				speedMs: kmhToMs(speedKmh),
+				multiplier,
+				loop,
+				deviceId,
+			});
+		}
 	}, [sendLocation]);
 
 	const handleBookmarkClick = () => {
