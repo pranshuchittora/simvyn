@@ -320,10 +320,80 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CLIP-04 | Phase 9 | Complete |
 
 **Coverage:**
-- v1 requirements: 108 total
+- v1.0 requirements: 108 total
 - Mapped to phases: 108
 - Unmapped: 0
 
+## v1.1 Requirements — Dashboard UX Polish
+
+### Routing
+
+- [ ] **ROUTE-01**: URL updates when user selects a module (e.g., `/logs`, `/location`)
+- [ ] **ROUTE-02**: Refreshing the page opens the same module that was active
+- [ ] **ROUTE-03**: Direct URL navigation works (typing `/logs` in browser navigates to that module)
+
+### Command Palette
+
+- [ ] **CMDK-01**: User can open a search palette with Cmd+K (or Ctrl+K on Linux)
+- [ ] **CMDK-02**: Palette lists all available modules with icons and descriptions
+- [ ] **CMDK-03**: User can fuzzy-search module names and navigate to them by pressing Enter
+- [ ] **CMDK-04**: Palette uses Liquid Glass styling (frosted glass backdrop, blur, dark theme)
+- [ ] **CMDK-05**: User can search for device actions (e.g., "screenshot", "set location", "toggle dark mode")
+
+### Home Screen
+
+- [ ] **HOME-01**: When no module is selected (or on first load), a welcome/home screen is displayed
+- [ ] **HOME-02**: Home screen shows keyboard shortcuts, quick-start tips, and recently used modules
+- [ ] **HOME-03**: Home screen shows connected device summary (count, names, states)
+
+### Module Icons
+
+- [ ] **ICON-01**: Each module has a custom colorful liquid glass SVG icon (not Lucide)
+- [ ] **ICON-02**: Icons used in sidebar dock, command palette, and home screen
+
+### Capture Management
+
+- [ ] **CAP-01**: User can delete individual screenshots or recordings from capture history
+- [ ] **CAP-02**: User can clear all capture history at once
+
+### Tool Settings
+
+- [ ] **TSET-01**: Dedicated settings page accessible from the sidebar for the entire tool
+- [ ] **TSET-02**: User can wipe all saved data and settings (favorites, history, preferences)
+- [ ] **TSET-03**: User can configure server port
+- [ ] **TSET-04**: User can toggle auto-open browser on launch
+- [ ] **TSET-05**: User can see storage usage (how much data in `~/.simvyn/`)
+
+## v1.1 Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ROUTE-01 | TBD | Pending |
+| ROUTE-02 | TBD | Pending |
+| ROUTE-03 | TBD | Pending |
+| CMDK-01 | TBD | Pending |
+| CMDK-02 | TBD | Pending |
+| CMDK-03 | TBD | Pending |
+| CMDK-04 | TBD | Pending |
+| CMDK-05 | TBD | Pending |
+| HOME-01 | TBD | Pending |
+| HOME-02 | TBD | Pending |
+| HOME-03 | TBD | Pending |
+| ICON-01 | TBD | Pending |
+| ICON-02 | TBD | Pending |
+| CAP-01 | TBD | Pending |
+| CAP-02 | TBD | Pending |
+| TSET-01 | TBD | Pending |
+| TSET-02 | TBD | Pending |
+| TSET-03 | TBD | Pending |
+| TSET-04 | TBD | Pending |
+| TSET-05 | TBD | Pending |
+
+**Coverage:**
+- v1.1 requirements: 20 total
+- Mapped to phases: 0
+- Unmapped: 20 (pending roadmap)
+
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-26 after roadmap creation*
+*Last updated: 2026-02-27 after milestone v1.1 requirements*
