@@ -11,9 +11,11 @@
 		"packages/modules/*"
 	],
 	"scripts": {
-		"dev": "npm run dev -w @simvyn/cli",
-		"build": "npm run build --workspaces --if-present",
-		"typecheck": "tsc --build",
+		"dev": "npm run build -w @simvyn/dashboard & npx tsx packages/cli/src/index.ts --no-open",
+		"start": "npx tsx packages/cli/src/index.ts",
+		"build": "npm run build -w @simvyn/dashboard",
+		"build:all": "npm run build --workspaces --if-present",
+		"typecheck": "npx tsc --build",
 		"lint": "biome check ."
 	},
 	"engines": {
