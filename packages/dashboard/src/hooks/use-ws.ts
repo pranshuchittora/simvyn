@@ -1,14 +1,14 @@
+import type { WsEnvelope } from "@simvyn/types";
 import {
 	createContext,
+	createElement,
+	type ReactNode,
+	useCallback,
 	useContext,
 	useEffect,
 	useRef,
 	useState,
-	useCallback,
-	createElement,
-	type ReactNode,
 } from "react";
-import type { WsEnvelope } from "@simvyn/types";
 
 type WsHandler = (payload: unknown) => void;
 type ListenerKey = `${string}:${string}`;
@@ -39,7 +39,10 @@ export function WsProvider({ children }: { children: ReactNode }) {
 		socket.onopen = () => {
 			setConnected(true);
 			retriesRef.current = 0;
-			socket.send(JSON.stringify({ channel: "system", type: "subscribe", payload: { channel: "devices" } }));
+			socket.send(
+				JSON.stringify({ channel: "system", type: "subscribe", payload: { channel: "devices" } }),
+			);
+			socket.send(JSON.stringify({ channel: "devices", type: "list", payload: {} }));
 		};
 
 		socket.onclose = () => {
