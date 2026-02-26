@@ -1,12 +1,18 @@
-import { spawn as nodeSpawn, type ChildProcess } from "node:child_process";
-import { execFile as nodeExecFile } from "node:child_process";
+import {
+	type ChildProcess,
+	execFile as nodeExecFile,
+	spawn as nodeSpawn,
+} from "node:child_process";
+import { mkdir, readdir, rm, stat } from "node:fs/promises";
+import { join } from "node:path";
 import { promisify } from "node:util";
-import Fastify, { type FastifyInstance } from "fastify";
-import fastifyWebsocket from "@fastify/websocket";
 import fastifyStatic from "@fastify/static";
+import fastifyWebsocket from "@fastify/websocket";
+import { createModuleStorage, getSimvynDir } from "@simvyn/core";
 import type { Device, PlatformAdapter } from "@simvyn/types";
-import { wsBrokerPlugin } from "./ws-broker.js";
+import Fastify, { type FastifyInstance } from "fastify";
 import { moduleLoaderPlugin } from "./module-loader.js";
+import { wsBrokerPlugin } from "./ws-broker.js";
 
 const execFileAsync = promisify(nodeExecFile);
 
@@ -46,10 +52,14 @@ function createStubDeviceManager(): DeviceManager {
 		devices: [],
 		start() {},
 		stop() {},
-		async refresh() { return []; },
+		async refresh() {
+			return [];
+		},
 		on() {},
 		off() {},
-		getAdapter() { return undefined; },
+		getAdapter() {
+			return undefined;
+		},
 	};
 }
 
@@ -66,11 +76,7 @@ function createStubProcessManager(): ProcessManager {
 }
 
 export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance> {
-	const {
-		modulesDir,
-		dashboardDir,
-		logger = true,
-	} = opts;
+	const { modulesDir, dashboardDir, logger = true } = opts;
 
 	const fastify = Fastify({ logger });
 
@@ -91,7 +97,10 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 	let processManager: ProcessManager;
 	try {
 		const core = await import("@simvyn/core");
-		if (typeof (core as any).createAvailableAdapters === "function" && typeof (core as any).createDeviceManager === "function") {
+		if (
+			typeof (core as any).createAvailableAdapters === "function" &&
+			typeof (core as any).createDeviceManager === "function"
+		) {
 			const adapters = await (core as any).createAvailableAdapters();
 			deviceManager = (core as any).createDeviceManager(adapters);
 		} else {
@@ -116,12 +125,91 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 		await fastify.register(moduleLoaderPlugin, { modulesDir });
 	}
 
+	if (fastify.hasDecorator("moduleRegistry")) {
+		fastify.moduleRegistry.set("tool-settings", {
+			name: "tool-settings",
+			version: "1.0.0",
+			description: "Configure simvyn server and manage stored data",
+		});
+	} else {
+		const registry = new Map();
+		registry.set("tool-settings", {
+			name: "tool-settings",
+			version: "1.0.0",
+			description: "Configure simvyn server and manage stored data",
+		});
+		fastify.decorate("moduleRegistry", registry);
+		fastify.get("/api/modules", async () => {
+			return Array.from(registry.values());
+		});
+	}
+
 	fastify.get("/api/health", async () => {
 		return {
 			status: "ok",
 			uptime: process.uptime(),
 			deviceCount: fastify.deviceManager.devices.length,
 		};
+	});
+
+	// Tool Settings API
+	const toolSettingsStorage = createModuleStorage("tool-settings");
+
+	interface ToolConfig {
+		port: number;
+		autoOpen: boolean;
+	}
+
+	fastify.get("/api/tool-settings/config", async () => {
+		const config = await toolSettingsStorage.read<ToolConfig>("config");
+		return config ?? { port: 3847, autoOpen: true };
+	});
+
+	fastify.put("/api/tool-settings/config", async (request) => {
+		const body = request.body as Partial<ToolConfig>;
+		const existing = await toolSettingsStorage.read<ToolConfig>("config");
+		const updated: ToolConfig = {
+			port: body.port ?? existing?.port ?? 3847,
+			autoOpen: body.autoOpen ?? existing?.autoOpen ?? true,
+		};
+		await toolSettingsStorage.write("config", updated);
+		return updated;
+	});
+
+	async function calculateDirSize(dirPath: string): Promise<number> {
+		let total = 0;
+		try {
+			const entries = await readdir(dirPath, { withFileTypes: true });
+			for (const entry of entries) {
+				const entryPath = join(dirPath, entry.name);
+				if (entry.isDirectory()) {
+					total += await calculateDirSize(entryPath);
+				} else {
+					const s = await stat(entryPath);
+					total += s.size;
+				}
+			}
+		} catch {}
+		return total;
+	}
+
+	fastify.get("/api/tool-settings/storage", async () => {
+		const totalBytes = await calculateDirSize(getSimvynDir());
+		let humanReadable: string;
+		if (totalBytes < 1024) {
+			humanReadable = `${totalBytes} B`;
+		} else if (totalBytes < 1024 * 1024) {
+			humanReadable = `${(totalBytes / 1024).toFixed(1)} KB`;
+		} else {
+			humanReadable = `${(totalBytes / 1024 / 1024).toFixed(1)} MB`;
+		}
+		return { totalBytes, humanReadable };
+	});
+
+	fastify.delete("/api/tool-settings/data", async () => {
+		await rm(getSimvynDir(), { recursive: true, force: true });
+		await mkdir(getSimvynDir(), { recursive: true });
+		return { wiped: true };
 	});
 
 	return fastify;
