@@ -20,6 +20,8 @@ interface ScreenshotStore {
 	fetchHistory: () => Promise<void>;
 	downloadFile: (filename: string) => void;
 	copyToClipboard: (filename: string) => Promise<void>;
+	deleteCapture: (filename: string) => Promise<void>;
+	clearAllCaptures: () => Promise<void>;
 }
 
 export type { CaptureEntry };
@@ -135,6 +137,42 @@ export const useScreenshotStore = create<ScreenshotStore>((set, get) => ({
 			toast.success("Copied to clipboard");
 		} catch {
 			toast.error("Failed to copy to clipboard");
+		}
+	},
+
+	deleteCapture: async (filename) => {
+		try {
+			const res = await fetch(`/api/modules/screenshot/history/${filename}`, {
+				method: "DELETE",
+			});
+			if (!res.ok) {
+				const data = await res.json().catch(() => ({ error: "Delete failed" }));
+				toast.error(data.error || "Delete failed");
+				return;
+			}
+			set((s) => ({
+				captures: s.captures.filter((c) => c.filename !== filename),
+			}));
+			toast.success("Capture deleted");
+		} catch {
+			toast.error("Network error deleting capture");
+		}
+	},
+
+	clearAllCaptures: async () => {
+		try {
+			const res = await fetch("/api/modules/screenshot/history", {
+				method: "DELETE",
+			});
+			if (!res.ok) {
+				const data = await res.json().catch(() => ({ error: "Clear failed" }));
+				toast.error(data.error || "Clear failed");
+				return;
+			}
+			set({ captures: [] });
+			toast.success("All captures cleared");
+		} catch {
+			toast.error("Network error clearing captures");
 		}
 	},
 }));

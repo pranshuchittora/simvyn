@@ -1,5 +1,5 @@
 import { createReadStream } from "node:fs";
-import { mkdir, stat } from "node:fs/promises";
+import { mkdir, stat, unlink } from "node:fs/promises";
 import { basename, join } from "node:path";
 import { createModuleStorage, getSimvynDir } from "@simvyn/core";
 import type {} from "@simvyn/server";
@@ -134,6 +134,40 @@ export async function screenshotRoutes(fastify: FastifyInstance) {
 	fastify.get("/history", async () => {
 		const history = (await storage.read<CaptureEntry[]>("history")) ?? [];
 		return history;
+	});
+
+	fastify.delete<{ Params: { filename: string } }>("/history/:filename", async (req, reply) => {
+		const { filename } = req.params;
+		const history = (await storage.read<CaptureEntry[]>("history")) ?? [];
+		const idx = history.findIndex((e) => e.filename === filename);
+		if (idx === -1) return reply.status(404).send({ error: "Entry not found" });
+
+		const entry = history[idx];
+		try {
+			await unlink(entry.path);
+		} catch {
+			// file may already be gone
+		}
+
+		history.splice(idx, 1);
+		await storage.write("history", history);
+		return { deleted: true };
+	});
+
+	fastify.delete("/history", async () => {
+		const history = (await storage.read<CaptureEntry[]>("history")) ?? [];
+		const count = history.length;
+
+		for (const entry of history) {
+			try {
+				await unlink(entry.path);
+			} catch {
+				// file may already be gone
+			}
+		}
+
+		await storage.write("history", []);
+		return { cleared: true, count };
 	});
 
 	fastify.get<{ Params: { filename: string } }>("/download/:filename", async (req, reply) => {

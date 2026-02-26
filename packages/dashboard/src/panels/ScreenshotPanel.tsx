@@ -1,4 +1,4 @@
-import { Camera, Copy, Download, Square, Video } from "lucide-react";
+import { Camera, Copy, Download, Square, Trash2, Video } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWs, useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
@@ -28,10 +28,12 @@ function CaptureCard({
 	entry,
 	onDownload,
 	onCopy,
+	onDelete,
 }: {
 	entry: CaptureEntry;
 	onDownload: (filename: string) => void;
 	onCopy: (filename: string) => void;
+	onDelete: (filename: string) => void;
 }) {
 	const isScreenshot = entry.type === "screenshot";
 	const time = new Date(entry.timestamp).toLocaleString();
@@ -84,6 +86,14 @@ function CaptureCard({
 						<Copy size={14} strokeWidth={1.8} />
 					</button>
 				)}
+				<button
+					type="button"
+					onClick={() => onDelete(entry.filename)}
+					className="glass-button-destructive p-1.5"
+					title="Delete"
+				>
+					<Trash2 size={14} strokeWidth={1.8} />
+				</button>
 			</div>
 		</div>
 	);
@@ -104,6 +114,8 @@ function ScreenshotPanel() {
 		fetchHistory,
 		downloadFile,
 		copyToClipboard,
+		deleteCapture,
+		clearAllCaptures,
 	} = useScreenshotStore();
 
 	useEffect(() => {
@@ -235,15 +247,33 @@ function ScreenshotPanel() {
 					)}
 
 					{!loading && captures.length > 0 && (
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-							{captures.map((entry) => (
-								<CaptureCard
-									key={`${entry.filename}-${entry.timestamp}`}
-									entry={entry}
-									onDownload={downloadFile}
-									onCopy={copyToClipboard}
-								/>
-							))}
+						<div className="space-y-3">
+							<div className="flex items-center justify-between">
+								<p className="text-xs text-text-muted">
+									{captures.length} capture{captures.length !== 1 ? "s" : ""}
+								</p>
+								<button
+									type="button"
+									onClick={() => {
+										if (window.confirm("Delete all captures?")) clearAllCaptures();
+									}}
+									className="glass-button-destructive text-xs flex items-center gap-1.5 px-2 py-1"
+								>
+									<Trash2 size={12} strokeWidth={1.8} />
+									Clear All
+								</button>
+							</div>
+							<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+								{captures.map((entry) => (
+									<CaptureCard
+										key={`${entry.filename}-${entry.timestamp}`}
+										entry={entry}
+										onDownload={downloadFile}
+										onCopy={copyToClipboard}
+										onDelete={deleteCapture}
+									/>
+								))}
+							</div>
 						</div>
 					)}
 				</>
