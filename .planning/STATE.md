@@ -9,15 +9,15 @@
 ## Current Position
 
 **Phase:** 1 of 9 — Foundation & Device Management
-**Plan:** 5 of 6 in Phase 1
+**Plan:** 6 of 6 in Phase 1
 **Status:** In progress
-**Progress:** [███████░░░] 67%
+**Progress:** [████████░░] 83%
 
 ## Phase Overview
 
 | Phase | Status |
 |-------|--------|
-| 1. Foundation & Device Management | 🔄 In progress (4/6 plans) |
+| 1. Foundation & Device Management | 🔄 In progress (5/6 plans) |
 | 2. Location Module | ⬜ Not started |
 | 3. App Management Module | ⬜ Not started |
 | 4. Log Viewer Module | ⬜ Not started |
@@ -32,11 +32,12 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 0/9 |
-| Plans completed | 4/6 (Phase 1) |
-| Requirements delivered | 13/108 |
+| Plans completed | 5/6 (Phase 1) |
+| Requirements delivered | 18/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
+| Phase 01 P05 | 3min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -57,6 +58,9 @@
 - Stub DeviceManager/ProcessManager in server with dynamic import fallback — server works before @simvyn/core is ready
 - WsBroker uses WeakMap for per-client subscription state — auto-cleanup on GC
 - Module loader tries .js then .ts manifest — supports compiled and development modes
+- Modules import `type {} from "@simvyn/server"` for Fastify decorator type augmentations
+- CLI commands in modules are headless — create own adapters/DeviceManager without server
+- Device ID prefix matching in CLI for convenience (short UUIDs)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -79,10 +83,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 01-03-PLAN.md (Server, WebSocket broker & module loader)
-**Next action:** Execute 01-05-PLAN.md (Device management module with dashboard panel)
-**Context for next session:** Server package complete with Fastify app factory, WsBroker (envelope routing, channel subscriptions), and module auto-discovery. Server starts on port 3847, health at /api/health, WS at /ws, modules at /api/modules. Stubs for DeviceManager/ProcessManager until @simvyn/core ready.
+**Last session:** Completed 01-05-PLAN.md (Device management module with dashboard panel)
+**Next action:** Execute 01-06-PLAN.md (CLI scaffold and final integration)
+**Context for next session:** Device management module complete at packages/modules/device-management/ — proves full module architecture: manifest auto-discovery → Fastify routes + WS handler + CLI commands + dashboard panel. REST API at /api/modules/devices/ (list, boot, shutdown, erase, refresh, capabilities). WebSocket "devices" channel broadcasts real-time updates. Dashboard DevicePanel renders in ModuleShell with device cards grouped by platform.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26 (after 01-03 execution)*
+*Last updated: 2026-02-26 (after 01-05 execution)*
