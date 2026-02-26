@@ -2,7 +2,7 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 9
+**Phases:** 12
 **Coverage:** 108/108 v1 requirements mapped
 
 ## Phases
@@ -17,6 +17,7 @@
 - [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
+- [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 
 ## Phase Details
 
@@ -260,6 +261,26 @@ Plans:
 - [ ] 11-01-PLAN.md — Replace stores with full sim-location versions + add route-parser utility
 - [ ] 11-02-PLAN.md — Replace/add all 14 map components (MapView, SearchBar, PlaybackControls, markers, overlays)
 - [ ] 11-03-PLAN.md — Rewrite LocationPanel orchestrator + CSS migration + dialog components
+
+### Phase 12: Liquid Glass UI Refactor
+**Goal:** Refactor the entire dashboard to match Apple's official Liquid Glass design specification — all module panels, shell components, and shared CSS updated to a unified glass aesthetic
+**Depends on:** Phase 5 (existing dashboard UI), Phase 11 (location panel glass reference)
+**Requirements:** GLASS-01 (design tokens & shared CSS), GLASS-02 (shell components), GLASS-03 (all module panels), GLASS-04 (visual consistency audit)
+**Success Criteria** (what must be TRUE):
+  1. Every module panel (Device, App, Log, Screenshot, Deep Links, Push, File System, Database, Settings, Crash Logs, Media, Clipboard) uses the Liquid Glass aesthetic — frosted glass cards, blur/saturate backdrop, oklch color tokens, inset highlights, deep shadows
+  2. Shell components (TopBar, Sidebar, DeviceSelector, ModuleShell) are visually consistent with the glass panels and match the location panel's quality level
+  3. main.css design tokens are the single source of truth — no hardcoded colors or backdrop-filter values in individual panel files
+  4. The dashboard looks and feels like a native Apple Liquid Glass application with consistent spacing, typography, and animation patterns across all modules
+**Plans:** 7 plans
+
+Plans:
+- [ ] 12-01-PLAN.md — Design tokens (lighter palette), 8 new glass utility classes, location-panel.css cleanup
+- [ ] 12-02-PLAN.md — Floating macOS Liquid Glass dock + shell components polish
+- [ ] 12-03-PLAN.md — Screenshot, CrashLogs, Media, Clipboard, DeepLinks, Push panels
+- [ ] 12-04-PLAN.md — Device, App, Log panels (tables, drop zones, toolbars)
+- [ ] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)
+- [ ] 12-06-PLAN.md — Settings panel (forms, toggles, permissions)
+- [ ] 12-07-PLAN.md — Visual consistency audit + human verification
 
 ---
 *Roadmap created: 2026-02-26*
