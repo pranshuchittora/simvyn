@@ -239,7 +239,10 @@ Plans:
   3. The home screen displays a connected device summary — count of connected devices, their names, and current states (booted/shutdown)
   4. User can delete individual screenshots or recordings from the capture history panel
   5. User can clear all capture history at once with a single action
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 16-01-PLAN.md — Home screen welcome page + capture delete/clear-all functionality
 
 ### Phase 17: Tool Settings
 **Goal:** Users can configure simvyn's behavior and manage stored data from a dedicated settings page
