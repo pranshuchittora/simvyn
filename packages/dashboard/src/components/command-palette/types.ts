@@ -26,11 +26,13 @@ export interface StepContext {
 	params: Record<string, unknown>;
 }
 
+export type AnyStep = DeviceSelectStep | ConfirmStep | Step;
+
 export interface MultiStepAction {
 	id: string;
 	label: string;
 	description: string;
 	icon: React.ReactNode;
-	steps: Step[];
+	steps: AnyStep[];
 	execute: (context: StepContext) => Promise<void>;
 }
