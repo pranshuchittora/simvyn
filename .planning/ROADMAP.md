@@ -66,7 +66,13 @@ Plans:
   2. User can drag an IPA or APK into the dashboard (or use `simvyn app install`) to install it, then launch it from the app list
   3. User can terminate a running app and clear its data (Android) from the dashboard or CLI
   4. All app management operations work via CLI subcommands (`simvyn app list`, `simvyn app install`, `simvyn app launch`, etc.) without the server running
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — AppInfo type + iOS/Android adapter app management methods
+- [ ] 03-02-PLAN.md — Module scaffold, Fastify routes, WS handler, @fastify/multipart
+- [ ] 03-03-PLAN.md — CLI subcommands (simvyn app list/install/launch/...)
+- [ ] 03-04-PLAN.md — Dashboard panel with app list, drag-and-drop install, action buttons
 
 ### Phase 4: Log Viewer Module
 **Goal:** Developers can stream, search, and filter device logs in real-time for debugging
