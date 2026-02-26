@@ -37,7 +37,7 @@ export default function DatabaseBrowser({ deviceId, bundleId }: DatabaseBrowserP
 			</div>
 
 			{databases.length === 0 && (
-				<div className="px-2 py-4 text-xs text-text-secondary text-center">No databases found</div>
+				<div className="glass-empty-state py-4 text-xs">No databases found</div>
 			)}
 
 			{databases.map((db) => (
@@ -54,7 +54,9 @@ export default function DatabaseBrowser({ deviceId, bundleId }: DatabaseBrowserP
 						<Database size={14} className="shrink-0" />
 						<span className="truncate">{db.name}</span>
 						{db.size > 0 && (
-							<span className="ml-auto text-[10px] text-text-muted shrink-0">{formatSize(db.size)}</span>
+							<span className="ml-auto text-[10px] text-text-muted shrink-0">
+								{formatSize(db.size)}
+							</span>
 						)}
 					</button>
 
@@ -73,7 +75,7 @@ export default function DatabaseBrowser({ deviceId, bundleId }: DatabaseBrowserP
 								>
 									<Table size={12} className="shrink-0" />
 									<span className="truncate">{t.name}</span>
-									<span className="ml-auto text-[10px] text-text-muted shrink-0 rounded-full bg-bg-surface/60 px-1.5">
+									<span className="glass-badge ml-auto text-[10px] text-text-muted shrink-0 bg-bg-surface/60">
 										{t.rowCount}
 									</span>
 								</button>

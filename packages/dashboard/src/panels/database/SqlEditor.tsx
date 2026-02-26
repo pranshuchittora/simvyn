@@ -34,7 +34,7 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 
 	if (!selectedDb) {
 		return (
-			<div className="flex items-center justify-center h-full text-text-secondary text-sm">
+			<div className="glass-empty-state h-full flex items-center justify-center">
 				Select a database first
 			</div>
 		);
@@ -52,7 +52,7 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 						placeholder="SELECT * FROM ..."
 						spellCheck={false}
 						rows={4}
-						className="w-full bg-transparent p-3 font-mono text-sm text-text-primary resize-none outline-none"
+						className="glass-textarea"
 					/>
 				</div>
 				<div className="flex items-center gap-2">
@@ -60,7 +60,7 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 						type="button"
 						onClick={handleRun}
 						disabled={!sql.trim() || loading}
-						className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 disabled:opacity-40 transition-colors"
+						className="glass-button-primary flex items-center gap-1.5"
 					>
 						<Play size={14} />
 						Run
@@ -92,14 +92,16 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 						<div className="p-4 text-sm text-red-400">{queryResult.message}</div>
 					)}
 					{queryResult.type === "run" && (
-						<div className="p-4 text-sm text-text-secondary">{queryResult.changes} row{queryResult.changes !== 1 ? "s" : ""} affected</div>
+						<div className="p-4 text-sm text-text-secondary">
+							{queryResult.changes} row{queryResult.changes !== 1 ? "s" : ""} affected
+						</div>
 					)}
 					{queryResult.type === "rows" && (
-						<table className="w-full text-sm">
+						<table className="glass-table">
 							<thead>
-								<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
+								<tr>
 									{queryResult.columns.map((col: any) => (
-										<th key={typeof col === "string" ? col : col.name} className="px-3 py-2 font-medium">
+										<th key={typeof col === "string" ? col : col.name}>
 											{typeof col === "string" ? col : col.name}
 										</th>
 									))}
@@ -107,12 +109,15 @@ export default function SqlEditor({ deviceId, bundleId }: SqlEditorProps) {
 							</thead>
 							<tbody>
 								{queryResult.rows.map((row: any, i: number) => (
-									<tr key={i} className="border-b border-border/30 hover:bg-white/[0.02]">
+									<tr key={i}>
 										{queryResult.columns.map((col: any) => {
 											const name = typeof col === "string" ? col : col.name;
 											const val = row[name];
 											return (
-												<td key={name} className={`px-3 py-1.5 text-xs ${val == null ? "text-text-muted italic" : "text-text-secondary"}`}>
+												<td
+													key={name}
+													className={`text-xs ${val == null ? "text-text-muted italic" : "text-text-secondary"}`}
+												>
 													{val == null ? "NULL" : String(val)}
 												</td>
 											);

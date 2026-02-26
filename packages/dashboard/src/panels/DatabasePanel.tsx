@@ -4,8 +4,8 @@ import { registerPanel } from "../stores/panel-registry";
 import DatabaseBrowser from "./database/DatabaseBrowser";
 import PrefsViewer from "./database/PrefsViewer";
 import SqlEditor from "./database/SqlEditor";
-import TableViewer from "./database/TableViewer";
 import { useDbStore } from "./database/stores/db-store";
+import TableViewer from "./database/TableViewer";
 
 interface AppOption {
 	bundleId: string;
@@ -80,7 +80,7 @@ function DatabasePanel() {
 					<select
 						value={selectedDeviceId ?? ""}
 						onChange={handleDeviceChange}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+						className="glass-select max-w-[200px] truncate"
 					>
 						<option value="">No device</option>
 						{devices.map((d) => (
@@ -92,7 +92,7 @@ function DatabasePanel() {
 					<select
 						value={selectedApp ?? ""}
 						onChange={handleAppChange}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[220px] truncate"
+						className="glass-select max-w-[220px] truncate"
 					>
 						<option value="">No app</option>
 						{apps.map((a) => (
@@ -106,8 +106,8 @@ function DatabasePanel() {
 
 			{/* No selection */}
 			{(!selectedDeviceId || !selectedApp) && (
-				<div className="glass-panel p-12 text-center mt-4">
-					<p className="text-text-secondary">Select a device and app to inspect databases</p>
+				<div className="glass-panel glass-empty-state mt-4">
+					Select a device and app to inspect databases
 				</div>
 			)}
 
@@ -115,17 +115,13 @@ function DatabasePanel() {
 			{selectedDeviceId && selectedApp && (
 				<div className="flex flex-col flex-1 mt-4 min-h-0">
 					{/* Tab bar */}
-					<div className="flex items-center gap-1 p-1 rounded-xl bg-bg-surface/40 border border-border/50 w-fit shrink-0">
+					<div className="glass-tab-bar shrink-0">
 						{TABS.map((tab) => (
 							<button
 								key={tab.id}
 								type="button"
 								onClick={() => setActiveTab(tab.id)}
-								className={`px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-									activeTab === tab.id
-										? "bg-glass text-text-primary shadow-sm"
-										: "text-text-secondary hover:text-text-primary"
-								}`}
+								className={`glass-tab${activeTab === tab.id ? " active" : ""}`}
 							>
 								{tab.label}
 							</button>
@@ -139,7 +135,7 @@ function DatabasePanel() {
 								<div className="w-[30%] glass-panel p-2 overflow-hidden">
 									<DatabaseBrowser deviceId={selectedDeviceId} bundleId={selectedApp} />
 								</div>
-								<div className="w-[70%] glass-panel overflow-hidden">
+								<div className="w-[70%] glass-panel overflow-auto">
 									<TableViewer deviceId={selectedDeviceId} bundleId={selectedApp} />
 								</div>
 							</div>

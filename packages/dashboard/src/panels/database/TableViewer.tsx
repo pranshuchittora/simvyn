@@ -79,7 +79,8 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 		const row = rows[editingCell.rowIdx];
 		const rowid = row.rowid;
 		if (rowid == null) return;
-		const parsed = editValue === "" ? null : isNaN(Number(editValue)) ? editValue : Number(editValue);
+		const parsed =
+			editValue === "" ? null : isNaN(Number(editValue)) ? editValue : Number(editValue);
 		updateCell(deviceId, bundleId, selectedDb, selectedTable, rowid, editingCell.col, parsed);
 		setEditingCell(null);
 	};
@@ -91,19 +92,24 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 		if (e.key === "Escape") handleEditCancel();
 	};
 
-	const colNames = columns.length > 0 ? columns.map((c: any) => (typeof c === "string" ? c : c.name)) : (rows.length > 0 ? Object.keys(rows[0]).filter((k) => k !== "rowid") : []);
+	const colNames =
+		columns.length > 0
+			? columns.map((c: any) => (typeof c === "string" ? c : c.name))
+			: rows.length > 0
+				? Object.keys(rows[0]).filter((k) => k !== "rowid")
+				: [];
 
 	return (
 		<div className="flex flex-col h-full">
 			{/* Table */}
 			<div className="flex-1 overflow-auto">
-				<table className="w-full text-sm">
-					<thead className="sticky top-0 bg-bg-surface/90 backdrop-blur-sm z-10">
-						<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
+				<table className="glass-table">
+					<thead className="sticky top-0 z-10" style={{ background: "var(--color-bg-surface)" }}>
+						<tr>
 							{colNames.map((col: string) => {
 								const schema = tableSchema?.columns.find((c) => c.name === col);
 								return (
-									<th key={col} className="px-3 py-2 font-medium">
+									<th key={col}>
 										<button
 											type="button"
 											onClick={() => handleSort(col)}
@@ -111,13 +117,14 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 										>
 											{col}
 											{schema && (
-												<span className={`inline-flex items-center rounded-full border px-1.5 py-0 text-[9px] font-medium ml-1 ${TYPE_COLORS[schema.type.toUpperCase()] || "bg-neutral-500/15 text-neutral-400 border-neutral-500/25"}`}>
+												<span
+													className={`glass-badge text-[9px] ml-1 ${TYPE_COLORS[schema.type.toUpperCase()] || "bg-neutral-500/15 text-neutral-400 border-neutral-500/25"}`}
+												>
 													{schema.type}
 												</span>
 											)}
-											{orderBy === col && (
-												orderDir === "ASC" ? <ArrowUp size={12} /> : <ArrowDown size={12} />
-											)}
+											{orderBy === col &&
+												(orderDir === "ASC" ? <ArrowUp size={12} /> : <ArrowDown size={12} />)}
 										</button>
 									</th>
 								);
@@ -126,21 +133,21 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 					</thead>
 					<tbody>
 						{rows.map((row: any, rowIdx: number) => (
-							<tr key={rowIdx} className="border-b border-border/30 hover:bg-white/[0.02] transition-colors">
+							<tr key={rowIdx}>
 								{colNames.map((col: string) => {
 									const value = row[col];
 									const isEditing = editingCell?.rowIdx === rowIdx && editingCell?.col === col;
 
 									if (isEditing) {
 										return (
-											<td key={col} className="px-3 py-1">
+											<td key={col}>
 												<input
 													autoFocus
 													value={editValue}
 													onChange={(e) => setEditValue(e.target.value)}
 													onKeyDown={handleEditKeyDown}
 													onBlur={handleEditSave}
-													className="w-full bg-bg-surface border border-accent-blue/50 rounded px-1.5 py-0.5 text-xs text-text-primary outline-none"
+													className="glass-input w-full text-xs py-0.5 px-1.5"
 												/>
 											</td>
 										);
@@ -150,7 +157,7 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 										<td
 											key={col}
 											onDoubleClick={() => handleDoubleClick(rowIdx, col, value)}
-											className={`px-3 py-1.5 text-xs cursor-default ${
+											className={`text-xs cursor-default ${
 												value == null
 													? "text-text-muted italic"
 													: typeof value === "number"
@@ -160,7 +167,11 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 															: "text-text-secondary"
 											}`}
 										>
-											{value == null ? "NULL" : typeof value === "boolean" ? String(value) : String(value)}
+											{value == null
+												? "NULL"
+												: typeof value === "boolean"
+													? String(value)
+													: String(value)}
 										</td>
 									);
 								})}
@@ -179,10 +190,12 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 					<select
 						value={pageSize}
 						onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-						className="rounded bg-bg-surface/60 border border-border px-1.5 py-0.5 text-xs text-text-secondary"
+						className="glass-select text-xs"
 					>
 						{[25, 50, 100].map((s) => (
-							<option key={s} value={s}>{s} rows</option>
+							<option key={s} value={s}>
+								{s} rows
+							</option>
 						))}
 					</select>
 					<div className="flex items-center gap-1">
@@ -190,7 +203,7 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 							type="button"
 							disabled={page === 0}
 							onClick={() => handlePageChange(page - 1)}
-							className="p-1 rounded hover:bg-glass disabled:opacity-30 transition-colors"
+							className="glass-button p-1"
 						>
 							<ChevronLeft size={14} />
 						</button>
@@ -201,7 +214,7 @@ export default function TableViewer({ deviceId, bundleId }: TableViewerProps) {
 							type="button"
 							disabled={page >= totalPages - 1}
 							onClick={() => handlePageChange(page + 1)}
-							className="p-1 rounded hover:bg-glass disabled:opacity-30 transition-colors"
+							className="glass-button p-1"
 						>
 							<ChevronRight size={14} />
 						</button>

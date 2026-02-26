@@ -23,10 +23,13 @@ function CollapsibleValue({ value }: { value: unknown }) {
 						onClick={() => setExpanded(!expanded)}
 						className="text-accent-blue text-[11px] hover:underline"
 					>
-						{expanded ? "Collapse" : "Expand"} ({Array.isArray(value) ? `${(value as unknown[]).length} items` : "object"})
+						{expanded ? "Collapse" : "Expand"} (
+						{Array.isArray(value) ? `${(value as unknown[]).length} items` : "object"})
 					</button>
 					{expanded && (
-						<pre className="mt-1 text-[11px] text-text-secondary font-mono whitespace-pre-wrap">{json}</pre>
+						<pre className="mt-1 text-[11px] text-text-secondary font-mono whitespace-pre-wrap">
+							{json}
+						</pre>
 					)}
 				</div>
 			);
@@ -53,7 +56,7 @@ export default function PrefsViewer() {
 
 	if (!prefs) {
 		return (
-			<div className="flex items-center justify-center h-full text-text-secondary text-sm">
+			<div className="glass-empty-state h-full flex items-center justify-center">
 				No preferences found
 			</div>
 		);
@@ -63,22 +66,22 @@ export default function PrefsViewer() {
 	if (prefs.platform === "ios") {
 		const entries = Object.entries(prefs.prefs || {});
 		if (entries.length === 0) {
-			return <div className="p-4 text-sm text-text-secondary">No preferences found</div>;
+			return <div className="glass-empty-state">No preferences found</div>;
 		}
 		return (
-			<div className="glass-panel overflow-hidden">
-				<table className="w-full text-sm">
+			<div className="overflow-hidden">
+				<table className="glass-table">
 					<thead>
-						<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
-							<th className="px-4 py-2 font-medium">Key</th>
-							<th className="px-4 py-2 font-medium">Value</th>
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
 						</tr>
 					</thead>
 					<tbody>
 						{entries.map(([key, value]) => (
-							<tr key={key} className="border-b border-border/30 hover:bg-white/[0.02]">
-								<td className="px-4 py-2 text-text-primary text-xs font-mono">{key}</td>
-								<td className="px-4 py-2 text-xs">
+							<tr key={key}>
+								<td className="text-text-primary text-xs font-mono">{key}</td>
+								<td className="text-xs">
 									<CollapsibleValue value={value} />
 								</td>
 							</tr>
@@ -92,33 +95,35 @@ export default function PrefsViewer() {
 	// Android: prefs = { platform: "android", prefs: [{ file, entries: [{ key, value, type }] }] }
 	const files = prefs.prefs || [];
 	if (files.length === 0) {
-		return <div className="p-4 text-sm text-text-secondary">No preferences found</div>;
+		return <div className="glass-empty-state">No preferences found</div>;
 	}
 
 	return (
 		<div className="flex flex-col gap-4">
 			{files.map((file: any) => (
-				<div key={file.file} className="glass-panel overflow-hidden">
-					<div className="px-4 py-2 border-b border-border text-xs text-text-primary font-medium font-mono">
+				<div key={file.file} className="overflow-hidden">
+					<div className="px-4 py-2 border-b border-border/50 text-[11px] text-text-muted uppercase tracking-wider font-medium font-mono">
 						{file.file}
 					</div>
-					<table className="w-full text-sm">
+					<table className="glass-table">
 						<thead>
-							<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
-								<th className="px-4 py-2 font-medium">Key</th>
-								<th className="px-4 py-2 font-medium">Value</th>
-								<th className="px-4 py-2 font-medium">Type</th>
+							<tr>
+								<th>Key</th>
+								<th>Value</th>
+								<th>Type</th>
 							</tr>
 						</thead>
 						<tbody>
 							{(file.entries || []).map((entry: any) => (
-								<tr key={entry.key} className="border-b border-border/30 hover:bg-white/[0.02]">
-									<td className="px-4 py-2 text-text-primary text-xs font-mono">{entry.key}</td>
-									<td className="px-4 py-2 text-xs">
+								<tr key={entry.key}>
+									<td className="text-text-primary text-xs font-mono">{entry.key}</td>
+									<td className="text-xs">
 										<CollapsibleValue value={entry.value} />
 									</td>
-									<td className="px-4 py-2">
-										<span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${TYPE_BADGE_COLORS[entry.type] || "bg-neutral-500/15 text-neutral-400 border-neutral-500/25"}`}>
+									<td>
+										<span
+											className={`glass-badge text-[10px] ${TYPE_BADGE_COLORS[entry.type] || "bg-neutral-500/15 text-neutral-400 border-neutral-500/25"}`}
+										>
 											{entry.type}
 										</span>
 									</td>
