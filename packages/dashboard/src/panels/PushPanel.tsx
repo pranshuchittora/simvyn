@@ -84,7 +84,10 @@ function PushPanel() {
 				<div className="flex items-center gap-2">
 					<h1 className="text-base font-medium text-text-primary">Push Notifications</h1>
 					{isAndroid && (
-						<span className="rounded bg-yellow-500/20 border border-yellow-500/30 px-1.5 py-0.5 text-[10px] text-yellow-400">
+						<span
+							className="glass-badge"
+							style={{ color: "var(--color-accent-blue)", borderColor: "rgba(0, 122, 255, 0.3)" }}
+						>
 							iOS only
 						</span>
 					)}
@@ -92,7 +95,7 @@ function PushPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -105,8 +108,8 @@ function PushPanel() {
 
 			{/* No device */}
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to send push notifications</p>
+				<div className="glass-panel">
+					<p className="glass-empty-state">Select a booted device to send push notifications</p>
 				</div>
 			)}
 
@@ -119,15 +122,13 @@ function PushPanel() {
 							value={bundleId}
 							onChange={(e) => setBundleId(e.target.value)}
 							placeholder="Bundle ID (e.g. com.example.app)"
-							className="w-full rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+							className="glass-input w-full"
 						/>
 						<textarea
 							value={payloadText}
 							onChange={(e) => setPayloadText(e.target.value)}
-							className={`w-full rounded-[var(--radius-button)] bg-bg-surface/60 border px-3 py-2 text-sm text-text-primary font-mono min-h-[200px] resize-y focus:outline-none ${
-								jsonValid
-									? "border-border focus:border-accent-blue/50"
-									: "border-red-500/50 focus:border-red-500/70"
+							className={`glass-textarea min-h-[200px] resize-y ${
+								!jsonValid ? "border border-red-500/50" : ""
 							}`}
 							spellCheck={false}
 						/>
@@ -137,7 +138,7 @@ function PushPanel() {
 								type="button"
 								onClick={handleSend}
 								disabled={!bundleId.trim() || !jsonValid}
-								className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-sm text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+								className="glass-button-primary flex items-center gap-2"
 							>
 								<Send size={14} strokeWidth={1.8} />
 								Send
@@ -145,7 +146,7 @@ function PushPanel() {
 							<button
 								type="button"
 								onClick={() => setShowSaveForm(!showSaveForm)}
-								className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+								className="glass-button"
 							>
 								Save Current
 							</button>
@@ -157,13 +158,13 @@ function PushPanel() {
 									value={saveName}
 									onChange={(e) => setSaveName(e.target.value)}
 									placeholder="Payload name"
-									className="flex-1 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2.5 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+									className="glass-input flex-1 text-xs"
 								/>
 								<button
 									type="button"
 									onClick={handleSavePayload}
 									disabled={!saveName.trim() || !jsonValid}
-									className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-2.5 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+									className="glass-button-primary"
 								>
 									Save
 								</button>
@@ -195,10 +196,8 @@ function PushPanel() {
 					<div className="space-y-2">
 						<h2 className="text-sm font-medium text-text-secondary">Saved Payloads</h2>
 						{savedPayloads.length === 0 && (
-							<div className="glass-panel p-4 text-center">
-								<p className="text-xs text-text-muted">
-									No saved payloads — use "Save Current" above
-								</p>
+							<div className="glass-panel">
+								<p className="glass-empty-state">No saved payloads — use "Save Current" above</p>
 							</div>
 						)}
 						{savedPayloads.length > 0 && (
@@ -255,8 +254,8 @@ function PushPanel() {
 							<>
 								{loading && <p className="text-xs text-text-muted">Loading...</p>}
 								{!loading && history.length === 0 && (
-									<div className="glass-panel p-4 text-center">
-										<p className="text-xs text-text-muted">No sends yet</p>
+									<div className="glass-panel">
+										<p className="glass-empty-state">No sends yet</p>
 									</div>
 								)}
 								{!loading && history.length > 0 && (

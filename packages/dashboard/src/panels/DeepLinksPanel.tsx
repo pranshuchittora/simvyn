@@ -67,7 +67,7 @@ function DeepLinksPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -80,8 +80,8 @@ function DeepLinksPanel() {
 
 			{/* No device */}
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to open deep links</p>
+				<div className="glass-panel">
+					<p className="glass-empty-state">Select a booted device to open deep links</p>
 				</div>
 			)}
 
@@ -95,13 +95,13 @@ function DeepLinksPanel() {
 							onChange={(e) => setUrlInput(e.target.value)}
 							onKeyDown={handleKeyDown}
 							placeholder="Enter URL or deep link (e.g. myapp://screen)"
-							className="flex-1 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+							className="glass-input flex-1"
 						/>
 						<button
 							type="button"
 							onClick={handleOpen}
 							disabled={!urlInput.trim()}
-							className="flex items-center gap-2 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-2 text-sm text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+							className="glass-button-primary flex items-center gap-2"
 						>
 							<ExternalLink size={16} strokeWidth={1.8} />
 							Open
@@ -118,7 +118,7 @@ function DeepLinksPanel() {
 							<button
 								type="button"
 								onClick={() => setShowAddForm(!showAddForm)}
-								className="flex items-center gap-1 rounded-[var(--radius-button)] bg-bg-surface/60 px-2 py-1 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+								className="glass-button flex items-center gap-1"
 							>
 								{showAddForm ? <ChevronUp size={12} /> : <Plus size={12} />}
 								{showAddForm ? "Cancel" : "Add"}
@@ -132,27 +132,27 @@ function DeepLinksPanel() {
 									value={favUrl}
 									onChange={(e) => setFavUrl(e.target.value)}
 									placeholder="URL"
-									className="w-full rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2.5 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+									className="glass-input w-full text-xs"
 								/>
 								<input
 									type="text"
 									value={favLabel}
 									onChange={(e) => setFavLabel(e.target.value)}
 									placeholder="Label"
-									className="w-full rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2.5 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+									className="glass-input w-full text-xs"
 								/>
 								<input
 									type="text"
 									value={favBundleId}
 									onChange={(e) => setFavBundleId(e.target.value)}
 									placeholder="Bundle ID (optional)"
-									className="w-full rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2.5 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+									className="glass-input w-full text-xs"
 								/>
 								<button
 									type="button"
 									onClick={handleAddFavorite}
 									disabled={!favUrl.trim() || !favLabel.trim()}
-									className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+									className="glass-button-primary"
 								>
 									Save
 								</button>
@@ -160,8 +160,8 @@ function DeepLinksPanel() {
 						)}
 
 						{favorites.length === 0 && !showAddForm && (
-							<div className="glass-panel p-4 text-center">
-								<p className="text-xs text-text-muted">No favorites yet — add one above</p>
+							<div className="glass-panel">
+								<p className="glass-empty-state">No favorites yet — add one above</p>
 							</div>
 						)}
 
@@ -207,8 +207,8 @@ function DeepLinksPanel() {
 						<h2 className="text-sm font-medium text-text-secondary">Recent</h2>
 						{loading && <p className="text-xs text-text-muted">Loading...</p>}
 						{!loading && history.length === 0 && (
-							<div className="glass-panel p-4 text-center">
-								<p className="text-xs text-text-muted">No recent deep link launches</p>
+							<div className="glass-panel">
+								<p className="glass-empty-state">No recent deep link launches</p>
 							</div>
 						)}
 						{!loading && history.length > 0 && (
