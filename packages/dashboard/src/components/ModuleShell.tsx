@@ -4,6 +4,8 @@ import { Suspense, useEffect } from "react";
 import { useModuleStore } from "../stores/module-store";
 import { usePanelRegistry } from "../stores/panel-registry";
 
+const UNMOUNT_WHEN_HIDDEN = new Set(["logs"]);
+
 const panelSpring = {
 	type: "spring" as const,
 	stiffness: 400,
@@ -63,6 +65,9 @@ export default function ModuleShell() {
 			{moduleList.map((mod) => {
 				const Panel = registry.getPanel(mod.name);
 				const isActive = activeModule === mod.name;
+				const shouldUnmount = UNMOUNT_WHEN_HIDDEN.has(mod.name) && !isActive;
+
+				if (shouldUnmount) return null;
 
 				return (
 					<div
