@@ -29,7 +29,7 @@
   3. Device list updates in real-time — booting a simulator outside simvyn is reflected in the dashboard within the polling interval
   4. A new module folder dropped into the modules directory is auto-discovered and its routes, CLI commands, and WS handlers are registered without modifying core code
   5. Running on Linux gracefully hides iOS-specific features and shows only Android device management
-**Plans:** 6/6 plans executed ✅ Complete
+**Plans:** 7 plans (6 executed, 1 gap closure pending)
 
 Plans:
 - [x] 01-01-PLAN.md — Monorepo scaffold & shared types
@@ -38,6 +38,7 @@ Plans:
 - [x] 01-04-PLAN.md — Dashboard shell (React + Vite + Tailwind v4)
 - [x] 01-05-PLAN.md — Device management module
 - [x] 01-06-PLAN.md — CLI entry point & packaging
+- [ ] 01-07-PLAN.md — Fix WS subscribe envelope for real-time device updates (gap closure)
 
 ### Phase 2: Location Module (sim-location Migration)
 **Goal:** Developers can set GPS coordinates and simulate routes on any simulator/emulator, proving the module architecture works end-to-end
