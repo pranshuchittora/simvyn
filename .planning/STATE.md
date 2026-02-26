@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 9 — Utility Modules
+**Current Focus:** Phase 10 — Post-v1 Bugfixes
 
 ## Current Position
 
-**Phase:** 9 of 9 — Utility Modules
-**Plan:** 4 of 4
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
+**Phase:** 10 of 10 — Post-v1 Bugfixes
+**Plan:** 1 of 1
+**Status:** In progress
+**Progress:** [█████████░] 89%
 
 ## Phase Overview
 
@@ -26,14 +26,15 @@
 | 7. File System & Database Inspector | ✅ Complete (3/3 plans) |
 | 8. Device Settings & Accessibility | ✅ Complete (2/2 plans) |
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
+| 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 9/9 |
-| Plans completed | 36/36 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 2, Phase 9: 4) |
-| Requirements delivered | 119/119 |
+| Phases completed | 10/10 |
+| Plans completed | 37/37 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 2, Phase 9: 4, Phase 10: 1) |
+| Requirements delivered | 122/122 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -69,6 +70,7 @@
 | Phase 09 P02 | 2min | 1 tasks | 7 files |
 | Phase 09 P03 | 1min | 1 tasks | 8 files |
 | Phase 09 P04 | 2min | 2 tasks | 5 files |
+| Phase 10 P01 | 1min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -156,6 +158,8 @@
 - Android getClipboard undefined — no reliable adb-only clipboard read without a helper app
 - Android setClipboard uses `cmd clipboard set-text` (Android 12+) with `input text` fallback for older versions
 - iOS setClipboard uses spawn + stdin pipe to `pbcopy` (reads from stdin, not file argument)
+- Z-index stacking order: sidebar(20) < header(30) < tooltips/dropdowns(50+) — raise overlays rather than lower content
+- AnimatedPanel motion.div needs h-full to maintain height chain for panels using height: 100% (e.g. LocationPanel)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -182,10 +186,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T12:59:08.747Z
-**Stopped at:** Completed 09-04-PLAN.md
-**Context for next session:** Phase 9 complete (4/4 plans). All utility module dashboard panels delivered — crash logs viewer, media drag-and-drop injector, clipboard bridge. All 9 phases complete. Ready for milestone completion.
+**Last session:** 2026-02-26T13:12:52Z
+**Stopped at:** Completed 10-01-PLAN.md
+**Context for next session:** Phase 10 complete (1/1 plans). Fixed 3 visual bugs: dock tooltip z-index, TopBar dropdown z-index, location map height chain. Dashboard is now fully usable.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T12:09:05Z*
+*Last updated: 2026-02-26T13:12:52Z*
