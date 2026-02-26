@@ -8,6 +8,7 @@ import {
 	MapPin,
 	MonitorSmartphone,
 	ScrollText,
+	Settings2,
 } from "lucide-react";
 import type { ComponentType } from "react";
 import { useModuleStore } from "../stores/module-store";
@@ -22,6 +23,7 @@ const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: numbe
 	push: Bell,
 	fs: FolderOpen,
 	database: Database,
+	settings: Settings2,
 };
 
 const labelMap: Record<string, string> = {
@@ -34,6 +36,7 @@ const labelMap: Record<string, string> = {
 	push: "Push",
 	fs: "Files",
 	database: "Database",
+	settings: "Settings",
 };
 
 export default function Sidebar() {

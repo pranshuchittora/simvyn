@@ -18,6 +18,7 @@ import "./panels/DeepLinksPanel";
 import "./panels/PushPanel";
 import "./panels/FileSystemPanel";
 import "./panels/DatabasePanel";
+import "./panels/SettingsPanel";
 
 function AppContent() {
 	const setDevices = useDeviceStore((s) => s.setDevices);
