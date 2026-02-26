@@ -329,6 +329,29 @@ export function createAndroidAdapter(): PlatformAdapter {
 			await execFileAsync("adb", ["-s", did, "shell", "rm", "/sdcard/simvyn_recording.mp4"]);
 		},
 
+		getClipboard: undefined,
+
+		async setClipboard(deviceId: string, text: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for clipboard operations");
+
+			// Try Android 12+ clipboard service first
+			try {
+				await execFileAsync("adb", ["-s", deviceId, "shell", "cmd", "clipboard", "set-text", text]);
+				return;
+			} catch {
+				// Fall back to input text for older Android
+			}
+
+			// Escape for adb shell input text — %s = space, backslash-escape specials
+			const escaped = text
+				.slice(0, 256)
+				.replace(/\\/g, "\\\\")
+				.replace(/ /g, "%s")
+				.replace(/[()&|;<>*~"'`]/g, (c) => `\\${c}`);
+			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
+		},
+
 		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for settings operations");
@@ -454,6 +477,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"deepLinks",
 				"appManagement",
 				"addMedia",
+				"clipboard",
 				"settings",
 				"accessibility",
 			];

@@ -258,6 +258,23 @@ export function createIosAdapter(): PlatformAdapter {
 			});
 		},
 
+		async getClipboard(deviceId: string): Promise<string> {
+			const { stdout } = await execFileAsync("xcrun", ["simctl", "pbpaste", deviceId]);
+			return stdout;
+		},
+
+		async setClipboard(deviceId: string, text: string): Promise<void> {
+			await new Promise<void>((resolve, reject) => {
+				const proc = spawn("xcrun", ["simctl", "pbcopy", deviceId]);
+				proc.on("close", (code) =>
+					code === 0 ? resolve() : reject(new Error(`pbcopy exit ${code}`)),
+				);
+				proc.on("error", reject);
+				proc.stdin.write(text);
+				proc.stdin.end();
+			});
+		},
+
 		async addMedia(deviceId: string, filePath: string): Promise<void> {
 			await execFileAsync("xcrun", ["simctl", "addmedia", deviceId, filePath]);
 		},

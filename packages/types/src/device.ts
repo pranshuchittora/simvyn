@@ -78,6 +78,8 @@ export interface PlatformAdapter {
 	getAppInfo?(deviceId: string, bundleId: string): Promise<AppInfo | null>;
 	clearAppData?(deviceId: string, bundleId: string): Promise<void>;
 	addMedia?(deviceId: string, filePath: string): Promise<void>;
+	getClipboard?(deviceId: string): Promise<string>;
+	setClipboard?(deviceId: string, text: string): Promise<void>;
 	openUrl?(deviceId: string, url: string): Promise<void>;
 	screenshot?(deviceId: string, outputPath: string): Promise<void>;
 	startRecording?(
