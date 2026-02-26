@@ -1,201 +1,109 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { toast } from "sonner";
 import { useFavoritesStore } from "./stores/favorites-store";
-import { useLocationStore } from "./stores/location-store";
-import { useRouteStore } from "./stores/route-store";
 
-export default function FavoritesPanel({
-	onFlyTo,
-	onClose,
-}: {
-	onFlyTo?: (lat: number, lon: number) => void;
-	onClose: () => void;
-}) {
+interface Props {
+	open: boolean;
+	onLoadLocation: (lat: number, lon: number) => void;
+	onLoadRoute: (waypoints: [number, number][]) => void;
+	onSaveRoute?: () => void;
+}
+
+export default function FavoritesPanel({ open, onLoadLocation, onLoadRoute, onSaveRoute }: Props) {
 	const locations = useFavoritesStore((s) => s.locations);
 	const routes = useFavoritesStore((s) => s.routes);
+	const loading = useFavoritesStore((s) => s.loading);
 	const fetchLocations = useFavoritesStore((s) => s.fetchLocations);
 	const fetchRoutes = useFavoritesStore((s) => s.fetchRoutes);
-	const addLocation = useFavoritesStore((s) => s.addLocation);
-	const removeLocation = useFavoritesStore((s) => s.removeLocation);
-	const addRoute = useFavoritesStore((s) => s.addRoute);
-	const removeRoute = useFavoritesStore((s) => s.removeRoute);
-
-	const currentLat = useLocationStore((s) => s.currentLat);
-	const currentLon = useLocationStore((s) => s.currentLon);
-	const setCurrentLocation = useLocationStore((s) => s.setCurrentLocation);
-	const selectedDeviceId = useLocationStore((s) => s.selectedDeviceId);
-	const waypoints = useRouteStore((s) => s.waypoints);
-	const setWaypoints = useRouteStore((s) => s.setWaypoints);
-
-	const [newLocName, setNewLocName] = useState("");
-	const [newRouteName, setNewRouteName] = useState("");
-	const [showLocInput, setShowLocInput] = useState(false);
-	const [showRouteInput, setShowRouteInput] = useState(false);
+	const deleteLocation = useFavoritesStore((s) => s.deleteLocation);
+	const deleteRoute = useFavoritesStore((s) => s.deleteRoute);
 
 	useEffect(() => {
-		fetchLocations();
-		fetchRoutes();
-	}, [fetchLocations, fetchRoutes]);
-
-	const handleSaveLocation = async () => {
-		if (!newLocName.trim() || currentLat === null || currentLon === null) return;
-		await addLocation(newLocName.trim(), currentLat, currentLon);
-		setNewLocName("");
-		setShowLocInput(false);
-	};
-
-	const handleSaveRoute = async () => {
-		if (!newRouteName.trim() || waypoints.length < 2) return;
-		await addRoute(newRouteName.trim(), waypoints);
-		setNewRouteName("");
-		setShowRouteInput(false);
-	};
-
-	const handleSelectLocation = async (lat: number, lon: number) => {
-		setCurrentLocation(lat, lon);
-		onFlyTo?.(lat, lon);
-		if (selectedDeviceId) {
-			try {
-				await fetch("/api/modules/location/set", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ deviceId: selectedDeviceId, lat, lon }),
-				});
-			} catch {}
+		if (open) {
+			fetchLocations();
+			fetchRoutes();
 		}
+	}, [open, fetchLocations, fetchRoutes]);
+
+	const handleDeleteLocation = async (e: React.MouseEvent, id: string, name: string) => {
+		e.stopPropagation();
+		await deleteLocation(id);
+		toast.success(`Deleted "${name}"`);
 	};
 
-	const handleSelectRoute = (wp: [number, number][]) => {
-		setWaypoints(wp);
-		if (wp.length > 0) {
-			onFlyTo?.(wp[0][0], wp[0][1]);
-		}
+	const handleDeleteRoute = async (e: React.MouseEvent, id: string, name: string) => {
+		e.stopPropagation();
+		await deleteRoute(id);
+		toast.success(`Deleted "${name}"`);
 	};
+
+	if (!open) return null;
 
 	return (
-		<div className="favorites-sidebar">
-			<div className="flex items-center justify-between">
-				<span className="text-sm font-medium text-text-primary">Favorites</span>
-				<button
-					type="button"
-					onClick={onClose}
-					className="text-text-muted hover:text-text-primary text-lg leading-none"
-				>
-					&times;
-				</button>
-			</div>
+		<div className="favorites-panel glass-panel">
+			{loading && <div className="favorites-empty">Loading...</div>}
 
-			{/* Saved Locations */}
-			<div>
-				<div className="favorites-section-title">Saved Locations</div>
-				{locations.length === 0 && (
-					<div className="text-xs text-text-muted py-2">No saved locations</div>
+			<div className="favorites-section">
+				<h4 style={{ margin: "0 0 6px", fontSize: "0.8rem", fontWeight: 600 }}>Locations</h4>
+				{locations.length === 0 && !loading && (
+					<div className="favorites-empty">No saved locations</div>
 				)}
 				{locations.map((loc) => (
-					<div
+					<button
+						type="button"
 						key={loc.id}
 						className="favorites-item"
-						onClick={() => handleSelectLocation(loc.lat, loc.lon)}
+						onClick={() => onLoadLocation(loc.lat, loc.lon)}
 					>
-						<div className="min-w-0">
-							<div className="truncate text-sm">{loc.name}</div>
-							<div className="favorites-item-meta">
-								{loc.lat.toFixed(4)}, {loc.lon.toFixed(4)}
-							</div>
+						<div className="favorites-item-name">
+							{loc.emoji && <span style={{ marginRight: 4 }}>{loc.emoji}</span>}
+							{loc.name}
+						</div>
+						<div className="favorites-item-meta">
+							{loc.lat.toFixed(4)}, {loc.lon.toFixed(4)}
 						</div>
 						<button
 							type="button"
-							className="favorites-item-delete"
-							onClick={(e) => {
-								e.stopPropagation();
-								removeLocation(loc.id);
-							}}
+							className="favorites-delete-btn"
+							onClick={(e) => handleDeleteLocation(e, loc.id, loc.name)}
+							title="Delete"
 						>
-							&times;
+							✕
 						</button>
-					</div>
-				))}
-				{showLocInput ? (
-					<div className="flex gap-1 mt-1">
-						<input
-							type="text"
-							value={newLocName}
-							onChange={(e) => setNewLocName(e.target.value)}
-							placeholder="Name"
-							className="flex-1 min-w-0 rounded-md bg-bg-surface/60 border border-border px-2 py-1 text-xs text-text-primary placeholder:text-text-muted focus:outline-none"
-							onKeyDown={(e) => e.key === "Enter" && handleSaveLocation()}
-						/>
-						<button
-							type="button"
-							onClick={handleSaveLocation}
-							className="text-xs text-accent-blue hover:text-accent-blue/80 px-1"
-						>
-							Save
-						</button>
-					</div>
-				) : (
-					<button
-						type="button"
-						onClick={() => setShowLocInput(true)}
-						disabled={currentLat === null}
-						className="text-xs text-text-muted hover:text-text-secondary mt-1 disabled:opacity-40"
-					>
-						+ Save current location
 					</button>
-				)}
+				))}
 			</div>
 
-			{/* Saved Routes */}
-			<div>
-				<div className="favorites-section-title">Saved Routes</div>
-				{routes.length === 0 && <div className="text-xs text-text-muted py-2">No saved routes</div>}
+			<div className="favorites-section">
+				<h4 style={{ margin: "0 0 6px", fontSize: "0.8rem", fontWeight: 600 }}>Routes</h4>
+				{routes.length === 0 && !loading && <div className="favorites-empty">No saved routes</div>}
 				{routes.map((route) => (
-					<div
-						key={route.id}
-						className="favorites-item"
-						onClick={() => handleSelectRoute(route.waypoints)}
-					>
-						<div className="min-w-0">
-							<div className="truncate text-sm">{route.name}</div>
-							<div className="favorites-item-meta">{route.waypoints.length} waypoints</div>
-						</div>
-						<button
-							type="button"
-							className="favorites-item-delete"
-							onClick={(e) => {
-								e.stopPropagation();
-								removeRoute(route.id);
-							}}
-						>
-							&times;
-						</button>
-					</div>
-				))}
-				{showRouteInput ? (
-					<div className="flex gap-1 mt-1">
-						<input
-							type="text"
-							value={newRouteName}
-							onChange={(e) => setNewRouteName(e.target.value)}
-							placeholder="Name"
-							className="flex-1 min-w-0 rounded-md bg-bg-surface/60 border border-border px-2 py-1 text-xs text-text-primary placeholder:text-text-muted focus:outline-none"
-							onKeyDown={(e) => e.key === "Enter" && handleSaveRoute()}
-						/>
-						<button
-							type="button"
-							onClick={handleSaveRoute}
-							className="text-xs text-accent-blue hover:text-accent-blue/80 px-1"
-						>
-							Save
-						</button>
-					</div>
-				) : (
 					<button
 						type="button"
-						onClick={() => setShowRouteInput(true)}
-						disabled={waypoints.length < 2}
-						className="text-xs text-text-muted hover:text-text-secondary mt-1 disabled:opacity-40"
+						key={route.id}
+						className="favorites-item"
+						onClick={() => onLoadRoute(route.waypoints)}
 					>
-						+ Save current route
+						<div className="favorites-item-name">{route.name}</div>
+						<div className="favorites-item-meta">{route.waypoints.length} waypoints</div>
+						<button
+							type="button"
+							className="favorites-delete-btn"
+							onClick={(e) => handleDeleteRoute(e, route.id, route.name)}
+							title="Delete"
+						>
+							✕
+						</button>
+					</button>
+				))}
+				{onSaveRoute && (
+					<button
+						type="button"
+						className="glass-button"
+						onClick={onSaveRoute}
+						style={{ marginTop: 6, width: "100%" }}
+					>
+						Save Current Route
 					</button>
 				)}
 			</div>
