@@ -8,9 +8,9 @@
 
 ## Current Position
 
-**Phase:** Not started (defining requirements)
+**Phase:** Phase 13 — URL Routing (next up)
 **Plan:** —
-**Status:** Defining requirements
+**Status:** Roadmap created, ready for planning
 **Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
@@ -31,14 +31,21 @@
 | 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
 | 12.1 Log Module Performance Overhaul | ✅ Complete (3/3 plans) |
 | 12.2 Unified Device Selector | ✅ Complete (2/2 plans) |
+| **v1.1 — Dashboard UX Polish** | |
+| 13. URL Routing | ⬜ Not started |
+| 14. Module Icons | ⬜ Not started |
+| 15. Command Palette | ⬜ Not started |
+| 16. Home Screen & Capture Management | ⬜ Not started |
+| 17. Tool Settings | ⬜ Not started |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 11/12 |
-| Plans completed | 41/41 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 2, Phase 9: 4, Phase 10: 1, Phase 11: 4) |
-| Requirements delivered | 126/126 |
+| Phases completed | 11/17 (v1.0: 11/12, v1.1: 0/5) |
+| Plans completed | 41/41 (v1.0 only) |
+| v1.0 requirements delivered | 126/126 |
+| v1.1 requirements delivered | 0/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -227,6 +234,7 @@
 - Phase 12 added: Liquid Glass UI refactor — refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - Phase 12.1 inserted after Phase 12: Log Module Performance Overhaul (URGENT) — paginated log fetching, virtual list, descending order, device log clearing, search revamp, unmount cleanup
 - Phase 12.2 inserted after Phase 12: Unified Device Selector (URGENT) — remove duplicate per-panel selectors, single top-bar selector with multi-select for location, single-select elsewhere
+- v1.1 milestone phases 13-17 added: URL Routing → Module Icons → Command Palette → Home Screen & Capture Management → Tool Settings
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -241,10 +249,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T20:37:22Z
-**Stopped at:** Completed 12.2-02-PLAN.md (all panels wired to global device store)
-**Context for next session:** Phase 12.2 complete (2/2 plans). All panels consume device selection from unified TopBar DeviceSelector.
+**Last session:** 2026-02-27
+**Stopped at:** v1.1 roadmap creation (phases 13-17)
+**Context for next session:** Milestone v1.1 roadmap created with 5 phases (13-17). Phase 12 (Liquid Glass UI Refactor) still has 1 remaining plan (12-07 visual audit). Next action: plan Phase 13 (URL Routing) or finish Phase 12 first.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T18:07:28Z*
+*Last updated: 2026-02-27 — v1.1 roadmap phases 13-17*

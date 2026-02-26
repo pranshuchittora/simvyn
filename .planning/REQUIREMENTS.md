@@ -368,31 +368,31 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | TBD | Pending |
-| ROUTE-02 | TBD | Pending |
-| ROUTE-03 | TBD | Pending |
-| CMDK-01 | TBD | Pending |
-| CMDK-02 | TBD | Pending |
-| CMDK-03 | TBD | Pending |
-| CMDK-04 | TBD | Pending |
-| CMDK-05 | TBD | Pending |
-| HOME-01 | TBD | Pending |
-| HOME-02 | TBD | Pending |
-| HOME-03 | TBD | Pending |
-| ICON-01 | TBD | Pending |
-| ICON-02 | TBD | Pending |
-| CAP-01 | TBD | Pending |
-| CAP-02 | TBD | Pending |
-| TSET-01 | TBD | Pending |
-| TSET-02 | TBD | Pending |
-| TSET-03 | TBD | Pending |
-| TSET-04 | TBD | Pending |
-| TSET-05 | TBD | Pending |
+| ROUTE-01 | Phase 13 | Pending |
+| ROUTE-02 | Phase 13 | Pending |
+| ROUTE-03 | Phase 13 | Pending |
+| CMDK-01 | Phase 15 | Pending |
+| CMDK-02 | Phase 15 | Pending |
+| CMDK-03 | Phase 15 | Pending |
+| CMDK-04 | Phase 15 | Pending |
+| CMDK-05 | Phase 15 | Pending |
+| HOME-01 | Phase 16 | Pending |
+| HOME-02 | Phase 16 | Pending |
+| HOME-03 | Phase 16 | Pending |
+| ICON-01 | Phase 14 | Pending |
+| ICON-02 | Phase 14 | Pending |
+| CAP-01 | Phase 16 | Pending |
+| CAP-02 | Phase 16 | Pending |
+| TSET-01 | Phase 17 | Pending |
+| TSET-02 | Phase 17 | Pending |
+| TSET-03 | Phase 17 | Pending |
+| TSET-04 | Phase 17 | Pending |
+| TSET-05 | Phase 17 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20 (pending roadmap)
+- Mapped to phases: 20
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-26*

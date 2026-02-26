@@ -2,8 +2,8 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 13
-**Coverage:** 108/108 v1 requirements mapped
+**Phases:** 18 (13 v1.0 + 5 v1.1)
+**Coverage:** 108/108 v1.0 requirements mapped, 20/20 v1.1 requirements mapped
 
 ## Phases
 
@@ -20,6 +20,14 @@
 - [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - [x] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED) (completed 2026-02-26)
 - [x] **Phase 12.2: Unified Device Selector** — Single top-bar selector with per-module multi/single select (INSERTED) (completed 2026-02-26)
+
+### Milestone v1.1 — Dashboard UX Polish
+
+- [ ] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
+- [ ] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen
+- [ ] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling
+- [ ] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion
+- [ ] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage
 
 ## Phase Details
 
@@ -180,6 +188,61 @@ Plans:
 - [x] 09-03-PLAN.md — Clipboard bridge module (get/set adapters, routes, CLI)
 - [x] 09-04-PLAN.md — Dashboard panels for all 3 modules + sidebar icons
 
+### Phase 13: URL Routing
+**Goal:** Users can navigate between modules via URL, refresh without losing their place, and share direct links to specific module views
+**Depends on:** Phase 5 (dashboard shell), Phase 12 (current UI)
+**Requirements:** ROUTE-01, ROUTE-02, ROUTE-03
+**Success Criteria** (what must be TRUE):
+  1. Clicking a module in the sidebar updates the browser URL to reflect the active module (e.g., `/logs`, `/location`, `/settings`)
+  2. Refreshing the browser re-opens the exact module that was active before the refresh
+  3. Typing a module URL directly into the browser address bar (e.g., `localhost:3000/logs`) navigates to that module without first showing the home screen
+**Plans:** TBD
+
+### Phase 14: Module Icons
+**Goal:** Every module has a distinctive, colorful liquid glass SVG icon that reinforces the Apple aesthetic and aids module recognition
+**Depends on:** Phase 5 (sidebar), Phase 12 (glass design system)
+**Requirements:** ICON-01, ICON-02
+**Success Criteria** (what must be TRUE):
+  1. Each module displays a custom colorful liquid glass SVG icon (not a Lucide generic icon) in the sidebar dock
+  2. The same custom icons appear in the command palette module list and home screen module grid
+  3. Icons are visually consistent with the Liquid Glass aesthetic — translucent fills, soft gradients, rounded forms
+**Plans:** TBD
+
+### Phase 15: Command Palette
+**Goal:** Users can discover and navigate to any module or device action instantly via keyboard-driven spotlight search
+**Depends on:** Phase 13 (routing for navigation), Phase 14 (icons for display)
+**Requirements:** CMDK-01, CMDK-02, CMDK-03, CMDK-04, CMDK-05
+**Success Criteria** (what must be TRUE):
+  1. Pressing Cmd+K (macOS) or Ctrl+K (Linux) opens a centered search palette overlay from any screen
+  2. The palette lists all available modules with their custom icons and descriptions, and the user can fuzzy-search by typing partial module names
+  3. Pressing Enter on a search result navigates to that module (URL updates, panel renders)
+  4. The palette includes device actions (e.g., "screenshot", "set location", "toggle dark mode") that the user can search and trigger
+  5. The palette uses Liquid Glass styling — frosted glass backdrop with blur, dark theme, consistent with the rest of the dashboard
+**Plans:** TBD
+
+### Phase 16: Home Screen & Capture Management
+**Goal:** Users see a welcoming, informative landing page on first load, and can manage their screenshot/recording history
+**Depends on:** Phase 13 (routing — home at `/`), Phase 14 (icons for module grid)
+**Requirements:** HOME-01, HOME-02, HOME-03, CAP-01, CAP-02
+**Success Criteria** (what must be TRUE):
+  1. When no module is selected (or on first load at `/`), a home/welcome screen is displayed instead of a blank content area
+  2. The home screen shows keyboard shortcuts, quick-start tips, and a grid of recently used modules the user can click to navigate
+  3. The home screen displays a connected device summary — count of connected devices, their names, and current states (booted/shutdown)
+  4. User can delete individual screenshots or recordings from the capture history panel
+  5. User can clear all capture history at once with a single action
+**Plans:** TBD
+
+### Phase 17: Tool Settings
+**Goal:** Users can configure simvyn's behavior and manage stored data from a dedicated settings page
+**Depends on:** Phase 13 (routing — settings at `/settings`)
+**Requirements:** TSET-01, TSET-02, TSET-03, TSET-04, TSET-05
+**Success Criteria** (what must be TRUE):
+  1. A dedicated settings page is accessible from the sidebar, rendering as a full module panel
+  2. User can wipe all saved data (favorites, history, preferences) from the settings page with confirmation
+  3. User can configure the server port and toggle whether the browser auto-opens on launch
+  4. User can see total storage usage (disk space consumed by `~/.simvyn/`) displayed on the settings page
+**Plans:** TBD
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -193,6 +256,16 @@ Plans:
 | 7. File System & Database Inspector | 3/3 | Complete | 2026-02-26 |
 | 8. Device Settings & Accessibility | 2/2 | Complete | 2026-02-26 |
 | 9. Utility Modules | 4/4 | Complete | 2026-02-26 |
+| 11. Location Module Rewrite | 4/4 | Complete | 2026-02-26 |
+| 12. Liquid Glass UI Refactor | 6/7 | In Progress | - |
+| 12.1 Log Module Performance Overhaul | 3/3 | Complete | 2026-02-26 |
+| 12.2 Unified Device Selector | 2/2 | Complete | 2026-02-26 |
+| **v1.1 — Dashboard UX Polish** | | | |
+| 13. URL Routing | 0/? | Not started | - |
+| 14. Module Icons | 0/? | Not started | - |
+| 15. Command Palette | 0/? | Not started | - |
+| 16. Home Screen & Capture Management | 0/? | Not started | - |
+| 17. Tool Settings | 0/? | Not started | - |
 
 ## Coverage Map
 
@@ -247,7 +320,26 @@ PUSH-05 → Phase 6     CRASH-02 → Phase 9
                        CLIP-04 → Phase 9
 ```
 
-**Mapped: 108/108 ✓ — No orphaned requirements**
+**v1.0 Mapped: 108/108 ✓ — No orphaned requirements**
+
+### v1.1 Coverage
+
+```
+ROUTE-01 → Phase 13   CMDK-01 → Phase 15   HOME-01 → Phase 16
+ROUTE-02 → Phase 13   CMDK-02 → Phase 15   HOME-02 → Phase 16
+ROUTE-03 → Phase 13   CMDK-03 → Phase 15   HOME-03 → Phase 16
+                       CMDK-04 → Phase 15
+ICON-01 → Phase 14    CMDK-05 → Phase 15   CAP-01 → Phase 16
+ICON-02 → Phase 14                          CAP-02 → Phase 16
+
+TSET-01 → Phase 17
+TSET-02 → Phase 17
+TSET-03 → Phase 17
+TSET-04 → Phase 17
+TSET-05 → Phase 17
+```
+
+**v1.1 Mapped: 20/20 ✓ — No orphaned requirements**
 
 ### Phase 11: Location Module Rewrite
 **Goal:** Replace the generated location dashboard panel with production-quality code migrated from sim-location, preserving exact UI and all working functionality
@@ -321,4 +413,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-02-26*
-*Last updated: 2026-02-26*
+*Last updated: 2026-02-27 — v1.1 phases 13-17 added*
