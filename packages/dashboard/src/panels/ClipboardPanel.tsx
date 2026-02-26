@@ -1,0 +1,175 @@
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useDeviceStore } from "../stores/device-store";
+import { registerPanel } from "../stores/panel-registry";
+
+function ClipboardPanel() {
+	const devices = useDeviceStore((s) => s.devices);
+	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const [clipboardContent, setClipboardContent] = useState("");
+	const [readLoading, setReadLoading] = useState(false);
+	const [writeText, setWriteText] = useState("");
+	const [writeLoading, setWriteLoading] = useState(false);
+
+	const bootedDevices = devices.filter((d) => d.state === "booted");
+	const selectedDevice = devices.find((d) => d.id === selectedDeviceId);
+
+	useEffect(() => {
+		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
+			const booted = bootedDevices[0];
+			if (booted) setSelectedDeviceId(booted.id);
+		}
+	}, [devices, selectedDeviceId, bootedDevices]);
+
+	const readClipboard = async () => {
+		if (!selectedDeviceId) return;
+		setReadLoading(true);
+		try {
+			const res = await fetch(`/api/modules/clipboard/get/${selectedDeviceId}`);
+			if (res.status === 400) {
+				toast.error("Clipboard read not supported for this platform");
+				setReadLoading(false);
+				return;
+			}
+			if (!res.ok) throw new Error("Failed to read clipboard");
+			const data = await res.json();
+			setClipboardContent((data as { text: string }).text ?? "");
+		} catch (err) {
+			toast.error((err as Error).message);
+		} finally {
+			setReadLoading(false);
+		}
+	};
+
+	const copyToHost = async () => {
+		try {
+			await navigator.clipboard.writeText(clipboardContent);
+			toast.success("Copied to host clipboard");
+		} catch {
+			toast.error("Failed to copy to host clipboard");
+		}
+	};
+
+	const writeClipboard = async (text: string) => {
+		if (!selectedDeviceId || !text.trim()) return;
+		setWriteLoading(true);
+		try {
+			const res = await fetch(`/api/modules/clipboard/set/${selectedDeviceId}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ text: text.trim() }),
+			});
+			if (!res.ok) throw new Error("Failed to set clipboard");
+			toast.success(`Clipboard set on ${selectedDevice?.name ?? "device"}`);
+		} catch (err) {
+			toast.error((err as Error).message);
+		} finally {
+			setWriteLoading(false);
+		}
+	};
+
+	const pasteFromHost = async () => {
+		try {
+			const text = await navigator.clipboard.readText();
+			setWriteText(text);
+			if (text.trim()) await writeClipboard(text);
+		} catch {
+			toast.error("Failed to read host clipboard (permission denied?)");
+		}
+	};
+
+	return (
+		<div className="p-6 space-y-4">
+			{/* Header */}
+			<div className="flex items-center justify-between">
+				<h1 className="text-base font-medium text-text-primary">Clipboard</h1>
+				<select
+					value={selectedDeviceId ?? ""}
+					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
+					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+				>
+					<option value="">No device</option>
+					{devices.map((d) => (
+						<option key={d.id} value={d.id}>
+							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
+						</option>
+					))}
+				</select>
+			</div>
+
+			{!selectedDeviceId && (
+				<div className="glass-panel p-12 text-center">
+					<p className="text-text-secondary">Select a booted device to bridge clipboard</p>
+				</div>
+			)}
+
+			{selectedDeviceId && (
+				<div className="glass-panel p-4 space-y-6">
+					{/* Read Clipboard */}
+					<div className="space-y-3">
+						<div className="flex items-center justify-between">
+							<h2 className="text-sm font-medium text-text-primary">Read Clipboard</h2>
+							<button
+								type="button"
+								onClick={readClipboard}
+								disabled={readLoading}
+								className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40"
+							>
+								{readLoading ? "Reading..." : "Read Clipboard"}
+							</button>
+						</div>
+						<textarea
+							readOnly
+							value={clipboardContent}
+							placeholder="Device clipboard content will appear here..."
+							className="w-full h-24 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-xs text-text-primary font-mono placeholder:text-text-muted focus:outline-none resize-none"
+						/>
+						{clipboardContent && (
+							<button
+								type="button"
+								onClick={copyToHost}
+								className="text-xs text-accent-blue hover:text-accent-blue/80 transition-colors"
+							>
+								Copy to Host
+							</button>
+						)}
+					</div>
+
+					<div className="border-t border-border/30" />
+
+					{/* Write Clipboard */}
+					<div className="space-y-3">
+						<h2 className="text-sm font-medium text-text-primary">Write Clipboard</h2>
+						<textarea
+							value={writeText}
+							onChange={(e) => setWriteText(e.target.value)}
+							placeholder="Enter text to write to device clipboard..."
+							className="w-full h-24 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-2 text-xs text-text-primary font-mono placeholder:text-text-muted focus:outline-none resize-none"
+						/>
+						<div className="flex items-center gap-2">
+							<button
+								type="button"
+								onClick={() => writeClipboard(writeText)}
+								disabled={writeLoading || !writeText.trim()}
+								className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+							>
+								{writeLoading ? "Writing..." : "Write to Device"}
+							</button>
+							<button
+								type="button"
+								onClick={pasteFromHost}
+								className="text-xs text-accent-blue hover:text-accent-blue/80 transition-colors"
+							>
+								Paste from Host
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+}
+
+registerPanel("clipboard", ClipboardPanel);
+
+export default ClipboardPanel;
