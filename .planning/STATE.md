@@ -190,6 +190,9 @@
 - glass-textarea used for Clipboard read/write and Push JSON payload — mono font and transparent bg from utility
 - Push JSON validation red border preserved as conditional class alongside glass-textarea
 - Empty state pattern: glass-panel wrapper + glass-empty-state child (not inline p-12 text-center)
+- Sticky table headers use opaque var(--color-bg-surface) instead of backdrop-filter — prevents glass-on-glass inside glass-panel container
+- Inner database components (DatabaseBrowser, TableViewer, PrefsViewer) stripped of glass-panel — only outermost container uses glass-panel
+- Android prefs file section headers use muted uppercase text (matching glass-table thead) instead of glass-panel dividers
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
