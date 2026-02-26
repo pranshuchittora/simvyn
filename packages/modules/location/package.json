@@ -4,8 +4,10 @@
 	"type": "module",
 	"main": "./manifest.ts",
 	"dependencies": {
-		"@simvyn/types": "*",
 		"@simvyn/core": "*",
-		"@simvyn/server": "*"
+		"@simvyn/server": "*",
+		"@simvyn/types": "*",
+		"@tmcw/togeojson": "^7.1.2",
+		"@xmldom/xmldom": "^0.8.11"
 	}
 }
