@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useWs, useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
@@ -8,19 +8,8 @@ import { useAppStore } from "./apps/stores/app-store";
 
 function AppPanel() {
 	const { send } = useWs();
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const fetchApps = useAppStore((s) => s.fetchApps);
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-
-	// auto-select first booted device
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	// fetch apps when device changes
 	useEffect(() => {
@@ -59,23 +48,9 @@ function AppPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">App Management</h1>
-				<div className="flex items-center gap-3">
-					<select
-						value={selectedDeviceId ?? ""}
-						onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-						className="glass-select max-w-[200px] truncate"
-					>
-						<option value="">No device</option>
-						{devices.map((d) => (
-							<option key={d.id} value={d.id}>
-								{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-							</option>
-						))}
-					</select>
-					<button type="button" onClick={handleRefresh} className="glass-button">
-						Refresh
-					</button>
-				</div>
+				<button type="button" onClick={handleRefresh} className="glass-button">
+					Refresh
+				</button>
 			</div>
 
 			{/* No device selected */}

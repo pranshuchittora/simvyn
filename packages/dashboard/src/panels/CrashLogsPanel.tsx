@@ -12,8 +12,7 @@ interface CrashLogEntry {
 }
 
 function CrashLogsPanel() {
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const [appFilter, setAppFilter] = useState("");
 	const [sinceFilter, setSinceFilter] = useState("");
 	const [logs, setLogs] = useState<CrashLogEntry[]>([]);
@@ -21,15 +20,6 @@ function CrashLogsPanel() {
 	const [viewingLog, setViewingLog] = useState<string | null>(null);
 	const [logContent, setLogContent] = useState("");
 	const [loadingContent, setLoadingContent] = useState(false);
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	const fetchLogs = useCallback(async () => {
 		if (!selectedDeviceId) return;
@@ -120,18 +110,6 @@ function CrashLogsPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Crash Logs</h1>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{!selectedDeviceId && (

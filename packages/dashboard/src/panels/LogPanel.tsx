@@ -1,5 +1,5 @@
 import type { LogEntry } from "@simvyn/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useWs, useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
@@ -9,9 +9,8 @@ import { useLogStore } from "./logs/stores/log-store";
 
 function LogPanel() {
 	const { send } = useWs();
-	const devices = useDeviceStore((s) => s.devices);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const selectedDeviceIdRef = useRef<string | null>(null);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
 	const addNewBatch = useLogStore((s) => s.addNewBatch);
 	const prependHistory = useLogStore((s) => s.prependHistory);
 	const setLoadingHistory = useLogStore((s) => s.setLoadingHistory);
@@ -21,19 +20,9 @@ function LogPanel() {
 	const hasMore = useLogStore((s) => s.hasMore);
 	const isLoadingHistory = useLogStore((s) => s.isLoadingHistory);
 
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-
 	useEffect(() => {
 		selectedDeviceIdRef.current = selectedDeviceId;
 	}, [selectedDeviceId]);
-
-	// auto-select first booted device
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	// subscribe to logs channel + cleanup on unmount
 	useEffect(() => {
@@ -172,18 +161,6 @@ function LogPanel() {
 		<div className="flex flex-col h-full p-6 gap-4">
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Log Viewer</h1>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{!selectedDeviceId && (

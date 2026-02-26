@@ -1,25 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
 
 function ClipboardPanel() {
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
+	const selectedDevice = useDeviceStore((s) =>
+		s.devices.find((d) => d.id === s.selectedDeviceIds[0]),
+	);
 	const [clipboardContent, setClipboardContent] = useState("");
 	const [readLoading, setReadLoading] = useState(false);
 	const [writeText, setWriteText] = useState("");
 	const [writeLoading, setWriteLoading] = useState(false);
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-	const selectedDevice = devices.find((d) => d.id === selectedDeviceId);
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	const readClipboard = async () => {
 		if (!selectedDeviceId) return;
@@ -83,18 +75,6 @@ function ClipboardPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Clipboard</h1>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{!selectedDeviceId && (

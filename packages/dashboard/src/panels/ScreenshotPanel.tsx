@@ -91,8 +91,7 @@ function CaptureCard({
 
 function ScreenshotPanel() {
 	const { send } = useWs();
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const recordStartRef = useRef<Record<string, number>>({});
 
 	const {
@@ -106,15 +105,6 @@ function ScreenshotPanel() {
 		downloadFile,
 		copyToClipboard,
 	} = useScreenshotStore();
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	useEffect(() => {
 		fetchHistory();
@@ -180,18 +170,6 @@ function ScreenshotPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Screenshots & Recording</h1>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{/* No device */}

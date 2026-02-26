@@ -5,8 +5,10 @@ import { registerPanel } from "../stores/panel-registry";
 import { usePushStore } from "./push/stores/push-store";
 
 function PushPanel() {
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
+	const selectedDevice = useDeviceStore((s) =>
+		s.devices.find((d) => d.id === s.selectedDeviceIds[0]),
+	);
 	const [bundleId, setBundleId] = useState("");
 	const [payloadText, setPayloadText] = useState(
 		'{\n  "aps": {\n    "alert": {\n      "title": "Test",\n      "body": "Hello from Simvyn"\n    },\n    "sound": "default"\n  }\n}',
@@ -29,16 +31,7 @@ function PushPanel() {
 		fetchHistory,
 	} = usePushStore();
 
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-	const selectedDevice = devices.find((d) => d.id === selectedDeviceId);
 	const isAndroid = selectedDevice?.platform === "android";
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	useEffect(() => {
 		fetchTemplates();
@@ -92,18 +85,6 @@ function PushPanel() {
 						</span>
 					)}
 				</div>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{/* No device */}

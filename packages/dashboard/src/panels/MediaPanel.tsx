@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
@@ -6,22 +6,14 @@ import { registerPanel } from "../stores/panel-registry";
 const ACCEPTED_TYPES = [".jpg", ".jpeg", ".png", ".gif", ".mp4", ".mov", ".heic"];
 
 function MediaPanel() {
-	const devices = useDeviceStore((s) => s.devices);
-	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
+	const selectedDevice = useDeviceStore((s) =>
+		s.devices.find((d) => d.id === s.selectedDeviceIds[0]),
+	);
 	const [dragOver, setDragOver] = useState(false);
 	const [uploading, setUploading] = useState(false);
 	const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-
-	const bootedDevices = devices.filter((d) => d.state === "booted");
-	const selectedDevice = devices.find((d) => d.id === selectedDeviceId);
-
-	useEffect(() => {
-		if (!selectedDeviceId || !devices.find((d) => d.id === selectedDeviceId)) {
-			const booted = bootedDevices[0];
-			if (booted) setSelectedDeviceId(booted.id);
-		}
-	}, [devices, selectedDeviceId, bootedDevices]);
 
 	const uploadFile = useCallback(
 		async (file: File) => {
@@ -86,18 +78,6 @@ function MediaPanel() {
 			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Media</h1>
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="glass-select max-w-[200px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
 			</div>
 
 			{!selectedDeviceId && (
