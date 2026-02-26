@@ -11,8 +11,6 @@ import MapView from "./location/MapView";
 import ModeSelector from "./location/ModeSelector";
 import PlaybackControls from "./location/PlaybackControls";
 import RouteActionBar from "./location/RouteActionBar";
-import SaveLocationDialog from "./location/SaveLocationDialog";
-import SaveRouteDialog from "./location/SaveRouteDialog";
 import SearchBar from "./location/SearchBar";
 import { useFavoritesStore } from "./location/stores/favorites-store";
 import { useLocationStore } from "./location/stores/location-store";
@@ -23,8 +21,6 @@ import "./location/location-panel.css";
 function LocationPanel() {
 	const { send } = useWs();
 	const [tileStyle, setTileStyle] = useState<TileStyle>(TILE_STYLES[0]);
-	const [showSaveLocation, setShowSaveLocation] = useState(false);
-	const [showSaveRoute, setShowSaveRoute] = useState(false);
 	const [showBookmarks, setShowBookmarks] = useState(false);
 	const reverseGeocodeCounter = useRef(0);
 
@@ -32,15 +28,6 @@ function LocationPanel() {
 	const reverseGeocode = useLocationStore((s) => s.reverseGeocode);
 	const setReverseGeocode = useLocationStore((s) => s.setReverseGeocode);
 	const waypoints = useRouteStore((s) => s.waypoints);
-	const locations = useFavoritesStore((s) => s.locations);
-
-	const isBookmarked =
-		markerPosition != null &&
-		locations.some(
-			(loc) =>
-				Math.abs(loc.lat - markerPosition[0]) < 0.0001 &&
-				Math.abs(loc.lon - markerPosition[1]) < 0.0001,
-		);
 
 	// subscribe to location channel on mount + fetch favorites
 	useEffect(() => {
@@ -209,16 +196,7 @@ function LocationPanel() {
 	}, [sendLocation]);
 
 	const handleBookmarkClick = () => {
-		if (markerPosition && !isBookmarked) {
-			setShowSaveLocation(true);
-		} else {
-			setShowBookmarks(!showBookmarks);
-		}
-	};
-
-	const handleSaveLocationClose = () => {
-		setShowSaveLocation(false);
-		useFavoritesStore.getState().fetchLocations();
+		setShowBookmarks(!showBookmarks);
 	};
 
 	return (
@@ -230,33 +208,17 @@ function LocationPanel() {
 				<FileImportButton />
 			</div>
 			<RouteActionBar onPlay={handlePlayRoute} />
-			<button
-				type="button"
-				className={`bookmark-btn glass-button${isBookmarked ? " bookmark-btn-active" : ""}`}
-				onClick={handleBookmarkClick}
-			>
-				<span className="bookmark-btn-star">★</span>
-				Bookmarks
-			</button>
-			<PlaybackControls sendLocation={sendLocation} />
-			<CursorPosition />
 			<FavoritesPanel
 				open={showBookmarks}
+				onToggle={handleBookmarkClick}
 				onLoadLocation={handleLoadLocation}
 				onLoadRoute={handleLoadRoute}
-				onSaveRoute={waypoints.length >= 2 ? () => setShowSaveRoute(true) : undefined}
+				markerPosition={markerPosition}
+				reverseGeocode={reverseGeocode}
+				waypoints={waypoints}
 			/>
-			{showSaveLocation && markerPosition && (
-				<SaveLocationDialog
-					lat={markerPosition[0]}
-					lon={markerPosition[1]}
-					address={reverseGeocode}
-					onClose={handleSaveLocationClose}
-				/>
-			)}
-			{showSaveRoute && waypoints.length >= 2 && (
-				<SaveRouteDialog waypoints={waypoints} onClose={() => setShowSaveRoute(false)} />
-			)}
+			<PlaybackControls sendLocation={sendLocation} />
+			<CursorPosition />
 		</div>
 	);
 }

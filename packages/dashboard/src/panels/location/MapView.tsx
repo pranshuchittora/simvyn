@@ -214,7 +214,7 @@ function MinZoomEnforcer() {
 	return null;
 }
 
-export function MapView({ tileStyle, onTileStyleChange }: MapViewProps) {
+export default function MapView({ tileStyle, onTileStyleChange }: MapViewProps) {
 	return (
 		<MapContainer
 			center={[37.7749, -122.4194]}

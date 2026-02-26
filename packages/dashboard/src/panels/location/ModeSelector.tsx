@@ -1,6 +1,6 @@
 import { useRouteStore } from "./stores/route-store";
 
-export function ModeSelector() {
+export default function ModeSelector() {
 	const interactionMode = useRouteStore((s) => s.interactionMode);
 	const setInteractionMode = useRouteStore((s) => s.setInteractionMode);
 	const waypoints = useRouteStore((s) => s.waypoints);

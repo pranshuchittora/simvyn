@@ -17,7 +17,7 @@ const mixedIcon = createMixedDeviceIcon();
 type DeviceWithLocation = DeviceInfo & { lastLocation: { lat: number; lon: number } };
 
 function hasLocation(d: DeviceInfo): d is DeviceWithLocation {
-	return d.lastLocation !== null;
+	return d.lastLocation != null;
 }
 
 interface MarkerGroup {

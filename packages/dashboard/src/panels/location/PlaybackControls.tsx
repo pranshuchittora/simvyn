@@ -13,7 +13,7 @@ interface Props {
 	sendLocation: (type: string, payload: Record<string, unknown>) => void;
 }
 
-export function PlaybackControls({ sendLocation }: Props) {
+export default function PlaybackControls({ sendLocation }: Props) {
 	const waypoints = useRouteStore((s) => s.waypoints);
 	const status = usePlaybackStore((s) => s.status);
 	const progress = usePlaybackStore((s) => s.progress);
@@ -36,9 +36,10 @@ export function PlaybackControls({ sendLocation }: Props) {
 		const kmh = speedUnit === "ms" ? msToKmh(num) : num;
 		setSpeedKmh(kmh);
 		if (usePlaybackStore.getState().status === "playing") {
-			sendLocation("update-playback-speed", {
-				speedMs: kmhToMs(kmh),
-				multiplier,
+			const deviceId = useDeviceStore.getState().selectedDeviceId;
+			sendLocation("set-speed", {
+				deviceId,
+				speedMs: kmhToMs(kmh) * multiplier,
 			});
 		}
 	}, [customSpeed, speedUnit, multiplier, setSpeedKmh, sendLocation]);
@@ -47,7 +48,8 @@ export function PlaybackControls({ sendLocation }: Props) {
 
 	function handlePlay() {
 		if (status === "paused") {
-			sendLocation("resume-playback", {});
+			const deviceId = useDeviceStore.getState().selectedDeviceId;
+			sendLocation("resume-playback", { deviceId });
 		} else {
 			const selectedId = useDeviceStore.getState().selectedDeviceId;
 			sendLocation("start-playback", {
@@ -61,18 +63,21 @@ export function PlaybackControls({ sendLocation }: Props) {
 	}
 
 	function handlePause() {
-		sendLocation("pause-playback", {});
+		const deviceId = useDeviceStore.getState().selectedDeviceId;
+		sendLocation("pause-playback", { deviceId });
 	}
 
 	function handleStop() {
-		sendLocation("stop-playback", {});
+		const deviceId = useDeviceStore.getState().selectedDeviceId;
+		sendLocation("stop-playback", { deviceId });
 	}
 
-	function sendSpeedUpdate(newKmh: number, newMultiplier: number) {
+	function sendSpeedUpdate(newKmh: number, _newMultiplier: number) {
 		if (status === "playing") {
-			sendLocation("update-playback-speed", {
-				speedMs: kmhToMs(newKmh),
-				multiplier: newMultiplier,
+			const deviceId = useDeviceStore.getState().selectedDeviceId;
+			sendLocation("set-speed", {
+				deviceId,
+				speedMs: kmhToMs(newKmh) * _newMultiplier,
 			});
 		}
 	}

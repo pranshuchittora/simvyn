@@ -13,7 +13,7 @@ function parseCoordinates(input: string): [number, number] | null {
 	return [lat, lon];
 }
 
-export function SearchBar() {
+export default function SearchBar() {
 	const [query, setQuery] = useState("");
 	const [focused, setFocused] = useState(false);
 	const searchResults = useLocationStore((s) => s.searchResults);

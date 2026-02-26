@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useRouteStore } from "./stores/route-store";
 import { detectRouteFormat, parseRouteFile } from "./utils/route-parser";
 
-export function FileImportButton() {
+export default function FileImportButton() {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	function handleClick() {
