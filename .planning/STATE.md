@@ -9,7 +9,7 @@
 ## Current Position
 
 **Phase:** 2 of 9 — Location Module
-**Plan:** 2 of 4 in Phase 2
+**Plan:** 3 of 4 in Phase 2
 **Status:** Executing Phase 2
 **Progress:** [███████░░░] 73%
 
@@ -18,7 +18,7 @@
 | Phase | Status |
 |-------|--------|
 | 1. Foundation & Device Management | ✅ Complete (7/7 plans) |
-| 2. Location Module | 🔄 In Progress (1/4 plans) |
+| 2. Location Module | 🔄 In Progress (2/4 plans) |
 | 3. App Management Module | ⬜ Not started |
 | 4. Log Viewer Module | ⬜ Not started |
 | 5. Dashboard UI | ⬜ Not started |
@@ -41,6 +41,7 @@
 | Phase 01 P06 | 5min | 3 tasks | 8 files |
 | Phase 01 P07 | 1min | 1 task | 1 file |
 | Phase 02 P01 | 2min | 2 tasks | 9 files |
+| Phase 02 P02 | 3min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -68,6 +69,7 @@
 - tsx for TypeScript execution in dev — Node 24 type-stripping doesn't rewrite .js import specifiers in NodeNext mode
 - Android geo fix uses lon,lat order (not lat,lon) matching adb protocol — intentional
 - PlatformAdapter location methods are optional (?) since not all adapters may support GPS
+- PlaybackEngine uses SpawnCapable interface (not core ProcessManager) to avoid server/core type mismatch
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -90,10 +92,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 02-01-PLAN.md (Adapter extensions & module scaffold)
-**Next action:** Execute 02-02-PLAN.md (Location server routes, WS, playback engine)
-**Context for next session:** PlatformAdapter has setLocation/clearLocation on both iOS and Android adapters. @simvyn/module-location package exists with geo utilities (haversine, route interpolation) and storage helpers (favorites CRUD). Manifest skeleton ready for route/WS registration in Plan 02.
+**Last session:** Completed 02-02-PLAN.md (Location server routes, WS, playback engine)
+**Next action:** Execute remaining Phase 2 plans (03 may be done in parallel, then 04)
+**Context for next session:** Location module has HTTP routes (set/clear/search/reverse/favorites), WS channel "location" with playback control, PlaybackEngine for iOS stdin pipe and Android tick-based simulation. Manifest register() wired. CLI commands added by Plan 03 in parallel.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26*
+*Last updated: 2026-02-26T08:15:03Z*
