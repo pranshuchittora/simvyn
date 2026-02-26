@@ -34,5 +34,7 @@ export interface PlatformAdapter {
 	boot(id: string): Promise<void>;
 	shutdown(id: string): Promise<void>;
 	erase?(id: string): Promise<void>;
+	setLocation?(deviceId: string, lat: number, lon: number): Promise<void>;
+	clearLocation?(deviceId: string): Promise<void>;
 	capabilities(): PlatformCapability[];
 }

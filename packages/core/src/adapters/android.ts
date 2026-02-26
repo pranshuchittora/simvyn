@@ -165,6 +165,14 @@ export function createAndroidAdapter(): PlatformAdapter {
 		// erase is not available on Android via adb
 		erase: undefined,
 
+		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
+			await execFileAsync("adb", ["-s", deviceId, "emu", "geo", "fix", String(lon), String(lat)]);
+		},
+
+		async clearLocation(deviceId: string): Promise<void> {
+			await execFileAsync("adb", ["-s", deviceId, "emu", "geo", "fix", "0", "0"]);
+		},
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",

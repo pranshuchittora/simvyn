@@ -109,6 +109,14 @@ export function createIosAdapter(): PlatformAdapter {
 			await execFileAsync("xcrun", ["simctl", "erase", id]);
 		},
 
+		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "location", deviceId, "set", `${lat},${lon}`]);
+		},
+
+		async clearLocation(deviceId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "location", deviceId, "clear"]);
+		},
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
