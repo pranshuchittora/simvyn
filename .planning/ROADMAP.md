@@ -49,7 +49,13 @@ Plans:
   2. User can load a GPX file and play back a route with play/pause/stop controls, seeing the simulated device move along the path
   3. User can search for a location by name (geocoding), pick it on the map, and save it as a favorite that persists across sessions
   4. The location module registers its Fastify routes, WS handlers, CLI subcommands, and dashboard panel entirely through the module manifest — no core code changes were needed to add it
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Core adapter extensions + location module scaffold
+- [ ] 02-02-PLAN.md — Server routes, WS handler, playback engine, Nominatim proxy
+- [ ] 02-03-PLAN.md — CLI subcommands (location set, route, clear) + GPX/KML parser
+- [ ] 02-04-PLAN.md — Dashboard panel with Leaflet map, search, playback, favorites
 
 ### Phase 3: App Management Module
 **Goal:** Developers can manage the full app lifecycle — list, install, uninstall, launch, terminate, and inspect apps on any device
@@ -136,7 +142,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Device Management | 2/6 | In Progress |  |
-| 2. Location Module | 0/? | Not started | — |
+| 2. Location Module | 0/4 | Planned | — |
 | 3. App Management Module | 0/? | Not started | — |
 | 4. Log Viewer Module | 0/? | Not started | — |
 | 5. Dashboard UI | 0/? | Not started | — |
