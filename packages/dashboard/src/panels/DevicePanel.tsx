@@ -1,0 +1,265 @@
+import { useState, useEffect, useCallback } from "react";
+import { registerPanel } from "../stores/panel-registry";
+import { useDeviceStore } from "../stores/device-store";
+import { useWsListener } from "../hooks/use-ws";
+import type { Device } from "@simvyn/types";
+
+type ActionState = { deviceId: string; action: string } | null;
+
+function DevicePanel() {
+	const devices = useDeviceStore((s) => s.devices);
+	const setDevices = useDeviceStore((s) => s.setDevices);
+	const [actionInFlight, setActionInFlight] = useState<ActionState>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	// fetch initial device list on mount
+	useEffect(() => {
+		fetch("/api/modules/devices/list")
+			.then((res) => res.json())
+			.then((data: { devices: Device[] }) => setDevices(data.devices))
+			.catch(() => {});
+	}, [setDevices]);
+
+	// real-time updates via WS
+	const handleDeviceList = useCallback(
+		(payload: unknown) => setDevices(payload as Device[]),
+		[setDevices],
+	);
+	useWsListener("devices", "device-list", handleDeviceList);
+
+	async function doAction(deviceId: string, action: "boot" | "shutdown" | "erase") {
+		if (action === "erase" && !confirm("Are you sure you want to erase this device? All data will be lost.")) {
+			return;
+		}
+		setActionInFlight({ deviceId, action });
+		setError(null);
+		try {
+			const res = await fetch(`/api/modules/devices/${action}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ deviceId }),
+			});
+			if (!res.ok) {
+				const data = await res.json().catch(() => ({ error: "Unknown error" }));
+				setError(data.error || "Action failed");
+			}
+		} catch {
+			setError("Network error");
+		} finally {
+			setActionInFlight(null);
+		}
+	}
+
+	async function handleRefresh() {
+		try {
+			const res = await fetch("/api/modules/devices/refresh", { method: "POST" });
+			if (res.ok) {
+				const data = await res.json();
+				setDevices(data.devices);
+			}
+		} catch {}
+	}
+
+	const iosDevices = devices.filter((d) => d.platform === "ios");
+	const androidDevices = devices.filter((d) => d.platform === "android");
+
+	return (
+		<div className="p-6 space-y-6">
+			{/* Header */}
+			<div className="flex items-center justify-between">
+				<h1 className="text-xl font-semibold text-text-primary">Device Management</h1>
+				<button
+					onClick={handleRefresh}
+					className="rounded-[var(--radius-button)] bg-bg-surface px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+				>
+					Refresh
+				</button>
+			</div>
+
+			{/* Error toast */}
+			{error && (
+				<div className="rounded-[var(--radius-button)] bg-red-900/40 border border-red-500/30 px-4 py-2 text-sm text-red-300">
+					{error}
+					<button onClick={() => setError(null)} className="ml-2 text-red-400 hover:text-red-200">&times;</button>
+				</div>
+			)}
+
+			{/* Empty state */}
+			{devices.length === 0 && (
+				<div className="glass-panel p-12 text-center">
+					<div className="text-4xl mb-3">📱</div>
+					<p className="text-text-secondary">
+						No devices detected. Make sure Xcode Simulator or Android Emulator tools are installed.
+					</p>
+				</div>
+			)}
+
+			{/* iOS Section */}
+			{iosDevices.length > 0 && (
+				<DeviceSection title="iOS Simulators" icon="🍎" devices={iosDevices} actionInFlight={actionInFlight} onAction={doAction} />
+			)}
+
+			{/* Android Section */}
+			{androidDevices.length > 0 && (
+				<DeviceSection title="Android Emulators" icon="🤖" devices={androidDevices} actionInFlight={actionInFlight} onAction={doAction} />
+			)}
+		</div>
+	);
+}
+
+function DeviceSection({
+	title,
+	icon,
+	devices,
+	actionInFlight,
+	onAction,
+}: {
+	title: string;
+	icon: string;
+	devices: Device[];
+	actionInFlight: ActionState;
+	onAction: (deviceId: string, action: "boot" | "shutdown" | "erase") => void;
+}) {
+	return (
+		<div>
+			<h2 className="text-sm font-medium text-text-muted uppercase tracking-wider mb-3">
+				{icon} {title}
+			</h2>
+			<div className="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+				{devices.map((device) => (
+					<DeviceCard
+						key={device.id}
+						device={device}
+						isLoading={actionInFlight?.deviceId === device.id}
+						loadingAction={actionInFlight?.deviceId === device.id ? actionInFlight.action : undefined}
+						onAction={onAction}
+					/>
+				))}
+			</div>
+		</div>
+	);
+}
+
+function StateBadge({ state }: { state: Device["state"] }) {
+	const colors: Record<string, string> = {
+		booted: "bg-green-500/20 text-green-400 border-green-500/30",
+		shutdown: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30",
+		"shutting-down": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+		creating: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+	};
+	const label: Record<string, string> = {
+		booted: "Booted",
+		shutdown: "Shutdown",
+		"shutting-down": "Shutting Down",
+		creating: "Creating",
+	};
+
+	return (
+		<span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${colors[state] ?? colors.shutdown}`}>
+			{label[state] ?? state}
+		</span>
+	);
+}
+
+function DeviceCard({
+	device,
+	isLoading,
+	loadingAction,
+	onAction,
+}: {
+	device: Device;
+	isLoading: boolean;
+	loadingAction?: string;
+	onAction: (deviceId: string, action: "boot" | "shutdown" | "erase") => void;
+}) {
+	const truncatedId = device.id.length > 16 ? `${device.id.slice(0, 8)}…${device.id.slice(-6)}` : device.id;
+
+	return (
+		<div className="glass-panel p-4 flex flex-col gap-3">
+			<div className="flex items-start justify-between">
+				<div className="min-w-0 flex-1">
+					<div className="font-medium text-text-primary truncate">{device.name}</div>
+					<div className="text-xs text-text-muted mt-0.5">{truncatedId}</div>
+				</div>
+				<StateBadge state={device.state} />
+			</div>
+
+			<div className="flex items-center gap-3 text-xs text-text-secondary">
+				<span>{device.platform === "ios" ? "iOS" : "Android"} {device.osVersion}</span>
+				<span className="text-text-muted">{device.deviceType}</span>
+			</div>
+
+			<div className="flex items-center gap-2 pt-1 border-t border-border">
+				{device.state === "shutdown" && (
+					<ActionButton
+						label="Boot"
+						loading={isLoading && loadingAction === "boot"}
+						disabled={isLoading}
+						onClick={() => onAction(device.id, "boot")}
+						variant="primary"
+					/>
+				)}
+				{device.state === "booted" && (
+					<ActionButton
+						label="Shutdown"
+						loading={isLoading && loadingAction === "shutdown"}
+						disabled={isLoading}
+						onClick={() => onAction(device.id, "shutdown")}
+						variant="default"
+					/>
+				)}
+				{device.platform === "ios" && (
+					<ActionButton
+						label="Erase"
+						loading={isLoading && loadingAction === "erase"}
+						disabled={isLoading}
+						onClick={() => onAction(device.id, "erase")}
+						variant="destructive"
+					/>
+				)}
+			</div>
+		</div>
+	);
+}
+
+function ActionButton({
+	label,
+	loading,
+	disabled,
+	onClick,
+	variant,
+}: {
+	label: string;
+	loading: boolean;
+	disabled: boolean;
+	onClick: () => void;
+	variant: "primary" | "default" | "destructive";
+}) {
+	const base = "rounded-[var(--radius-button)] px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+	const variants: Record<string, string> = {
+		primary: "bg-accent-blue/20 text-accent-blue border border-accent-blue/30 hover:bg-accent-blue/30",
+		default: "bg-bg-surface text-text-secondary border border-border hover:text-text-primary hover:bg-glass",
+		destructive: "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20",
+	};
+
+	return (
+		<button
+			onClick={onClick}
+			disabled={disabled}
+			className={`${base} ${variants[variant]}`}
+		>
+			{loading ? (
+				<span className="inline-flex items-center gap-1">
+					<span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+					{label}
+				</span>
+			) : (
+				label
+			)}
+		</button>
+	);
+}
+
+registerPanel("devices", DevicePanel);
+
+export default DevicePanel;

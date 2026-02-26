@@ -7,6 +7,9 @@ import Sidebar from "./components/Sidebar";
 import ModuleShell from "./components/ModuleShell";
 import type { Device } from "@simvyn/types";
 
+// Module panel side-effect registrations
+import "./panels/DevicePanel";
+
 function AppContent() {
 	const setDevices = useDeviceStore((s) => s.setDevices);
 	const fetchModules = useModuleStore((s) => s.fetchModules);
