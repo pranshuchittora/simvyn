@@ -153,7 +153,11 @@ Plans:
   2. User can override the iOS status bar (time, battery, network) and grant/revoke/reset app permissions on both platforms from the dashboard
   3. User can change accessibility content size, increase contrast (iOS), and toggle TalkBack (Android) from a quick-preset panel
   4. All settings and accessibility operations are available via CLI subcommands (`simvyn settings`, `simvyn a11y`)
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Settings & accessibility module backend (types, adapters, routes, CLI)
+- [ ] 08-02-PLAN.md — Dashboard panel with appearance, status bar, permissions, accessibility sections
 
 ### Phase 9: Utility Modules
 **Goal:** Developers can view crash logs, inject media into devices, and bridge the clipboard between host and device
@@ -177,7 +181,7 @@ Plans:
 | 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
 | 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
 | 7. File System & Database Inspector | 3/3 | Complete | 2026-02-26 |
-| 8. Device Settings & Accessibility | 0/? | Not started | — |
+| 8. Device Settings & Accessibility | 0/2 | Not started | — |
 | 9. Utility Modules | 0/? | Not started | — |
 
 ## Coverage Map
