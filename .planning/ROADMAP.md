@@ -14,7 +14,7 @@
 - [x] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
 - [x] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
 - [x] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
-- [ ] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
+- [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [ ] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 
 ## Phase Details
@@ -156,8 +156,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 08-01-PLAN.md — Settings & accessibility module backend (types, adapters, routes, CLI)
-- [ ] 08-02-PLAN.md — Dashboard panel with appearance, status bar, permissions, accessibility sections
+- [x] 08-01-PLAN.md — Settings & accessibility module backend (types, adapters, routes, CLI)
+- [x] 08-02-PLAN.md — Dashboard panel with appearance, status bar, permissions, accessibility sections
 
 ### Phase 9: Utility Modules
 **Goal:** Developers can view crash logs, inject media into devices, and bridge the clipboard between host and device
@@ -181,7 +181,7 @@ Plans:
 | 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
 | 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
 | 7. File System & Database Inspector | 3/3 | Complete | 2026-02-26 |
-| 8. Device Settings & Accessibility | 0/2 | Not started | — |
+| 8. Device Settings & Accessibility | 2/2 | Complete | 2026-02-26 |
 | 9. Utility Modules | 0/? | Not started | — |
 
 ## Coverage Map
