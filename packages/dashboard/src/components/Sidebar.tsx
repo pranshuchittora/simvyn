@@ -2,7 +2,9 @@ import {
 	AppWindow,
 	Bell,
 	Camera,
+	Database,
 	ExternalLink,
+	FolderOpen,
 	MapPin,
 	MonitorSmartphone,
 	ScrollText,
@@ -18,6 +20,8 @@ const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: numbe
 	screenshot: Camera,
 	"deep-links": ExternalLink,
 	push: Bell,
+	fs: FolderOpen,
+	database: Database,
 };
 
 const labelMap: Record<string, string> = {
@@ -28,6 +32,8 @@ const labelMap: Record<string, string> = {
 	screenshot: "Screenshots",
 	"deep-links": "Deep Links",
 	push: "Push",
+	fs: "Files",
+	database: "Database",
 };
 
 export default function Sidebar() {
