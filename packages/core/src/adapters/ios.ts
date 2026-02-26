@@ -258,6 +258,10 @@ export function createIosAdapter(): PlatformAdapter {
 			});
 		},
 
+		async addMedia(deviceId: string, filePath: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "addmedia", deviceId, filePath]);
+		},
+
 		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
 			await execFileAsync("xcrun", ["simctl", "ui", deviceId, "appearance", mode]);
 		},

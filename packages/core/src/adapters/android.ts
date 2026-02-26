@@ -1,4 +1,5 @@
 import { type ChildProcess, execFile, spawn } from "node:child_process";
+import { basename } from "node:path";
 import { promisify } from "node:util";
 import type { AppInfo, Device, PlatformAdapter, PlatformCapability } from "@simvyn/types";
 
@@ -339,6 +340,24 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"uimode",
 				"night",
 				mode === "dark" ? "yes" : "no",
+			]);
+		},
+
+		async addMedia(deviceId: string, filePath: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for media operations");
+			const filename = basename(filePath);
+			await execFileAsync("adb", ["-s", deviceId, "push", filePath, `/sdcard/DCIM/${filename}`]);
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"am",
+				"broadcast",
+				"-a",
+				"android.intent.action.MEDIA_SCANNER_SCAN_FILE",
+				"-d",
+				`file:///sdcard/DCIM/${filename}`,
 			]);
 		},
 
