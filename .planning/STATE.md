@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 10 — Post-v1 Bugfixes
+**Current Focus:** Phase 11 — Location Module Rewrite
 
 ## Current Position
 
-**Phase:** 10 of 10 — Post-v1 Bugfixes
-**Plan:** 1 of 1
+**Phase:** 11 of 11 — Location Module Rewrite
+**Plan:** 2 of 4
 **Status:** In progress
-**Progress:** [█████████░] 89%
+**Progress:** [████████░░] 83%
 
 ## Phase Overview
 
@@ -27,14 +27,15 @@
 | 8. Device Settings & Accessibility | ✅ Complete (2/2 plans) |
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
+| 11. Location Module Rewrite | 🔄 In Progress (1/4 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 10/10 |
-| Plans completed | 37/37 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 2, Phase 9: 4, Phase 10: 1) |
-| Requirements delivered | 122/122 |
+| Phases completed | 10/11 |
+| Plans completed | 38/41 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 2, Phase 9: 4, Phase 10: 1, Phase 11: 1) |
+| Requirements delivered | 124/126 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -71,6 +72,7 @@
 | Phase 09 P03 | 1min | 1 tasks | 8 files |
 | Phase 09 P04 | 2min | 2 tasks | 5 files |
 | Phase 10 P01 | 1min | 2 tasks | 3 files |
+| Phase 11 P01 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -160,6 +162,7 @@
 - iOS setClipboard uses spawn + stdin pipe to `pbcopy` (reads from stdin, not file argument)
 - Z-index stacking order: sidebar(20) < header(30) < tooltips/dropdowns(50+) — raise overlays rather than lower content
 - AnimatedPanel motion.div needs h-full to maintain height chain for panels using height: 100% (e.g. LocationPanel)
+- Store migration from sim-location: direct copy with only API path prefix changes (favorites: /api/favorites/* → /api/modules/location/favorites/*)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -189,10 +192,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T13:12:52Z
-**Stopped at:** Completed 10-01-PLAN.md
-**Context for next session:** Phase 10 complete (1/1 plans). Fixed 3 visual bugs: dock tooltip z-index, TopBar dropdown z-index, location map height chain. Dashboard is now fully usable.
+**Last session:** 2026-02-26T14:00:37Z
+**Stopped at:** Completed 11-01-PLAN.md
+**Context for next session:** Phase 11 plan 01 complete (1/4 plans). Replaced 4 location stores with sim-location versions and added route-parser utility. Components will have type errors until plans 02/03 update them to use new store interfaces.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T13:12:52Z*
+*Last updated: 2026-02-26T14:00:37Z*

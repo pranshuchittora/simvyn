@@ -254,7 +254,7 @@ PUSH-05 → Phase 6     CRASH-02 → Phase 9
   1. Location panel renders the exact same UI as sim-location's web app — dark map tiles, glass-panel toolbar, search with geocoding, favorites sidebar, mode selector, playback controls
   2. Map renders correctly with OpenStreetMap tiles, click-to-set-location works, route waypoints are interactive
   3. GPX/KML file import, route playback with speed controls, and favorites persistence all work end-to-end
-**Plans:** 3 plans
+**Plans:** 2/4 plans executed
 
 Plans:
 - [ ] 11-01-PLAN.md — Replace stores with full sim-location versions + add route-parser utility
