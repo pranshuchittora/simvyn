@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useDeviceStore } from "../stores/device-store";
 
 const tips = [
 	"Press Cmd+K to search modules and run device actions",
@@ -21,6 +22,7 @@ const modKey = isMac ? "\u2318" : "Ctrl";
 
 export default function HomeScreen() {
 	const tip = useMemo(() => tips[Math.floor(Math.random() * tips.length)], []);
+	const devices = useDeviceStore((s) => s.devices);
 
 	return (
 		<div className="absolute inset-0 flex items-center justify-center select-none">
@@ -35,6 +37,28 @@ export default function HomeScreen() {
 				<h1 className="text-4xl font-semibold text-text-primary tracking-wide">simvyn</h1>
 
 				<p className="text-base text-text-secondary text-center leading-relaxed">{tip}</p>
+
+				{devices.length > 0 && (
+					<div className="flex flex-wrap items-center justify-center gap-2">
+						{devices.map((d) => (
+							<div
+								key={d.id}
+								className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bg-surface/40 border border-white/8 text-sm"
+							>
+								<span
+									className="w-2 h-2 rounded-full shrink-0"
+									style={{
+										backgroundColor: d.state === "booted" ? "#4ade80" : "#6b7280",
+									}}
+								/>
+								<span className="text-text-primary">{d.name}</span>
+								<span className="text-text-muted text-xs">
+									{d.platform === "ios" ? "iOS" : "Android"}
+								</span>
+							</div>
+						))}
+					</div>
+				)}
 
 				<div className="flex items-center gap-2 text-sm text-text-secondary">
 					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/60 border border-white/15 font-mono">
