@@ -294,7 +294,7 @@ Plans:
   2. All module panels consume the selected device from a shared global store, not their own selector
   3. Location module supports multi-device select (set location on multiple devices at once)
   4. All other modules use single-device select
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 12.2-01-PLAN.md — Upgrade device store + DeviceSelector for adaptive single/multi mode

@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 12.1 — Log Module Performance Overhaul
+**Current Focus:** Phase 12.2 — Unified Device Selector
 
 ## Current Position
 
-**Phase:** 12.1 — Log Module Performance Overhaul
-**Plan:** 3 of 3
-**Status:** Milestone complete
-**Progress:** [█████████░] 90%
+**Phase:** 12.2 — Unified Device Selector
+**Plan:** 1 of 2
+**Status:** Executing
+**Progress:** [█████████░] 89%
 
 ## Phase Overview
 
@@ -30,6 +30,7 @@
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
 | 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
 | 12.1 Log Module Performance Overhaul | ✅ Complete (3/3 plans) |
+| 12.2 Unified Device Selector | 🔄 Executing (1/2 plans) |
 
 ## Performance Metrics
 
@@ -87,6 +88,7 @@
 | Phase 12.1 P01 | 1min | 2 tasks | 2 files |
 | Phase 12.1 P02 | 1min | 2 tasks | 5 files |
 | Phase 12.1 P03 | 2min | 2 tasks | 3 files |
+| Phase 12.2 P01 | 1min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -203,6 +205,9 @@
 - iOS clear-device-logs restarts the log stream (no equivalent to adb logcat -c) — stop/start cycle gives fresh output
 - LogList reads from store directly (selectFilteredEntries) instead of receiving entries as props — avoids parent re-render on every log batch
 - selectedDeviceId stored in ref for WS callbacks — prevents stale closure issues with useCallback dependencies
+- selectedDeviceIds as string[] (empty = no selection) replaces nullable single selectedDeviceId — cleaner null-safety
+- MULTI_SELECT_MODULES Set in DeviceSelector for extensible module-based mode switching (currently only "location")
+- toggleDevice guards against removing last device — silent no-op, prevents empty selection state
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -235,9 +240,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T18:14:39.662Z
-**Stopped at:** Completed 12.1-03-PLAN.md (virtual list UI, pagination wiring, device-clear, unmount cleanup)
-**Context for next session:** Phase 12.1 complete (3/3 plans). Return to Phase 12 remaining plans (4-7).
+**Last session:** 2026-02-26T20:29:15Z
+**Stopped at:** Completed 12.2-01-PLAN.md (device store multi-select, adaptive DeviceSelector)
+**Context for next session:** Phase 12.2 Plan 01 complete (1/2 plans). Next: 12.2-02 to wire panels to global store.
 
 ---
 *State initialized: 2026-02-26*
