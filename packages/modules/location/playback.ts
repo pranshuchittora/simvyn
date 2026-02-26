@@ -1,14 +1,17 @@
-import type { ChildProcess } from "node:child_process";
-import type { ProcessManager } from "@simvyn/core";
+import type { ChildProcess, SpawnOptions } from "node:child_process";
 import type { PlatformAdapter } from "@simvyn/types";
 import { cumulativeDistances, interpolateAlongRoute } from "./geo.js";
+
+interface SpawnCapable {
+	spawn(command: string, args: string[], opts?: SpawnOptions): ChildProcess;
+}
 
 export interface PlaybackOptions {
 	deviceId: string;
 	platform: "ios" | "android";
 	waypoints: [number, number][];
 	speedMs: number;
-	processManager: ProcessManager;
+	processManager: SpawnCapable;
 	adapter: PlatformAdapter;
 	onPosition: (data: PlaybackPosition) => void;
 	onComplete: () => void;
