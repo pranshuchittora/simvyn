@@ -12,9 +12,9 @@ const LEVELS: {
 		key: "verbose",
 		label: "V",
 		activeStyle: {
-			background: "rgba(107,114,128,0.2)",
-			color: "#d1d5db",
-			borderColor: "rgba(107,114,128,0.3)",
+			background: "rgba(168,85,247,0.2)",
+			color: "#c4b5fd",
+			borderColor: "rgba(168,85,247,0.3)",
 		},
 	},
 	{
