@@ -21,7 +21,11 @@ function AnimatedPanel({ isActive, children }: { isActive: boolean; children: Re
 		}
 	}, [isActive, controls]);
 
-	return <motion.div animate={controls}>{children}</motion.div>;
+	return (
+		<motion.div className="h-full" animate={controls}>
+			{children}
+		</motion.div>
+	);
 }
 
 function LoadingSkeleton() {
