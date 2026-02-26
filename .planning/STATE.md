@@ -25,7 +25,7 @@
 | 6. Quick-Action Modules | ✅ Complete (4/4 plans) |
 | 7. File System & Database Inspector | ✅ Complete (3/3 plans) |
 | 8. Device Settings & Accessibility | ✅ Complete (2/2 plans) |
-| 9. Utility Modules | 🔄 In progress (1/4 plans) |
+| 9. Utility Modules | 🔄 In progress (2/4 plans) |
 
 ## Performance Metrics
 
@@ -65,6 +65,7 @@
 | Phase 07 P03 | 5min | 2 tasks | 12 files |
 | Phase 08 P01 | 5min | 3 tasks | 9 files |
 | Phase 08 P02 | 3min | 2 tasks | 6 files |
+| Phase 09 P01 | 3min | 2 tasks | 9 files |
 | Phase 09 P02 | 2min | 1 tasks | 7 files |
 
 ## Accumulated Context
@@ -147,6 +148,9 @@
 - Android permission prefix auto-prepended — short names (CAMERA) mapped to android.permission.CAMERA for ergonomic API
 - Capabilities endpoint derives flags from adapter method presence (!!adapter?.method) — no hardcoded platform checks
 - Settings adapter methods as optional on PlatformAdapter — undefined for unsupported platforms (e.g. setTalkBack on iOS)
+- iOS crash logs parsed from filename pattern (ProcessName-YYYY-MM-DD-HHMMSS.ips) with fs.stat for timestamps
+- Android logcat entries grouped by PID+TAG into crash groups, tombstones fetched via dumpsys dropbox
+- Android crash log view returns preview text — logcat dumps are transient, no persistent log file to re-read
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -173,8 +177,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T12:49:11.172Z
-**Stopped at:** Completed 09-02-PLAN.md
+**Last session:** 2026-02-26T12:48:00Z
+**Stopped at:** Completed 09-01-PLAN.md and 09-02-PLAN.md
 **Context for next session:** Phase 8 complete (2/2 plans). Settings & accessibility module delivered — 10 adapter methods, 11 REST endpoints, 7 CLI subcommands, dashboard panel with platform-aware sections. All 12 requirements (SET-01–07, A11Y-01–05) verified. Phase 9 (Utility Modules: crash logs, media injection, clipboard) is the final phase.
 
 ---

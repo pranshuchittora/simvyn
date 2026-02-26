@@ -120,10 +120,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Crash Logs
 
-- [ ] **CRASH-01**: List and view iOS crash logs from `~/Library/Logs/DiagnosticReports/`
-- [ ] **CRASH-02**: List and view Android crash logs via `adb logcat *:E` and tombstone access
-- [ ] **CRASH-03**: Filter crash logs by app/process and time range
-- [ ] **CRASH-04**: CLI subcommand: `simvyn crashes <device> [--app <bundle-id>]`
+- [x] **CRASH-01**: List and view iOS crash logs from `~/Library/Logs/DiagnosticReports/`
+- [x] **CRASH-02**: List and view Android crash logs via `adb logcat *:E` and tombstone access
+- [x] **CRASH-03**: Filter crash logs by app/process and time range
+- [x] **CRASH-04**: CLI subcommand: `simvyn crashes <device> [--app <bundle-id>]`
 
 ### App Management
 
@@ -306,10 +306,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-03 | Phase 8 | Complete |
 | A11Y-04 | Phase 8 | Complete |
 | A11Y-05 | Phase 8 | Complete |
-| CRASH-01 | Phase 9 | Pending |
-| CRASH-02 | Phase 9 | Pending |
-| CRASH-03 | Phase 9 | Pending |
-| CRASH-04 | Phase 9 | Pending |
+| CRASH-01 | Phase 9 | Complete |
+| CRASH-02 | Phase 9 | Complete |
+| CRASH-03 | Phase 9 | Complete |
+| CRASH-04 | Phase 9 | Complete |
 | MED-01 | Phase 9 | Complete |
 | MED-02 | Phase 9 | Complete |
 | MED-03 | Phase 9 | Complete |

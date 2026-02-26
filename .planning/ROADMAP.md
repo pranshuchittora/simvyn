@@ -171,8 +171,8 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 09-01-PLAN.md — Crash logs module (iOS DiagnosticReports + Android logcat, routes, CLI)
-- [ ] 09-02-PLAN.md — Media injection module (addMedia adapters, multipart upload route, CLI)
+- [x] 09-01-PLAN.md — Crash logs module (iOS DiagnosticReports + Android logcat, routes, CLI)
+- [x] 09-02-PLAN.md — Media injection module (addMedia adapters, multipart upload route, CLI)
 - [ ] 09-03-PLAN.md — Clipboard bridge module (get/set adapters, routes, CLI)
 - [ ] 09-04-PLAN.md — Dashboard panels for all 3 modules + sidebar icons
 
@@ -188,7 +188,7 @@ Plans:
 | 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
 | 7. File System & Database Inspector | 3/3 | Complete | 2026-02-26 |
 | 8. Device Settings & Accessibility | 2/2 | Complete | 2026-02-26 |
-| 9. Utility Modules | 0/4 | Not started | — |
+| 9. Utility Modules | 2/4 | In Progress | — |
 
 ## Coverage Map
 
