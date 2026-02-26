@@ -36,49 +36,56 @@ export default function PlaybackControls({ sendLocation }: Props) {
 		const kmh = speedUnit === "ms" ? msToKmh(num) : num;
 		setSpeedKmh(kmh);
 		if (usePlaybackStore.getState().status === "playing") {
-			const deviceId = useDeviceStore.getState().selectedDeviceId;
-			sendLocation("set-speed", {
-				deviceId,
-				speedMs: kmhToMs(kmh) * multiplier,
-			});
+			for (const deviceId of useDeviceStore.getState().selectedDeviceIds) {
+				sendLocation("set-speed", {
+					deviceId,
+					speedMs: kmhToMs(kmh) * multiplier,
+				});
+			}
 		}
 	}, [customSpeed, speedUnit, multiplier, setSpeedKmh, sendLocation]);
 
 	if (waypoints.length < 2 && status === "idle") return null;
 
 	function handlePlay() {
+		const deviceIds = useDeviceStore.getState().selectedDeviceIds;
 		if (status === "paused") {
-			const deviceId = useDeviceStore.getState().selectedDeviceId;
-			sendLocation("resume-playback", { deviceId });
+			for (const deviceId of deviceIds) {
+				sendLocation("resume-playback", { deviceId });
+			}
 		} else {
-			const selectedId = useDeviceStore.getState().selectedDeviceId;
-			sendLocation("start-playback", {
-				waypoints,
-				speedMs: kmhToMs(speedKmh),
-				multiplier,
-				loop,
-				deviceId: selectedId,
-			});
+			for (const deviceId of deviceIds) {
+				sendLocation("start-playback", {
+					waypoints,
+					speedMs: kmhToMs(speedKmh),
+					multiplier,
+					loop,
+					deviceId,
+				});
+			}
 		}
 	}
 
 	function handlePause() {
-		const deviceId = useDeviceStore.getState().selectedDeviceId;
-		sendLocation("pause-playback", { deviceId });
+		for (const deviceId of useDeviceStore.getState().selectedDeviceIds) {
+			sendLocation("pause-playback", { deviceId });
+		}
 	}
 
 	function handleStop() {
-		const deviceId = useDeviceStore.getState().selectedDeviceId;
-		sendLocation("stop-playback", { deviceId });
+		for (const deviceId of useDeviceStore.getState().selectedDeviceIds) {
+			sendLocation("stop-playback", { deviceId });
+		}
 	}
 
 	function sendSpeedUpdate(newKmh: number, _newMultiplier: number) {
 		if (status === "playing") {
-			const deviceId = useDeviceStore.getState().selectedDeviceId;
-			sendLocation("set-speed", {
-				deviceId,
-				speedMs: kmhToMs(newKmh) * _newMultiplier,
-			});
+			for (const deviceId of useDeviceStore.getState().selectedDeviceIds) {
+				sendLocation("set-speed", {
+					deviceId,
+					speedMs: kmhToMs(newKmh) * _newMultiplier,
+				});
+			}
 		}
 	}
 
