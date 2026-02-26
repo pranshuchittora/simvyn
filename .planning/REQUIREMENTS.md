@@ -54,13 +54,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Database Inspector
 
-- [ ] **DB-01**: Detect and list SQLite databases within app containers
-- [ ] **DB-02**: Browse SQLite tables — show schema, row counts, column types
-- [ ] **DB-03**: View table data with pagination and sorting
-- [ ] **DB-04**: Edit individual cell values and write back to database
-- [ ] **DB-05**: Run arbitrary SQL queries with results display
-- [ ] **DB-06**: View SharedPreferences (Android) as key-value table
-- [ ] **DB-07**: View NSUserDefaults (iOS) as key-value table via plist reading
+- [x] **DB-01**: Detect and list SQLite databases within app containers
+- [x] **DB-02**: Browse SQLite tables — show schema, row counts, column types
+- [x] **DB-03**: View table data with pagination and sorting
+- [x] **DB-04**: Edit individual cell values and write back to database
+- [x] **DB-05**: Run arbitrary SQL queries with results display
+- [x] **DB-06**: View SharedPreferences (Android) as key-value table
+- [x] **DB-07**: View NSUserDefaults (iOS) as key-value table via plist reading
 - [ ] **DB-08**: CLI subcommands: `simvyn db list <device>`, `simvyn db query <device> <db> <sql>`
 
 ### Logs
@@ -286,13 +286,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | FS-04 | Phase 7 | Complete |
 | FS-05 | Phase 7 | Complete |
 | FS-06 | Phase 7 | Complete |
-| DB-01 | Phase 7 | Pending |
-| DB-02 | Phase 7 | Pending |
-| DB-03 | Phase 7 | Pending |
-| DB-04 | Phase 7 | Pending |
-| DB-05 | Phase 7 | Pending |
-| DB-06 | Phase 7 | Pending |
-| DB-07 | Phase 7 | Pending |
+| DB-01 | Phase 7 | Complete |
+| DB-02 | Phase 7 | Complete |
+| DB-03 | Phase 7 | Complete |
+| DB-04 | Phase 7 | Complete |
+| DB-05 | Phase 7 | Complete |
+| DB-06 | Phase 7 | Complete |
+| DB-07 | Phase 7 | Complete |
 | DB-08 | Phase 7 | Pending |
 | SET-01 | Phase 8 | Pending |
 | SET-02 | Phase 8 | Pending |
