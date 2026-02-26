@@ -65,14 +65,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Logs
 
-- [ ] **LOG-01**: Stream iOS simulator logs in real-time via `simctl spawn log stream`
-- [ ] **LOG-02**: Stream Android device logs in real-time via `adb logcat`
-- [ ] **LOG-03**: Filter logs by level (verbose, debug, info, warning, error, fatal) with color coding
-- [ ] **LOG-04**: Search/filter logs by text pattern with regex support
-- [ ] **LOG-05**: Filter logs by process/app name
-- [ ] **LOG-06**: Export logs to file (plain text or JSON)
-- [ ] **LOG-07**: Server-side log batching to prevent WebSocket flooding
-- [ ] **LOG-08**: CLI subcommand: `simvyn logs <device> [--level <level>] [--filter <pattern>]`
+- [x] **LOG-01**: Stream iOS simulator logs in real-time via `simctl spawn log stream`
+- [x] **LOG-02**: Stream Android device logs in real-time via `adb logcat`
+- [x] **LOG-03**: Filter logs by level (verbose, debug, info, warning, error, fatal) with color coding
+- [x] **LOG-04**: Search/filter logs by text pattern with regex support
+- [x] **LOG-05**: Filter logs by process/app name
+- [x] **LOG-06**: Export logs to file (plain text or JSON)
+- [x] **LOG-07**: Server-side log batching to prevent WebSocket flooding
+- [x] **LOG-08**: CLI subcommand: `simvyn logs <device> [--level <level>] [--filter <pattern>]`
 
 ### Push Notifications
 
@@ -246,14 +246,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 | APP-07 | Phase 3 | Complete |
 | APP-08 | Phase 3 | Complete |
 | APP-09 | Phase 3 | Complete |
-| LOG-01 | Phase 4 | Pending |
-| LOG-02 | Phase 4 | Pending |
-| LOG-03 | Phase 4 | Pending |
-| LOG-04 | Phase 4 | Pending |
-| LOG-05 | Phase 4 | Pending |
-| LOG-06 | Phase 4 | Pending |
-| LOG-07 | Phase 4 | Pending |
-| LOG-08 | Phase 4 | Pending |
+| LOG-01 | Phase 4 | Complete |
+| LOG-02 | Phase 4 | Complete |
+| LOG-03 | Phase 4 | Complete |
+| LOG-04 | Phase 4 | Complete |
+| LOG-05 | Phase 4 | Complete |
+| LOG-06 | Phase 4 | Complete |
+| LOG-07 | Phase 4 | Complete |
+| LOG-08 | Phase 4 | Complete |
 | UI-01 | Phase 5 | Pending |
 | UI-02 | Phase 5 | Pending |
 | UI-03 | Phase 5 | Pending |

@@ -11,6 +11,7 @@ import { useModuleStore } from "./stores/module-store";
 import "./panels/DevicePanel";
 import "./panels/LocationPanel";
 import "./panels/AppPanel";
+import "./panels/LogPanel";
 
 function AppContent() {
 	const setDevices = useDeviceStore((s) => s.setDevices);

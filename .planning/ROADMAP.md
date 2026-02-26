@@ -10,7 +10,7 @@
 - [x] **Phase 1: Foundation & Device Management** — Monorepo, module system, server, dashboard shell, CLI, device discovery and lifecycle
 - [x] **Phase 2: Location Module (sim-location Migration)** — Migrate sim-location into module architecture, validating the module system end-to-end
 - [x] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
-- [ ] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
+- [x] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
 - [ ] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
 - [ ] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
 - [ ] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
@@ -87,10 +87,10 @@ Plans:
 **Plans:** 4 plans
 
 Plans:
-- [ ] 04-01-PLAN.md — Shared types (LogLevel, LogEntry) + LogStreamer class with iOS/Android ndjson parsing and batched flush
-- [ ] 04-02-PLAN.md — Module scaffold, Fastify export route, WS handler with ref-counted streaming
-- [ ] 04-03-PLAN.md — CLI subcommand: `simvyn logs <device>` with level/regex filtering and ANSI colors
-- [ ] 04-04-PLAN.md — Dashboard panel with real-time log list, level/search/process filters, and export
+- [x] 04-01-PLAN.md — Shared types (LogLevel, LogEntry) + LogStreamer class with iOS/Android ndjson parsing and batched flush
+- [x] 04-02-PLAN.md — Module scaffold, Fastify export route, WS handler with ref-counted streaming
+- [x] 04-03-PLAN.md — CLI subcommand: `simvyn logs <device>` with level/regex filtering and ANSI colors
+- [x] 04-04-PLAN.md — Dashboard panel with real-time log list, level/search/process filters, and export
 
 ### Phase 5: Dashboard UI
 **Goal:** The web dashboard delivers the Apple Liquid Glass aesthetic with a polished, responsive layout that makes every module feel native
@@ -156,7 +156,7 @@ Plans:
 | 1. Foundation & Device Management | 7/7 | Complete | 2026-02-26 |
 | 2. Location Module | 4/4 | Complete | 2026-02-26 |
 | 3. App Management Module | 4/4 | Complete | 2026-02-26 |
-| 4. Log Viewer Module | 0/4 | Planned | — |
+| 4. Log Viewer Module | 4/4 | Complete | 2026-02-26 |
 | 5. Dashboard UI | 0/? | Not started | — |
 | 6. Quick-Action Modules | 0/? | Not started | — |
 | 7. File System & Database Inspector | 0/? | Not started | — |

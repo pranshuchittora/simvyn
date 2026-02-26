@@ -36,6 +36,18 @@ export interface AppInfo {
 	appPath?: string;
 }
 
+export type LogLevel = "verbose" | "debug" | "info" | "warning" | "error" | "fatal";
+
+export interface LogEntry {
+	timestamp: string;
+	level: LogLevel;
+	message: string;
+	processName: string;
+	pid: number;
+	subsystem?: string;
+	category?: string;
+}
+
 export interface PlatformAdapter {
 	platform: Platform;
 	isAvailable(): Promise<boolean>;

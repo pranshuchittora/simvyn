@@ -2,6 +2,8 @@ export type {
 	AppInfo,
 	Device,
 	DeviceState,
+	LogEntry,
+	LogLevel,
 	Platform,
 	PlatformAdapter,
 	PlatformCapability,
