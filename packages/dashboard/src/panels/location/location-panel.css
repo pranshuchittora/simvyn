@@ -955,18 +955,20 @@
 	bottom: 160px;
 	left: 12px;
 	z-index: 1000;
-	width: 52px;
+	width: fit-content;
 	overflow: hidden;
 	transition:
 		width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
 		max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 	max-height: 44px;
+	background: rgba(30, 30, 42, 0.85);
+	backdrop-filter: blur(24px) saturate(1.5);
+	-webkit-backdrop-filter: blur(24px) saturate(1.5);
 }
 
 .bookmarks-card-open {
 	width: 280px;
 	max-height: 500px;
-	overflow-y: auto;
 }
 
 .bookmarks-toggle {
@@ -1018,6 +1020,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
+	max-height: 440px;
+	overflow-y: auto;
 }
 
 .bookmarks-save-section {
