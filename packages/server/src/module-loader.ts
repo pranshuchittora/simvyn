@@ -1,12 +1,16 @@
+import { readdir } from "node:fs/promises";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import fp from "fastify-plugin";
 import type { FastifyInstance } from "fastify";
+import type { SimvynModule, PlatformCapability } from "@simvyn/types";
 
 export interface ModuleMetadata {
 	name: string;
 	version: string;
 	description: string;
 	icon?: string;
-	capabilities?: string[];
+	capabilities?: PlatformCapability[];
 }
 
 declare module "fastify" {
@@ -15,10 +19,114 @@ declare module "fastify" {
 	}
 }
 
+function validateManifest(mod: unknown): mod is SimvynModule {
+	if (!mod || typeof mod !== "object") return false;
+	const m = mod as Record<string, unknown>;
+	return (
+		typeof m.name === "string" &&
+		typeof m.version === "string" &&
+		typeof m.register === "function"
+	);
+}
+
 export const moduleLoaderPlugin = fp(async function moduleLoader(fastify: FastifyInstance, opts: { modulesDir: string }) {
-	// Placeholder — implemented in Task 3
+	const registry = new Map<string, ModuleMetadata>();
+	fastify.decorate("moduleRegistry", registry);
+
+	const { modulesDir } = opts;
+
+	let entries;
+	try {
+		entries = await readdir(modulesDir, { withFileTypes: true });
+	} catch {
+		fastify.log.info({ modulesDir }, "Modules directory not found, skipping module loading");
+		registerModulesRoute(fastify, registry);
+		return;
+	}
+
+	for (const entry of entries) {
+		if (!entry.isDirectory()) continue;
+
+		const manifestPath = join(modulesDir, entry.name, "manifest");
+
+		let mod: SimvynModule;
+		try {
+			// Try .js first (compiled), then .ts via import
+			let imported;
+			try {
+				const jsPath = manifestPath + ".js";
+				imported = await import(pathToFileURL(jsPath).href);
+			} catch {
+				const tsPath = manifestPath + ".ts";
+				imported = await import(pathToFileURL(tsPath).href);
+			}
+			mod = imported.default ?? imported;
+		} catch (err) {
+			fastify.log.warn({ module: entry.name, error: (err as Error).message }, "Failed to import module manifest, skipping");
+			continue;
+		}
+
+		if (!validateManifest(mod)) {
+			fastify.log.warn({ module: entry.name }, "Invalid module manifest (missing name, version, or register), skipping");
+			continue;
+		}
+
+		try {
+			await fastify.register(mod.register, { prefix: `/api/modules/${mod.name}` });
+		} catch (err) {
+			fastify.log.warn({ module: mod.name, error: (err as Error).message }, "Failed to register module, skipping");
+			continue;
+		}
+
+		registry.set(mod.name, {
+			name: mod.name,
+			version: mod.version,
+			description: mod.description,
+			icon: mod.icon,
+			capabilities: mod.capabilities,
+		});
+
+		fastify.log.info({ module: mod.name, version: mod.version }, "Module loaded");
+	}
+
+	registerModulesRoute(fastify, registry);
 }, { name: "module-loader" });
 
-export async function getModuleCLIRegistrars(_modulesDir: string): Promise<Array<{ name: string; register: (program: any) => void }>> {
-	return [];
+function registerModulesRoute(fastify: FastifyInstance, registry: Map<string, ModuleMetadata>) {
+	fastify.get("/api/modules", async () => {
+		return Array.from(registry.values());
+	});
+}
+
+export async function getModuleCLIRegistrars(modulesDir: string): Promise<Array<{ name: string; register: (program: any) => void }>> {
+	const registrars: Array<{ name: string; register: (program: any) => void }> = [];
+
+	let entries;
+	try {
+		entries = await readdir(modulesDir, { withFileTypes: true });
+	} catch {
+		return registrars;
+	}
+
+	for (const entry of entries) {
+		if (!entry.isDirectory()) continue;
+
+		const manifestPath = join(modulesDir, entry.name, "manifest");
+		try {
+			let imported;
+			try {
+				imported = await import(pathToFileURL(manifestPath + ".js").href);
+			} catch {
+				imported = await import(pathToFileURL(manifestPath + ".ts").href);
+			}
+			const mod = imported.default ?? imported;
+			if (mod?.cli && typeof mod.cli === "function") {
+				registrars.push({ name: mod.name, register: mod.cli });
+			}
+		} catch {
+			// Skip modules that can't be imported
+		}
+	}
+
+	return registrars;
 }
