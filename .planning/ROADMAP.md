@@ -28,7 +28,7 @@
 - [x] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling (completed 2026-02-26)
 - [x] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion (completed 2026-02-26)
 - [x] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage (completed 2026-02-26)
-- [ ] **Phase 17.1: Typography Update** — Cascadia Code for branding, adjust all dashboard text styling (INSERTED)
+- [x] **Phase 17.1: Typography Update** — Cascadia Code for branding, adjust all dashboard text styling (INSERTED) (completed 2026-02-26)
 
 ## Phase Details
 
@@ -368,7 +368,7 @@ TSET-05 → Phase 17
 **Success Criteria** (what must be TRUE):
   1. "simvyn" text in the TopBar uses Cascadia Code font and is white (not gradient)
   2. "simvyn" text on the HomeScreen uses Cascadia Code font
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 17.1-01-PLAN.md — Add Cascadia Code branding font and apply to simvyn text

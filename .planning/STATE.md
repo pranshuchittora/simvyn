@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 17 — Tool Settings
+**Phase:** Phase 17.1 — Typography Update
 **Plan:** 01 (complete)
-**Status:** Phase 17 complete (1/1 plans)
-**Progress:** [█████████░] 93%
+**Status:** Phase 17.1 complete (1/1 plans)
+**Progress:** [█████████░] 92%
 
 ## Phase Overview
 
@@ -37,6 +37,7 @@
 | 15. Command Palette | ✅ Complete (1/1 plans) |
 | 16. Home Screen & Capture Management | ✅ Complete (1/1 plans) |
 | 17. Tool Settings | ✅ Complete (1/1 plans) |
+| 17.1. Typography Update | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -102,6 +103,7 @@
 | Phase 15 P01 | 3min | 2 tasks | 6 files |
 | Phase 16 P01 | 3min | 2 tasks | 5 files |
 | Phase 17 P01 | 3min | 2 tasks | 4 files |
+| Phase 17.1 P01 | 1min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -237,6 +239,8 @@
 - Module registry injection checks hasDecorator('moduleRegistry') — creates standalone registry with /api/modules route if moduleLoaderPlugin wasn't registered
 - Tool config saved via createModuleStorage('tool-settings') at ~/.simvyn/tool-settings/config.json — reuses existing storage pattern
 - ToolSettingsPanel is a non-device panel (no device selector) — operates on server-level config only
+- Used fontsource CDN for Cascadia Code (not Google Fonts — Cascadia Code is a Microsoft font not available there)
+- Inline style for fontFamily on brand text — one-off branding element, not worth a Tailwind utility
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -271,8 +275,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T21:26:00Z
-**Stopped at:** Completed 17-01-PLAN.md (Phase 17 Tool Settings complete — v1.1 milestone complete)
+**Last session:** 2026-02-26T22:28:22.847Z
+**Stopped at:** Completed 17.1-01-PLAN.md (Phase 17.1 Typography Update complete)
 **Context for next session:** v1.1 milestone (phases 13-17) fully complete. Phase 12 still has 4 incomplete plans from v1.0 scope. All 20 v1.1 requirements delivered.
 
 ---
