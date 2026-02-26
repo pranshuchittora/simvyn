@@ -52,7 +52,9 @@ function AppContent() {
 		<div className="flex h-screen flex-col bg-bg-base">
 			<TopBar />
 			<div className="flex flex-1 overflow-hidden">
-				<Sidebar />
+				<div className="flex items-center">
+					<Sidebar />
+				</div>
 				<ModuleShell />
 			</div>
 		</div>

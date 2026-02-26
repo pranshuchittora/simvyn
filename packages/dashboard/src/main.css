@@ -151,19 +151,28 @@ body {
 	scrollbar-color: oklch(0.45 0.015 260 / 0.35) transparent;
 }
 
-/* Dock sidebar */
+/* Dock sidebar — floating pill (macOS Liquid Glass dock) */
 .dock-sidebar {
 	position: relative;
 	z-index: 20;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	padding: 12px 0;
-	gap: 4px;
-	width: 60px;
-	backdrop-filter: blur(20px) saturate(1.4);
-	background: rgba(28, 28, 40, 0.65);
-	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	padding: 8px 0;
+	gap: 2px;
+	width: 52px;
+	margin: 12px 0 12px 12px;
+	border-radius: 16px;
+	backdrop-filter: blur(24px) saturate(1.5);
+	-webkit-backdrop-filter: blur(24px) saturate(1.5);
+	background: rgba(40, 40, 55, 0.45);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.3),
+		inset 0 0.5px 0 rgba(255, 255, 255, 0.08);
+	overflow-y: auto;
+	overflow-x: hidden;
+	align-self: center;
 }
 
 .dock-icon {
@@ -171,9 +180,9 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 42px;
-	height: 42px;
-	border-radius: 12px;
+	width: 38px;
+	height: 38px;
+	border-radius: 10px;
 	color: var(--color-text-secondary);
 	cursor: pointer;
 	transition:
@@ -181,6 +190,9 @@ body {
 		background 0.15s ease,
 		color 0.15s ease;
 	user-select: none;
+	border: none;
+	background: none;
+	font-family: inherit;
 }
 
 .dock-icon:hover {
@@ -194,13 +206,13 @@ body {
 	background: rgba(0, 122, 255, 0.15);
 }
 
-/* Active dot indicator (macOS Dock style) */
+/* Active dot indicator — LEFT side (macOS Dock style) */
 .dock-icon.active::after {
 	content: "";
 	position: absolute;
-	bottom: -2px;
-	left: 50%;
-	transform: translateX(-50%);
+	left: -6px;
+	top: 50%;
+	transform: translateY(-50%);
 	width: 4px;
 	height: 4px;
 	border-radius: 50%;
