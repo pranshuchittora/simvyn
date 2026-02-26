@@ -11,7 +11,9 @@
 		"packages/modules/*"
 	],
 	"scripts": {
-		"dev": "npm run build -w @simvyn/dashboard & npx tsx packages/cli/src/index.ts --no-open",
+		"dev": "npx tsx packages/cli/src/index.ts --no-open & npm run dev -w @simvyn/dashboard",
+		"dev:server": "npx tsx packages/cli/src/index.ts --no-open",
+		"dev:dashboard": "npm run dev -w @simvyn/dashboard",
 		"start": "npx tsx packages/cli/src/index.ts",
 		"build": "npm run build -w @simvyn/dashboard",
 		"build:all": "npm run build --workspaces --if-present",

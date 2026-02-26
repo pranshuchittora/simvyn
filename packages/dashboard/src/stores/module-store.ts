@@ -27,8 +27,10 @@ export const useModuleStore = create<ModuleStore>((set) => ({
 		try {
 			const res = await fetch("/api/modules");
 			if (res.ok) {
-				const modules = (await res.json()) as ModuleInfo[];
-				set({ modules });
+				const data = await res.json();
+				if (Array.isArray(data)) {
+					set({ modules: data });
+				}
 			}
 		} catch {
 			// server not available yet

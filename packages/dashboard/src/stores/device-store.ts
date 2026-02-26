@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import type { Device } from "@simvyn/types";
+import { create } from "zustand";
 
 interface DeviceStore {
 	devices: Device[];
@@ -17,6 +17,7 @@ export const useDeviceStore = create<DeviceStore>((set, get) => ({
 	broadcastMode: false,
 
 	setDevices: (devices) => {
+		if (!Array.isArray(devices)) return;
 		set({ devices });
 		const state = get();
 		if (state.selectedDeviceId && !devices.find((d) => d.id === state.selectedDeviceId)) {
@@ -29,8 +30,7 @@ export const useDeviceStore = create<DeviceStore>((set, get) => ({
 
 	selectDevice: (id) => set({ selectedDeviceId: id, broadcastMode: false }),
 
-	toggleBroadcast: () =>
-		set((s) => ({ broadcastMode: !s.broadcastMode })),
+	toggleBroadcast: () => set((s) => ({ broadcastMode: !s.broadcastMode })),
 
 	selectedDevice: () => {
 		const state = get();

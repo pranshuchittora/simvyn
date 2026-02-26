@@ -56,9 +56,11 @@ export default function ModuleShell() {
 		);
 	}
 
+	const moduleList = Array.isArray(modules) ? modules : [];
+
 	return (
 		<div className="relative flex-1 overflow-hidden">
-			{modules.map((mod) => {
+			{moduleList.map((mod) => {
 				const Panel = registry.getPanel(mod.name);
 				const isActive = activeModule === mod.name;
 
