@@ -196,7 +196,10 @@ Plans:
   1. Clicking a module in the sidebar updates the browser URL to reflect the active module (e.g., `/logs`, `/location`, `/settings`)
   2. Refreshing the browser re-opens the exact module that was active before the refresh
   3. Typing a module URL directly into the browser address bar (e.g., `localhost:3000/logs`) navigates to that module without first showing the home screen
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 13-01-PLAN.md — Install react-router, wire BrowserRouter with URL-synced module navigation, update Sidebar and ModuleShell
 
 ### Phase 14: Module Icons
 **Goal:** Every module has a distinctive, colorful liquid glass SVG icon that reinforces the Apple aesthetic and aids module recognition
