@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+	--color-bg-base: oklch(0.08 0.015 260);
+	--color-bg-surface: oklch(0.12 0.015 260);
+	--color-glass: oklch(0.15 0.02 260 / 0.6);
+	--color-glass-border: oklch(0.35 0.02 260 / 0.15);
+	--color-accent-blue: oklch(0.7 0.12 240);
+	--color-accent-purple: oklch(0.65 0.12 290);
+	--color-accent-teal: oklch(0.72 0.1 190);
+	--color-text-primary: oklch(0.92 0.01 260);
+	--color-text-secondary: oklch(0.65 0.01 260);
+	--color-text-muted: oklch(0.45 0.01 260);
+	--color-border: oklch(0.25 0.02 260 / 0.5);
+	--radius-panel: 14px;
+	--radius-button: 10px;
+}
+
+body {
+	background: var(--color-bg-base);
+	color: var(--color-text-primary);
+	font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.glass-panel {
+	backdrop-filter: blur(20px) saturate(1.2);
+	background: var(--color-glass);
+	border: 1px solid var(--color-glass-border);
+	border-radius: var(--radius-panel);
+}

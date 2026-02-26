@@ -1,9 +1,16 @@
 {
-	"extends": "../../tsconfig.json",
 	"compilerOptions": {
+		"strict": true,
+		"target": "ES2023",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"declaration": false,
+		"sourceMap": true,
+		"jsx": "react-jsx",
 		"outDir": "dist",
-		"rootDir": "src",
-		"jsx": "react-jsx"
+		"rootDir": "src"
 	},
 	"include": ["src"],
 	"references": [
