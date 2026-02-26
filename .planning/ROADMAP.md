@@ -359,12 +359,19 @@ TSET-05 → Phase 17
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
+**Goal:** Use Cascadia Code as the branding font for simvyn identity, adjust dashboard text styling for consistency
 **Depends on:** Phase 17
-**Plans:** 0 plans
+**Requirements:** TYPO-01, TYPO-02
+**User Notes:**
+- TopBar "simvyn" text should be white (not gradient) and use the branding font (Cascadia Code)
+- Branding font should be used wherever "simvyn" appears (TopBar, HomeScreen title)
+**Success Criteria** (what must be TRUE):
+  1. "simvyn" text in the TopBar uses Cascadia Code font and is white (not gradient)
+  2. "simvyn" text on the HomeScreen uses Cascadia Code font
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 17.1 to break down)
+- [ ] 17.1-01-PLAN.md — Add Cascadia Code branding font and apply to simvyn text
 
 ### Phase 11: Location Module Rewrite
 **Goal:** Replace the generated location dashboard panel with production-quality code migrated from sim-location, preserving exact UI and all working functionality
