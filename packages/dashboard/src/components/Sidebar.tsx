@@ -1,53 +1,6 @@
-import {
-	AppWindow,
-	Bell,
-	Bug,
-	Camera,
-	ClipboardCopy,
-	Database,
-	ExternalLink,
-	FolderOpen,
-	ImagePlus,
-	MapPin,
-	MonitorSmartphone,
-	ScrollText,
-	Settings2,
-} from "lucide-react";
-import type { ComponentType } from "react";
 import { useNavigate } from "react-router";
 import { useModuleStore } from "../stores/module-store";
-
-const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: number }>> = {
-	devices: MonitorSmartphone,
-	location: MapPin,
-	apps: AppWindow,
-	logs: ScrollText,
-	screenshot: Camera,
-	"deep-links": ExternalLink,
-	push: Bell,
-	fs: FolderOpen,
-	database: Database,
-	settings: Settings2,
-	"crash-logs": Bug,
-	media: ImagePlus,
-	clipboard: ClipboardCopy,
-};
-
-const labelMap: Record<string, string> = {
-	devices: "Devices",
-	location: "Location",
-	apps: "Apps",
-	logs: "Logs",
-	screenshot: "Screenshots",
-	"deep-links": "Deep Links",
-	push: "Push",
-	fs: "Files",
-	database: "Database",
-	settings: "Settings",
-	"crash-logs": "Crashes",
-	media: "Media",
-	clipboard: "Clipboard",
-};
+import { moduleIconMap, moduleLabelMap } from "./icons/module-icons";
 
 export default function Sidebar() {
 	const modules = useModuleStore((s) => s.modules);
@@ -58,8 +11,8 @@ export default function Sidebar() {
 		<aside className="dock-sidebar">
 			{modules.map((mod) => {
 				const isActive = activeModule === mod.name;
-				const Icon = iconMap[mod.name];
-				const label = labelMap[mod.name] ?? mod.name;
+				const Icon = moduleIconMap[mod.name];
+				const label = moduleLabelMap[mod.name] ?? mod.name;
 
 				return (
 					<button
@@ -69,7 +22,7 @@ export default function Sidebar() {
 						className={`dock-icon ${isActive ? "active" : ""}`}
 					>
 						{Icon ? (
-							<Icon size={20} strokeWidth={1.8} />
+							<Icon size={20} />
 						) : (
 							<span className="text-sm">{mod.name[0]?.toUpperCase()}</span>
 						)}
