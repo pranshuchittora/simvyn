@@ -1,24 +1,41 @@
 import { create } from "zustand";
 
-interface LocationState {
-	currentLat: number | null;
-	currentLon: number | null;
-	mode: "point" | "route";
-	selectedDeviceId: string | null;
-	setCurrentLocation: (lat: number, lon: number) => void;
-	setMode: (mode: "point" | "route") => void;
-	setSelectedDevice: (id: string | null) => void;
-	clearLocation: () => void;
+export interface SearchResult {
+	placeId: number;
+	lat: number;
+	lon: number;
+	displayName: string;
+	type: string;
 }
 
-export const useLocationStore = create<LocationState>((set) => ({
-	currentLat: null,
-	currentLon: null,
-	mode: "point",
-	selectedDeviceId: null,
+interface LocationState {
+	markerPosition: [number, number] | null;
+	cursorPosition: [number, number] | null;
+	myLocation: [number, number] | null;
+	reverseGeocode: string | null;
+	searchResults: SearchResult[];
+	searchQuery: string;
+	setMarkerPosition: (pos: [number, number]) => void;
+	setCursorPosition: (pos: [number, number] | null) => void;
+	setMyLocation: (pos: [number, number] | null) => void;
+	clearMarkerPosition: () => void;
+	setReverseGeocode: (name: string | null) => void;
+	setSearchResults: (results: SearchResult[]) => void;
+	setSearchQuery: (query: string) => void;
+}
 
-	setCurrentLocation: (lat, lon) => set({ currentLat: lat, currentLon: lon }),
-	setMode: (mode) => set({ mode }),
-	setSelectedDevice: (id) => set({ selectedDeviceId: id }),
-	clearLocation: () => set({ currentLat: null, currentLon: null }),
+export const useLocationStore = create<LocationState>()((set) => ({
+	markerPosition: null,
+	cursorPosition: null,
+	myLocation: null,
+	reverseGeocode: null,
+	searchResults: [],
+	searchQuery: "",
+	setMarkerPosition: (pos) => set({ markerPosition: pos }),
+	setCursorPosition: (pos) => set({ cursorPosition: pos }),
+	setMyLocation: (pos) => set({ myLocation: pos }),
+	clearMarkerPosition: () => set({ markerPosition: null, reverseGeocode: null }),
+	setReverseGeocode: (name) => set({ reverseGeocode: name }),
+	setSearchResults: (results) => set({ searchResults: results }),
+	setSearchQuery: (query) => set({ searchQuery: query }),
 }));

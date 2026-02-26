@@ -5,122 +5,89 @@ export interface SavedLocation {
 	name: string;
 	lat: number;
 	lon: number;
-	createdAt: number;
+	address?: string;
+	emoji?: string;
+	createdAt: string;
 }
 
 export interface SavedRoute {
 	id: string;
 	name: string;
 	waypoints: [number, number][];
-	createdAt: number;
+	createdAt: string;
 }
 
 interface FavoritesState {
 	locations: SavedLocation[];
 	routes: SavedRoute[];
 	loading: boolean;
+
 	fetchLocations: () => Promise<void>;
 	fetchRoutes: () => Promise<void>;
-	addLocation: (name: string, lat: number, lon: number) => Promise<void>;
-	removeLocation: (id: string) => Promise<void>;
-	addRoute: (name: string, waypoints: [number, number][]) => Promise<void>;
-	removeRoute: (id: string) => Promise<void>;
+	saveLocation: (data: {
+		name: string;
+		lat: number;
+		lon: number;
+		address?: string;
+		emoji?: string;
+	}) => Promise<void>;
+	saveRoute: (data: { name: string; waypoints: [number, number][] }) => Promise<void>;
+	deleteLocation: (id: string) => Promise<void>;
+	deleteRoute: (id: string) => Promise<void>;
 }
 
-export const useFavoritesStore = create<FavoritesState>((set, get) => ({
+export const useFavoritesStore = create<FavoritesState>()((set, get) => ({
 	locations: [],
 	routes: [],
 	loading: false,
 
-	fetchLocations: async () => {
+	async fetchLocations() {
 		set({ loading: true });
 		try {
 			const res = await fetch("/api/modules/location/favorites/locations");
-			if (res.ok) {
-				const locations = (await res.json()) as SavedLocation[];
-				set({ locations });
-			}
-		} catch {
-			// server unavailable
+			const data = await res.json();
+			set({ locations: data });
 		} finally {
 			set({ loading: false });
 		}
 	},
 
-	fetchRoutes: async () => {
+	async fetchRoutes() {
 		set({ loading: true });
 		try {
 			const res = await fetch("/api/modules/location/favorites/routes");
-			if (res.ok) {
-				const routes = (await res.json()) as SavedRoute[];
-				set({ routes });
-			}
-		} catch {
-			// server unavailable
+			const data = await res.json();
+			set({ routes: data });
 		} finally {
 			set({ loading: false });
 		}
 	},
 
-	addLocation: async (name, lat, lon) => {
-		try {
-			const res = await fetch("/api/modules/location/favorites/locations", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ name, lat, lon }),
-			});
-			if (res.ok) {
-				const loc = (await res.json()) as SavedLocation;
-				set((s) => ({ locations: [...s.locations, loc] }));
-			}
-		} catch {
-			// network error
-		}
+	async saveLocation(data) {
+		await fetch("/api/modules/location/favorites/locations", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(data),
+		});
+		await get().fetchLocations();
 	},
 
-	removeLocation: async (id) => {
-		try {
-			const res = await fetch(`/api/modules/location/favorites/locations/${id}`, {
-				method: "DELETE",
-			});
-			if (res.ok) {
-				set((s) => ({
-					locations: s.locations.filter((l) => l.id !== id),
-				}));
-			}
-		} catch {
-			// network error
-		}
+	async saveRoute(data) {
+		await fetch("/api/modules/location/favorites/routes", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(data),
+		});
+		await get().fetchRoutes();
 	},
 
-	addRoute: async (name, waypoints) => {
-		try {
-			const res = await fetch("/api/modules/location/favorites/routes", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ name, waypoints }),
-			});
-			if (res.ok) {
-				const route = (await res.json()) as SavedRoute;
-				set((s) => ({ routes: [...s.routes, route] }));
-			}
-		} catch {
-			// network error
-		}
+	async deleteLocation(id) {
+		await fetch(`/api/modules/location/favorites/locations/${id}`, { method: "DELETE" });
+		await get().fetchLocations();
 	},
 
-	removeRoute: async (id) => {
-		try {
-			const res = await fetch(`/api/modules/location/favorites/routes/${id}`, {
-				method: "DELETE",
-			});
-			if (res.ok) {
-				set((s) => ({
-					routes: s.routes.filter((r) => r.id !== id),
-				}));
-			}
-		} catch {
-			// network error
-		}
+	async deleteRoute(id) {
+		await fetch(`/api/modules/location/favorites/routes/${id}`, { method: "DELETE" });
+		await get().fetchRoutes();
 	},
 }));
