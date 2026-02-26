@@ -173,6 +173,9 @@
 - Dashboard design system: oklch tokens in @theme, .glass-panel utility, .dock-sidebar/.dock-icon CSS classes
 - Icon system: separate iconMap/labelMap objects in Sidebar for easy future swap from Lucide to custom SVGs
 
+### Roadmap Evolution
+- Phase 11 added: Location module rewrite — migrate sim-location UI and logic into simvyn dashboard
+
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
 - ~~Phase 4: `simctl spawn log stream` output varies by macOS version — needs defensive parsing~~ RESOLVED: using `--style ndjson` eliminates this concern

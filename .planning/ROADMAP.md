@@ -16,6 +16,7 @@
 - [x] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
 - [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
+- [ ] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code
 
 ## Phase Details
 
@@ -244,6 +245,19 @@ PUSH-05 → Phase 6     CRASH-02 → Phase 9
 ```
 
 **Mapped: 108/108 ✓ — No orphaned requirements**
+
+### Phase 11: Location Module Rewrite
+**Goal:** Replace the generated location dashboard panel with production-quality code migrated from sim-location, preserving exact UI and all working functionality
+**Depends on:** Phase 2 (existing location module backend)
+**Requirements:** LOC-REWRITE-01, LOC-REWRITE-02, LOC-REWRITE-03
+**Success Criteria** (what must be TRUE):
+  1. Location panel renders the exact same UI as sim-location's web app — dark map tiles, glass-panel toolbar, search with geocoding, favorites sidebar, mode selector, playback controls
+  2. Map renders correctly with OpenStreetMap tiles, click-to-set-location works, route waypoints are interactive
+  3. GPX/KML file import, route playback with speed controls, and favorites persistence all work end-to-end
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 11 to break down)
 
 ---
 *Roadmap created: 2026-02-26*
