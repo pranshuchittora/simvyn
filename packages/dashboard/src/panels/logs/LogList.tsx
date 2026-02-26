@@ -49,7 +49,7 @@ export default function LogList({ entries }: LogListProps) {
 
 	if (entries.length === 0) {
 		return (
-			<div className="glass-panel h-full flex items-center justify-center text-text-secondary text-sm">
+			<div className="glass-empty-state h-full flex items-center justify-center">
 				No log entries
 			</div>
 		);

@@ -107,11 +107,7 @@ export default function LogToolbar() {
 							key={lvl.key}
 							type="button"
 							onClick={() => setMinLevel(lvl.key)}
-							className={`rounded-[var(--radius-button)] border px-2 py-0.5 text-xs font-medium transition-colors ${
-								active
-									? lvl.activeColor
-									: "bg-bg-surface/60 border-border text-text-muted hover:text-text-secondary"
-							}`}
+							className={`glass-button text-xs ${active ? lvl.activeColor : ""}`}
 							title={lvl.key}
 						>
 							{lvl.label}
@@ -126,7 +122,7 @@ export default function LogToolbar() {
 				placeholder="Filter logs (regex)..."
 				defaultValue={searchPattern}
 				onChange={(e) => handleSearch(e.target.value)}
-				className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1 text-xs text-text-secondary placeholder:text-text-muted flex-1 min-w-[140px] max-w-[260px]"
+				className="glass-input text-xs flex-1 min-w-[140px] max-w-[260px]"
 			/>
 
 			{/* Process filter */}
@@ -135,33 +131,21 @@ export default function LogToolbar() {
 				placeholder="Process..."
 				value={processFilter}
 				onChange={(e) => setProcessFilter(e.target.value)}
-				className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1 text-xs text-text-secondary placeholder:text-text-muted w-[100px]"
+				className="glass-input text-xs w-[100px]"
 			/>
 
 			{/* Export */}
 			<div className="flex items-center gap-0.5">
-				<button
-					type="button"
-					onClick={() => handleExport("json")}
-					className="rounded-[var(--radius-button)] bg-bg-surface px-2 py-1 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors border border-border"
-				>
+				<button type="button" onClick={() => handleExport("json")} className="glass-button">
 					JSON
 				</button>
-				<button
-					type="button"
-					onClick={() => handleExport("text")}
-					className="rounded-[var(--radius-button)] bg-bg-surface px-2 py-1 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors border border-border"
-				>
+				<button type="button" onClick={() => handleExport("text")} className="glass-button">
 					TXT
 				</button>
 			</div>
 
 			{/* Clear */}
-			<button
-				type="button"
-				onClick={clear}
-				className="rounded-[var(--radius-button)] bg-bg-surface px-2 py-1 text-xs text-text-secondary hover:text-red-400 hover:bg-red-500/10 transition-colors border border-border"
-			>
+			<button type="button" onClick={clear} className="glass-button-destructive">
 				Clear
 			</button>
 

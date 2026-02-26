@@ -119,7 +119,7 @@ function LogPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -132,8 +132,8 @@ function LogPanel() {
 
 			{/* No device selected */}
 			{!selectedDeviceId && (
-				<div className="flex-1 flex items-center justify-center">
-					<p className="text-sm text-text-secondary">Select a booted device to stream logs</p>
+				<div className="glass-empty-state flex-1 flex items-center justify-center">
+					<p>Select a booted device to stream logs</p>
 				</div>
 			)}
 
