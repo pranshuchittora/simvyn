@@ -4,21 +4,21 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 1 — Foundation & Device Management
+**Current Focus:** Phase 2 — Location Module
 
 ## Current Position
 
-**Phase:** 1 of 9 — Foundation & Device Management
-**Plan:** 7 of 7 in Phase 1 (complete)
-**Status:** Phase 1 complete
-**Progress:** [██████████] 100%
+**Phase:** 2 of 9 — Location Module
+**Plan:** 2 of 4 in Phase 2
+**Status:** Executing Phase 2
+**Progress:** [███████░░░] 73%
 
 ## Phase Overview
 
 | Phase | Status |
 |-------|--------|
 | 1. Foundation & Device Management | ✅ Complete (7/7 plans) |
-| 2. Location Module | ⬜ Not started |
+| 2. Location Module | 🔄 In Progress (1/4 plans) |
 | 3. App Management Module | ⬜ Not started |
 | 4. Log Viewer Module | ⬜ Not started |
 | 5. Dashboard UI | ⬜ Not started |
@@ -40,6 +40,7 @@
 | Phase 01 P05 | 3min | 3 tasks | 8 files |
 | Phase 01 P06 | 5min | 3 tasks | 8 files |
 | Phase 01 P07 | 1min | 1 task | 1 file |
+| Phase 02 P01 | 2min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -65,6 +66,8 @@
 - Device ID prefix matching in CLI for convenience (short UUIDs)
 - Commander isDefault for start command — avoids duplicate option conflicts between program and subcommand
 - tsx for TypeScript execution in dev — Node 24 type-stripping doesn't rewrite .js import specifiers in NodeNext mode
+- Android geo fix uses lon,lat order (not lat,lon) matching adb protocol — intentional
+- PlatformAdapter location methods are optional (?) since not all adapters may support GPS
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -87,11 +90,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 01-07-PLAN.md (WS subscribe envelope gap closure fix)
-**Resumed:** 2026-02-26 — Session resumed, ready to begin Phase 2
-**Next action:** Plan and execute Phase 2 (Location Module)
-**Context for next session:** Phase 1 fully complete (including gap closure). Full stack: CLI (`simvyn`) → Fastify server (port 3847) → dashboard (React/Vite) → WebSocket (device updates) → device management module. WS subscribe envelope now correct — dashboard joins devices subscription set on connect. CLI has device subcommands for headless use. Module CLI auto-discovery from manifests. tsx used for running TypeScript source.
+**Last session:** Completed 02-01-PLAN.md (Adapter extensions & module scaffold)
+**Next action:** Execute 02-02-PLAN.md (Location server routes, WS, playback engine)
+**Context for next session:** PlatformAdapter has setLocation/clearLocation on both iOS and Android adapters. @simvyn/module-location package exists with geo utilities (haversine, route interpolation) and storage helpers (favorites CRUD). Manifest skeleton ready for route/WS registration in Plan 02.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26 (session resumed)*
+*Last updated: 2026-02-26*

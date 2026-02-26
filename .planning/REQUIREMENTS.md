@@ -32,9 +32,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Location
 
-- [ ] **LOC-01**: Migrate sim-location codebase into simvyn monorepo as Location module (copy and refactor to module architecture)
-- [ ] **LOC-02**: Set GPS coordinates on iOS simulators via `simctl location set`
-- [ ] **LOC-03**: Set GPS coordinates on Android emulators via `adb emu geo fix`
+- [x] **LOC-01**: Migrate sim-location codebase into simvyn monorepo as Location module (copy and refactor to module architecture)
+- [x] **LOC-02**: Set GPS coordinates on iOS simulators via `simctl location set`
+- [x] **LOC-03**: Set GPS coordinates on Android emulators via `adb emu geo fix`
 - [ ] **LOC-04**: Simulate routes from GPX/KML files with playback controls (play, pause, resume, stop, speed)
 - [ ] **LOC-05**: iOS route simulation via native `simctl location start` (pipe waypoints to stdin)
 - [ ] **LOC-06**: Android route simulation via tick-based `geo fix` calls at configurable intervals
@@ -227,9 +227,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEV-06 | Phase 1 | Complete |
 | DEV-07 | Phase 1 | Complete |
 | DEV-08 | Phase 1 | Complete |
-| LOC-01 | Phase 2 | Pending |
-| LOC-02 | Phase 2 | Pending |
-| LOC-03 | Phase 2 | Pending |
+| LOC-01 | Phase 2 | Complete |
+| LOC-02 | Phase 2 | Complete |
+| LOC-03 | Phase 2 | Complete |
 | LOC-04 | Phase 2 | Pending |
 | LOC-05 | Phase 2 | Pending |
 | LOC-06 | Phase 2 | Pending |
