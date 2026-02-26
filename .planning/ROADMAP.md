@@ -24,7 +24,7 @@
 ### Milestone v1.1 — Dashboard UX Polish
 
 - [x] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
-- [ ] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen
+- [x] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen (completed 2026-02-26)
 - [ ] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling
 - [ ] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion
 - [ ] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage
@@ -209,7 +209,7 @@ Plans:
   1. Each module displays a custom colorful liquid glass SVG icon (not a Lucide generic icon) in the sidebar dock
   2. The same custom icons appear in the command palette module list and home screen module grid
   3. Icons are visually consistent with the Liquid Glass aesthetic — translucent fills, soft gradients, rounded forms
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 14-01-PLAN.md — Create 13 custom liquid glass SVG icons and wire into Sidebar
@@ -268,7 +268,7 @@ Plans:
 | 12.2 Unified Device Selector | 2/2 | Complete | 2026-02-26 |
 | **v1.1 — Dashboard UX Polish** | | | |
 | 13. URL Routing | 1/1 | Complete | 2026-02-27 |
-| 14. Module Icons | 0/? | Not started | - |
+| 14. Module Icons | 1/1 | Complete   | 2026-02-26 |
 | 15. Command Palette | 0/? | Not started | - |
 | 16. Home Screen & Capture Management | 0/? | Not started | - |
 | 17. Tool Settings | 0/? | Not started | - |

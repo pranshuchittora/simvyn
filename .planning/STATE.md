@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 13 — URL Routing
+**Phase:** Phase 14 — Module Icons
 **Plan:** 01 (complete)
-**Status:** Phase 13 complete (1/1 plans)
-**Progress:** [██░░░░░░░░] 20% (1/5 v1.1 phases)
+**Status:** Phase 14 complete (1/1 plans)
+**Progress:** [█████████░] 91%
 
 ## Phase Overview
 
@@ -33,7 +33,7 @@
 | 12.2 Unified Device Selector | ✅ Complete (2/2 plans) |
 | **v1.1 — Dashboard UX Polish** | |
 | 13. URL Routing | ✅ Complete (1/1 plans) |
-| 14. Module Icons | ⬜ Not started |
+| 14. Module Icons | ✅ Complete (1/1 plans) |
 | 15. Command Palette | ⬜ Not started |
 | 16. Home Screen & Capture Management | ⬜ Not started |
 | 17. Tool Settings | ⬜ Not started |
@@ -42,10 +42,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 12/17 (v1.0: 11/12, v1.1: 1/5) |
-| Plans completed | 42/42 (v1.0: 41, v1.1: 1) |
+| Phases completed | 13/17 (v1.0: 11/12, v1.1: 2/5) |
+| Plans completed | 43/43 (v1.0: 41, v1.1: 2) |
 | v1.0 requirements delivered | 126/126 |
-| v1.1 requirements delivered | 3/20 |
+| v1.1 requirements delivered | 5/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -98,6 +98,7 @@
 | Phase 12.2 P01 | 1min | 2 tasks | 2 files |
 | Phase 12.2 P02 | 5min | 2 tasks | 13 files |
 | Phase 13 P01 | 2min | 2 tasks | 5 files |
+| Phase 14 P01 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -221,6 +222,8 @@
 - Module slugs in URL match module `name` field exactly (e.g. /logs, /deep-links, /crash-logs) — no slug transformation
 - Sidebar navigates via navigate() not direct store mutation — store updates as consequence of URL change via RouterSync
 - Race condition guard in RouterSync: don't redirect invalid URLs until modules list has loaded from API (modules.length === 0 → skip)
+- Keep lucide-react dependency — 12 other panel files still import from it, only Sidebar switched to custom icons
+- Custom SVG icons use explicit hex accent colors (not currentColor) so dock-icon CSS color inheritance doesn't override unique module colors
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -232,7 +235,7 @@
 - LogStreamer per-device with readline line-by-line ndjson parsing, timed flush, capped history buffer
 - WS handler uses WeakMap<WebSocket, Set<string>> for socket-to-device tracking, WeakSet for close listener dedup
 - Dashboard design system: oklch tokens in @theme, .glass-panel utility, .dock-sidebar/.dock-icon CSS classes
-- Icon system: separate iconMap/labelMap objects in Sidebar for easy future swap from Lucide to custom SVGs
+- Icon system: shared module-icons.tsx exports moduleIconMap/moduleLabelMap — consumed by Sidebar, reusable by command palette and home screen
 
 ### Roadmap Evolution
 - Phase 11 added: Location module rewrite — migrate sim-location UI and logic into simvyn dashboard
@@ -254,9 +257,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-27
-**Stopped at:** Completed 13-01-PLAN.md (Phase 13 URL Routing complete)
-**Context for next session:** Phase 13 (URL Routing) complete — react-router v7 installed, BrowserRouter + RouterSync wired. All modules navigable via URL. Next action: Phase 14 (Module Icons) or remaining Phase 12 plans.
+**Last session:** 2026-02-26T21:06:45.487Z
+**Stopped at:** Completed 14-01-PLAN.md (Phase 14 Module Icons complete)
+**Context for next session:** Phase 14 (Module Icons) complete — 13 custom SVG icons with unique accent colors, shared moduleIconMap/moduleLabelMap exports. Next action: Phase 15 (Command Palette) or remaining Phase 12 plans.
 
 ---
 *State initialized: 2026-02-26*

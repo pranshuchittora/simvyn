@@ -348,8 +348,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Module Icons
 
-- [ ] **ICON-01**: Each module has a custom colorful liquid glass SVG icon (not Lucide)
-- [ ] **ICON-02**: Icons used in sidebar dock, command palette, and home screen
+- [x] **ICON-01**: Each module has a custom colorful liquid glass SVG icon (not Lucide)
+- [x] **ICON-02**: Icons used in sidebar dock, command palette, and home screen
 
 ### Capture Management
 
@@ -379,8 +379,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOME-01 | Phase 16 | Pending |
 | HOME-02 | Phase 16 | Pending |
 | HOME-03 | Phase 16 | Pending |
-| ICON-01 | Phase 14 | Pending |
-| ICON-02 | Phase 14 | Pending |
+| ICON-01 | Phase 14 | Complete |
+| ICON-02 | Phase 14 | Complete |
 | CAP-01 | Phase 16 | Pending |
 | CAP-02 | Phase 16 | Pending |
 | TSET-01 | Phase 17 | Pending |
