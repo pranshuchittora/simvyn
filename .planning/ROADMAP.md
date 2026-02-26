@@ -224,7 +224,10 @@ Plans:
   3. Pressing Enter on a search result navigates to that module (URL updates, panel renders)
   4. The palette includes device actions (e.g., "screenshot", "set location", "toggle dark mode") that the user can search and trigger
   5. The palette uses Liquid Glass styling — frosted glass backdrop with blur, dark theme, consistent with the rest of the dashboard
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 15-01-PLAN.md — Cmd+K command palette with module navigation, device actions, and Liquid Glass styling
 
 ### Phase 16: Home Screen & Capture Management
 **Goal:** Users see a welcoming, informative landing page on first load, and can manage their screenshot/recording history
