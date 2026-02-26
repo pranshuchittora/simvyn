@@ -220,6 +220,7 @@
 - Phase 11 added: Location module rewrite — migrate sim-location UI and logic into simvyn dashboard
 - Phase 12 added: Liquid Glass UI refactor — refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - Phase 12.1 inserted after Phase 12: Log Module Performance Overhaul (URGENT) — paginated log fetching, virtual list, descending order, device log clearing, search revamp, unmount cleanup
+- Phase 12.2 inserted after Phase 12: Unified Device Selector (URGENT) — remove duplicate per-panel selectors, single top-bar selector with multi-select for location, single-select elsewhere
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)

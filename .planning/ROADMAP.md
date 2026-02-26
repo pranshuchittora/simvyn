@@ -19,6 +19,7 @@
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
 - [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - [x] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED) (completed 2026-02-26)
+- [ ] **Phase 12.2: Unified Device Selector** — Single top-bar selector with per-module multi/single select (INSERTED)
 
 ## Phase Details
 
@@ -282,6 +283,22 @@ Plans:
 - [ ] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)
 - [ ] 12-06-PLAN.md — Settings panel (forms, toggles, permissions)
 - [ ] 12-07-PLAN.md — Visual consistency audit + human verification
+
+### Phase 12.2: Unified Device Selector (INSERTED)
+
+**Goal:** Remove duplicate device selectors — single top-bar DeviceSelector becomes the global source of truth, with per-module multi-select (location) vs single-select (everything else)
+**Depends on:** Phase 5 (TopBar + DeviceSelector), Phase 1 (device management)
+**Requirements:** DEVSEL-01 (remove per-panel selectors), DEVSEL-02 (top-bar single source of truth), DEVSEL-03 (multi-select for location module), DEVSEL-04 (single-select for all other modules)
+**Success Criteria** (what must be TRUE):
+  1. Only one device selector exists in the entire dashboard — in the top bar
+  2. All module panels consume the selected device from a shared global store, not their own selector
+  3. Location module supports multi-device select (set location on multiple devices at once)
+  4. All other modules use single-device select
+**Plans:** 2 plans
+
+Plans:
+- [ ] 12.2-01-PLAN.md — Upgrade device store + DeviceSelector for adaptive single/multi mode
+- [ ] 12.2-02-PLAN.md — Remove all per-panel device selectors + wire LocationPanel multi-device
 
 ### Phase 12.1: Log Module Performance Overhaul (INSERTED)
 
