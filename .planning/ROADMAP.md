@@ -25,7 +25,7 @@
 
 - [x] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
 - [x] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen (completed 2026-02-26)
-- [ ] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling
+- [x] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling (completed 2026-02-26)
 - [ ] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion
 - [ ] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage
 
@@ -224,7 +224,7 @@ Plans:
   3. Pressing Enter on a search result navigates to that module (URL updates, panel renders)
   4. The palette includes device actions (e.g., "screenshot", "set location", "toggle dark mode") that the user can search and trigger
   5. The palette uses Liquid Glass styling — frosted glass backdrop with blur, dark theme, consistent with the rest of the dashboard
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 15-01-PLAN.md — Cmd+K command palette with module navigation, device actions, and Liquid Glass styling
@@ -272,7 +272,7 @@ Plans:
 | **v1.1 — Dashboard UX Polish** | | | |
 | 13. URL Routing | 1/1 | Complete | 2026-02-27 |
 | 14. Module Icons | 1/1 | Complete   | 2026-02-26 |
-| 15. Command Palette | 0/? | Not started | - |
+| 15. Command Palette | 1/1 | Complete   | 2026-02-26 |
 | 16. Home Screen & Capture Management | 0/? | Not started | - |
 | 17. Tool Settings | 0/? | Not started | - |
 

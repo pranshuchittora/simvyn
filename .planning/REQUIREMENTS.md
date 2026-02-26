@@ -334,11 +334,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Command Palette
 
-- [ ] **CMDK-01**: User can open a search palette with Cmd+K (or Ctrl+K on Linux)
-- [ ] **CMDK-02**: Palette lists all available modules with icons and descriptions
-- [ ] **CMDK-03**: User can fuzzy-search module names and navigate to them by pressing Enter
-- [ ] **CMDK-04**: Palette uses Liquid Glass styling (frosted glass backdrop, blur, dark theme)
-- [ ] **CMDK-05**: User can search for device actions (e.g., "screenshot", "set location", "toggle dark mode")
+- [x] **CMDK-01**: User can open a search palette with Cmd+K (or Ctrl+K on Linux)
+- [x] **CMDK-02**: Palette lists all available modules with icons and descriptions
+- [x] **CMDK-03**: User can fuzzy-search module names and navigate to them by pressing Enter
+- [x] **CMDK-04**: Palette uses Liquid Glass styling (frosted glass backdrop, blur, dark theme)
+- [x] **CMDK-05**: User can search for device actions (e.g., "screenshot", "set location", "toggle dark mode")
 
 ### Home Screen
 
@@ -371,11 +371,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROUTE-01 | Phase 13 | Complete |
 | ROUTE-02 | Phase 13 | Complete |
 | ROUTE-03 | Phase 13 | Complete |
-| CMDK-01 | Phase 15 | Pending |
-| CMDK-02 | Phase 15 | Pending |
-| CMDK-03 | Phase 15 | Pending |
-| CMDK-04 | Phase 15 | Pending |
-| CMDK-05 | Phase 15 | Pending |
+| CMDK-01 | Phase 15 | Complete |
+| CMDK-02 | Phase 15 | Complete |
+| CMDK-03 | Phase 15 | Complete |
+| CMDK-04 | Phase 15 | Complete |
+| CMDK-05 | Phase 15 | Complete |
 | HOME-01 | Phase 16 | Pending |
 | HOME-02 | Phase 16 | Pending |
 | HOME-03 | Phase 16 | Pending |

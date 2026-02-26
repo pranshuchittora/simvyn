@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 14 — Module Icons
+**Phase:** Phase 15 — Command Palette
 **Plan:** 01 (complete)
-**Status:** Phase 14 complete (1/1 plans)
-**Progress:** [█████████░] 91%
+**Status:** Phase 15 complete (1/1 plans)
+**Progress:** [█████████░] 93%
 
 ## Phase Overview
 
@@ -34,7 +34,7 @@
 | **v1.1 — Dashboard UX Polish** | |
 | 13. URL Routing | ✅ Complete (1/1 plans) |
 | 14. Module Icons | ✅ Complete (1/1 plans) |
-| 15. Command Palette | ⬜ Not started |
+| 15. Command Palette | ✅ Complete (1/1 plans) |
 | 16. Home Screen & Capture Management | ⬜ Not started |
 | 17. Tool Settings | ⬜ Not started |
 
@@ -42,10 +42,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 13/17 (v1.0: 11/12, v1.1: 2/5) |
-| Plans completed | 43/43 (v1.0: 41, v1.1: 2) |
+| Phases completed | 14/17 (v1.0: 11/12, v1.1: 3/5) |
+| Plans completed | 44/44 (v1.0: 41, v1.1: 3) |
 | v1.0 requirements delivered | 126/126 |
-| v1.1 requirements delivered | 5/20 |
+| v1.1 requirements delivered | 10/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -99,6 +99,7 @@
 | Phase 12.2 P02 | 5min | 2 tasks | 13 files |
 | Phase 13 P01 | 2min | 2 tasks | 5 files |
 | Phase 14 P01 | 2min | 2 tasks | 2 files |
+| Phase 15 P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -224,6 +225,9 @@
 - Race condition guard in RouterSync: don't redirect invalid URLs until modules list has loaded from API (modules.length === 0 → skip)
 - Keep lucide-react dependency — 12 other panel files still import from it, only Sidebar switched to custom icons
 - Custom SVG icons use explicit hex accent colors (not currentColor) so dock-icon CSS color inheritance doesn't override unique module colors
+- cmdk Command.Dialog with Radix overlay — handles keyboard navigation, Escape, outside click natively without custom implementations
+- Zustand store (useCommandPaletteStore) for command palette open state — simplest sharing between TopBar hint and CommandPalette
+- Platform-aware shortcut label (⌘K on macOS, Ctrl+K on Linux) via navigator.platform check
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -257,9 +261,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T21:06:45.487Z
-**Stopped at:** Completed 14-01-PLAN.md (Phase 14 Module Icons complete)
-**Context for next session:** Phase 14 (Module Icons) complete — 13 custom SVG icons with unique accent colors, shared moduleIconMap/moduleLabelMap exports. Next action: Phase 15 (Command Palette) or remaining Phase 12 plans.
+**Last session:** 2026-02-26T21:12:14Z
+**Stopped at:** Completed 15-01-PLAN.md (Phase 15 Command Palette complete)
+**Context for next session:** Phase 15 (Command Palette) complete — Cmd+K palette with cmdk, 13 modules with custom icons, device actions, Liquid Glass styling, TopBar hint. Next action: Phase 16 (Home Screen & Capture Management) or remaining Phase 12 plans.
 
 ---
 *State initialized: 2026-02-26*
