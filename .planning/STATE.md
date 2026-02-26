@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 12.1 — Log Module Performance Overhaul
-**Plan:** 2 of 3
-**Status:** Executing
-**Progress:** [█████████░] 88%
+**Plan:** 3 of 3
+**Status:** Complete
+**Progress:** [█████████░] 90%
 
 ## Phase Overview
 
@@ -29,7 +29,7 @@
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
 | 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
-| 12.1 Log Module Performance Overhaul | 🔄 Executing (1/3 plans) |
+| 12.1 Log Module Performance Overhaul | ✅ Complete (3/3 plans) |
 
 ## Performance Metrics
 
@@ -86,6 +86,7 @@
 | Phase 12 P05 | 6min | 2 tasks | 8 files |
 | Phase 12.1 P01 | 1min | 2 tasks | 2 files |
 | Phase 12.1 P02 | 1min | 2 tasks | 5 files |
+| Phase 12.1 P03 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -200,6 +201,8 @@
 - Android prefs file section headers use muted uppercase text (matching glass-table thead) instead of glass-panel dividers
 - Cursor-based pagination for log history using buffer index (not timestamp) — simpler, no ambiguity with duplicate timestamps
 - iOS clear-device-logs restarts the log stream (no equivalent to adb logcat -c) — stop/start cycle gives fresh output
+- LogList reads from store directly (selectFilteredEntries) instead of receiving entries as props — avoids parent re-render on every log batch
+- selectedDeviceId stored in ref for WS callbacks — prevents stale closure issues with useCallback dependencies
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -231,9 +234,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T18:09:13.868Z
-**Stopped at:** Completed 12.1-02-PLAN.md (paginated log store + panel unmount)
-**Context for next session:** Phase 12.1 executing. 3 plans. Plan 01 complete. Plans 02-03 remain.
+**Last session:** 2026-02-26T18:14:39.662Z
+**Stopped at:** Completed 12.1-03-PLAN.md (virtual list UI, pagination wiring, device-clear, unmount cleanup)
+**Context for next session:** Phase 12.1 complete (3/3 plans). Return to Phase 12 remaining plans (4-7).
 
 ---
 *State initialized: 2026-02-26*

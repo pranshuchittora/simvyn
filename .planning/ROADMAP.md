@@ -18,7 +18,7 @@
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
 - [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
-- [ ] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED)
+- [x] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED) (completed 2026-02-26)
 
 ## Phase Details
 
@@ -295,7 +295,7 @@ Plans:
   4. User can clear device logs via dashboard button (runs `adb logcat -c` / equivalent) and separately clear UI-only logs
   5. Search works efficiently on the current paginated dataset without needing all logs loaded
   6. Navigating away from the Logs panel unmounts the component and releases all log data from memory
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [x] 12.1-01-PLAN.md — Server-side paginated history retrieval + device log clearing WS handlers
