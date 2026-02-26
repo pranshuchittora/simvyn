@@ -1,16 +1,47 @@
 {
-	"name": "@simvyn/cli",
-	"version": "0.0.1",
+	"name": "simvyn",
+	"version": "0.1.0",
 	"type": "module",
+	"description": "Universal mobile device devtool — control iOS Simulators and Android Emulators from a single dashboard and CLI",
 	"main": "./src/index.ts",
 	"types": "./src/index.ts",
+	"bin": {
+		"simvyn": "./src/index.ts"
+	},
 	"exports": {
 		".": {
 			"types": "./src/index.ts",
 			"default": "./src/index.ts"
 		}
 	},
+	"files": [
+		"src/",
+		"dist/"
+	],
+	"engines": {
+		"node": ">=22.12.0"
+	},
+	"keywords": [
+		"simulator",
+		"emulator",
+		"ios",
+		"android",
+		"devtools",
+		"simctl",
+		"adb",
+		"mobile"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/nicepkg/simvyn.git",
+		"directory": "packages/cli"
+	},
 	"dependencies": {
-		"@simvyn/server": "*"
+		"@simvyn/core": "*",
+		"@simvyn/server": "*",
+		"@simvyn/types": "*",
+		"commander": "^14",
+		"open": "^10"
 	}
 }
