@@ -10,6 +10,7 @@
 	"dependencies": {
 		"@simvyn/types": "*",
 		"@tmcw/togeojson": "^7.1.2",
+		"cmdk": "^1.1.1",
 		"framer-motion": "^12.34.3",
 		"leaflet": "^1.9.4",
 		"lucide-react": "^0.575.0",

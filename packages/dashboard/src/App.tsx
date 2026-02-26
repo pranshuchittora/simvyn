@@ -2,6 +2,7 @@ import type { Device } from "@simvyn/types";
 import { useCallback, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from "react-router";
 import { Toaster } from "sonner";
+import CommandPalette from "./components/CommandPalette";
 import ModuleShell from "./components/ModuleShell";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -119,6 +120,7 @@ export default function App() {
 					theme="dark"
 					richColors
 				/>
+				<CommandPalette />
 			</WsProvider>
 		</BrowserRouter>
 	);
