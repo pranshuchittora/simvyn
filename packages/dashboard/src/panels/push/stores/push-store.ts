@@ -98,7 +98,7 @@ export const usePushStore = create<PushStore>((set) => ({
 				return;
 			}
 			const data = await res.json();
-			set((s) => ({ savedPayloads: [...s.savedPayloads, data.payload] }));
+			set((s) => ({ savedPayloads: [...s.savedPayloads, data] }));
 			toast.success("Payload saved");
 		} catch {
 			toast.error("Network error saving payload");

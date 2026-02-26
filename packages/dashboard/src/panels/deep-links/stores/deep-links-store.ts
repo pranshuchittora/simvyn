@@ -76,7 +76,7 @@ export const useDeepLinksStore = create<DeepLinksStore>((set) => ({
 				return;
 			}
 			const data = await res.json();
-			set((s) => ({ favorites: [...s.favorites, data.favorite] }));
+			set((s) => ({ favorites: [...s.favorites, data] }));
 			toast.success("Favorite saved");
 		} catch {
 			toast.error("Network error saving favorite");

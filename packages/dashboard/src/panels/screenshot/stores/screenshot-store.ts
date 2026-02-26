@@ -113,7 +113,7 @@ export const useScreenshotStore = create<ScreenshotStore>((set, get) => ({
 				return;
 			}
 			const data = await res.json();
-			set({ captures: data.entries ?? [], loading: false });
+			set({ captures: Array.isArray(data) ? data : [], loading: false });
 		} catch {
 			set({ loading: false });
 		}
