@@ -1,4 +1,5 @@
 import { Search } from "lucide-react";
+import { useNavigate } from "react-router";
 import { useWs } from "../hooks/use-ws";
 import { useCommandPaletteStore } from "./CommandPalette";
 import DeviceSelector from "./DeviceSelector";
@@ -10,12 +11,20 @@ function isMac() {
 export default function TopBar() {
 	const { connected } = useWs();
 	const toggle = useCommandPaletteStore((s) => s.toggle);
+	const navigate = useNavigate();
 
 	return (
 		<header className="top-bar relative z-30 flex h-12 shrink-0 items-center justify-between px-4">
-			<div className="text-base font-semibold tracking-tight bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
-				simvyn
-			</div>
+			<button
+				type="button"
+				onClick={() => navigate("/")}
+				className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-none p-0"
+			>
+				<img src="/icon-192.png" alt="" className="w-6 h-6 rounded-md" draggable={false} />
+				<span className="text-base font-semibold tracking-tight bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
+					simvyn
+				</span>
+			</button>
 
 			<div className="flex items-center gap-4">
 				<button type="button" onClick={toggle} className="cmdk-hint">
