@@ -36,7 +36,12 @@ export default function HomeScreen() {
 						draggable={false}
 					/>
 
-					<h1 className="text-4xl font-semibold text-text-primary tracking-wide">simvyn</h1>
+					<h1
+						className="text-4xl font-semibold text-text-primary tracking-wide"
+						style={{ fontFamily: "var(--font-brand)" }}
+					>
+						simvyn
+					</h1>
 
 					<p className="text-base text-text-secondary text-center leading-relaxed">{tip}</p>
 
