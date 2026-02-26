@@ -92,13 +92,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Screenshots & Recording
 
-- [ ] **SCRN-01**: Capture screenshots on iOS via `simctl io screenshot`
-- [ ] **SCRN-02**: Capture screenshots on Android via `adb shell screencap` + `adb pull`
-- [ ] **SCRN-03**: Record screen on iOS via `simctl io recordVideo` with start/stop controls
-- [ ] **SCRN-04**: Record screen on Android via `adb shell screenrecord` with start/stop controls
-- [ ] **SCRN-05**: Save screenshot/recording history with timestamps and device info
+- [x] **SCRN-01**: Capture screenshots on iOS via `simctl io screenshot`
+- [x] **SCRN-02**: Capture screenshots on Android via `adb shell screencap` + `adb pull`
+- [x] **SCRN-03**: Record screen on iOS via `simctl io recordVideo` with start/stop controls
+- [x] **SCRN-04**: Record screen on Android via `adb shell screenrecord` with start/stop controls
+- [x] **SCRN-05**: Save screenshot/recording history with timestamps and device info
 - [ ] **SCRN-06**: Copy screenshot to host clipboard from dashboard
-- [ ] **SCRN-07**: CLI subcommands: `simvyn screenshot <device> [--output <path>]`, `simvyn record <device> [--output <path>]`
+- [x] **SCRN-07**: CLI subcommands: `simvyn screenshot <device> [--output <path>]`, `simvyn record <device> [--output <path>]`
 
 ### Device Settings
 
@@ -263,13 +263,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UI-07 | Phase 5 | Complete |
 | UI-08 | Phase 5 | Complete |
 | UI-09 | Phase 5 | Complete |
-| SCRN-01 | Phase 6 | Pending |
-| SCRN-02 | Phase 6 | Pending |
-| SCRN-03 | Phase 6 | Pending |
-| SCRN-04 | Phase 6 | Pending |
-| SCRN-05 | Phase 6 | Pending |
+| SCRN-01 | Phase 6 | Complete |
+| SCRN-02 | Phase 6 | Complete |
+| SCRN-03 | Phase 6 | Complete |
+| SCRN-04 | Phase 6 | Complete |
+| SCRN-05 | Phase 6 | Complete |
 | SCRN-06 | Phase 6 | Pending |
-| SCRN-07 | Phase 6 | Pending |
+| SCRN-07 | Phase 6 | Complete |
 | LINK-01 | Phase 6 | Complete |
 | LINK-02 | Phase 6 | Complete |
 | LINK-03 | Phase 6 | Complete |

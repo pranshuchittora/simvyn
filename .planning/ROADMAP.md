@@ -119,12 +119,12 @@ Plans:
   3. User can type a URL or custom scheme into the deep links panel and launch it on the selected device; frequently used links can be saved as favorites per app
   4. User can compose a push notification payload in a JSON editor (or pick from a template library), send it to an iOS simulator, and save the payload for reuse
   5. All three modules expose CLI subcommands (`simvyn screenshot`, `simvyn record`, `simvyn link`, `simvyn push`) that work headlessly
-**Plans:** 2/4 plans executed
+**Plans:** 3/4 plans executed
 
 Plans:
-- [ ] 06-01-PLAN.md — Screenshot/recording module (adapters, routes, WS, CLI)
-- [ ] 06-02-PLAN.md — Deep links module (open URLs, favorites, CLI)
-- [ ] 06-03-PLAN.md — Push notifications module (send, templates, saved payloads, CLI)
+- [x] 06-01-PLAN.md — Screenshot/recording module (adapters, routes, WS, CLI)
+- [x] 06-02-PLAN.md — Deep links module (open URLs, favorites, CLI)
+- [x] 06-03-PLAN.md — Push notifications module (send, templates, saved payloads, CLI)
 - [ ] 06-04-PLAN.md — Dashboard panels for all 3 modules + Sidebar integration
 
 ### Phase 7: File System & Database Inspector
@@ -170,7 +170,7 @@ Plans:
 | 3. App Management Module | 4/4 | Complete | 2026-02-26 |
 | 4. Log Viewer Module | 4/4 | Complete | 2026-02-26 |
 | 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
-| 6. Quick-Action Modules | 2/4 | In Progress|  |
+| 6. Quick-Action Modules | 3/4 | In Progress|  |
 | 7. File System & Database Inspector | 0/? | Not started | — |
 | 8. Device Settings & Accessibility | 0/? | Not started | — |
 | 9. Utility Modules | 0/? | Not started | — |
