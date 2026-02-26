@@ -256,6 +256,7 @@
 - Phase 12.1 inserted after Phase 12: Log Module Performance Overhaul (URGENT) — paginated log fetching, virtual list, descending order, device log clearing, search revamp, unmount cleanup
 - Phase 12.2 inserted after Phase 12: Unified Device Selector (URGENT) — remove duplicate per-panel selectors, single top-bar selector with multi-select for location, single-select elsewhere
 - v1.1 milestone phases 13-17 added: URL Routing → Module Icons → Command Palette → Home Screen & Capture Management → Tool Settings
+- Phase 17.1 inserted after Phase 17: Typography Update (URGENT) — Cascadia Code for branding, adjust all dashboard text styling
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)

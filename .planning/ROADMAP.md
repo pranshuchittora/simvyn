@@ -28,6 +28,7 @@
 - [x] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling (completed 2026-02-26)
 - [x] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion (completed 2026-02-26)
 - [x] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage (completed 2026-02-26)
+- [ ] **Phase 17.1: Typography Update** — Cascadia Code for branding, adjust all dashboard text styling (INSERTED)
 
 ## Phase Details
 
@@ -355,6 +356,15 @@ TSET-05 → Phase 17
 ```
 
 **v1.1 Mapped: 20/20 ✓ — No orphaned requirements**
+
+### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Depends on:** Phase 17
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 17.1 to break down)
 
 ### Phase 11: Location Module Rewrite
 **Goal:** Replace the generated location dashboard panel with production-quality code migrated from sim-location, preserving exact UI and all working functionality
