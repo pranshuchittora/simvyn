@@ -76,11 +76,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Push Notifications
 
-- [ ] **PUSH-01**: Compose push notification payload via JSON editor in dashboard
-- [ ] **PUSH-02**: Send push notifications to iOS simulators via `simctl push <device> <bundle-id> <payload>`
-- [ ] **PUSH-03**: Save favorite push payloads for reuse
-- [ ] **PUSH-04**: Template library for common push payload structures
-- [ ] **PUSH-05**: CLI subcommand: `simvyn push <device> --bundle <id> --payload <json>`
+- [x] **PUSH-01**: Compose push notification payload via JSON editor in dashboard
+- [x] **PUSH-02**: Send push notifications to iOS simulators via `simctl push <device> <bundle-id> <payload>`
+- [x] **PUSH-03**: Save favorite push payloads for reuse
+- [x] **PUSH-04**: Template library for common push payload structures
+- [x] **PUSH-05**: CLI subcommand: `simvyn push <device> --bundle <id> --payload <json>`
 
 ### Deep Links
 
@@ -275,11 +275,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LINK-03 | Phase 6 | Pending |
 | LINK-04 | Phase 6 | Pending |
 | LINK-05 | Phase 6 | Pending |
-| PUSH-01 | Phase 6 | Pending |
-| PUSH-02 | Phase 6 | Pending |
-| PUSH-03 | Phase 6 | Pending |
-| PUSH-04 | Phase 6 | Pending |
-| PUSH-05 | Phase 6 | Pending |
+| PUSH-01 | Phase 6 | Complete |
+| PUSH-02 | Phase 6 | Complete |
+| PUSH-03 | Phase 6 | Complete |
+| PUSH-04 | Phase 6 | Complete |
+| PUSH-05 | Phase 6 | Complete |
 | FS-01 | Phase 7 | Pending |
 | FS-02 | Phase 7 | Pending |
 | FS-03 | Phase 7 | Pending |

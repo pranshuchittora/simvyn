@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 5 Complete — Ready for Phase 6
+**Current Focus:** Phase 6 — Quick-Action Modules (Plan 3 of 4 complete)
 
 ## Current Position
 
-**Phase:** 5 of 9 — Dashboard UI
-**Plan:** 4 of 4 in Phase 5 ✅
-**Status:** Milestone complete
-**Progress:** [██████████] 100% (Phase 5)
+**Phase:** 6 of 9 — Quick-Action Modules
+**Plan:** 3 of 4 in Phase 6
+**Status:** In progress
+**Progress:** [████████░░] 78%
 
 ## Phase Overview
 
@@ -22,7 +22,7 @@
 | 3. App Management Module | ✅ Complete (4/4 plans) |
 | 4. Log Viewer Module | ✅ Complete (4/4 plans) |
 | 5. Dashboard UI | ✅ Complete (4/4 plans) |
-| 6. Quick-Action Modules | ⬜ Not started |
+| 6. Quick-Action Modules | 🔄 In Progress (3/4 plans) |
 | 7. File System & Database Inspector | ⬜ Not started |
 | 8. Device Settings & Accessibility | ⬜ Not started |
 | 9. Utility Modules | ⬜ Not started |
@@ -56,6 +56,8 @@
 | Phase 05 P02 | 2min | 3 tasks | 3 files |
 | Phase 05 P03 | 1min | 2 tasks | 3 files |
 | Phase 05 P04 | 2min | 4 tasks | 6 files |
+| Phase 06 P02 | 2min | 1 task | 7 files |
+| Phase 06 P03 | 2min | 1 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -110,6 +112,10 @@
 - Framer Motion AnimatedPanel uses useAnimationControls (not key-based remount) — re-animates on every switch without losing state
 - Sonner toasts mounted at app root with inline oklch glass styles — no dependency on CSS classes for core toast appearance
 - All emojis removed from dashboard — replaced with Lucide icons or plain text throughout
+- Direct execFileAsync for simctl push — no adapter needed since push is iOS-simulator-only
+- openUrl on PlatformAdapter is optional (?) — consistent with setLocation/listApps pattern, not all platforms may support all URL types
+- Deep link history capped at 50 entries with LIFO ordering — recent-first display without unbounded growth
+- No WS handler for deep-links module — fire-and-forget pattern, no streaming needed
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -136,8 +142,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26
-**Stopped at:** Phase 5 complete
+**Last session:** 2026-02-26T10:49:06.137Z
+**Stopped at:** Completed 06-03-PLAN.md
 **Context for next session:** Phase 5 (Dashboard UI) complete — all 4 plans executed. Liquid Glass design system established with oklch tokens, 4-stop diagonal gradient background, enhanced glass panels (blur 24px, saturate 1.3), Inter font via Google Fonts, custom thin scrollbars. Sidebar rebuilt as macOS Dock-style icon bar (60px) with Lucide icons (MonitorSmartphone, MapPin, AppWindow, ScrollText), hover tooltips, scale-up animation, and glowing dot active indicator. TopBar polished with gradient text branding, pulsing connection indicator. DeviceSelector enhanced with glass dropdown, chevron rotation, shadow. ModuleShell has Framer Motion spring animations (fade+slide-up on every switch via useAnimationControls, display:none/block state persistence preserved). Sonner Toaster mounted at app root with glass styling. All module panels (device, app, log, location) polished for visual consistency — no emojis remain, consistent text-base font-medium headings, responsive grids, hover effects. lucide-react and framer-motion added as dependencies. Ready for Phase 6 planning.
 
 ---
