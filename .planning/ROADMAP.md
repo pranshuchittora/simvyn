@@ -141,7 +141,7 @@ Plans:
 
 Plans:
 - [ ] 07-01-PLAN.md — File system module backend (iOS/Android adapters, routes, CLI)
-- [ ] 07-02-PLAN.md — Database inspector module backend (SQLite, prefs, routes, CLI)
+- [x] 07-02-PLAN.md — Database inspector module backend (SQLite, prefs, routes, CLI)
 - [ ] 07-03-PLAN.md — Dashboard panels for both modules + sidebar integration
 
 ### Phase 8: Device Settings & Accessibility
@@ -176,7 +176,7 @@ Plans:
 | 4. Log Viewer Module | 4/4 | Complete | 2026-02-26 |
 | 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
 | 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
-| 7. File System & Database Inspector | 1/3 | In Progress | — |
+| 7. File System & Database Inspector | 2/3 | In Progress | — |
 | 8. Device Settings & Accessibility | 0/? | Not started | — |
 | 9. Utility Modules | 0/? | Not started | — |
 

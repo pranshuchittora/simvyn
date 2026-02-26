@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 7 of 9 — File System & Database Inspector
-**Plan:** 1 of 3 in Phase 7
+**Plan:** 2 of 3 in Phase 7
 **Status:** In progress
-**Progress:** [████████░░] 83%
+**Progress:** [████████░░] 86%
 
 ## Phase Overview
 
@@ -23,7 +23,7 @@
 | 4. Log Viewer Module | ✅ Complete (4/4 plans) |
 | 5. Dashboard UI | ✅ Complete (4/4 plans) |
 | 6. Quick-Action Modules | ✅ Complete (4/4 plans) |
-| 7. File System & Database Inspector | 🔄 In Progress (1/3 plans) |
+| 7. File System & Database Inspector | 🔄 In Progress (2/3 plans) |
 | 8. Device Settings & Accessibility | ⬜ Not started |
 | 9. Utility Modules | ⬜ Not started |
 
@@ -32,8 +32,8 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 6/9 |
-| Plans completed | 28/30 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 1/3) |
-| Requirements delivered | 76/108 |
+| Plans completed | 29/30 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 2/3) |
+| Requirements delivered | 84/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -61,6 +61,7 @@
 | Phase 06 P03 | 2min | 1 tasks | 5 files |
 | Phase 06 P04 | 3min | 2 tasks | 8 files |
 | Phase 07 P01 | 3min | 2 tasks | 7 files |
+| Phase 07 P02 | 5min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -129,6 +130,11 @@
 - iOS plist read converts binary to XML via plutil for human-readable editing, converts back on write
 - Android file staging uses /data/local/tmp/simvyn_transfer as intermediate path for run-as file transfer
 - fileSystem (and database) added to PlatformCapability union type for module capability declarations
+- better-sqlite3 with readonly:true for browsing, copy-on-write (copy db+wal+shm to temp, modify, copy back) for mutations
+- Android databases pulled to temp via `adb shell run-as <pkg> cat`, operated locally with better-sqlite3, pushed back for writes
+- SharedPreferences parsed from XML via regex — no XML library needed for well-defined Android format (6 element types)
+- NSUserDefaults read via `plutil -convert json <path>` — direct file path (not stdin pipe) since file is on host filesystem
+- Android database discovery uses `adb shell run-as <pkg> find` — simpler than recursive walk over adb
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -145,7 +151,7 @@
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
 - ~~Phase 4: `simctl spawn log stream` output varies by macOS version — needs defensive parsing~~ RESOLVED: using `--style ndjson` eliminates this concern
-- Phase 7: better-sqlite3 WAL-mode locking behavior with actively-written databases
+- ~~Phase 7: better-sqlite3 WAL-mode locking behavior with actively-written databases~~ RESOLVED: copy-on-write strategy avoids direct access to actively-written databases
 
 ### TODOs
 (None)
@@ -155,10 +161,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T11:32:54Z
-**Stopped at:** Completed 07-01-PLAN.md
-**Context for next session:** Phase 7 Plan 1 complete (1/3). File-system module created with iOS direct-fs and Android adb-run-as adapters. REST API at /api/modules/fs/* with ls/pull/push/read/write endpoints. CLI commands: simvyn fs ls/pull/push. Ready for Plan 2 (database inspector module).
+**Last session:** 2026-02-26T11:35:00Z
+**Stopped at:** Completed 07-02-PLAN.md
+**Context for next session:** Phase 7 Plan 2 complete (2/3). Database module created with SQLite inspector (better-sqlite3), SharedPreferences XML parser, NSUserDefaults plist reader. REST API at /api/modules/database/* with 6 endpoints. CLI commands: simvyn db list/query/prefs. Ready for Plan 3 (dashboard panels for file system and database modules).
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T11:32:54Z*
+*Last updated: 2026-02-26T11:35:00Z*
