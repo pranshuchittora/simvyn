@@ -41,6 +41,15 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - [ ] Published as `simvyn` npm package, invocable via `npx simvyn`
 - [ ] Cross-platform: macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
 
+## Current Milestone: v1.1 Dashboard UX Polish
+
+**Goal:** Improve dashboard navigation and discoverability with URL routing, command palette search, and a welcoming home screen.
+
+**Target features:**
+- URL-based routing — module selection persists across page refresh
+- Cmd+K command palette — spotlight-style search with Liquid Glass styling
+- Home/welcome screen — VS Code-inspired landing when no module is active
+
 ### Out of Scope
 
 - Native mobile app (dashboard only) — web-first approach, no mobile client needed
@@ -102,4 +111,4 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 | File-based persistence at ~/.simvyn/ | Simple, no database dependency; JSON files like sim-location | — Pending |
 
 ---
-*Last updated: 2026-02-26 after initialization*
+*Last updated: 2026-02-27 after milestone v1.1 start*

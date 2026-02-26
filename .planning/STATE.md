@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 12.2 — Unified Device Selector
+**Current Focus:** Milestone v1.1 — Dashboard UX Polish
 
 ## Current Position
 
-**Phase:** 12.2 — Unified Device Selector
-**Plan:** 2 of 2 (Complete)
-**Status:** Milestone complete
-**Progress:** [██████████] 90%
+**Phase:** Not started (defining requirements)
+**Plan:** —
+**Status:** Defining requirements
+**Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
 
