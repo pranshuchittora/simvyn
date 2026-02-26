@@ -24,6 +24,7 @@ import "./panels/SettingsPanel";
 import "./panels/CrashLogsPanel";
 import "./panels/MediaPanel";
 import "./panels/ClipboardPanel";
+import "./panels/ToolSettingsPanel";
 
 function RouterSync() {
 	const { moduleName } = useParams<{ moduleName: string }>();
