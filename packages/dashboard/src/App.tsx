@@ -1,14 +1,15 @@
-import { useEffect, useCallback } from "react";
-import { WsProvider, useWsListener } from "./hooks/use-ws";
+import type { Device } from "@simvyn/types";
+import { useCallback, useEffect } from "react";
+import ModuleShell from "./components/ModuleShell";
+import Sidebar from "./components/Sidebar";
+import TopBar from "./components/TopBar";
+import { useWsListener, WsProvider } from "./hooks/use-ws";
 import { useDeviceStore } from "./stores/device-store";
 import { useModuleStore } from "./stores/module-store";
-import TopBar from "./components/TopBar";
-import Sidebar from "./components/Sidebar";
-import ModuleShell from "./components/ModuleShell";
-import type { Device } from "@simvyn/types";
 
 // Module panel side-effect registrations
 import "./panels/DevicePanel";
+import "./panels/LocationPanel";
 
 function AppContent() {
 	const setDevices = useDeviceStore((s) => s.setDevices);
@@ -21,15 +22,12 @@ function AppContent() {
 		[setDevices],
 	);
 
-	const handleDeviceUpdated = useCallback(
-		(payload: unknown) => {
-			const updated = payload as Device;
-			useDeviceStore.setState((s) => ({
-				devices: s.devices.map((d) => (d.id === updated.id ? updated : d)),
-			}));
-		},
-		[],
-	);
+	const handleDeviceUpdated = useCallback((payload: unknown) => {
+		const updated = payload as Device;
+		useDeviceStore.setState((s) => ({
+			devices: s.devices.map((d) => (d.id === updated.id ? updated : d)),
+		}));
+	}, []);
 
 	useWsListener("devices", "device-list", handleDeviceList);
 	useWsListener("devices", "device-updated", handleDeviceUpdated);
