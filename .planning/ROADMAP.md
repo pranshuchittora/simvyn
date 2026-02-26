@@ -137,7 +137,12 @@ Plans:
   3. User can open a SQLite database from an app container, browse tables with schema/types/row counts, view paginated data, edit cell values, and run arbitrary SQL queries
   4. User can view SharedPreferences (Android) and NSUserDefaults (iOS) as key-value tables in the dashboard
   5. File and database operations are available via CLI (`simvyn fs ls`, `simvyn fs pull`, `simvyn db query`, etc.)
-**Plans:** TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — File system module backend (iOS/Android adapters, routes, CLI)
+- [ ] 07-02-PLAN.md — Database inspector module backend (SQLite, prefs, routes, CLI)
+- [ ] 07-03-PLAN.md — Dashboard panels for both modules + sidebar integration
 
 ### Phase 8: Device Settings & Accessibility
 **Goal:** Developers can toggle device settings and accessibility configurations for testing without leaving the dashboard
