@@ -2,7 +2,7 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 12
+**Phases:** 13
 **Coverage:** 108/108 v1 requirements mapped
 
 ## Phases
@@ -18,6 +18,7 @@
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
 - [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
+- [ ] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED)
 
 ## Phase Details
 
@@ -281,6 +282,25 @@ Plans:
 - [ ] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)
 - [ ] 12-06-PLAN.md — Settings panel (forms, toggles, permissions)
 - [ ] 12-07-PLAN.md — Visual consistency audit + human verification
+
+### Phase 12.1: Log Module Performance Overhaul (INSERTED)
+
+**Goal:** Overhaul the log module for production-grade performance — paginated fetching (500 logs at a time), descending order (newest first), virtual list rendering, device log clearing (adb/simctl), UI-only clear, revamped search for smaller datasets, and full unmount cleanup to reduce memory footprint
+**Depends on:** Phase 4 (existing log module), Phase 12 (glass UI)
+**Requirements:** LOGPERF-01 (paginated fetching), LOGPERF-02 (descending order), LOGPERF-03 (virtual list), LOGPERF-04 (infinite scroll pagination), LOGPERF-05 (device log clearing), LOGPERF-06 (UI clear), LOGPERF-07 (search revamp), LOGPERF-08 (unmount cleanup)
+**Success Criteria** (what must be TRUE):
+  1. Log panel initially fetches ~500 most recent logs in descending order (newest at top), not the entire stream
+  2. Scrolling down triggers pagination — fetches next batch of older logs seamlessly
+  3. Log list uses a virtual/recycler list library — only visible rows are rendered in the DOM regardless of total log count
+  4. User can clear device logs via dashboard button (runs `adb logcat -c` / equivalent) and separately clear UI-only logs
+  5. Search works efficiently on the current paginated dataset without needing all logs loaded
+  6. Navigating away from the Logs panel unmounts the component and releases all log data from memory
+**Plans:** 3 plans
+
+Plans:
+- [ ] 12.1-01-PLAN.md — Server-side paginated history retrieval + device log clearing WS handlers
+- [ ] 12.1-02-PLAN.md — Client log store redesign for paginated model + ModuleShell unmount + install react-virtuoso
+- [ ] 12.1-03-PLAN.md — LogList react-virtuoso rewrite + LogPanel pagination wiring + LogToolbar device-clear + search revamp
 
 ---
 *Roadmap created: 2026-02-26*
