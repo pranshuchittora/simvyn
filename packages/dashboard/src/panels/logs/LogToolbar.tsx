@@ -1,5 +1,6 @@
 import type { LogLevel } from "@simvyn/types";
 import { useCallback, useRef } from "react";
+import { useWs } from "../../hooks/use-ws";
 import { selectFilteredEntries, useLogStore } from "./stores/log-store";
 
 const LEVELS: { key: LogLevel; label: string; color: string; activeColor: string }[] = [
@@ -43,7 +44,12 @@ const LEVELS: { key: LogLevel; label: string; color: string; activeColor: string
 
 const LEVEL_ORDER: LogLevel[] = ["verbose", "debug", "info", "warning", "error", "fatal"];
 
-export default function LogToolbar() {
+interface LogToolbarProps {
+	selectedDeviceId: string;
+}
+
+export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
+	const { send } = useWs();
 	const minLevel = useLogStore((s) => s.minLevel);
 	const searchPattern = useLogStore((s) => s.searchPattern);
 	const processFilter = useLogStore((s) => s.processFilter);
@@ -95,6 +101,14 @@ export default function LogToolbar() {
 		URL.revokeObjectURL(url);
 	}, []);
 
+	const handleClearDevice = useCallback(() => {
+		send({
+			channel: "logs",
+			type: "clear-device-logs",
+			payload: { deviceId: selectedDeviceId },
+		});
+	}, [send, selectedDeviceId]);
+
 	return (
 		<div className="flex items-center gap-2 flex-wrap">
 			{/* Level filter buttons */}
@@ -144,9 +158,22 @@ export default function LogToolbar() {
 				</button>
 			</div>
 
-			{/* Clear */}
-			<button type="button" onClick={clear} className="glass-button-destructive">
-				Clear
+			{/* Clear buttons */}
+			<button
+				type="button"
+				onClick={handleClearDevice}
+				className="glass-button-destructive"
+				title="Clear device log buffer"
+			>
+				Clear Device
+			</button>
+			<button
+				type="button"
+				onClick={clear}
+				className="glass-button"
+				title="Clear loaded entries (UI only)"
+			>
+				Clear UI
 			</button>
 
 			{/* Entry count */}

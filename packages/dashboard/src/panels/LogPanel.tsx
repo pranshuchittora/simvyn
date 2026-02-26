@@ -5,19 +5,27 @@ import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
 import LogList from "./logs/LogList";
 import LogToolbar from "./logs/LogToolbar";
-import { selectFilteredEntries, useLogStore } from "./logs/stores/log-store";
+import { useLogStore } from "./logs/stores/log-store";
 
 function LogPanel() {
 	const { send } = useWs();
 	const devices = useDeviceStore((s) => s.devices);
+	const selectedDeviceIdRef = useRef<string | null>(null);
 	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
 	const addNewBatch = useLogStore((s) => s.addNewBatch);
+	const prependHistory = useLogStore((s) => s.prependHistory);
+	const setLoadingHistory = useLogStore((s) => s.setLoadingHistory);
 	const clear = useLogStore((s) => s.clear);
+	const reset = useLogStore((s) => s.reset);
 	const setStreaming = useLogStore((s) => s.setStreaming);
-	const filteredEntries = useLogStore(selectFilteredEntries);
-	const prevDeviceRef = useRef<string | null>(null);
+	const hasMore = useLogStore((s) => s.hasMore);
+	const isLoadingHistory = useLogStore((s) => s.isLoadingHistory);
 
 	const bootedDevices = devices.filter((d) => d.state === "booted");
+
+	useEffect(() => {
+		selectedDeviceIdRef.current = selectedDeviceId;
+	}, [selectedDeviceId]);
 
 	// auto-select first booted device
 	useEffect(() => {
@@ -27,7 +35,7 @@ function LogPanel() {
 		}
 	}, [devices, selectedDeviceId, bootedDevices]);
 
-	// subscribe to logs channel
+	// subscribe to logs channel + cleanup on unmount
 	useEffect(() => {
 		send({
 			channel: "system",
@@ -40,10 +48,12 @@ function LogPanel() {
 				type: "unsubscribe",
 				payload: { channel: "logs" },
 			});
+			reset();
 		};
-	}, [send]);
+	}, [send, reset]);
 
-	// start/stop stream on device change
+	// start/stop stream + fetch initial history on device change
+	const prevDeviceRef = useRef<string | null>(null);
 	useEffect(() => {
 		if (prevDeviceRef.current && prevDeviceRef.current !== selectedDeviceId) {
 			send({
@@ -60,6 +70,11 @@ function LogPanel() {
 				type: "start-stream",
 				payload: { deviceId: selectedDeviceId },
 			});
+			send({
+				channel: "logs",
+				type: "get-history",
+				payload: { deviceId: selectedDeviceId, limit: 500 },
+			});
 		}
 
 		prevDeviceRef.current = selectedDeviceId;
@@ -75,15 +90,45 @@ function LogPanel() {
 		};
 	}, [selectedDeviceId, send, clear]);
 
+	const loadMoreHistory = useCallback(() => {
+		if (!selectedDeviceId || !hasMore || isLoadingHistory) return;
+		setLoadingHistory(true);
+		const currentCursor = useLogStore.getState().cursor;
+		send({
+			channel: "logs",
+			type: "get-history",
+			payload: {
+				deviceId: selectedDeviceId,
+				before: currentCursor ?? undefined,
+				limit: 500,
+			},
+		});
+	}, [selectedDeviceId, hasMore, isLoadingHistory, send, setLoadingHistory]);
+
 	// WS event handlers
 	const handleLogBatch = useCallback(
 		(payload: unknown) => {
 			const data = payload as { deviceId: string; entries: LogEntry[] };
-			if (data.deviceId === selectedDeviceId) {
+			if (data.deviceId === selectedDeviceIdRef.current) {
 				addNewBatch(data.entries);
 			}
 		},
-		[selectedDeviceId, addNewBatch],
+		[addNewBatch],
+	);
+
+	const handleHistoryPage = useCallback(
+		(payload: unknown) => {
+			const data = payload as {
+				deviceId: string;
+				entries: LogEntry[];
+				cursor: number;
+				hasMore: boolean;
+			};
+			if (data.deviceId === selectedDeviceIdRef.current) {
+				prependHistory(data.entries, data.cursor, data.hasMore);
+			}
+		},
+		[prependHistory],
 	);
 
 	const handleStreamStarted = useCallback(
@@ -101,19 +146,30 @@ function LogPanel() {
 		[setStreaming],
 	);
 
+	const handleDeviceCleared = useCallback(
+		(payload: unknown) => {
+			const data = payload as { deviceId: string };
+			if (data.deviceId === selectedDeviceIdRef.current) {
+				clear();
+			}
+		},
+		[clear],
+	);
+
 	const handleError = useCallback((payload: unknown) => {
 		const data = payload as { message: string };
 		console.error("[logs]", data.message);
 	}, []);
 
 	useWsListener("logs", "log-batch", handleLogBatch);
+	useWsListener("logs", "history-page", handleHistoryPage);
 	useWsListener("logs", "stream-started", handleStreamStarted);
 	useWsListener("logs", "stream-stopped", handleStreamStopped);
+	useWsListener("logs", "device-cleared", handleDeviceCleared);
 	useWsListener("logs", "error", handleError);
 
 	return (
 		<div className="flex flex-col h-full p-6 gap-4">
-			{/* Header */}
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Log Viewer</h1>
 				<select
@@ -130,19 +186,17 @@ function LogPanel() {
 				</select>
 			</div>
 
-			{/* No device selected */}
 			{!selectedDeviceId && (
 				<div className="glass-empty-state flex-1 flex items-center justify-center">
 					<p>Select a booted device to stream logs</p>
 				</div>
 			)}
 
-			{/* Device selected */}
 			{selectedDeviceId && (
 				<>
-					<LogToolbar />
+					<LogToolbar selectedDeviceId={selectedDeviceId} />
 					<div className="flex-1 min-h-0">
-						<LogList entries={filteredEntries} />
+						<LogList onLoadMore={loadMoreHistory} />
 					</div>
 				</>
 			)}
@@ -151,5 +205,4 @@ function LogPanel() {
 }
 
 registerPanel("logs", LogPanel);
-
 export default LogPanel;
