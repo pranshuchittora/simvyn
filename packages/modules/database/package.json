@@ -1,0 +1,15 @@
+{
+	"name": "@simvyn/module-database",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./manifest.ts",
+	"dependencies": {
+		"@simvyn/core": "*",
+		"@simvyn/server": "*",
+		"@simvyn/types": "*",
+		"better-sqlite3": "^12.6.2"
+	},
+	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.13"
+	}
+}
