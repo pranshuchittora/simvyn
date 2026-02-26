@@ -209,7 +209,10 @@ Plans:
   1. Each module displays a custom colorful liquid glass SVG icon (not a Lucide generic icon) in the sidebar dock
   2. The same custom icons appear in the command palette module list and home screen module grid
   3. Icons are visually consistent with the Liquid Glass aesthetic — translucent fills, soft gradients, rounded forms
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 14-01-PLAN.md — Create 13 custom liquid glass SVG icons and wire into Sidebar
 
 ### Phase 15: Command Palette
 **Goal:** Users can discover and navigate to any module or device action instantly via keyboard-driven spotlight search
