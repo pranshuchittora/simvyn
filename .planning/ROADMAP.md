@@ -298,7 +298,7 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 12.1-01-PLAN.md — Server-side paginated history retrieval + device log clearing WS handlers
+- [x] 12.1-01-PLAN.md — Server-side paginated history retrieval + device log clearing WS handlers
 - [ ] 12.1-02-PLAN.md — Client log store redesign for paginated model + ModuleShell unmount + install react-virtuoso
 - [ ] 12.1-03-PLAN.md — LogList react-virtuoso rewrite + LogPanel pagination wiring + LogToolbar device-clear + search revamp
 

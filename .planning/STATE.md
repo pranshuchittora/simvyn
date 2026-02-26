@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 12 — Liquid Glass UI Refactor
+**Current Focus:** Phase 12.1 — Log Module Performance Overhaul
 
 ## Current Position
 
-**Phase:** 12 of 12 — Liquid Glass UI Refactor
-**Plan:** 3 of 7
+**Phase:** 12.1 — Log Module Performance Overhaul
+**Plan:** 2 of 3
 **Status:** Executing
-**Progress:** [█████████░] 90%
+**Progress:** [█████████░] 88%
 
 ## Phase Overview
 
@@ -29,6 +29,7 @@
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
 | 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
+| 12.1 Log Module Performance Overhaul | 🔄 Executing (1/3 plans) |
 
 ## Performance Metrics
 
@@ -83,6 +84,8 @@
 | Phase 12 P06 | 4min | 2 tasks | 4 files |
 | Phase 12 P03 | 6min | 2 tasks | 6 files |
 | Phase 12 P05 | 6min | 2 tasks | 8 files |
+| Phase 12.1 P01 | 1min | 2 tasks | 2 files |
+| Phase 12.1 P02 | 1min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -128,7 +131,9 @@
 - Ref-counted log streaming — multiple WS clients share a single child process per device
 - CLI `simvyn logs` uses raw ANSI escape codes (not chalk) — 6 constants don't justify a dependency
 - CLI log output processes each line immediately (no batching) for lowest latency
-- Dashboard log buffer capped at 50K entries (server at 10K) for extended scrollback
+- Dashboard log buffer capped at 5K entries (reduced from 50K) with server-side pagination compensating
+- INITIAL_INDEX at 100K for react-virtuoso reverse-infinite scroll headroom
+- UNMOUNT_WHEN_HIDDEN Set pattern in ModuleShell — panels in this set return null when inactive (full unmount vs display:none)
 - Client-side log filtering only — no server roundtrip for filter changes, instant response
 - Liquid Glass design system uses oklch color space — perceptually uniform, CSS native
 - Body background is a 4-stop diagonal gradient (not flat color) — deep blue-purple tones at 145deg
@@ -193,6 +198,8 @@
 - Sticky table headers use opaque var(--color-bg-surface) instead of backdrop-filter — prevents glass-on-glass inside glass-panel container
 - Inner database components (DatabaseBrowser, TableViewer, PrefsViewer) stripped of glass-panel — only outermost container uses glass-panel
 - Android prefs file section headers use muted uppercase text (matching glass-table thead) instead of glass-panel dividers
+- Cursor-based pagination for log history using buffer index (not timestamp) — simpler, no ambiguity with duplicate timestamps
+- iOS clear-device-logs restarts the log stream (no equivalent to adb logcat -c) — stop/start cycle gives fresh output
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -209,6 +216,7 @@
 ### Roadmap Evolution
 - Phase 11 added: Location module rewrite — migrate sim-location UI and logic into simvyn dashboard
 - Phase 12 added: Liquid Glass UI refactor — refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
+- Phase 12.1 inserted after Phase 12: Log Module Performance Overhaul (URGENT) — paginated log fetching, virtual list, descending order, device log clearing, search revamp, unmount cleanup
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -223,10 +231,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T16:05:56.308Z
-**Stopped at:** Completed 12-05-PLAN.md (FileSystem & Database panels)
-**Context for next session:** Phase 12 executing. 7 plans across 3 waves. Wave 2 in progress: Plans 02-06 parallel. Wave 3: Plan 07 (audit + verify).
+**Last session:** 2026-02-26T18:07:28Z
+**Stopped at:** Completed 12.1-01-PLAN.md (Server-side log history & device clearing)
+**Context for next session:** Phase 12.1 executing. 3 plans. Plan 01 complete. Plans 02-03 remain.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T14:00:37Z*
+*Last updated: 2026-02-26T18:07:28Z*
