@@ -20,7 +20,7 @@ export default function TopBar() {
 				onClick={() => navigate("/")}
 				className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer bg-transparent border-none p-0"
 			>
-				<img src="/icon-192.png" alt="" className="w-6 h-6 rounded-md" draggable={false} />
+				<img src="/icon-512.png" alt="" className="w-6 h-6 rounded-md" draggable={false} />
 				<span className="text-base font-semibold tracking-tight bg-gradient-to-r from-accent-blue to-accent-purple bg-clip-text text-transparent">
 					simvyn
 				</span>
