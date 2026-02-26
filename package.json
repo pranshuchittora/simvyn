@@ -7,7 +7,8 @@
 		"packages/core",
 		"packages/server",
 		"packages/cli",
-		"packages/dashboard"
+		"packages/dashboard",
+		"packages/modules/*"
 	],
 	"scripts": {
 		"dev": "npm run dev -w @simvyn/cli",
