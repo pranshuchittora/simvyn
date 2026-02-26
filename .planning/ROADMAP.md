@@ -29,6 +29,7 @@
 - [x] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion (completed 2026-02-26)
 - [x] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage (completed 2026-02-26)
 - [x] **Phase 17.1: Typography Update** — Cascadia Code for branding, adjust all dashboard text styling (INSERTED) (completed 2026-02-26)
+- [ ] **Phase 18: Interactive Command Palette** — Multi-step actions with parameter selection, device targeting, and inline autocomplete
 
 ## Phase Details
 
@@ -356,6 +357,15 @@ TSET-05 → Phase 17
 ```
 
 **v1.1 Mapped: 20/20 ✓ — No orphaned requirements**
+
+### Phase 18: Interactive Command Palette
+
+**Goal:** Transform one-shot command palette actions into multi-step interactive flows with parameter selection, device targeting, and inline autocomplete
+**Depends on:** Phase 15 (command palette), Phase 8 (settings/accessibility APIs)
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 18 to break down)
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
