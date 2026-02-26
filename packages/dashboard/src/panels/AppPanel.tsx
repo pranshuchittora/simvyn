@@ -63,7 +63,7 @@ function AppPanel() {
 					<select
 						value={selectedDeviceId ?? ""}
 						onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+						className="glass-select max-w-[200px] truncate"
 					>
 						<option value="">No device</option>
 						{devices.map((d) => (
@@ -72,11 +72,7 @@ function AppPanel() {
 							</option>
 						))}
 					</select>
-					<button
-						type="button"
-						onClick={handleRefresh}
-						className="rounded-[var(--radius-button)] bg-bg-surface px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
-					>
+					<button type="button" onClick={handleRefresh} className="glass-button">
 						Refresh
 					</button>
 				</div>
@@ -84,7 +80,7 @@ function AppPanel() {
 
 			{/* No device selected */}
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
+				<div className="glass-empty-state">
 					<p className="text-text-secondary">Select a booted device to manage apps</p>
 				</div>
 			)}

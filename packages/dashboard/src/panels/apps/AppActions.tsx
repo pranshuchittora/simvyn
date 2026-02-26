@@ -32,16 +32,13 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 		}
 	}
 
-	const btnBase =
-		"rounded-[var(--radius-button)] px-2 py-0.5 text-[11px] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
-
 	return (
 		<div className="flex items-center gap-1.5">
 			<button
 				type="button"
 				onClick={() => doAction("launch", "launch")}
 				disabled={loading !== null}
-				className={`${btnBase} bg-accent-blue/15 text-accent-blue border border-accent-blue/25 hover:bg-accent-blue/25`}
+				className="glass-button-primary"
 			>
 				{loading === "launch" ? "..." : "Launch"}
 			</button>
@@ -49,7 +46,7 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 				type="button"
 				onClick={() => doAction("terminate", "terminate")}
 				disabled={loading !== null}
-				className={`${btnBase} bg-bg-surface text-text-secondary border border-border hover:text-text-primary hover:bg-glass`}
+				className="glass-button"
 			>
 				{loading === "terminate" ? "..." : "Stop"}
 			</button>
@@ -57,7 +54,7 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 				type="button"
 				onClick={() => doAction("uninstall", "uninstall")}
 				disabled={loading !== null}
-				className={`${btnBase} bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20`}
+				className="glass-button-destructive"
 			>
 				{loading === "uninstall" ? "..." : "Uninstall"}
 			</button>
@@ -66,7 +63,7 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 					type="button"
 					onClick={() => doAction("clear-data", "clear-data")}
 					disabled={loading !== null}
-					className={`${btnBase} bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 hover:bg-yellow-500/20`}
+					className="glass-button-destructive"
 				>
 					{loading === "clear-data" ? "..." : "Clear Data"}
 				</button>

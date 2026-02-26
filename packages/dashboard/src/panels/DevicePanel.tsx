@@ -68,11 +68,7 @@ function DevicePanel() {
 		<div className="p-6 space-y-6">
 			<div className="flex items-center justify-between">
 				<h1 className="text-base font-medium text-text-primary">Device Management</h1>
-				<button
-					type="button"
-					onClick={handleRefresh}
-					className="rounded-[var(--radius-button)] bg-bg-surface px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
-				>
+				<button type="button" onClick={handleRefresh} className="glass-button">
 					Refresh
 				</button>
 			</div>
@@ -91,7 +87,7 @@ function DevicePanel() {
 			)}
 
 			{devices.length === 0 && (
-				<div className="glass-panel p-12 text-center">
+				<div className="glass-empty-state">
 					<p className="text-base font-medium text-text-primary mb-2">No Devices Detected</p>
 					<p className="text-sm text-text-secondary">
 						Make sure Xcode Simulator or Android Emulator tools are installed.
@@ -152,11 +148,27 @@ function DeviceSection({
 }
 
 function StateBadge({ state }: { state: Device["state"] }) {
-	const colors: Record<string, string> = {
-		booted: "bg-green-500/20 text-green-400 border-green-500/30",
-		shutdown: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30",
-		"shutting-down": "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
-		creating: "bg-blue-500/20 text-blue-400 border-blue-500/30",
+	const styles: Record<string, { color: string; borderColor: string; bg: string }> = {
+		booted: {
+			color: "rgb(74, 222, 128)",
+			borderColor: "rgba(34, 197, 94, 0.3)",
+			bg: "rgba(34, 197, 94, 0.2)",
+		},
+		shutdown: {
+			color: "rgb(163, 163, 163)",
+			borderColor: "rgba(115, 115, 115, 0.3)",
+			bg: "rgba(115, 115, 115, 0.2)",
+		},
+		"shutting-down": {
+			color: "rgb(250, 204, 21)",
+			borderColor: "rgba(234, 179, 8, 0.3)",
+			bg: "rgba(234, 179, 8, 0.2)",
+		},
+		creating: {
+			color: "rgb(96, 165, 250)",
+			borderColor: "rgba(59, 130, 246, 0.3)",
+			bg: "rgba(59, 130, 246, 0.2)",
+		},
 	};
 	const label: Record<string, string> = {
 		booted: "Booted",
@@ -165,9 +177,12 @@ function StateBadge({ state }: { state: Device["state"] }) {
 		creating: "Creating",
 	};
 
+	const s = styles[state] ?? styles.shutdown;
+
 	return (
 		<span
-			className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium ${colors[state] ?? colors.shutdown}`}
+			className="glass-badge"
+			style={{ color: s.color, borderColor: s.borderColor, background: s.bg }}
 		>
 			{label[state] ?? state}
 		</span>
@@ -251,23 +266,14 @@ function ActionButton({
 	onClick: () => void;
 	variant: "primary" | "default" | "destructive";
 }) {
-	const base =
-		"rounded-[var(--radius-button)] px-3 py-1 text-xs font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 	const variants: Record<string, string> = {
-		primary:
-			"bg-accent-blue/20 text-accent-blue border border-accent-blue/30 hover:bg-accent-blue/30",
-		default:
-			"bg-bg-surface text-text-secondary border border-border hover:text-text-primary hover:bg-glass",
-		destructive: "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20",
+		primary: "glass-button-primary",
+		default: "glass-button",
+		destructive: "glass-button-destructive",
 	};
 
 	return (
-		<button
-			type="button"
-			onClick={onClick}
-			disabled={disabled}
-			className={`${base} ${variants[variant]}`}
-		>
+		<button type="button" onClick={onClick} disabled={disabled} className={variants[variant]}>
 			{loading ? (
 				<span className="inline-flex items-center gap-1">
 					<span className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />

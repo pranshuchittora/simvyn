@@ -30,11 +30,7 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 						key={f.value}
 						type="button"
 						onClick={() => setFilter(f.value)}
-						className={`rounded-[var(--radius-button)] border px-2.5 py-1 text-xs font-medium transition-colors ${
-							filter === f.value
-								? "bg-accent-blue/20 text-accent-blue border-accent-blue/30"
-								: "bg-bg-surface/60 border-border text-text-secondary hover:text-text-primary hover:bg-glass"
-						}`}
+						className={filter === f.value ? "glass-button-primary" : "glass-button"}
 					>
 						{f.label}
 					</button>
@@ -61,45 +57,51 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 
 			{/* Empty */}
 			{!loading && !error && filtered.length === 0 && (
-				<div className="glass-panel p-8 text-center text-text-secondary text-sm">No apps found</div>
+				<div className="glass-empty-state">No apps found</div>
 			)}
 
 			{/* App table */}
 			{!loading && filtered.length > 0 && (
 				<div className="glass-panel overflow-hidden">
-					<table className="w-full text-sm">
+					<table className="glass-table">
 						<thead>
-							<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
-								<th className="px-4 py-2 font-medium">Name</th>
-								<th className="px-4 py-2 font-medium">Bundle ID</th>
-								<th className="px-4 py-2 font-medium">Version</th>
-								<th className="px-4 py-2 font-medium">Type</th>
-								<th className="px-4 py-2 font-medium text-right">Actions</th>
+							<tr>
+								<th>Name</th>
+								<th>Bundle ID</th>
+								<th>Version</th>
+								<th>Type</th>
+								<th className="text-right">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
 							{filtered.map((app: AppInfo) => (
-								<tr
-									key={app.bundleId}
-									className="border-b border-border/50 hover:bg-white/[0.03] transition-colors"
-								>
-									<td className="px-4 py-2 text-text-primary truncate max-w-[180px]">{app.name}</td>
-									<td className="px-4 py-2 text-text-secondary truncate max-w-[220px] font-mono text-xs">
+								<tr key={app.bundleId}>
+									<td className="text-text-primary truncate max-w-[180px]">{app.name}</td>
+									<td className="text-text-secondary truncate max-w-[220px] font-mono text-xs">
 										{app.bundleId}
 									</td>
-									<td className="px-4 py-2 text-text-secondary">{app.version}</td>
-									<td className="px-4 py-2">
+									<td className="text-text-secondary">{app.version}</td>
+									<td>
 										<span
-											className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${
+											className="glass-badge"
+											style={
 												app.type === "user"
-													? "bg-accent-blue/15 text-accent-blue border-accent-blue/25"
-													: "bg-neutral-500/15 text-neutral-400 border-neutral-500/25"
-											}`}
+													? {
+															color: "var(--color-accent-blue)",
+															borderColor: "rgba(0,122,255,0.25)",
+															background: "rgba(0,122,255,0.15)",
+														}
+													: {
+															color: "rgb(163,163,163)",
+															borderColor: "rgba(115,115,115,0.25)",
+															background: "rgba(115,115,115,0.15)",
+														}
+											}
 										>
 											{app.type}
 										</span>
 									</td>
-									<td className="px-4 py-2 text-right">
+									<td className="text-right">
 										<AppActions app={app} deviceId={deviceId} onRefresh={onRefresh} />
 									</td>
 								</tr>

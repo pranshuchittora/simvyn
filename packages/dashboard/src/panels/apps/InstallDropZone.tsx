@@ -67,11 +67,8 @@ export default function InstallDropZone({ deviceId, onInstallComplete }: Install
 			}}
 			onDragLeave={() => setDragOver(false)}
 			onDrop={handleDrop}
-			className={`rounded-lg border-2 border-dashed p-4 text-center transition-colors ${
-				dragOver
-					? "border-accent-blue/40 bg-accent-blue/[0.04]"
-					: "border-glass-border hover:border-glass-border-hover"
-			}`}
+			className={`glass-drop-zone ${dragOver ? "drag-over" : ""}`}
+			style={{ padding: "16px" }}
 		>
 			{uploading ? (
 				<div className="flex items-center justify-center gap-2 text-sm text-text-secondary">
@@ -84,7 +81,7 @@ export default function InstallDropZone({ deviceId, onInstallComplete }: Install
 					<button
 						type="button"
 						onClick={() => fileInputRef.current?.click()}
-						className="text-xs text-accent-blue hover:text-accent-blue/80 transition-colors underline-offset-2"
+						className="glass-button-primary"
 					>
 						or click to browse
 					</button>
