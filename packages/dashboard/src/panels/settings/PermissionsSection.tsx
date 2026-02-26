@@ -119,18 +119,17 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 		}
 	};
 
-	const selectClass =
-		"rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary w-full";
-
 	return (
-		<div className="glass-panel p-4 space-y-3">
-			<h2 className="text-sm font-medium text-text-primary">Permissions</h2>
+		<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
+			<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+				Permissions
+			</h2>
 
 			<div className="space-y-2">
 				<select
 					value={selectedApp}
 					onChange={(e) => setSelectedApp(e.target.value)}
-					className={selectClass}
+					className="glass-select w-full"
 				>
 					<option value="">Select app</option>
 					{apps.map((a) => (
@@ -143,7 +142,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 				<select
 					value={selectedPermission}
 					onChange={(e) => setSelectedPermission(e.target.value)}
-					className={selectClass}
+					className="glass-select w-full"
 				>
 					<option value="">Select permission</option>
 					{permissions.map((p) => (
@@ -159,7 +158,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 					type="button"
 					onClick={handleGrant}
 					disabled={!selectedApp || !selectedPermission}
-					className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-green-500/20 border border-green-500/30 px-3 py-1.5 text-xs text-green-400 hover:bg-green-500/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+					className="glass-button-primary flex items-center gap-1.5"
 				>
 					<ShieldCheck size={12} strokeWidth={1.8} />
 					Grant
@@ -168,7 +167,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 					type="button"
 					onClick={handleRevoke}
 					disabled={!selectedApp || !selectedPermission}
-					className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-red-500/20 border border-red-500/30 px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+					className="glass-button-destructive flex items-center gap-1.5"
 				>
 					<ShieldOff size={12} strokeWidth={1.8} />
 					Revoke
@@ -178,7 +177,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 						type="button"
 						onClick={handleReset}
 						disabled={!selectedApp}
-						className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 text-xs text-orange-400 hover:bg-orange-500/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+						className="glass-button-destructive flex items-center gap-1.5"
 					>
 						<RotateCcw size={12} strokeWidth={1.8} />
 						Reset All

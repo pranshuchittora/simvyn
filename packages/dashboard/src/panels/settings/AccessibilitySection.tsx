@@ -107,8 +107,10 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 	const showIosPresets = capabilities.contentSize || capabilities.increaseContrast;
 
 	return (
-		<div className="glass-panel p-4 space-y-3">
-			<h2 className="text-sm font-medium text-text-primary">Accessibility</h2>
+		<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
+			<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+				Accessibility
+			</h2>
 
 			{/* Quick Presets */}
 			{showIosPresets && (
@@ -120,14 +122,14 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 								<button
 									type="button"
 									onClick={() => applyPreset("large-text")}
-									className="rounded-full bg-bg-surface/60 border border-border px-3 py-1 text-[11px] text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+									className={`glass-button ${contentSize === "extra-large" ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""}`}
 								>
 									Large Text
 								</button>
 								<button
 									type="button"
 									onClick={() => applyPreset("extra-large")}
-									className="rounded-full bg-bg-surface/60 border border-border px-3 py-1 text-[11px] text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+									className={`glass-button ${contentSize === "accessibility-large" ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""}`}
 								>
 									Extra Large
 								</button>
@@ -137,7 +139,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 							<button
 								type="button"
 								onClick={() => applyPreset("high-contrast")}
-								className="rounded-full bg-bg-surface/60 border border-border px-3 py-1 text-[11px] text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+								className={`glass-button ${contrastEnabled ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""}`}
 							>
 								High Contrast
 							</button>
@@ -145,7 +147,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 						<button
 							type="button"
 							onClick={() => applyPreset("default")}
-							className="rounded-full bg-bg-surface/60 border border-border px-3 py-1 text-[11px] text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+							className={`glass-button ${contentSize === "medium" && !contrastEnabled ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""}`}
 						>
 							Default
 						</button>
@@ -161,7 +163,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 						<select
 							value={contentSize}
 							onChange={(e) => applyContentSize(e.target.value)}
-							className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary w-full"
+							className="glass-select w-full"
 						>
 							{CONTENT_SIZES.map((s) => (
 								<option key={s} value={s}>
@@ -174,44 +176,32 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 
 				{/* Increase Contrast (iOS) */}
 				{capabilities.increaseContrast && (
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between gap-3">
 						<p className="text-xs text-text-secondary">Increase Contrast</p>
 						<button
 							type="button"
 							onClick={() => toggleContrast(!contrastEnabled)}
-							className={`relative w-9 h-5 rounded-full transition-colors ${
-								contrastEnabled
-									? "bg-accent-blue/60 border border-accent-blue/40"
-									: "bg-bg-surface/60 border border-border"
+							className={`glass-button ${
+								contrastEnabled ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""
 							}`}
 						>
-							<span
-								className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-text-primary transition-transform ${
-									contrastEnabled ? "translate-x-4" : "translate-x-0"
-								}`}
-							/>
+							{contrastEnabled ? "On" : "Off"}
 						</button>
 					</div>
 				)}
 
 				{/* TalkBack (Android) */}
 				{capabilities.talkBack && (
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-between gap-3">
 						<p className="text-xs text-text-secondary">TalkBack</p>
 						<button
 							type="button"
 							onClick={() => toggleTalkBack(!talkBackEnabled)}
-							className={`relative w-9 h-5 rounded-full transition-colors ${
-								talkBackEnabled
-									? "bg-accent-blue/60 border border-accent-blue/40"
-									: "bg-bg-surface/60 border border-border"
+							className={`glass-button ${
+								talkBackEnabled ? "bg-accent-blue/20 text-accent-blue border-accent-blue/30" : ""
 							}`}
 						>
-							<span
-								className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-text-primary transition-transform ${
-									talkBackEnabled ? "translate-x-4" : "translate-x-0"
-								}`}
-							/>
+							{talkBackEnabled ? "On" : "Off"}
 						</button>
 					</div>
 				)}
