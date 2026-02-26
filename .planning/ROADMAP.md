@@ -16,7 +16,7 @@
 - [x] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
 - [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
-- [ ] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code
+- [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
 
 ## Phase Details
 
@@ -254,7 +254,7 @@ PUSH-05 → Phase 6     CRASH-02 → Phase 9
   1. Location panel renders the exact same UI as sim-location's web app — dark map tiles, glass-panel toolbar, search with geocoding, favorites sidebar, mode selector, playback controls
   2. Map renders correctly with OpenStreetMap tiles, click-to-set-location works, route waypoints are interactive
   3. GPX/KML file import, route playback with speed controls, and favorites persistence all work end-to-end
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 11-01-PLAN.md — Replace stores with full sim-location versions + add route-parser utility
