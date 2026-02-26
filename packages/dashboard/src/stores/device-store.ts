@@ -3,37 +3,52 @@ import { create } from "zustand";
 
 interface DeviceStore {
 	devices: Device[];
-	selectedDeviceId: string | null;
-	broadcastMode: boolean;
+	selectedDeviceIds: string[];
 	setDevices: (devices: Device[]) => void;
 	selectDevice: (id: string) => void;
-	toggleBroadcast: () => void;
+	toggleDevice: (id: string) => void;
+	truncateToFirst: () => void;
 	selectedDevice: () => Device | undefined;
 }
 
 export const useDeviceStore = create<DeviceStore>((set, get) => ({
 	devices: [],
-	selectedDeviceId: null,
-	broadcastMode: false,
+	selectedDeviceIds: [],
 
 	setDevices: (devices) => {
 		if (!Array.isArray(devices)) return;
 		set({ devices });
 		const state = get();
-		if (state.selectedDeviceId && !devices.find((d) => d.id === state.selectedDeviceId)) {
-			set({ selectedDeviceId: devices[0]?.id ?? null });
+		const firstSelected = state.selectedDeviceIds[0];
+		if (firstSelected && !devices.find((d) => d.id === firstSelected)) {
+			const fallback = devices[0]?.id;
+			set({ selectedDeviceIds: fallback ? [fallback] : [] });
 		}
-		if (!state.selectedDeviceId && devices.length > 0) {
-			set({ selectedDeviceId: devices[0].id });
+		if (state.selectedDeviceIds.length === 0 && devices.length > 0) {
+			set({ selectedDeviceIds: [devices[0].id] });
 		}
 	},
 
-	selectDevice: (id) => set({ selectedDeviceId: id, broadcastMode: false }),
+	selectDevice: (id) => set({ selectedDeviceIds: [id] }),
 
-	toggleBroadcast: () => set((s) => ({ broadcastMode: !s.broadcastMode })),
+	toggleDevice: (id) =>
+		set((s) => {
+			const idx = s.selectedDeviceIds.indexOf(id);
+			if (idx >= 0) {
+				if (s.selectedDeviceIds.length <= 1) return s;
+				return { selectedDeviceIds: s.selectedDeviceIds.filter((x) => x !== id) };
+			}
+			return { selectedDeviceIds: [...s.selectedDeviceIds, id] };
+		}),
+
+	truncateToFirst: () =>
+		set((s) => {
+			if (s.selectedDeviceIds.length <= 1) return s;
+			return { selectedDeviceIds: [s.selectedDeviceIds[0]] };
+		}),
 
 	selectedDevice: () => {
 		const state = get();
-		return state.devices.find((d) => d.id === state.selectedDeviceId);
+		return state.devices.find((d) => d.id === state.selectedDeviceIds[0]);
 	},
 }));
