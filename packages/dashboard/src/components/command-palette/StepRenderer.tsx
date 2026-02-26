@@ -1,6 +1,6 @@
 import { Command } from "cmdk";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import DevicePicker from "./DevicePicker";
 import LocalePicker from "./LocalePicker";
 import LocationPicker from "./LocationPicker";
@@ -11,9 +11,16 @@ interface StepRendererProps {
 	search: string;
 	onComplete: () => void;
 	onBack: () => void;
+	onStepChange?: (stepType: string) => void;
 }
 
-export default function StepRenderer({ action, search, onComplete, onBack }: StepRendererProps) {
+export default function StepRenderer({
+	action,
+	search,
+	onComplete,
+	onBack,
+	onStepChange,
+}: StepRendererProps) {
 	const [stepIndex, setStepIndex] = useState(0);
 	const [context, setContext] = useState<StepContext>({
 		selectedDeviceIds: [],
@@ -23,6 +30,10 @@ export default function StepRenderer({ action, search, onComplete, onBack }: Ste
 	const [executing, setExecuting] = useState(false);
 
 	const currentStep = action.steps[stepIndex];
+
+	useEffect(() => {
+		if (currentStep) onStepChange?.(currentStep.type);
+	}, [currentStep, onStepChange]);
 
 	const handleBack = useCallback(() => {
 		if (stepIndex === 0) {

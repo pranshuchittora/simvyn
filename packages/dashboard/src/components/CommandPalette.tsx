@@ -52,6 +52,7 @@ export default function CommandPalette() {
 	const [search, setSearch] = useState("");
 	const [recent, setRecent] = useState<RecentEntry[]>([]);
 	const [activeAction, setActiveAction] = useState<MultiStepAction | null>(null);
+	const [currentStepType, setCurrentStepType] = useState<string | null>(null);
 
 	const actions = useMemo(() => getActions(navigate), [navigate]);
 
@@ -74,7 +75,13 @@ export default function CommandPalette() {
 		setOpen(false);
 		setSearch("");
 		setActiveAction(null);
+		setCurrentStepType(null);
 	}, [setOpen]);
+
+	const handleStepChange = useCallback((stepType: string) => {
+		setCurrentStepType(stepType);
+		setSearch("");
+	}, []);
 
 	function selectModule(name: string) {
 		const label = moduleLabelMap[name] ?? name;
@@ -114,6 +121,18 @@ export default function CommandPalette() {
 
 	const showRecent = !search && recent.length > 0 && !activeAction;
 
+	const placeholder = !activeAction
+		? "Search modules and actions..."
+		: currentStepType === "device-select"
+			? "Search devices..."
+			: currentStepType === "locale-select"
+				? "Search locales..."
+				: currentStepType === "location-select"
+					? "Search for a location..."
+					: "";
+
+	const hideSearch = activeAction && currentStepType === "confirm";
+
 	return (
 		<Command.Dialog
 			open={open}
@@ -129,14 +148,10 @@ export default function CommandPalette() {
 			contentClassName="cmdk-dialog"
 			loop
 		>
-			{!activeAction && (
+			{!hideSearch && (
 				<div className="cmdk-search-row">
 					<Search size={16} className="cmdk-search-icon" />
-					<Command.Input
-						placeholder="Search modules and actions..."
-						value={search}
-						onValueChange={setSearch}
-					/>
+					<Command.Input placeholder={placeholder} value={search} onValueChange={setSearch} />
 				</div>
 			)}
 			<Command.List>
@@ -145,7 +160,12 @@ export default function CommandPalette() {
 						action={activeAction}
 						search={search}
 						onComplete={close}
-						onBack={() => setActiveAction(null)}
+						onBack={() => {
+							setActiveAction(null);
+							setCurrentStepType(null);
+							setSearch("");
+						}}
+						onStepChange={handleStepChange}
 					/>
 				) : (
 					<>
