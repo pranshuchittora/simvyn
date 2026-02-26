@@ -400,12 +400,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 - [x] **IPAL-01**: Command palette supports multi-step flows (action → parameters → device → execute) with step transitions inside the palette
 - [x] **IPAL-02**: Inline device picker step — user can select one or multiple target devices within the palette without changing global selection
-- [ ] **IPAL-03**: Set Locale action — searchable/autocomplete locale list → device picker → apply locale
-- [ ] **IPAL-04**: Set Location action — select from bookmarked locations or free-text geocoding search → device picker → set point location
+- [x] **IPAL-03**: Set Locale action — searchable/autocomplete locale list → device picker → apply locale
+- [x] **IPAL-04**: Set Location action — select from bookmarked locations or free-text geocoding search → device picker → set point location
 - [x] **IPAL-05**: Toggle Dark/Light Mode action — device picker → toggle appearance
 - [x] **IPAL-06**: Erase Device action — device picker → confirmation step → erase
 - [x] **IPAL-07**: Take Screenshot action — device picker → capture (existing action upgraded with device selection)
-- [ ] **IPAL-08**: Expanded action catalog with additional useful actions beyond the core 5
+- [x] **IPAL-08**: Expanded action catalog with additional useful actions beyond the core 5
 
 ## v1.2 Traceability
 
@@ -413,12 +413,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 |-------------|-------|--------|
 | IPAL-01 | Phase 18 | Complete |
 | IPAL-02 | Phase 18 | Complete |
-| IPAL-03 | Phase 18 | Pending |
-| IPAL-04 | Phase 18 | Pending |
+| IPAL-03 | Phase 18 | Complete |
+| IPAL-04 | Phase 18 | Complete |
 | IPAL-05 | Phase 18 | Complete |
 | IPAL-06 | Phase 18 | Complete |
 | IPAL-07 | Phase 18 | Complete |
-| IPAL-08 | Phase 18 | Pending |
+| IPAL-08 | Phase 18 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 8 total
