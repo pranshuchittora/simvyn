@@ -115,7 +115,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **A11Y-01**: Toggle accessibility content size presets on iOS via `simctl ui content_size`
 - [x] **A11Y-02**: Toggle increase contrast on iOS via `simctl ui increase_contrast`
 - [x] **A11Y-03**: Toggle TalkBack on Android via `adb shell settings put secure enabled_accessibility_services`
-- [ ] **A11Y-04**: Quick preset panel for common accessibility test configurations
+- [x] **A11Y-04**: Quick preset panel for common accessibility test configurations
 - [x] **A11Y-05**: CLI subcommand: `simvyn a11y <device> <setting> <value>`
 
 ### Crash Logs
@@ -304,7 +304,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | A11Y-01 | Phase 8 | Complete |
 | A11Y-02 | Phase 8 | Complete |
 | A11Y-03 | Phase 8 | Complete |
-| A11Y-04 | Phase 8 | Pending |
+| A11Y-04 | Phase 8 | Complete |
 | A11Y-05 | Phase 8 | Complete |
 | CRASH-01 | Phase 9 | Pending |
 | CRASH-02 | Phase 9 | Pending |
