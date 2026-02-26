@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 7 — File System & Database Inspector
+**Current Focus:** Phase 8 — Device Settings & Accessibility
 
 ## Current Position
 
-**Phase:** 7 of 9 — File System & Database Inspector
-**Plan:** 3 of 3 in Phase 7
-**Status:** Complete
-**Progress:** [█████████░] 90%
+**Phase:** 8 of 9 — Device Settings & Accessibility
+**Plan:** 1 of 2 in Phase 8
+**Status:** In Progress
+**Progress:** [████████░░] 84%
 
 ## Phase Overview
 
@@ -24,7 +24,7 @@
 | 5. Dashboard UI | ✅ Complete (4/4 plans) |
 | 6. Quick-Action Modules | ✅ Complete (4/4 plans) |
 | 7. File System & Database Inspector | ✅ Complete (3/3 plans) |
-| 8. Device Settings & Accessibility | ⬜ Not started |
+| 8. Device Settings & Accessibility | 🔄 In Progress (1/2 plans) |
 | 9. Utility Modules | ⬜ Not started |
 
 ## Performance Metrics
@@ -32,7 +32,7 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 7/9 |
-| Plans completed | 30/30 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3/3) |
+| Plans completed | 31/32 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4, Phase 6: 4, Phase 7: 3, Phase 8: 1/2) |
 | Requirements delivered | 96/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
@@ -63,6 +63,7 @@
 | Phase 07 P01 | 3min | 2 tasks | 7 files |
 | Phase 07 P02 | 5min | 2 tasks | 7 files |
 | Phase 07 P03 | 5min | 2 tasks | 12 files |
+| Phase 08 P01 | 5min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,9 @@
 - Database panel tab bar uses glass-panel segment control (bg-bg-surface/40 with rounded-xl)
 - TableViewer inline cell editing with double-click — auto-detects number vs string on save
 - PrefsViewer handles both iOS (flat key-value) and Android (grouped by file with type badges)
+- Android permission prefix auto-prepended — short names (CAMERA) mapped to android.permission.CAMERA for ergonomic API
+- Capabilities endpoint derives flags from adapter method presence (!!adapter?.method) — no hardcoded platform checks
+- Settings adapter methods as optional on PlatformAdapter — undefined for unsupported platforms (e.g. setTalkBack on iOS)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -167,10 +171,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T11:42:28Z
-**Stopped at:** Completed 07-03-PLAN.md
-**Context for next session:** Phase 7 complete (3/3 plans). File System and Database dashboard panels created with full interactivity. Ready for Phase 8 (Device Settings & Accessibility).
+**Last session:** 2026-02-26T12:01:29Z
+**Stopped at:** Completed 08-01-PLAN.md
+**Context for next session:** Phase 8 plan 1 complete (1/2 plans). Settings module backend with types, adapter methods, REST API (11 endpoints), and CLI (7 subcommands). Ready for Phase 8 Plan 2.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26T11:35:00Z*
+*Last updated: 2026-02-26T12:01:29Z*

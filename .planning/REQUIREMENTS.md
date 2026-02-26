@@ -102,21 +102,21 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Device Settings
 
-- [ ] **SET-01**: Toggle dark/light mode on iOS via `simctl ui appearance`
-- [ ] **SET-02**: Toggle dark/light mode on Android via `adb shell cmd uimode night`
-- [ ] **SET-03**: Override iOS status bar (time, battery, network type, carrier) via `simctl status_bar override`
-- [ ] **SET-04**: Grant/revoke/reset app permissions on iOS via `simctl privacy`
-- [ ] **SET-05**: Grant/revoke app permissions on Android via `adb shell pm grant/revoke`
-- [ ] **SET-06**: Change locale/language settings where platform supports
-- [ ] **SET-07**: CLI subcommands: `simvyn settings dark-mode <device> <on|off>`, `simvyn settings permission <device> <grant|revoke|reset> <permission>`
+- [x] **SET-01**: Toggle dark/light mode on iOS via `simctl ui appearance`
+- [x] **SET-02**: Toggle dark/light mode on Android via `adb shell cmd uimode night`
+- [x] **SET-03**: Override iOS status bar (time, battery, network type, carrier) via `simctl status_bar override`
+- [x] **SET-04**: Grant/revoke/reset app permissions on iOS via `simctl privacy`
+- [x] **SET-05**: Grant/revoke app permissions on Android via `adb shell pm grant/revoke`
+- [x] **SET-06**: Change locale/language settings where platform supports
+- [x] **SET-07**: CLI subcommands: `simvyn settings dark-mode <device> <on|off>`, `simvyn settings permission <device> <grant|revoke|reset> <permission>`
 
 ### Accessibility
 
-- [ ] **A11Y-01**: Toggle accessibility content size presets on iOS via `simctl ui content_size`
-- [ ] **A11Y-02**: Toggle increase contrast on iOS via `simctl ui increase_contrast`
-- [ ] **A11Y-03**: Toggle TalkBack on Android via `adb shell settings put secure enabled_accessibility_services`
+- [x] **A11Y-01**: Toggle accessibility content size presets on iOS via `simctl ui content_size`
+- [x] **A11Y-02**: Toggle increase contrast on iOS via `simctl ui increase_contrast`
+- [x] **A11Y-03**: Toggle TalkBack on Android via `adb shell settings put secure enabled_accessibility_services`
 - [ ] **A11Y-04**: Quick preset panel for common accessibility test configurations
-- [ ] **A11Y-05**: CLI subcommand: `simvyn a11y <device> <setting> <value>`
+- [x] **A11Y-05**: CLI subcommand: `simvyn a11y <device> <setting> <value>`
 
 ### Crash Logs
 
@@ -294,18 +294,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DB-06 | Phase 7 | Complete |
 | DB-07 | Phase 7 | Complete |
 | DB-08 | Phase 7 | Pending |
-| SET-01 | Phase 8 | Pending |
-| SET-02 | Phase 8 | Pending |
-| SET-03 | Phase 8 | Pending |
-| SET-04 | Phase 8 | Pending |
-| SET-05 | Phase 8 | Pending |
-| SET-06 | Phase 8 | Pending |
-| SET-07 | Phase 8 | Pending |
-| A11Y-01 | Phase 8 | Pending |
-| A11Y-02 | Phase 8 | Pending |
-| A11Y-03 | Phase 8 | Pending |
+| SET-01 | Phase 8 | Complete |
+| SET-02 | Phase 8 | Complete |
+| SET-03 | Phase 8 | Complete |
+| SET-04 | Phase 8 | Complete |
+| SET-05 | Phase 8 | Complete |
+| SET-06 | Phase 8 | Complete |
+| SET-07 | Phase 8 | Complete |
+| A11Y-01 | Phase 8 | Complete |
+| A11Y-02 | Phase 8 | Complete |
+| A11Y-03 | Phase 8 | Complete |
 | A11Y-04 | Phase 8 | Pending |
-| A11Y-05 | Phase 8 | Pending |
+| A11Y-05 | Phase 8 | Complete |
 | CRASH-01 | Phase 9 | Pending |
 | CRASH-02 | Phase 9 | Pending |
 | CRASH-03 | Phase 9 | Pending |
