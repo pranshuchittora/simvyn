@@ -1,48 +1,68 @@
 import type { LogLevel } from "@simvyn/types";
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useWs } from "../../hooks/use-ws";
-import { selectFilteredEntries, useLogStore } from "./stores/log-store";
+import { filterEntries, useLogStore } from "./stores/log-store";
 
-const LEVELS: { key: LogLevel; label: string; color: string; activeColor: string }[] = [
+const LEVELS: {
+	key: LogLevel;
+	label: string;
+	activeStyle: { background: string; color: string; borderColor: string };
+}[] = [
 	{
 		key: "verbose",
 		label: "V",
-		color: "text-gray-500",
-		activeColor: "bg-gray-500/20 text-gray-300 border-gray-500/30",
+		activeStyle: {
+			background: "rgba(107,114,128,0.2)",
+			color: "#d1d5db",
+			borderColor: "rgba(107,114,128,0.3)",
+		},
 	},
 	{
 		key: "debug",
 		label: "D",
-		color: "text-cyan-400",
-		activeColor: "bg-cyan-500/20 text-cyan-300 border-cyan-500/30",
+		activeStyle: {
+			background: "rgba(6,182,212,0.2)",
+			color: "#67e8f9",
+			borderColor: "rgba(6,182,212,0.3)",
+		},
 	},
 	{
 		key: "info",
 		label: "I",
-		color: "text-white",
-		activeColor: "bg-white/10 text-white border-white/20",
+		activeStyle: {
+			background: "rgba(255,255,255,0.1)",
+			color: "#fff",
+			borderColor: "rgba(255,255,255,0.2)",
+		},
 	},
 	{
 		key: "warning",
 		label: "W",
-		color: "text-yellow-400",
-		activeColor: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+		activeStyle: {
+			background: "rgba(234,179,8,0.2)",
+			color: "#fde047",
+			borderColor: "rgba(234,179,8,0.3)",
+		},
 	},
 	{
 		key: "error",
 		label: "E",
-		color: "text-red-400",
-		activeColor: "bg-red-500/20 text-red-300 border-red-500/30",
+		activeStyle: {
+			background: "rgba(239,68,68,0.2)",
+			color: "#f87171",
+			borderColor: "rgba(239,68,68,0.3)",
+		},
 	},
 	{
 		key: "fatal",
 		label: "F",
-		color: "text-pink-400",
-		activeColor: "bg-pink-500/20 text-pink-300 border-pink-500/30",
+		activeStyle: {
+			background: "rgba(236,72,153,0.2)",
+			color: "#f472b6",
+			borderColor: "rgba(236,72,153,0.3)",
+		},
 	},
 ];
-
-const LEVEL_ORDER: LogLevel[] = ["verbose", "debug", "info", "warning", "error", "fatal"];
 
 interface LogToolbarProps {
 	selectedDeviceId: string;
@@ -50,18 +70,20 @@ interface LogToolbarProps {
 
 export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 	const { send } = useWs();
-	const minLevel = useLogStore((s) => s.minLevel);
+	const enabledLevels = useLogStore((s) => s.enabledLevels);
 	const searchPattern = useLogStore((s) => s.searchPattern);
 	const processFilter = useLogStore((s) => s.processFilter);
-	const setMinLevel = useLogStore((s) => s.setMinLevel);
+	const toggleLevel = useLogStore((s) => s.toggleLevel);
 	const setSearchPattern = useLogStore((s) => s.setSearchPattern);
 	const setProcessFilter = useLogStore((s) => s.setProcessFilter);
 	const clear = useLogStore((s) => s.clear);
-	const totalCount = useLogStore((s) => s.entries.length);
-	const filteredCount = useLogStore(selectFilteredEntries).length;
+	const entries = useLogStore((s) => s.entries);
+	const totalCount = entries.length;
+	const filteredCount = useMemo(
+		() => filterEntries(entries, enabledLevels, processFilter, searchPattern).length,
+		[entries, enabledLevels, processFilter, searchPattern],
+	);
 	const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
-
-	const minIdx = LEVEL_ORDER.indexOf(minLevel);
 
 	const handleSearch = useCallback(
 		(value: string) => {
@@ -72,7 +94,8 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 	);
 
 	const handleExport = useCallback((format: "json" | "text") => {
-		const entries = selectFilteredEntries(useLogStore.getState());
+		const s = useLogStore.getState();
+		const entries = filterEntries(s.entries, s.enabledLevels, s.processFilter, s.searchPattern);
 		let content: string;
 		let mime: string;
 		let ext: string;
@@ -114,14 +137,14 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 			{/* Level filter buttons */}
 			<div className="flex items-center gap-0.5">
 				{LEVELS.map((lvl) => {
-					const idx = LEVEL_ORDER.indexOf(lvl.key);
-					const active = idx >= minIdx;
+					const active = enabledLevels.includes(lvl.key);
 					return (
 						<button
 							key={lvl.key}
 							type="button"
-							onClick={() => setMinLevel(lvl.key)}
-							className={`glass-button text-xs ${active ? lvl.activeColor : ""}`}
+							onClick={() => toggleLevel(lvl.key)}
+							className="glass-button text-xs"
+							style={active ? lvl.activeStyle : undefined}
 							title={lvl.key}
 						>
 							{lvl.label}

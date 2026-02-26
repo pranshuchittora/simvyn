@@ -1,6 +1,8 @@
 import type { LogEntry, LogLevel } from "@simvyn/types";
 import { create } from "zustand";
 
+const ALL_LEVELS: LogLevel[] = ["verbose", "debug", "info", "warning", "error", "fatal"];
+
 interface LogStore {
 	entries: LogEntry[];
 	firstItemIndex: number;
@@ -9,7 +11,7 @@ interface LogStore {
 	isLoadingHistory: boolean;
 	isStreaming: boolean;
 	streamDeviceId: string | null;
-	minLevel: LogLevel;
+	enabledLevels: LogLevel[];
 	searchPattern: string;
 	processFilter: string;
 
@@ -19,7 +21,7 @@ interface LogStore {
 	clear: () => void;
 	reset: () => void;
 	setStreaming: (deviceId: string | null) => void;
-	setMinLevel: (level: LogLevel) => void;
+	toggleLevel: (level: LogLevel) => void;
 	setSearchPattern: (pattern: string) => void;
 	setProcessFilter: (filter: string) => void;
 }
@@ -35,7 +37,7 @@ const initialState = {
 	isLoadingHistory: false,
 	isStreaming: false,
 	streamDeviceId: null as string | null,
-	minLevel: "verbose" as LogLevel,
+	enabledLevels: [...ALL_LEVELS] as LogLevel[],
 	searchPattern: "",
 	processFilter: "",
 };
@@ -77,32 +79,43 @@ export const useLogStore = create<LogStore>((set) => ({
 	reset: () => set({ ...initialState }),
 
 	setStreaming: (deviceId) => set({ streamDeviceId: deviceId, isStreaming: deviceId !== null }),
-	setMinLevel: (level) => set({ minLevel: level }),
+	toggleLevel: (level: LogLevel) =>
+		set((s) => {
+			const has = s.enabledLevels.includes(level);
+			if (has && s.enabledLevels.length === 1) return s;
+			return {
+				enabledLevels: has
+					? s.enabledLevels.filter((l) => l !== level)
+					: [...s.enabledLevels, level],
+			};
+		}),
 	setSearchPattern: (pattern) => set({ searchPattern: pattern }),
 	setProcessFilter: (filter) => set({ processFilter: filter }),
 }));
 
-const LEVELS: LogLevel[] = ["verbose", "debug", "info", "warning", "error", "fatal"];
+export function filterEntries(
+	entries: LogEntry[],
+	enabledLevels: LogLevel[],
+	processFilter: string,
+	searchPattern: string,
+): LogEntry[] {
+	let filtered = entries;
 
-export function selectFilteredEntries(state: LogStore): LogEntry[] {
-	const minIdx = LEVELS.indexOf(state.minLevel);
-	let filtered = state.entries;
-
-	if (minIdx > 0) {
-		filtered = filtered.filter((e) => LEVELS.indexOf(e.level) >= minIdx);
+	if (enabledLevels.length < ALL_LEVELS.length) {
+		filtered = filtered.filter((e) => enabledLevels.includes(e.level));
 	}
 
-	if (state.processFilter) {
-		const pf = state.processFilter.toLowerCase();
+	if (processFilter) {
+		const pf = processFilter.toLowerCase();
 		filtered = filtered.filter((e) => e.processName.toLowerCase().includes(pf));
 	}
 
-	if (state.searchPattern) {
+	if (searchPattern) {
 		try {
-			const re = new RegExp(state.searchPattern, "i");
+			const re = new RegExp(searchPattern, "i");
 			filtered = filtered.filter((e) => re.test(e.message) || re.test(e.processName));
 		} catch {
-			const sp = state.searchPattern.toLowerCase();
+			const sp = searchPattern.toLowerCase();
 			filtered = filtered.filter(
 				(e) => e.message.toLowerCase().includes(sp) || e.processName.toLowerCase().includes(sp),
 			);
