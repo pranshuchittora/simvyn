@@ -128,5 +128,69 @@ export function registerLogWsHandler(fastify: FastifyInstance) {
 			wsBroker.send(socket, "logs", "stream-stopped", { deviceId }, requestId);
 			return;
 		}
+
+		if (type === "get-history") {
+			const { deviceId, before, limit } = data as unknown as {
+				deviceId: string;
+				before?: number;
+				limit?: number;
+			};
+			if (!deviceId) {
+				sendError("Missing deviceId");
+				return;
+			}
+
+			const history = getLogHistory(deviceId);
+			const pageSize = Math.min(limit ?? 500, 500);
+			const endIdx = before != null ? Math.min(before, history.length) : history.length;
+			const startIdx = Math.max(0, endIdx - pageSize);
+			const page = history.slice(startIdx, endIdx);
+
+			wsBroker.send(
+				socket,
+				"logs",
+				"history-page",
+				{
+					deviceId,
+					entries: [...page].reverse(),
+					cursor: startIdx,
+					hasMore: startIdx > 0,
+				},
+				requestId,
+			);
+			return;
+		}
+
+		if (type === "clear-device-logs") {
+			const { deviceId } = data as { deviceId: string };
+			if (!deviceId) {
+				sendError("Missing deviceId");
+				return;
+			}
+
+			const device = deviceManager.devices.find((d: Device) => d.id === deviceId);
+			if (!device) {
+				sendError(`Device not found: ${deviceId}`);
+				return;
+			}
+
+			if (device.platform === "android") {
+				processManager.spawn("adb", ["-s", deviceId, "logcat", "-c"]);
+			} else if (device.platform === "ios") {
+				const ref = activeStreams.get(deviceId);
+				if (ref && ref.streamer.isRunning) {
+					ref.streamer.stop();
+					ref.streamer.start();
+				}
+			}
+
+			const ref = activeStreams.get(deviceId);
+			if (ref) {
+				ref.streamer.clearHistory();
+			}
+
+			wsBroker.send(socket, "logs", "device-cleared", { deviceId }, requestId);
+			return;
+		}
 	});
 }
