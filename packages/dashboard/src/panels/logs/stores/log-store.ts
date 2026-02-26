@@ -3,42 +3,80 @@ import { create } from "zustand";
 
 interface LogStore {
 	entries: LogEntry[];
+	firstItemIndex: number;
+	cursor: number | null;
+	hasMore: boolean;
+	isLoadingHistory: boolean;
 	isStreaming: boolean;
 	streamDeviceId: string | null;
 	minLevel: LogLevel;
 	searchPattern: string;
 	processFilter: string;
-	addBatch: (batch: LogEntry[]) => void;
+
+	addNewBatch: (batch: LogEntry[]) => void;
+	prependHistory: (batch: LogEntry[], cursor: number, hasMore: boolean) => void;
+	setLoadingHistory: (loading: boolean) => void;
 	clear: () => void;
+	reset: () => void;
 	setStreaming: (deviceId: string | null) => void;
 	setMinLevel: (level: LogLevel) => void;
 	setSearchPattern: (pattern: string) => void;
 	setProcessFilter: (filter: string) => void;
 }
 
-const MAX_ENTRIES = 50_000;
+const INITIAL_INDEX = 100_000;
+const MAX_ENTRIES = 5_000;
 
-export const useLogStore = create<LogStore>((set) => ({
-	entries: [],
+const initialState = {
+	entries: [] as LogEntry[],
+	firstItemIndex: INITIAL_INDEX,
+	cursor: null as number | null,
+	hasMore: true,
+	isLoadingHistory: false,
 	isStreaming: false,
-	streamDeviceId: null,
-	minLevel: "verbose",
+	streamDeviceId: null as string | null,
+	minLevel: "verbose" as LogLevel,
 	searchPattern: "",
 	processFilter: "",
+};
 
-	addBatch: (batch) =>
+export const useLogStore = create<LogStore>((set) => ({
+	...initialState,
+
+	addNewBatch: (batch) =>
 		set((s) => {
-			const combined = s.entries.concat(batch);
+			const newEntries = [...batch].reverse();
+			const combined = [...newEntries, ...s.entries];
+			const trimmed = combined.length > MAX_ENTRIES ? combined.slice(0, MAX_ENTRIES) : combined;
+			return { entries: trimmed };
+		}),
+
+	prependHistory: (batch, cursor, hasMore) =>
+		set((s) => {
+			const combined = [...s.entries, ...batch];
+			const trimmed = combined.length > MAX_ENTRIES ? combined.slice(0, MAX_ENTRIES) : combined;
 			return {
-				entries:
-					combined.length > MAX_ENTRIES ? combined.slice(combined.length - MAX_ENTRIES) : combined,
+				entries: trimmed,
+				firstItemIndex: s.firstItemIndex - batch.length,
+				cursor,
+				hasMore,
+				isLoadingHistory: false,
 			};
 		}),
 
-	clear: () => set({ entries: [] }),
+	setLoadingHistory: (loading) => set({ isLoadingHistory: loading }),
+
+	clear: () =>
+		set({
+			entries: [],
+			firstItemIndex: INITIAL_INDEX,
+			cursor: null,
+			hasMore: true,
+		}),
+
+	reset: () => set({ ...initialState }),
 
 	setStreaming: (deviceId) => set({ streamDeviceId: deviceId, isStreaming: deviceId !== null }),
-
 	setMinLevel: (level) => set({ minLevel: level }),
 	setSearchPattern: (pattern) => set({ searchPattern: pattern }),
 	setProcessFilter: (filter) => set({ processFilter: filter }),

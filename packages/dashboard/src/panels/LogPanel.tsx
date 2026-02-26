@@ -11,7 +11,7 @@ function LogPanel() {
 	const { send } = useWs();
 	const devices = useDeviceStore((s) => s.devices);
 	const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
-	const addBatch = useLogStore((s) => s.addBatch);
+	const addNewBatch = useLogStore((s) => s.addNewBatch);
 	const clear = useLogStore((s) => s.clear);
 	const setStreaming = useLogStore((s) => s.setStreaming);
 	const filteredEntries = useLogStore(selectFilteredEntries);
@@ -80,10 +80,10 @@ function LogPanel() {
 		(payload: unknown) => {
 			const data = payload as { deviceId: string; entries: LogEntry[] };
 			if (data.deviceId === selectedDeviceId) {
-				addBatch(data.entries);
+				addNewBatch(data.entries);
 			}
 		},
-		[selectedDeviceId, addBatch],
+		[selectedDeviceId, addNewBatch],
 	);
 
 	const handleStreamStarted = useCallback(
