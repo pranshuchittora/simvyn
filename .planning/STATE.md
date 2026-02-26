@@ -9,15 +9,15 @@
 ## Current Position
 
 **Phase:** 1 of 9 — Foundation & Device Management
-**Plan:** 2 of 6 in Phase 1
+**Plan:** 5 of 6 in Phase 1
 **Status:** In progress
-**Progress:** █░░░░░░░░░ 1/6 plans complete
+**Progress:** [███░░░░░░░] 33%
 
 ## Phase Overview
 
 | Phase | Status |
 |-------|--------|
-| 1. Foundation & Device Management | 🔄 In progress (1/6 plans) |
+| 1. Foundation & Device Management | 🔄 In progress (3/6 plans) |
 | 2. Location Module | ⬜ Not started |
 | 3. App Management Module | ⬜ Not started |
 | 4. Log Viewer Module | ⬜ Not started |
@@ -32,8 +32,10 @@
 | Metric | Value |
 |--------|-------|
 | Phases completed | 0/9 |
-| Plans completed | 1/6 (Phase 1) |
-| Requirements delivered | 2/108 |
+| Plans completed | 3/6 (Phase 1) |
+| Requirements delivered | 13/108 |
+| Phase 01 P02 | 3min | 3 tasks | 10 files |
+| Phase 01 P04 | 3min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -45,6 +47,12 @@
 - CLI-first approach: features work headlessly before dashboard panels
 - macOS + Linux only, no Windows-specific code paths
 - Single WebSocket connection with envelope-based multiplexing and per-module subscription
+- execFile (not exec) for all shell commands to prevent shell injection — argument arrays only
+- Android AVD boot uses detached spawn + poll-based wait (60s) rather than event-based detection
+- Device change detection via JSON serialization of id+state arrays (simple, effective at expected scale)
+- Dashboard uses moduleResolution: bundler (not NodeNext) — Vite handles module resolution for browser target
+- ModuleShell uses CSS display:none/block toggle to persist panel state across module switches
+- Single WsProvider context for entire app with listener registration pattern (useWsListener hook)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -67,10 +75,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 01-01-PLAN.md (Monorepo scaffold & shared types)
-**Next action:** Execute 01-02-PLAN.md (Core library: adapters, services, DeviceManager)
-**Context for next session:** Monorepo scaffold complete with 5 packages. @simvyn/types provides all foundational interfaces. Next plan builds the core library with platform adapters, device manager, process manager, and storage.
+**Last session:** Completed 01-04-PLAN.md (Dashboard shell with layout, WS, stores)
+**Next action:** Execute 01-05-PLAN.md (Device management module with dashboard panel)
+**Context for next session:** Dashboard shell complete with Vite + React + Tailwind v4. WsProvider connects to /ws, device-store receives device-list, module-store fetches from /api/modules, panel-registry enables lazy-loaded module panels. Layout: TopBar + Sidebar + ModuleShell. Ready for first module panel.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26 (after 01-01 execution)*
+*Last updated: 2026-02-26 (after 01-04 execution)*
