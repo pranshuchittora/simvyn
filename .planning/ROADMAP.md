@@ -84,7 +84,13 @@ Plans:
   3. User can export the current log buffer to a file (plain text or JSON) from the dashboard
   4. Log streaming doesn't degrade device status updates or other module WebSocket traffic — server-side batching prevents flooding
   5. User can stream logs headlessly via `simvyn logs <device> --level <level> --filter <pattern>` with output to stdout
-**Plans:** TBD
+**Plans:** 4 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — Shared types (LogLevel, LogEntry) + LogStreamer class with iOS/Android ndjson parsing and batched flush
+- [ ] 04-02-PLAN.md — Module scaffold, Fastify export route, WS handler with ref-counted streaming
+- [ ] 04-03-PLAN.md — CLI subcommand: `simvyn logs <device>` with level/regex filtering and ANSI colors
+- [ ] 04-04-PLAN.md — Dashboard panel with real-time log list, level/search/process filters, and export
 
 ### Phase 5: Dashboard UI
 **Goal:** The web dashboard delivers the Apple Liquid Glass aesthetic with a polished, responsive layout that makes every module feel native
@@ -150,7 +156,7 @@ Plans:
 | 1. Foundation & Device Management | 7/7 | Complete | 2026-02-26 |
 | 2. Location Module | 4/4 | Complete | 2026-02-26 |
 | 3. App Management Module | 4/4 | Complete | 2026-02-26 |
-| 4. Log Viewer Module | 0/? | Not started | — |
+| 4. Log Viewer Module | 0/4 | Planned | — |
 | 5. Dashboard UI | 0/? | Not started | — |
 | 6. Quick-Action Modules | 0/? | Not started | — |
 | 7. File System & Database Inspector | 0/? | Not started | — |
