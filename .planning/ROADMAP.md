@@ -29,7 +29,7 @@
   3. Device list updates in real-time — booting a simulator outside simvyn is reflected in the dashboard within the polling interval
   4. A new module folder dropped into the modules directory is auto-discovered and its routes, CLI commands, and WS handlers are registered without modifying core code
   5. Running on Linux gracefully hides iOS-specific features and shows only Android device management
-**Plans:** 6 plans
+**Plans:** 1/6 plans executed
 
 Plans:
 - [ ] 01-01-PLAN.md — Monorepo scaffold & shared types
@@ -134,7 +134,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Device Management | 0/6 | Planned | — |
+| 1. Foundation & Device Management | 1/6 | In Progress|  |
 | 2. Location Module | 0/? | Not started | — |
 | 3. App Management Module | 0/? | Not started | — |
 | 4. Log Viewer Module | 0/? | Not started | — |

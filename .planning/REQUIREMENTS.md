@@ -9,7 +9,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: TypeScript monorepo with npm workspaces — shared types, core, server, dashboard, CLI packages
+- [x] **INFRA-01**: TypeScript monorepo with npm workspaces — shared types, core, server, dashboard, CLI packages
 - [ ] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
 - [ ] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
 - [ ] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
@@ -23,7 +23,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [ ] **DEV-01**: Detect all iOS simulators via `simctl list devices --json` with booted status, device type, OS version
 - [ ] **DEV-02**: Detect all Android emulators via `emulator -list-avds` and connected Android devices via `adb devices`
-- [ ] **DEV-03**: Unified device model across iOS and Android platforms
+- [x] **DEV-03**: Unified device model across iOS and Android platforms
 - [ ] **DEV-04**: Boot, shutdown, and erase iOS simulators from dashboard and CLI
 - [ ] **DEV-05**: Boot and kill Android emulators from dashboard and CLI
 - [ ] **DEV-06**: Real-time device status updates via polling with configurable interval
@@ -210,7 +210,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Pending |
 | INFRA-03 | Phase 1 | Pending |
 | INFRA-04 | Phase 1 | Pending |
@@ -221,7 +221,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-09 | Phase 1 | Pending |
 | DEV-01 | Phase 1 | Pending |
 | DEV-02 | Phase 1 | Pending |
-| DEV-03 | Phase 1 | Pending |
+| DEV-03 | Phase 1 | Complete |
 | DEV-04 | Phase 1 | Pending |
 | DEV-05 | Phase 1 | Pending |
 | DEV-06 | Phase 1 | Pending |
