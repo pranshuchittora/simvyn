@@ -168,7 +168,7 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 				placeholder="Process..."
 				value={processFilter}
 				onChange={(e) => setProcessFilter(e.target.value)}
-				className="glass-input text-xs w-[100px]"
+				className="glass-input text-xs w-[180px]"
 			/>
 
 			{/* Export */}
