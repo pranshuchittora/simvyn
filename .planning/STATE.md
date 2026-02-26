@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 13 — URL Routing (next up)
-**Plan:** —
-**Status:** Roadmap created, ready for planning
-**Progress:** [░░░░░░░░░░] 0%
+**Phase:** Phase 13 — URL Routing
+**Plan:** 01 (complete)
+**Status:** Phase 13 complete (1/1 plans)
+**Progress:** [██░░░░░░░░] 20% (1/5 v1.1 phases)
 
 ## Phase Overview
 
@@ -32,7 +32,7 @@
 | 12.1 Log Module Performance Overhaul | ✅ Complete (3/3 plans) |
 | 12.2 Unified Device Selector | ✅ Complete (2/2 plans) |
 | **v1.1 — Dashboard UX Polish** | |
-| 13. URL Routing | ⬜ Not started |
+| 13. URL Routing | ✅ Complete (1/1 plans) |
 | 14. Module Icons | ⬜ Not started |
 | 15. Command Palette | ⬜ Not started |
 | 16. Home Screen & Capture Management | ⬜ Not started |
@@ -42,10 +42,10 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 11/17 (v1.0: 11/12, v1.1: 0/5) |
-| Plans completed | 41/41 (v1.0 only) |
+| Phases completed | 12/17 (v1.0: 11/12, v1.1: 1/5) |
+| Plans completed | 42/42 (v1.0: 41, v1.1: 1) |
 | v1.0 requirements delivered | 126/126 |
-| v1.1 requirements delivered | 0/20 |
+| v1.1 requirements delivered | 3/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -97,6 +97,7 @@
 | Phase 12.1 P03 | 2min | 2 tasks | 3 files |
 | Phase 12.2 P01 | 1min | 2 tasks | 2 files |
 | Phase 12.2 P02 | 5min | 2 tasks | 13 files |
+| Phase 13 P01 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -216,6 +217,10 @@
 - selectedDeviceIds as string[] (empty = no selection) replaces nullable single selectedDeviceId — cleaner null-safety
 - MULTI_SELECT_MODULES Set in DeviceSelector for extensible module-based mode switching (currently only "location")
 - toggleDevice guards against removing last device — silent no-op, prevents empty selection state
+- react-router v7 with BrowserRouter — URL is navigation interface, store is runtime source of truth, RouterSync bridges URL→store unidirectionally
+- Module slugs in URL match module `name` field exactly (e.g. /logs, /deep-links, /crash-logs) — no slug transformation
+- Sidebar navigates via navigate() not direct store mutation — store updates as consequence of URL change via RouterSync
+- Race condition guard in RouterSync: don't redirect invalid URLs until modules list has loaded from API (modules.length === 0 → skip)
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -250,8 +255,8 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** v1.1 roadmap creation (phases 13-17)
-**Context for next session:** Milestone v1.1 roadmap created with 5 phases (13-17). Phase 12 (Liquid Glass UI Refactor) still has 1 remaining plan (12-07 visual audit). Next action: plan Phase 13 (URL Routing) or finish Phase 12 first.
+**Stopped at:** Completed 13-01-PLAN.md (Phase 13 URL Routing complete)
+**Context for next session:** Phase 13 (URL Routing) complete — react-router v7 installed, BrowserRouter + RouterSync wired. All modules navigable via URL. Next action: Phase 14 (Module Icons) or remaining Phase 12 plans.
 
 ---
 *State initialized: 2026-02-26*

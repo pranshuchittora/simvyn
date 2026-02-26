@@ -23,7 +23,7 @@
 
 ### Milestone v1.1 — Dashboard UX Polish
 
-- [ ] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
+- [x] **Phase 13: URL Routing** — URL-based module navigation with browser history, refresh persistence, and direct URL access
 - [ ] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen
 - [ ] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling
 - [ ] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion
@@ -199,7 +199,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 13-01-PLAN.md — Install react-router, wire BrowserRouter with URL-synced module navigation, update Sidebar and ModuleShell
+- [x] 13-01-PLAN.md — Install react-router, wire BrowserRouter with URL-synced module navigation, update Sidebar and ModuleShell
 
 ### Phase 14: Module Icons
 **Goal:** Every module has a distinctive, colorful liquid glass SVG icon that reinforces the Apple aesthetic and aids module recognition
@@ -264,7 +264,7 @@ Plans:
 | 12.1 Log Module Performance Overhaul | 3/3 | Complete | 2026-02-26 |
 | 12.2 Unified Device Selector | 2/2 | Complete | 2026-02-26 |
 | **v1.1 — Dashboard UX Polish** | | | |
-| 13. URL Routing | 0/? | Not started | - |
+| 13. URL Routing | 1/1 | Complete | 2026-02-27 |
 | 14. Module Icons | 0/? | Not started | - |
 | 15. Command Palette | 0/? | Not started | - |
 | 16. Home Screen & Capture Management | 0/? | Not started | - |

@@ -328,9 +328,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Routing
 
-- [ ] **ROUTE-01**: URL updates when user selects a module (e.g., `/logs`, `/location`)
-- [ ] **ROUTE-02**: Refreshing the page opens the same module that was active
-- [ ] **ROUTE-03**: Direct URL navigation works (typing `/logs` in browser navigates to that module)
+- [x] **ROUTE-01**: URL updates when user selects a module (e.g., `/logs`, `/location`)
+- [x] **ROUTE-02**: Refreshing the page opens the same module that was active
+- [x] **ROUTE-03**: Direct URL navigation works (typing `/logs` in browser navigates to that module)
 
 ### Command Palette
 
@@ -368,9 +368,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ROUTE-01 | Phase 13 | Pending |
-| ROUTE-02 | Phase 13 | Pending |
-| ROUTE-03 | Phase 13 | Pending |
+| ROUTE-01 | Phase 13 | Complete |
+| ROUTE-02 | Phase 13 | Complete |
+| ROUTE-03 | Phase 13 | Complete |
 | CMDK-01 | Phase 15 | Pending |
 | CMDK-02 | Phase 15 | Pending |
 | CMDK-03 | Phase 15 | Pending |
