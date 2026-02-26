@@ -24,26 +24,26 @@ export default function HomeScreen() {
 
 	return (
 		<div className="absolute inset-0 flex items-center justify-center select-none">
-			<div className="flex flex-col items-center gap-8 max-w-lg px-6">
+			<div className="flex flex-col items-center gap-10 max-w-xl px-8">
 				<img
 					src="/icon-192.png"
 					alt="simvyn"
-					className="w-32 h-32 rounded-3xl opacity-25"
+					className="w-48 h-48 rounded-[2rem] opacity-20"
 					draggable={false}
 				/>
 
-				<h1 className="text-2xl font-semibold text-text-muted tracking-wide">simvyn</h1>
+				<h1 className="text-4xl font-semibold text-text-muted/70 tracking-wide">simvyn</h1>
 
-				<p className="text-sm text-text-muted/50 text-center leading-relaxed">{tip}</p>
+				<p className="text-base text-text-muted/40 text-center leading-relaxed">{tip}</p>
 
-				<div className="flex items-center gap-1.5 text-xs text-text-muted/35">
-					<kbd className="px-2 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
+				<div className="flex items-center gap-2 text-sm text-text-muted/30">
+					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
 						{modKey}
 					</kbd>
-					<kbd className="px-2 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
+					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
 						K
 					</kbd>
-					<span className="ml-1.5">to search</span>
+					<span className="ml-2">to search</span>
 				</div>
 			</div>
 		</div>
