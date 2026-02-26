@@ -75,16 +75,13 @@ export default function StatusBarSection({ deviceId }: Props) {
 		}
 	};
 
-	const selectClass =
-		"rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary w-full";
-	const inputClass =
-		"rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-primary placeholder:text-text-muted w-full focus:outline-none focus:border-accent-blue/50";
-
 	return (
-		<div className="glass-panel p-4 space-y-3">
+		<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
 			<div className="flex items-center gap-2">
-				<h2 className="text-sm font-medium text-text-primary">Status Bar</h2>
-				<span className="rounded bg-blue-500/20 border border-blue-500/30 px-1.5 py-0.5 text-[10px] text-blue-400">
+				<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+					Status Bar
+				</h2>
+				<span className="glass-badge bg-accent-blue/15 text-accent-blue border-accent-blue/30">
 					iOS only
 				</span>
 			</div>
@@ -97,7 +94,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 						value={time}
 						onChange={(e) => setTime(e.target.value)}
 						placeholder="9:41"
-						className={inputClass}
+						className="glass-input w-full text-xs"
 					/>
 				</div>
 
@@ -118,7 +115,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 					<select
 						value={batteryState}
 						onChange={(e) => setBatteryState(e.target.value)}
-						className={selectClass}
+						className="glass-select w-full"
 					>
 						<option value="">Default</option>
 						{BATTERY_STATES.map((s) => (
@@ -134,7 +131,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 					<select
 						value={cellularBars}
 						onChange={(e) => setCellularBars(e.target.value)}
-						className={selectClass}
+						className="glass-select w-full"
 					>
 						<option value="">Default</option>
 						{CELLULAR_BARS.map((b) => (
@@ -150,7 +147,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 					<select
 						value={wifiBars}
 						onChange={(e) => setWifiBars(e.target.value)}
-						className={selectClass}
+						className="glass-select w-full"
 					>
 						<option value="">Default</option>
 						{WIFI_BARS.map((b) => (
@@ -168,7 +165,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 						value={operatorName}
 						onChange={(e) => setOperatorName(e.target.value)}
 						placeholder="Carrier"
-						className={inputClass}
+						className="glass-input w-full text-xs"
 					/>
 				</div>
 
@@ -177,7 +174,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 					<select
 						value={dataNetwork}
 						onChange={(e) => setDataNetwork(e.target.value)}
-						className={selectClass}
+						className="glass-select w-full"
 					>
 						<option value="">Default</option>
 						{DATA_NETWORKS.map((n) => (
@@ -193,7 +190,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 				<button
 					type="button"
 					onClick={handleApply}
-					className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors"
+					className="glass-button-primary flex items-center gap-1.5"
 				>
 					<Send size={12} strokeWidth={1.8} />
 					Apply Overrides
@@ -201,7 +198,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 				<button
 					type="button"
 					onClick={handleClear}
-					className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-orange-500/20 border border-orange-500/30 px-3 py-1.5 text-xs text-orange-400 hover:bg-orange-500/30 transition-colors"
+					className="glass-button-destructive flex items-center gap-1.5"
 				>
 					<RotateCcw size={12} strokeWidth={1.8} />
 					Clear

@@ -105,7 +105,7 @@ function SettingsPanel() {
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+					className="glass-select max-w-[200px] truncate"
 				>
 					<option value="">No device</option>
 					{devices.map((d) => (
@@ -118,8 +118,8 @@ function SettingsPanel() {
 
 			{/* No device */}
 			{!selectedDeviceId && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a booted device to manage settings</p>
+				<div className="glass-empty-state">
+					<p>Select a booted device to manage settings</p>
 				</div>
 			)}
 
@@ -127,17 +127,15 @@ function SettingsPanel() {
 				<div className="space-y-4">
 					{/* Appearance */}
 					{capabilities.appearance && (
-						<div className="glass-panel p-4 space-y-3">
-							<h2 className="text-sm font-medium text-text-primary">Appearance</h2>
-							<div className="flex items-center gap-1 p-1 rounded-xl bg-bg-surface/40 border border-border/50 w-fit">
+						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
+							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+								Appearance
+							</h2>
+							<div className="glass-tab-bar">
 								<button
 									type="button"
 									onClick={() => setAppearance("light")}
-									className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-										activeMode === "light"
-											? "bg-glass text-text-primary shadow-sm"
-											: "text-text-secondary hover:text-text-primary"
-									}`}
+									className={`glass-tab flex items-center gap-1.5 ${activeMode === "light" ? "active" : ""}`}
 								>
 									<Sun size={13} strokeWidth={1.8} />
 									Light
@@ -145,11 +143,7 @@ function SettingsPanel() {
 								<button
 									type="button"
 									onClick={() => setAppearance("dark")}
-									className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-										activeMode === "dark"
-											? "bg-glass text-text-primary shadow-sm"
-											: "text-text-secondary hover:text-text-primary"
-									}`}
+									className={`glass-tab flex items-center gap-1.5 ${activeMode === "dark" ? "active" : ""}`}
 								>
 									<Moon size={13} strokeWidth={1.8} />
 									Dark
@@ -172,21 +166,23 @@ function SettingsPanel() {
 
 					{/* Locale */}
 					{capabilities.locale && (
-						<div className="glass-panel p-4 space-y-3">
-							<h2 className="text-sm font-medium text-text-primary">Locale</h2>
+						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
+							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+								Locale
+							</h2>
 							<div className="flex items-center gap-2">
 								<input
 									type="text"
 									value={locale}
 									onChange={(e) => setLocale(e.target.value)}
 									placeholder="en_US, ja_JP, fr_FR..."
-									className="flex-1 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-1.5 text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
+									className="glass-input flex-1 text-xs"
 								/>
 								<button
 									type="button"
 									onClick={applyLocale}
 									disabled={!locale.trim()}
-									className="rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+									className="glass-button-primary"
 								>
 									Apply
 								</button>
