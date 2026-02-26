@@ -23,27 +23,27 @@ export default function HomeScreen() {
 	const tip = useMemo(() => tips[Math.floor(Math.random() * tips.length)], []);
 
 	return (
-		<div className="flex h-full items-center justify-center select-none">
-			<div className="flex flex-col items-center gap-6 max-w-md px-6">
+		<div className="absolute inset-0 flex items-center justify-center select-none">
+			<div className="flex flex-col items-center gap-8 max-w-lg px-6">
 				<img
 					src="/icon-192.png"
 					alt="simvyn"
-					className="w-24 h-24 rounded-2xl opacity-30"
+					className="w-32 h-32 rounded-3xl opacity-25"
 					draggable={false}
 				/>
 
-				<h1 className="text-lg font-medium text-text-muted tracking-wide">simvyn</h1>
+				<h1 className="text-2xl font-semibold text-text-muted tracking-wide">simvyn</h1>
 
-				<p className="text-xs text-text-muted/60 text-center leading-relaxed">{tip}</p>
+				<p className="text-sm text-text-muted/50 text-center leading-relaxed">{tip}</p>
 
-				<div className="flex items-center gap-1.5 text-[11px] text-text-muted/40">
-					<kbd className="px-1.5 py-0.5 rounded bg-bg-surface/30 border border-white/5 font-mono">
+				<div className="flex items-center gap-1.5 text-xs text-text-muted/35">
+					<kbd className="px-2 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
 						{modKey}
 					</kbd>
-					<kbd className="px-1.5 py-0.5 rounded bg-bg-surface/30 border border-white/5 font-mono">
+					<kbd className="px-2 py-1 rounded-md bg-bg-surface/30 border border-white/5 font-mono">
 						K
 					</kbd>
-					<span className="ml-1">to search</span>
+					<span className="ml-1.5">to search</span>
 				</div>
 			</div>
 		</div>

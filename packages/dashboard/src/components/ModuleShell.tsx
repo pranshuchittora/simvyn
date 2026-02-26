@@ -51,7 +51,7 @@ export default function ModuleShell() {
 
 	if (!activeModule) {
 		return (
-			<div className="flex flex-1 overflow-hidden">
+			<div className="relative flex-1 overflow-hidden h-full">
 				<HomeScreen />
 			</div>
 		);
