@@ -5,7 +5,7 @@ interface Props {
 	onPlay: () => void;
 }
 
-export function RouteActionBar({ onPlay }: Props) {
+export default function RouteActionBar({ onPlay }: Props) {
 	const waypoints = useRouteStore((s) => s.waypoints);
 	const clearRoute = useRouteStore((s) => s.clearRoute);
 	const status = usePlaybackStore((s) => s.status);

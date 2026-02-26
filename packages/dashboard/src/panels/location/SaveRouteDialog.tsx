@@ -7,7 +7,7 @@ interface Props {
 	onClose: () => void;
 }
 
-export function SaveRouteDialog({ waypoints, onClose }: Props) {
+export default function SaveRouteDialog({ waypoints, onClose }: Props) {
 	const [name, setName] = useState("");
 	const [saving, setSaving] = useState(false);
 	const inputRef = useRef<HTMLInputElement>(null);

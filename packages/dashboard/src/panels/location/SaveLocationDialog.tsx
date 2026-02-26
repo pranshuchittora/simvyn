@@ -11,7 +11,7 @@ interface Props {
 	onClose: () => void;
 }
 
-export function SaveLocationDialog({ lat, lon, address, onClose }: Props) {
+export default function SaveLocationDialog({ lat, lon, address, onClose }: Props) {
 	const [name, setName] = useState("");
 	const [emoji, setEmoji] = useState<string | undefined>(undefined);
 	const [saving, setSaving] = useState(false);

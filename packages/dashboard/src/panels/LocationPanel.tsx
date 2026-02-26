@@ -1,48 +1,55 @@
-import type { Map as LeafletMap } from "leaflet";
-import { Star } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useWs, useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
+import { CursorPosition } from "./location/CursorPosition";
 import FavoritesPanel from "./location/FavoritesPanel";
 import FileImportButton from "./location/FileImportButton";
+import { TILE_STYLES, type TileStyle } from "./location/MapStyleSwitcher";
 import MapView from "./location/MapView";
 import ModeSelector from "./location/ModeSelector";
 import PlaybackControls from "./location/PlaybackControls";
+import RouteActionBar from "./location/RouteActionBar";
+import SaveLocationDialog from "./location/SaveLocationDialog";
+import SaveRouteDialog from "./location/SaveRouteDialog";
 import SearchBar from "./location/SearchBar";
+import { useFavoritesStore } from "./location/stores/favorites-store";
 import { useLocationStore } from "./location/stores/location-store";
-import { usePlaybackStore } from "./location/stores/playback-store";
+import { kmhToMs, usePlaybackStore } from "./location/stores/playback-store";
+import { useRouteStore } from "./location/stores/route-store";
 import "./location/location-panel.css";
 
 function LocationPanel() {
 	const { send } = useWs();
-	const [showFavorites, setShowFavorites] = useState(false);
-	const mapRef = useRef<LeafletMap | null>(null);
+	const [tileStyle, setTileStyle] = useState<TileStyle>(TILE_STYLES[0]);
+	const [showSaveLocation, setShowSaveLocation] = useState(false);
+	const [showSaveRoute, setShowSaveRoute] = useState(false);
+	const [showBookmarks, setShowBookmarks] = useState(false);
+	const reverseGeocodeCounter = useRef(0);
 
-	const devices = useDeviceStore((s) => s.devices);
-	const selectedDeviceId = useLocationStore((s) => s.selectedDeviceId);
-	const setSelectedDevice = useLocationStore((s) => s.setSelectedDevice);
-	const setCurrentLocation = useLocationStore((s) => s.setCurrentLocation);
-	const setPlaybackState = usePlaybackStore((s) => s.setPlaybackState);
-	const setPlaybackPosition = usePlaybackStore((s) => s.setPosition);
-	const resetPlayback = usePlaybackStore((s) => s.reset);
+	const markerPosition = useLocationStore((s) => s.markerPosition);
+	const reverseGeocode = useLocationStore((s) => s.reverseGeocode);
+	const setReverseGeocode = useLocationStore((s) => s.setReverseGeocode);
+	const waypoints = useRouteStore((s) => s.waypoints);
+	const locations = useFavoritesStore((s) => s.locations);
 
-	// auto-select first booted device
-	useEffect(() => {
-		if (!selectedDeviceId) {
-			const booted = devices.find((d) => d.state === "booted");
-			if (booted) setSelectedDevice(booted.id);
-			else if (devices.length > 0) setSelectedDevice(devices[0].id);
-		}
-	}, [devices, selectedDeviceId, setSelectedDevice]);
+	const isBookmarked =
+		markerPosition != null &&
+		locations.some(
+			(loc) =>
+				Math.abs(loc.lat - markerPosition[0]) < 0.0001 &&
+				Math.abs(loc.lon - markerPosition[1]) < 0.0001,
+		);
 
-	// subscribe to location channel on mount
+	// subscribe to location channel on mount + fetch favorites
 	useEffect(() => {
 		send({
 			channel: "system",
 			type: "subscribe",
 			payload: { channel: "location" },
 		});
+		useFavoritesStore.getState().fetchLocations();
 		return () => {
 			send({
 				channel: "system",
@@ -52,103 +59,204 @@ function LocationPanel() {
 		};
 	}, [send]);
 
-	// WS listeners for playback events
-	const handlePlaybackPosition = useCallback(
-		(payload: unknown) => {
-			const p = payload as { lat: number; lon: number; progress: number };
-			setPlaybackPosition(p.lat, p.lon, p.progress);
+	// helper to send location-channel WS messages
+	const sendLocation = useCallback(
+		(type: string, payload: Record<string, unknown>) => {
+			send({ channel: "location", type, payload });
 		},
-		[setPlaybackPosition],
+		[send],
 	);
 
-	const handlePlaybackComplete = useCallback(() => {
-		resetPlayback();
-	}, [resetPlayback]);
+	// ─── WS listeners ───
 
-	const handleLocationSet = useCallback(
-		(payload: unknown) => {
-			const p = payload as { lat: number; lon: number };
-			setCurrentLocation(p.lat, p.lon);
-		},
-		[setCurrentLocation],
-	);
-
-	const handlePlaybackPaused = useCallback(() => {
-		setPlaybackState("paused");
-	}, [setPlaybackState]);
-
-	const handlePlaybackResumed = useCallback(() => {
-		setPlaybackState("playing");
-	}, [setPlaybackState]);
+	const handleLocationSet = useCallback((payload: unknown) => {
+		const msg = payload as {
+			results: { success: boolean; error?: string }[];
+			lat: number;
+			lon: number;
+		};
+		const successCount = msg.results?.filter((r) => r.success).length ?? 0;
+		const failCount = msg.results?.filter((r) => !r.success).length ?? 0;
+		if (failCount === 0 && successCount > 0) {
+			toast.success(`Location set on ${successCount} device${successCount > 1 ? "s" : ""}`, {
+				description: `${msg.lat.toFixed(4)}, ${msg.lon.toFixed(4)}`,
+			});
+		} else if (successCount > 0) {
+			toast.warning(`Set on ${successCount}, failed on ${failCount} device(s)`);
+		} else if (successCount === 0 && failCount > 0) {
+			toast.error("Failed to set location", { description: msg.results[0]?.error });
+		}
+		if (successCount === 0 && failCount === 0) {
+			toast.info("No devices detected", {
+				description: "Start an iOS Simulator or Android Emulator",
+			});
+		}
+	}, []);
 
 	const handlePlaybackStarted = useCallback(() => {
-		setPlaybackState("playing");
-	}, [setPlaybackState]);
+		usePlaybackStore.getState().setStatus("playing");
+		toast.success("Playback started");
+	}, []);
+
+	const handlePlaybackPosition = useCallback((payload: unknown) => {
+		const p = payload as { lat: number; lon: number; progress: number };
+		usePlaybackStore.getState().setCurrentPosition([p.lat, p.lon]);
+		usePlaybackStore.getState().setProgress(p.progress);
+	}, []);
+
+	const handlePlaybackPaused = useCallback(() => {
+		usePlaybackStore.getState().setStatus("paused");
+		toast.info("Playback paused");
+	}, []);
+
+	const handlePlaybackResumed = useCallback(() => {
+		usePlaybackStore.getState().setStatus("playing");
+	}, []);
 
 	const handlePlaybackStopped = useCallback(() => {
-		resetPlayback();
-	}, [resetPlayback]);
+		usePlaybackStore.getState().reset();
+		toast.info("Playback stopped");
+	}, []);
 
-	useWsListener("location", "playback-position", handlePlaybackPosition);
-	useWsListener("location", "playback-complete", handlePlaybackComplete);
+	const handlePlaybackComplete = useCallback((payload: unknown) => {
+		const msg = payload as { looping?: boolean };
+		if (msg.looping) {
+			toast.info("Route looping...");
+		} else {
+			usePlaybackStore.getState().reset();
+			toast.success("Route playback complete");
+		}
+	}, []);
+
+	const handlePlaybackError = useCallback((payload: unknown) => {
+		const msg = payload as { message?: string };
+		toast.error("Playback error", { description: msg.message });
+		usePlaybackStore.getState().reset();
+	}, []);
+
+	const handleSpeedChanged = useCallback((_payload: unknown) => {
+		// speed-changed acknowledgement — no action needed
+	}, []);
+
 	useWsListener("location", "location-set", handleLocationSet);
+	useWsListener("location", "playback-started", handlePlaybackStarted);
+	useWsListener("location", "playback-position", handlePlaybackPosition);
 	useWsListener("location", "playback-paused", handlePlaybackPaused);
 	useWsListener("location", "playback-resumed", handlePlaybackResumed);
-	useWsListener("location", "playback-started", handlePlaybackStarted);
 	useWsListener("location", "playback-stopped", handlePlaybackStopped);
+	useWsListener("location", "playback-complete", handlePlaybackComplete);
+	useWsListener("location", "playback-error", handlePlaybackError);
+	useWsListener("location", "speed-changed", handleSpeedChanged);
 
-	const flyTo = (lat: number, lon: number) => {
-		mapRef.current?.flyTo([lat, lon], 15);
+	// ─── markerPosition change → set location on device + reverse geocode ───
+
+	useEffect(() => {
+		if (markerPosition) {
+			const deviceId = useDeviceStore.getState().selectedDeviceId;
+			sendLocation("set-location", {
+				lat: markerPosition[0],
+				lon: markerPosition[1],
+				deviceId,
+			});
+
+			const requestId = ++reverseGeocodeCounter.current;
+			fetch(`/api/modules/location/reverse?lat=${markerPosition[0]}&lon=${markerPosition[1]}`)
+				.then((res) => {
+					if (!res.ok) throw new Error("Reverse geocode failed");
+					return res.json();
+				})
+				.then((data) => {
+					if (requestId === reverseGeocodeCounter.current) {
+						setReverseGeocode(data.display_name ?? null);
+					}
+				})
+				.catch(() => {
+					if (requestId === reverseGeocodeCounter.current) {
+						setReverseGeocode(null);
+					}
+				});
+		} else {
+			setReverseGeocode(null);
+		}
+	}, [markerPosition, setReverseGeocode, sendLocation]);
+
+	// ─── handlers ───
+
+	const handleLoadLocation = useCallback((lat: number, lon: number) => {
+		useLocationStore.getState().setMarkerPosition([lat, lon]);
+		useRouteStore.getState().setInteractionMode("point");
+	}, []);
+
+	const handleLoadRoute = useCallback((wps: [number, number][]) => {
+		useRouteStore.getState().setInteractionMode("route");
+		useRouteStore.getState().setWaypoints(wps);
+	}, []);
+
+	const handlePlayRoute = useCallback(() => {
+		const { waypoints: wps } = useRouteStore.getState();
+		if (wps.length < 2) return;
+
+		const { speedKmh, multiplier, loop } = usePlaybackStore.getState();
+		const deviceId = useDeviceStore.getState().selectedDeviceId;
+
+		sendLocation("start-playback", {
+			waypoints: wps,
+			speedMs: kmhToMs(speedKmh),
+			multiplier,
+			loop,
+			deviceId,
+		});
+	}, [sendLocation]);
+
+	const handleBookmarkClick = () => {
+		if (markerPosition && !isBookmarked) {
+			setShowSaveLocation(true);
+		} else {
+			setShowBookmarks(!showBookmarks);
+		}
 	};
 
-	const fitBounds = (waypoints: [number, number][]) => {
-		if (waypoints.length > 0 && mapRef.current) {
-			const bounds = waypoints.map(([lat, lon]) => [lat, lon] as [number, number]);
-			mapRef.current.fitBounds(bounds);
-		}
+	const handleSaveLocationClose = () => {
+		setShowSaveLocation(false);
+		useFavoritesStore.getState().fetchLocations();
 	};
 
 	return (
 		<div className="location-panel">
-			<div className="location-toolbar">
+			<MapView tileStyle={tileStyle} onTileStyleChange={setTileStyle} />
+			<SearchBar />
+			<div className="route-controls">
 				<ModeSelector />
-				<SearchBar onFlyTo={flyTo} />
-
-				{/* Device selector */}
-				<select
-					value={selectedDeviceId ?? ""}
-					onChange={(e) => setSelectedDevice(e.target.value || null)}
-					className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[140px] truncate"
-				>
-					<option value="">No device</option>
-					{devices.map((d) => (
-						<option key={d.id} value={d.id}>
-							{d.name} {d.state === "booted" ? "" : `(${d.state})`}
-						</option>
-					))}
-				</select>
-
-				<FileImportButton onFitBounds={fitBounds} />
-				<button
-					type="button"
-					onClick={() => setShowFavorites(!showFavorites)}
-					className={`rounded-[var(--radius-button)] border px-2 py-1.5 text-xs transition-colors ${
-						showFavorites
-							? "bg-accent-blue/20 text-accent-blue border-accent-blue/30"
-							: "bg-bg-surface/60 border-border text-text-secondary hover:text-text-primary hover:bg-glass"
-					}`}
-					title="Favorites"
-				>
-					<Star size={14} strokeWidth={1.8} />
-				</button>
+				<FileImportButton />
 			</div>
-
-			<div className="location-map">
-				<MapView mapRef={mapRef} />
-				<PlaybackControls />
-			</div>
-
-			{showFavorites && <FavoritesPanel onFlyTo={flyTo} onClose={() => setShowFavorites(false)} />}
+			<RouteActionBar onPlay={handlePlayRoute} />
+			<button
+				type="button"
+				className={`bookmark-btn glass-button${isBookmarked ? " bookmark-btn-active" : ""}`}
+				onClick={handleBookmarkClick}
+			>
+				<span className="bookmark-btn-star">★</span>
+				Bookmarks
+			</button>
+			<PlaybackControls sendLocation={sendLocation} />
+			<CursorPosition />
+			<FavoritesPanel
+				open={showBookmarks}
+				onLoadLocation={handleLoadLocation}
+				onLoadRoute={handleLoadRoute}
+				onSaveRoute={waypoints.length >= 2 ? () => setShowSaveRoute(true) : undefined}
+			/>
+			{showSaveLocation && markerPosition && (
+				<SaveLocationDialog
+					lat={markerPosition[0]}
+					lon={markerPosition[1]}
+					address={reverseGeocode}
+					onClose={handleSaveLocationClose}
+				/>
+			)}
+			{showSaveRoute && waypoints.length >= 2 && (
+				<SaveRouteDialog waypoints={waypoints} onClose={() => setShowSaveRoute(false)} />
+			)}
 		</div>
 	);
 }
