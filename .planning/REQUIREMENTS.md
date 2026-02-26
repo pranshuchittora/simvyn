@@ -45,12 +45,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### File System
 
-- [ ] **FS-01**: Browse iOS simulator app sandboxes via `simctl get_app_container` + direct filesystem access
-- [ ] **FS-02**: Browse Android app files via `adb pull`/`adb push` and `adb shell run-as` for debug apps
-- [ ] **FS-03**: Download files from device to host
-- [ ] **FS-04**: Upload files from host to device
-- [ ] **FS-05**: Edit text files inline in the dashboard with save-back to device
-- [ ] **FS-06**: CLI subcommands: `simvyn fs ls <device> <path>`, `simvyn fs pull <device> <path>`, `simvyn fs push <device> <src> <dest>`
+- [x] **FS-01**: Browse iOS simulator app sandboxes via `simctl get_app_container` + direct filesystem access
+- [x] **FS-02**: Browse Android app files via `adb pull`/`adb push` and `adb shell run-as` for debug apps
+- [x] **FS-03**: Download files from device to host
+- [x] **FS-04**: Upload files from host to device
+- [x] **FS-05**: Edit text files inline in the dashboard with save-back to device
+- [x] **FS-06**: CLI subcommands: `simvyn fs ls <device> <path>`, `simvyn fs pull <device> <path>`, `simvyn fs push <device> <src> <dest>`
 
 ### Database Inspector
 
@@ -280,12 +280,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PUSH-03 | Phase 6 | Complete |
 | PUSH-04 | Phase 6 | Complete |
 | PUSH-05 | Phase 6 | Complete |
-| FS-01 | Phase 7 | Pending |
-| FS-02 | Phase 7 | Pending |
-| FS-03 | Phase 7 | Pending |
-| FS-04 | Phase 7 | Pending |
-| FS-05 | Phase 7 | Pending |
-| FS-06 | Phase 7 | Pending |
+| FS-01 | Phase 7 | Complete |
+| FS-02 | Phase 7 | Complete |
+| FS-03 | Phase 7 | Complete |
+| FS-04 | Phase 7 | Complete |
+| FS-05 | Phase 7 | Complete |
+| FS-06 | Phase 7 | Complete |
 | DB-01 | Phase 7 | Pending |
 | DB-02 | Phase 7 | Pending |
 | DB-03 | Phase 7 | Pending |
