@@ -18,6 +18,7 @@ export interface LogStreamerOptions {
 export interface LogStreamer {
 	start(): void;
 	stop(): void;
+	clearHistory(): void;
 	readonly deviceId: string;
 	readonly isRunning: boolean;
 	readonly history: readonly LogEntry[];
@@ -140,6 +141,10 @@ export function createLogStreamer(opts: LogStreamerOptions): LogStreamer {
 		},
 		get history() {
 			return historyBuffer;
+		},
+
+		clearHistory() {
+			historyBuffer.length = 0;
 		},
 
 		start() {
