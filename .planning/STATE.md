@@ -35,6 +35,7 @@
 | Plans completed | 4/6 (Phase 1) |
 | Requirements delivered | 13/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
+| Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
 
 ## Accumulated Context
@@ -53,6 +54,9 @@
 - Dashboard uses moduleResolution: bundler (not NodeNext) — Vite handles module resolution for browser target
 - ModuleShell uses CSS display:none/block toggle to persist panel state across module switches
 - Single WsProvider context for entire app with listener registration pattern (useWsListener hook)
+- Stub DeviceManager/ProcessManager in server with dynamic import fallback — server works before @simvyn/core is ready
+- WsBroker uses WeakMap for per-client subscription state — auto-cleanup on GC
+- Module loader tries .js then .ts manifest — supports compiled and development modes
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -75,10 +79,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 01-04-PLAN.md (Dashboard shell with layout, WS, stores)
+**Last session:** Completed 01-03-PLAN.md (Server, WebSocket broker & module loader)
 **Next action:** Execute 01-05-PLAN.md (Device management module with dashboard panel)
-**Context for next session:** Dashboard shell complete with Vite + React + Tailwind v4. WsProvider connects to /ws, device-store receives device-list, module-store fetches from /api/modules, panel-registry enables lazy-loaded module panels. Layout: TopBar + Sidebar + ModuleShell. Ready for first module panel.
+**Context for next session:** Server package complete with Fastify app factory, WsBroker (envelope routing, channel subscriptions), and module auto-discovery. Server starts on port 3847, health at /api/health, WS at /ws, modules at /api/modules. Stubs for DeviceManager/ProcessManager until @simvyn/core ready.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26 (after 01-04 execution)*
+*Last updated: 2026-02-26 (after 01-03 execution)*

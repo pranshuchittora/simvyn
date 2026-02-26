@@ -10,8 +10,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Infrastructure
 
 - [x] **INFRA-01**: TypeScript monorepo with npm workspaces — shared types, core, server, dashboard, CLI packages
-- [ ] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
-- [ ] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
+- [x] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
+- [x] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
 - [x] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
 - [ ] **INFRA-05**: CLI entry point via commander.js — `simvyn` starts server + opens dashboard, subcommands for headless use
 - [ ] **INFRA-06**: Published as `simvyn` npm package, invocable via `npx simvyn`
@@ -211,8 +211,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | INFRA-01 | Phase 1 | Complete |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Pending |
 | INFRA-06 | Phase 1 | Pending |
