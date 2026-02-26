@@ -1,4 +1,12 @@
-import { AppWindow, MapPin, MonitorSmartphone, ScrollText } from "lucide-react";
+import {
+	AppWindow,
+	Bell,
+	Camera,
+	ExternalLink,
+	MapPin,
+	MonitorSmartphone,
+	ScrollText,
+} from "lucide-react";
 import type { ComponentType } from "react";
 import { useModuleStore } from "../stores/module-store";
 
@@ -7,6 +15,9 @@ const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: numbe
 	location: MapPin,
 	apps: AppWindow,
 	logs: ScrollText,
+	screenshot: Camera,
+	"deep-links": ExternalLink,
+	push: Bell,
 };
 
 const labelMap: Record<string, string> = {
@@ -14,6 +25,9 @@ const labelMap: Record<string, string> = {
 	location: "Location",
 	apps: "Apps",
 	logs: "Logs",
+	screenshot: "Screenshots",
+	"deep-links": "Deep Links",
+	push: "Push",
 };
 
 export default function Sidebar() {
