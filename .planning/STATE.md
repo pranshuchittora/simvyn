@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 11 of 11 — Location Module Rewrite
-**Plan:** 2 of 4
+**Plan:** 4 of 4
 **Status:** In progress
-**Progress:** [████████░░] 83%
+**Progress:** [█████████░] 85%
 
 ## Phase Overview
 
@@ -27,7 +27,7 @@
 | 8. Device Settings & Accessibility | ✅ Complete (2/2 plans) |
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
-| 11. Location Module Rewrite | 🔄 In Progress (1/4 plans) |
+| 11. Location Module Rewrite | 🔄 In Progress (2/4 plans) |
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@
 | Phase 09 P04 | 2min | 2 tasks | 5 files |
 | Phase 10 P01 | 1min | 2 tasks | 3 files |
 | Phase 11 P01 | 1min | 2 tasks | 5 files |
+| Phase 11 P04 | 2min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -163,6 +164,9 @@
 - Z-index stacking order: sidebar(20) < header(30) < tooltips/dropdowns(50+) — raise overlays rather than lower content
 - AnimatedPanel motion.div needs h-full to maintain height chain for panels using height: 100% (e.g. LocationPanel)
 - Store migration from sim-location: direct copy with only API path prefix changes (favorites: /api/favorites/* → /api/modules/location/favorites/*)
+- Switched from oklch inline values to rgba glass values in shell components for visual parity with sim-location
+- glass-panel uses inset highlight + deep shadow (blur(20px) saturate(1.4)) as standard across all components
+- .top-bar CSS class for header instead of long Tailwind arbitrary value strings
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -192,8 +196,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T14:00:37Z
-**Stopped at:** Completed 11-01-PLAN.md
+**Last session:** 2026-02-26T14:03:29.663Z
+**Stopped at:** Completed 11-04-PLAN.md
 **Context for next session:** Phase 11 plan 01 complete (1/4 plans). Replaced 4 location stores with sim-location versions and added route-parser utility. Components will have type errors until plans 02/03 update them to use new store interfaces.
 
 ---
