@@ -15,7 +15,7 @@
 - [x] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
 - [x] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
 - [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
-- [ ] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
+- [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 
 ## Phase Details
 
@@ -173,8 +173,8 @@ Plans:
 Plans:
 - [x] 09-01-PLAN.md — Crash logs module (iOS DiagnosticReports + Android logcat, routes, CLI)
 - [x] 09-02-PLAN.md — Media injection module (addMedia adapters, multipart upload route, CLI)
-- [ ] 09-03-PLAN.md — Clipboard bridge module (get/set adapters, routes, CLI)
-- [ ] 09-04-PLAN.md — Dashboard panels for all 3 modules + sidebar icons
+- [x] 09-03-PLAN.md — Clipboard bridge module (get/set adapters, routes, CLI)
+- [x] 09-04-PLAN.md — Dashboard panels for all 3 modules + sidebar icons
 
 ## Progress
 
@@ -188,7 +188,7 @@ Plans:
 | 6. Quick-Action Modules | 4/4 | Complete | 2026-02-26 |
 | 7. File System & Database Inspector | 3/3 | Complete | 2026-02-26 |
 | 8. Device Settings & Accessibility | 2/2 | Complete | 2026-02-26 |
-| 9. Utility Modules | 2/4 | In Progress | — |
+| 9. Utility Modules | 4/4 | Complete | 2026-02-26 |
 
 ## Coverage Map
 
