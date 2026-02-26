@@ -26,7 +26,8 @@ export type PlatformCapability =
 	| "logs"
 	| "deepLinks"
 	| "appManagement"
-	| "fileSystem";
+	| "fileSystem"
+	| "database";
 
 export interface AppInfo {
 	bundleId: string;
