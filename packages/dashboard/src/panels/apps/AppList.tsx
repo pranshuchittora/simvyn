@@ -81,7 +81,7 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 							{filtered.map((app: AppInfo) => (
 								<tr
 									key={app.bundleId}
-									className="border-b border-border/50 hover:bg-white/[0.02] transition-colors"
+									className="border-b border-border/50 hover:bg-white/[0.03] transition-colors"
 								>
 									<td className="px-4 py-2 text-text-primary truncate max-w-[180px]">{app.name}</td>
 									<td className="px-4 py-2 text-text-secondary truncate max-w-[220px] font-mono text-xs">

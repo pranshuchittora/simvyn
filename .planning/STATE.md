@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Phase 4 Complete — Ready for Phase 5
+**Current Focus:** Phase 5 Complete — Ready for Phase 6
 
 ## Current Position
 
-**Phase:** 4 of 9 — Log Viewer Module
-**Plan:** 4 of 4 in Phase 4 ✅
+**Phase:** 5 of 9 — Dashboard UI
+**Plan:** 4 of 4 in Phase 5 ✅
 **Status:** Milestone complete
-**Progress:** [██████████] 100% (Phase 4)
+**Progress:** [██████████] 100% (Phase 5)
 
 ## Phase Overview
 
@@ -21,7 +21,7 @@
 | 2. Location Module | ✅ Complete (4/4 plans) |
 | 3. App Management Module | ✅ Complete (4/4 plans) |
 | 4. Log Viewer Module | ✅ Complete (4/4 plans) |
-| 5. Dashboard UI | ⬜ Not started |
+| 5. Dashboard UI | ✅ Complete (4/4 plans) |
 | 6. Quick-Action Modules | ⬜ Not started |
 | 7. File System & Database Inspector | ⬜ Not started |
 | 8. Device Settings & Accessibility | ⬜ Not started |
@@ -31,9 +31,9 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 4/9 |
-| Plans completed | 19/19 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4) |
-| Requirements delivered | 40/108 |
+| Phases completed | 5/9 |
+| Plans completed | 23/23 (Phase 1: 7, Phase 2: 4, Phase 3: 4, Phase 4: 4, Phase 5: 4) |
+| Requirements delivered | 49/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -52,6 +52,10 @@
 | Phase 04 P02 | 3min | 2 tasks | 3 files |
 | Phase 04 P03 | 2min | 1 task | 1 file |
 | Phase 04 P04 | 3min | 2 tasks | 5 files |
+| Phase 05 P01 | 2min | 3 tasks | 4 files |
+| Phase 05 P02 | 2min | 3 tasks | 3 files |
+| Phase 05 P03 | 1min | 2 tasks | 3 files |
+| Phase 05 P04 | 2min | 4 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -99,6 +103,13 @@
 - CLI log output processes each line immediately (no batching) for lowest latency
 - Dashboard log buffer capped at 50K entries (server at 10K) for extended scrollback
 - Client-side log filtering only — no server roundtrip for filter changes, instant response
+- Liquid Glass design system uses oklch color space — perceptually uniform, CSS native
+- Body background is a 4-stop diagonal gradient (not flat color) — deep blue-purple tones at 145deg
+- Glass panels use backdrop-filter: blur(24px) saturate(1.3) — increased from initial 20px/1.2 for stronger effect
+- Sidebar is macOS Dock-style (60px icon bar, not 224px text sidebar) — Lucide icons with hover tooltips
+- Framer Motion AnimatedPanel uses useAnimationControls (not key-based remount) — re-animates on every switch without losing state
+- Sonner toasts mounted at app root with inline oklch glass styles — no dependency on CSS classes for core toast appearance
+- All emojis removed from dashboard — replaced with Lucide icons or plain text throughout
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -109,6 +120,8 @@
 - Dashboard module panels lazy-loaded via `React.lazy()`
 - LogStreamer per-device with readline line-by-line ndjson parsing, timed flush, capped history buffer
 - WS handler uses WeakMap<WebSocket, Set<string>> for socket-to-device tracking, WeakSet for close listener dedup
+- Dashboard design system: oklch tokens in @theme, .glass-panel utility, .dock-sidebar/.dock-icon CSS classes
+- Icon system: separate iconMap/labelMap objects in Sidebar for easy future swap from Lucide to custom SVGs
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -123,9 +136,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T09:54:21.590Z
-**Stopped at:** Phase 5 context gathered
-**Context for next session:** Phase 4 (Log Viewer Module) complete — all 4 plans executed. LogLevel/LogEntry types added to @simvyn/types. LogStreamer class at packages/modules/log-viewer/log-streamer.ts handles iOS (simctl spawn log stream --style ndjson) and Android (adb logcat -v json) with readline ndjson parsing, batched flush (150ms), and capped history buffer (10K). Server-side WS handler with ref-counted streaming (multiple clients share one child process per device). REST export endpoint at GET /export/:deviceId?format=json|text. CLI `simvyn logs <device>` with --level, --filter, --json options and ANSI color-coded output. Dashboard panel with real-time log list, level/search/process filters, JSON/TXT export, auto-scroll, and 50K entry buffer. Ready for Phase 5 planning.
+**Last session:** 2026-02-26
+**Stopped at:** Phase 5 complete
+**Context for next session:** Phase 5 (Dashboard UI) complete — all 4 plans executed. Liquid Glass design system established with oklch tokens, 4-stop diagonal gradient background, enhanced glass panels (blur 24px, saturate 1.3), Inter font via Google Fonts, custom thin scrollbars. Sidebar rebuilt as macOS Dock-style icon bar (60px) with Lucide icons (MonitorSmartphone, MapPin, AppWindow, ScrollText), hover tooltips, scale-up animation, and glowing dot active indicator. TopBar polished with gradient text branding, pulsing connection indicator. DeviceSelector enhanced with glass dropdown, chevron rotation, shadow. ModuleShell has Framer Motion spring animations (fade+slide-up on every switch via useAnimationControls, display:none/block state persistence preserved). Sonner Toaster mounted at app root with glass styling. All module panels (device, app, log, location) polished for visual consistency — no emojis remain, consistent text-base font-medium headings, responsive grids, hover effects. lucide-react and framer-motion added as dependencies. Ready for Phase 6 planning.
 
 ---
 *State initialized: 2026-02-26*

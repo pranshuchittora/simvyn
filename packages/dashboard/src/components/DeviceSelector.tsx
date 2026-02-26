@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from "react";
-import { useDeviceStore } from "../stores/device-store";
 import type { Device } from "@simvyn/types";
+import { useEffect, useRef, useState } from "react";
+import { useDeviceStore } from "../stores/device-store";
 
 function groupByPlatform(devices: Device[]) {
 	const groups: Record<string, Device[]> = {};
@@ -12,8 +12,13 @@ function groupByPlatform(devices: Device[]) {
 }
 
 function StateIndicator({ state }: { state: Device["state"] }) {
-	const color = state === "booted" ? "bg-green-500" : "bg-text-muted";
-	return <span className={`inline-block h-2 w-2 rounded-full ${color}`} />;
+	return (
+		<span
+			className={`inline-block h-2 w-2 rounded-full ${
+				state === "booted" ? "bg-green-500 ring-2 ring-green-500/20" : "bg-text-muted/50"
+			}`}
+		/>
+	);
 }
 
 export default function DeviceSelector() {
@@ -35,27 +40,28 @@ export default function DeviceSelector() {
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, []);
 
-	const label = broadcastMode
-		? "All devices"
-		: selected
-			? selected.name
-			: "No devices";
+	const label = broadcastMode ? "All devices" : selected ? selected.name : "No devices";
 
 	return (
 		<div ref={ref} className="relative">
 			<button
 				type="button"
 				onClick={() => setOpen(!open)}
-				className="flex items-center gap-2 rounded-[var(--radius-button)] border border-border bg-bg-surface px-3 py-1.5 text-sm text-text-primary hover:bg-glass transition-colors"
+				className="flex items-center gap-2 rounded-[var(--radius-button)] bg-bg-surface/50 border border-glass-border hover:border-glass-border-hover hover:bg-glass-hover px-3 py-1.5 text-sm text-text-primary transition-all duration-150"
 			>
 				<span>{label}</span>
-				<svg className="h-4 w-4 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<svg
+					className={`h-4 w-4 text-text-secondary transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
 					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
 				</svg>
 			</button>
 
 			{open && (
-				<div className="glass-panel absolute top-full right-0 z-50 mt-2 w-72 overflow-hidden p-1">
+				<div className="glass-panel absolute top-full right-0 z-50 mt-2 w-72 overflow-hidden p-1 shadow-xl shadow-black/30">
 					<button
 						type="button"
 						onClick={() => {
@@ -63,7 +69,9 @@ export default function DeviceSelector() {
 							setOpen(false);
 						}}
 						className={`flex w-full items-center gap-2 rounded-[var(--radius-button)] px-3 py-2 text-left text-sm transition-colors ${
-							broadcastMode ? "bg-accent-blue/20 text-accent-blue" : "text-text-secondary hover:bg-bg-surface"
+							broadcastMode
+								? "bg-accent-blue/20 text-accent-blue"
+								: "text-text-secondary hover:bg-bg-surface"
 						}`}
 					>
 						<span className="inline-block h-2 w-2 rounded-full bg-accent-purple" />
@@ -74,7 +82,7 @@ export default function DeviceSelector() {
 
 					{Object.entries(groups).map(([platform, devs]) => (
 						<div key={platform}>
-							<div className="px-3 py-1 text-xs font-semibold uppercase text-text-muted">
+							<div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
 								{platform}
 							</div>
 							{devs.map((d) => (
@@ -100,9 +108,7 @@ export default function DeviceSelector() {
 					))}
 
 					{devices.length === 0 && (
-						<div className="px-3 py-4 text-center text-sm text-text-muted">
-							No devices detected
-						</div>
+						<div className="px-3 py-4 text-center text-sm text-text-muted">No devices detected</div>
 					)}
 				</div>
 			)}

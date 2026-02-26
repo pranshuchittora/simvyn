@@ -1,14 +1,38 @@
-import { Suspense } from "react";
+import { motion, useAnimationControls } from "framer-motion";
+import type { ReactNode } from "react";
+import { Suspense, useEffect } from "react";
 import { useModuleStore } from "../stores/module-store";
 import { usePanelRegistry } from "../stores/panel-registry";
 
+const panelSpring = {
+	type: "spring" as const,
+	stiffness: 400,
+	damping: 30,
+	mass: 0.8,
+};
+
+function AnimatedPanel({ isActive, children }: { isActive: boolean; children: ReactNode }) {
+	const controls = useAnimationControls();
+
+	useEffect(() => {
+		if (isActive) {
+			controls.set({ opacity: 0, y: 8 });
+			controls.start({ opacity: 1, y: 0 }, panelSpring);
+		}
+	}, [isActive, controls]);
+
+	return <motion.div animate={controls}>{children}</motion.div>;
+}
+
 function LoadingSkeleton() {
 	return (
-		<div className="glass-panel m-4 animate-pulse p-6">
-			<div className="mb-4 h-6 w-48 rounded bg-bg-surface" />
-			<div className="mb-3 h-4 w-full rounded bg-bg-surface" />
-			<div className="mb-3 h-4 w-3/4 rounded bg-bg-surface" />
-			<div className="h-4 w-1/2 rounded bg-bg-surface" />
+		<div className="p-6 space-y-4">
+			<div className="h-7 w-48 rounded-lg bg-bg-surface/60 animate-pulse" />
+			<div className="glass-panel p-6 space-y-3">
+				<div className="h-4 w-full rounded bg-bg-surface/40 animate-pulse" />
+				<div className="h-4 w-3/4 rounded bg-bg-surface/40 animate-pulse" />
+				<div className="h-4 w-1/2 rounded bg-bg-surface/40 animate-pulse" />
+			</div>
 		</div>
 	);
 }
@@ -22,10 +46,7 @@ export default function ModuleShell() {
 		return (
 			<div className="flex flex-1 items-center justify-center">
 				<div className="text-center">
-					<div className="mb-2 text-4xl">🧩</div>
-					<div className="text-lg text-text-secondary">
-						Select a module from the sidebar
-					</div>
+					<p className="text-sm text-text-secondary">Select a module from the dock</p>
 				</div>
 			</div>
 		);
@@ -45,16 +66,18 @@ export default function ModuleShell() {
 					>
 						{Panel ? (
 							<Suspense fallback={<LoadingSkeleton />}>
-								<Panel />
+								<AnimatedPanel isActive={isActive}>
+									<Panel />
+								</AnimatedPanel>
 							</Suspense>
 						) : (
 							isActive && (
 								<div className="flex h-full items-center justify-center">
 									<div className="text-center">
-										<div className="mb-2 text-4xl">🚧</div>
-										<div className="text-lg text-text-secondary">
-											No panel available for <span className="text-text-primary">{mod.name}</span>
-										</div>
+										<p className="text-sm text-text-secondary">
+											No panel available for{" "}
+											<span className="font-medium text-text-primary">{mod.name}</span>
+										</p>
 									</div>
 								</div>
 							)

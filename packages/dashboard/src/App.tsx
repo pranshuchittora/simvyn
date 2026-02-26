@@ -1,5 +1,6 @@
 import type { Device } from "@simvyn/types";
 import { useCallback, useEffect } from "react";
+import { Toaster } from "sonner";
 import ModuleShell from "./components/ModuleShell";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
@@ -53,6 +54,22 @@ export default function App() {
 	return (
 		<WsProvider>
 			<AppContent />
+			<Toaster
+				position="bottom-right"
+				toastOptions={{
+					style: {
+						background: "oklch(0.14 0.02 260 / 0.85)",
+						backdropFilter: "blur(24px) saturate(1.3)",
+						border: "1px solid oklch(0.35 0.02 260 / 0.15)",
+						borderRadius: "12px",
+						color: "oklch(0.92 0.01 260)",
+						fontSize: "13px",
+						fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+					},
+				}}
+				theme="dark"
+				richColors
+			/>
 		</WsProvider>
 	);
 }

@@ -1,4 +1,5 @@
 import type { Map as LeafletMap } from "leaflet";
+import { Star } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWs, useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
@@ -131,14 +132,14 @@ function LocationPanel() {
 				<button
 					type="button"
 					onClick={() => setShowFavorites(!showFavorites)}
-					className={`rounded-[var(--radius-button)] border px-2.5 py-1.5 text-xs transition-colors whitespace-nowrap ${
+					className={`rounded-[var(--radius-button)] border px-2 py-1.5 text-xs transition-colors ${
 						showFavorites
 							? "bg-accent-blue/20 text-accent-blue border-accent-blue/30"
 							: "bg-bg-surface/60 border-border text-text-secondary hover:text-text-primary hover:bg-glass"
 					}`}
 					title="Favorites"
 				>
-					Favs
+					<Star size={14} strokeWidth={1.8} />
 				</button>
 			</div>
 

@@ -153,15 +153,15 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Dashboard UI
 
-- [ ] **UI-01**: Apple Liquid Glass design — dark background with deep gradients, frosted glass panels (backdrop-filter: blur + saturate)
-- [ ] **UI-02**: Muted accent colors (soft blue, purple, teal), no harsh neons
-- [ ] **UI-03**: Spring animations via Framer Motion for panel transitions and interactions
-- [ ] **UI-04**: Inter font, light-medium weights, thin translucent scrollbars, rounded corners (12-16px)
-- [ ] **UI-05**: Top bar with device selector dropdown + connection status indicators
-- [ ] **UI-06**: Sidebar listing all modules with icons, active module highlighted
-- [ ] **UI-07**: Main content area rendering active module panel — module state persists when switching
-- [ ] **UI-08**: Responsive layout that works on various screen sizes
-- [ ] **UI-09**: Toast notifications for async operations (location set, screenshot captured, etc.)
+- [x] **UI-01**: Apple Liquid Glass design — dark background with deep gradients, frosted glass panels (backdrop-filter: blur + saturate)
+- [x] **UI-02**: Muted accent colors (soft blue, purple, teal), no harsh neons
+- [x] **UI-03**: Spring animations via Framer Motion for panel transitions and interactions
+- [x] **UI-04**: Inter font, light-medium weights, thin translucent scrollbars, rounded corners (12-16px)
+- [x] **UI-05**: Top bar with device selector dropdown + connection status indicators
+- [x] **UI-06**: Sidebar listing all modules with icons, active module highlighted
+- [x] **UI-07**: Main content area rendering active module panel — module state persists when switching
+- [x] **UI-08**: Responsive layout that works on various screen sizes
+- [x] **UI-09**: Toast notifications for async operations (location set, screenshot captured, etc.)
 
 ## v2 Requirements
 
@@ -254,15 +254,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOG-06 | Phase 4 | Complete |
 | LOG-07 | Phase 4 | Complete |
 | LOG-08 | Phase 4 | Complete |
-| UI-01 | Phase 5 | Pending |
-| UI-02 | Phase 5 | Pending |
-| UI-03 | Phase 5 | Pending |
-| UI-04 | Phase 5 | Pending |
-| UI-05 | Phase 5 | Pending |
-| UI-06 | Phase 5 | Pending |
-| UI-07 | Phase 5 | Pending |
-| UI-08 | Phase 5 | Pending |
-| UI-09 | Phase 5 | Pending |
+| UI-01 | Phase 5 | Complete |
+| UI-02 | Phase 5 | Complete |
+| UI-03 | Phase 5 | Complete |
+| UI-04 | Phase 5 | Complete |
+| UI-05 | Phase 5 | Complete |
+| UI-06 | Phase 5 | Complete |
+| UI-07 | Phase 5 | Complete |
+| UI-08 | Phase 5 | Complete |
+| UI-09 | Phase 5 | Complete |
 | SCRN-01 | Phase 6 | Pending |
 | SCRN-02 | Phase 6 | Pending |
 | SCRN-03 | Phase 6 | Pending |

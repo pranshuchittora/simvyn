@@ -11,7 +11,7 @@
 - [x] **Phase 2: Location Module (sim-location Migration)** — Migrate sim-location into module architecture, validating the module system end-to-end
 - [x] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
 - [x] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
-- [ ] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
+- [x] **Phase 5: Dashboard UI** — Apple Liquid Glass design system, layout shell, responsive panels, animations
 - [ ] **Phase 6: Quick-Action Modules** — Screenshots, screen recording, deep links, and push notifications
 - [ ] **Phase 7: File System & Database Inspector** — Browse app files, SQLite tables, SharedPreferences, and NSUserDefaults
 - [ ] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
@@ -101,13 +101,13 @@ Plans:
   2. Top bar shows the device selector dropdown with connection status; sidebar lists all discovered modules with icons; clicking a module renders its panel in the main content area
   3. Switching between modules preserves each module's state — navigating away from logs and back shows the same scroll position and filters
   4. Layout adapts to different screen widths without breaking, and toast notifications appear for async operations (screenshot captured, location set, etc.)
-**Plans:** 4 plans
+**Plans:** 4 plans (4 executed)
 
 Plans:
-- [ ] 05-01-PLAN.md — Liquid Glass design system, Inter font, macOS Dock sidebar with Lucide icons
-- [ ] 05-02-PLAN.md — TopBar polish, DeviceSelector glass dropdown, ModuleShell loading/empty states
-- [ ] 05-03-PLAN.md — Framer Motion spring animations + Sonner toast notifications
-- [ ] 05-04-PLAN.md — Polish all module panels (device, app, log, location) for visual consistency
+- [x] 05-01-PLAN.md — Liquid Glass design system, Inter font, macOS Dock sidebar with Lucide icons
+- [x] 05-02-PLAN.md — TopBar polish, DeviceSelector glass dropdown, ModuleShell loading/empty states
+- [x] 05-03-PLAN.md — Framer Motion spring animations + Sonner toast notifications
+- [x] 05-04-PLAN.md — Polish all module panels (device, app, log, location) for visual consistency
 
 ### Phase 6: Quick-Action Modules
 **Goal:** Developers can capture screenshots, record screens, open deep links, and send push notifications as one-click actions
@@ -163,7 +163,7 @@ Plans:
 | 2. Location Module | 4/4 | Complete | 2026-02-26 |
 | 3. App Management Module | 4/4 | Complete | 2026-02-26 |
 | 4. Log Viewer Module | 4/4 | Complete | 2026-02-26 |
-| 5. Dashboard UI | 0/? | Not started | — |
+| 5. Dashboard UI | 4/4 | Complete | 2026-02-26 |
 | 6. Quick-Action Modules | 0/? | Not started | — |
 | 7. File System & Database Inspector | 0/? | Not started | — |
 | 8. Device Settings & Accessibility | 0/? | Not started | — |

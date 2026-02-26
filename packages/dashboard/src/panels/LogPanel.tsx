@@ -115,7 +115,7 @@ function LogPanel() {
 		<div className="flex flex-col h-full p-6 gap-4">
 			{/* Header */}
 			<div className="flex items-center justify-between">
-				<h1 className="text-xl font-semibold text-text-primary">Log Viewer</h1>
+				<h1 className="text-base font-medium text-text-primary">Log Viewer</h1>
 				<select
 					value={selectedDeviceId ?? ""}
 					onChange={(e) => setSelectedDeviceId(e.target.value || null)}
@@ -132,8 +132,8 @@ function LogPanel() {
 
 			{/* No device selected */}
 			{!selectedDeviceId && (
-				<div className="glass-panel flex-1 flex items-center justify-center">
-					<p className="text-text-secondary text-sm">Select a booted device to stream logs</p>
+				<div className="flex-1 flex items-center justify-center">
+					<p className="text-sm text-text-secondary">Select a booted device to stream logs</p>
 				</div>
 			)}
 
