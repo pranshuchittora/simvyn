@@ -1,30 +1,31 @@
-import { useLocationStore } from "./stores/location-store";
+import { useRouteStore } from "./stores/route-store";
 
-export default function ModeSelector() {
-	const mode = useLocationStore((s) => s.mode);
-	const setMode = useLocationStore((s) => s.setMode);
+export function ModeSelector() {
+	const interactionMode = useRouteStore((s) => s.interactionMode);
+	const setInteractionMode = useRouteStore((s) => s.setInteractionMode);
+	const waypoints = useRouteStore((s) => s.waypoints);
+	const clearRoute = useRouteStore((s) => s.clearRoute);
+
+	function switchToPoint() {
+		if (waypoints.length < 2) {
+			clearRoute();
+		}
+		setInteractionMode("point");
+	}
 
 	return (
-		<div className="flex rounded-[var(--radius-button)] overflow-hidden border border-border">
+		<div className="mode-selector">
 			<button
 				type="button"
-				onClick={() => setMode("point")}
-				className={`px-3 py-1 text-xs font-medium transition-colors ${
-					mode === "point"
-						? "bg-accent-blue/20 text-accent-blue"
-						: "bg-bg-surface/40 text-text-secondary hover:text-text-primary"
-				}`}
+				className={`mode-button ${interactionMode === "point" ? "active" : ""}`}
+				onClick={switchToPoint}
 			>
 				Point
 			</button>
 			<button
 				type="button"
-				onClick={() => setMode("route")}
-				className={`px-3 py-1 text-xs font-medium transition-colors border-l border-border ${
-					mode === "route"
-						? "bg-accent-purple/20 text-accent-purple"
-						: "bg-bg-surface/40 text-text-secondary hover:text-text-primary"
-				}`}
+				className={`mode-button ${interactionMode === "route" ? "active" : ""}`}
+				onClick={() => setInteractionMode("route")}
 			>
 				Route
 			</button>

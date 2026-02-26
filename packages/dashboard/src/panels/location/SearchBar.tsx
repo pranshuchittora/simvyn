@@ -1,98 +1,184 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocationStore } from "./stores/location-store";
+import { type SearchResult, useLocationStore } from "./stores/location-store";
 
-interface SearchResult {
-	display_name: string;
-	lat: string;
-	lon: string;
+const COORD_REGEX = /^\s*(-?\d+\.?\d*)\s*[,\s]\s*(-?\d+\.?\d*)\s*$/;
+
+function parseCoordinates(input: string): [number, number] | null {
+	const match = input.match(COORD_REGEX);
+	if (!match) return null;
+	const lat = Number.parseFloat(match[1]);
+	const lon = Number.parseFloat(match[2]);
+	if (Number.isNaN(lat) || Number.isNaN(lon)) return null;
+	if (lat < -90 || lat > 90 || lon < -180 || lon > 180) return null;
+	return [lat, lon];
 }
 
-export default function SearchBar({ onFlyTo }: { onFlyTo?: (lat: number, lon: number) => void }) {
+export function SearchBar() {
 	const [query, setQuery] = useState("");
-	const [results, setResults] = useState<SearchResult[]>([]);
-	const [open, setOpen] = useState(false);
-	const setCurrentLocation = useLocationStore((s) => s.setCurrentLocation);
-	const selectedDeviceId = useLocationStore((s) => s.selectedDeviceId);
-	const timerRef = useRef<ReturnType<typeof setTimeout>>();
-	const wrapperRef = useRef<HTMLDivElement>(null);
+	const [focused, setFocused] = useState(false);
+	const searchResults = useLocationStore((s) => s.searchResults);
+	const setSearchResults = useLocationStore((s) => s.setSearchResults);
+	const setMarkerPosition = useLocationStore((s) => s.setMarkerPosition);
+	const clearMarkerPosition = useLocationStore((s) => s.clearMarkerPosition);
+	const markerPosition = useLocationStore((s) => s.markerPosition);
+	const setSearchQuery = useLocationStore((s) => s.setSearchQuery);
+	const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const abortRef = useRef<AbortController | null>(null);
 
-	const doSearch = useCallback(async (q: string) => {
-		if (!q.trim()) {
-			setResults([]);
-			setOpen(false);
-			return;
-		}
-		try {
-			const res = await fetch(`/api/modules/location/search?q=${encodeURIComponent(q)}`);
-			if (res.ok) {
-				const data = (await res.json()) as SearchResult[];
-				setResults(data);
-				setOpen(data.length > 0);
-			}
-		} catch {
-			// network error
-		}
-	}, []);
+	const fetchSuggestions = useCallback(
+		async (text: string) => {
+			abortRef.current?.abort();
+			const controller = new AbortController();
+			abortRef.current = controller;
 
-	const handleInput = (value: string) => {
-		setQuery(value);
-		clearTimeout(timerRef.current);
-		timerRef.current = setTimeout(() => doSearch(value), 300);
-	};
-
-	const handleSelect = async (result: SearchResult) => {
-		const lat = parseFloat(result.lat);
-		const lon = parseFloat(result.lon);
-		setCurrentLocation(lat, lon);
-		setQuery(result.display_name);
-		setOpen(false);
-		onFlyTo?.(lat, lon);
-
-		if (selectedDeviceId) {
 			try {
-				await fetch("/api/modules/location/set", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ deviceId: selectedDeviceId, lat, lon }),
+				const res = await fetch(`/api/modules/location/search?q=${encodeURIComponent(text)}`, {
+					signal: controller.signal,
 				});
+				if (!res.ok) return;
+				const data = await res.json();
+				const results: SearchResult[] = data.map(
+					(r: {
+						place_id: number;
+						lat: string;
+						lon: string;
+						display_name: string;
+						type: string;
+					}) => ({
+						placeId: r.place_id,
+						lat: Number.parseFloat(r.lat),
+						lon: Number.parseFloat(r.lon),
+						displayName: r.display_name,
+						type: r.type,
+					}),
+				);
+				setSearchResults(results);
 			} catch {
-				// network error
+				// aborted or network error
 			}
-		}
-	};
+		},
+		[setSearchResults],
+	);
 
 	useEffect(() => {
-		function handleClickOutside(e: MouseEvent) {
-			if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
-				setOpen(false);
-			}
+		if (debounceRef.current) clearTimeout(debounceRef.current);
+
+		const trimmed = query.trim();
+
+		if (parseCoordinates(trimmed)) {
+			setSearchResults([]);
+			return;
 		}
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => document.removeEventListener("mousedown", handleClickOutside);
-	}, []);
+
+		if (trimmed.length < 3) {
+			setSearchResults([]);
+			return;
+		}
+
+		debounceRef.current = setTimeout(() => {
+			fetchSuggestions(trimmed);
+		}, 400);
+
+		return () => {
+			if (debounceRef.current) clearTimeout(debounceRef.current);
+		};
+	}, [query, fetchSuggestions, setSearchResults]);
+
+	function handleSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		const trimmed = query.trim();
+		if (!trimmed) return;
+
+		const coords = parseCoordinates(trimmed);
+		if (coords) {
+			setMarkerPosition(coords);
+			setSearchResults([]);
+			return;
+		}
+
+		fetchSuggestions(trimmed);
+	}
+
+	function handleResultClick(result: SearchResult) {
+		setMarkerPosition([result.lat, result.lon]);
+		setSearchResults([]);
+		setSearchQuery(result.displayName);
+		setQuery(result.displayName);
+	}
+
+	function handleCoordClick(coords: [number, number]) {
+		setMarkerPosition(coords);
+		setSearchResults([]);
+	}
+
+	function handleClear() {
+		setQuery("");
+		setSearchResults([]);
+		clearMarkerPosition();
+	}
+
+	const coordParsed = parseCoordinates(query.trim());
+	const showResults = focused && (searchResults.length > 0 || coordParsed);
+	const hasValue = query.trim().length > 0 || markerPosition !== null;
 
 	return (
-		<div ref={wrapperRef} className="relative flex-1 min-w-0">
-			<input
-				type="text"
-				value={query}
-				onChange={(e) => handleInput(e.target.value)}
-				placeholder="Search location..."
-				className="w-full rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-3 py-1.5 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-blue/50"
-			/>
-			{open && results.length > 0 && (
-				<div className="search-dropdown">
-					{results.map((r, i) => (
-						<div
-							key={`${r.lat}-${r.lon}-${i}`}
-							className="search-dropdown-item"
-							onClick={() => handleSelect(r)}
+		<div className="search-bar">
+			<form className="search-row" onSubmit={handleSubmit}>
+				<input
+					className="search-input"
+					type="text"
+					placeholder="Search places or enter coordinates..."
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
+					onFocus={() => setFocused(true)}
+					onBlur={() => setTimeout(() => setFocused(false), 200)}
+				/>
+				{hasValue && (
+					<button className="search-clear-btn" type="button" onClick={handleClear} title="Clear">
+						&times;
+					</button>
+				)}
+			</form>
+			{showResults && (
+				<div className="search-results">
+					{coordParsed && (
+						<button
+							type="button"
+							className="search-result-item search-result-coord"
+							onMouseDown={() => handleCoordClick(coordParsed)}
 						>
-							<div className="truncate">{r.display_name}</div>
-							<div className="search-coords">
-								{parseFloat(r.lat).toFixed(4)}, {parseFloat(r.lon).toFixed(4)}
-							</div>
-						</div>
+							<span className="search-result-icon">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									width="14"
+									height="14"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									strokeWidth="2"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								>
+									<title>Coordinates</title>
+									<circle cx="12" cy="12" r="3" />
+									<line x1="12" y1="2" x2="12" y2="6" />
+									<line x1="12" y1="18" x2="12" y2="22" />
+									<line x1="2" y1="12" x2="6" y2="12" />
+									<line x1="18" y1="12" x2="22" y2="12" />
+								</svg>
+							</span>
+							Go to {coordParsed[0].toFixed(6)}, {coordParsed[1].toFixed(6)}
+						</button>
+					)}
+					{searchResults.map((r) => (
+						<button
+							key={r.placeId}
+							type="button"
+							className="search-result-item"
+							onMouseDown={() => handleResultClick(r)}
+						>
+							{r.displayName}
+						</button>
 					))}
 				</div>
 			)}

@@ -1,108 +1,211 @@
-import { useWs } from "../../hooks/use-ws";
-import { useLocationStore } from "./stores/location-store";
-import { usePlaybackStore } from "./stores/playback-store";
+import { useCallback, useState } from "react";
+import { useDeviceStore } from "../../stores/device-store";
+import {
+	kmhToMs,
+	MULTIPLIERS,
+	msToKmh,
+	SPEED_PRESETS,
+	usePlaybackStore,
+} from "./stores/playback-store";
 import { useRouteStore } from "./stores/route-store";
 
-const SPEEDS = [
-	{ label: "0.5x", value: 20 },
-	{ label: "1x", value: 10 },
-	{ label: "2x", value: 5 },
-	{ label: "5x", value: 2 },
-	{ label: "10x", value: 1 },
-];
+interface Props {
+	sendLocation: (type: string, payload: Record<string, unknown>) => void;
+}
 
-export default function PlaybackControls() {
-	const { send } = useWs();
-	const playbackState = usePlaybackStore((s) => s.state);
-	const progress = usePlaybackStore((s) => s.progress);
-	const speedMs = usePlaybackStore((s) => s.speedMs);
-	const setSpeed = usePlaybackStore((s) => s.setSpeed);
+export function PlaybackControls({ sendLocation }: Props) {
 	const waypoints = useRouteStore((s) => s.waypoints);
-	const selectedDeviceId = useLocationStore((s) => s.selectedDeviceId);
+	const status = usePlaybackStore((s) => s.status);
+	const progress = usePlaybackStore((s) => s.progress);
+	const speedKmh = usePlaybackStore((s) => s.speedKmh);
+	const speedUnit = usePlaybackStore((s) => s.speedUnit);
+	const multiplier = usePlaybackStore((s) => s.multiplier);
+	const loop = usePlaybackStore((s) => s.loop);
+	const setSpeedKmh = usePlaybackStore((s) => s.setSpeedKmh);
+	const setSpeedUnit = usePlaybackStore((s) => s.setSpeedUnit);
+	const setMultiplier = usePlaybackStore((s) => s.setMultiplier);
+	const setLoop = usePlaybackStore((s) => s.setLoop);
 
-	const visible = waypoints.length >= 2 || playbackState !== "idle";
-	if (!visible) return null;
+	const [customSpeed, setCustomSpeed] = useState(() =>
+		speedUnit === "ms" ? kmhToMs(speedKmh).toFixed(1) : String(speedKmh),
+	);
 
-	const handlePlay = () => {
-		if (playbackState === "idle") {
-			send({
-				channel: "location",
-				type: "start-playback",
-				payload: {
-					deviceId: selectedDeviceId,
-					waypoints,
-					speedMs,
-				},
+	const commitCustomSpeed = useCallback(() => {
+		const num = Number.parseFloat(customSpeed);
+		if (Number.isNaN(num) || num <= 0) return;
+		const kmh = speedUnit === "ms" ? msToKmh(num) : num;
+		setSpeedKmh(kmh);
+		if (usePlaybackStore.getState().status === "playing") {
+			sendLocation("update-playback-speed", {
+				speedMs: kmhToMs(kmh),
+				multiplier,
 			});
-		} else if (playbackState === "paused") {
-			send({
-				channel: "location",
-				type: "resume-playback",
-				payload: { deviceId: selectedDeviceId },
-			});
+		}
+	}, [customSpeed, speedUnit, multiplier, setSpeedKmh, sendLocation]);
+
+	if (waypoints.length < 2 && status === "idle") return null;
+
+	function handlePlay() {
+		if (status === "paused") {
+			sendLocation("resume-playback", {});
 		} else {
-			send({
-				channel: "location",
-				type: "pause-playback",
-				payload: { deviceId: selectedDeviceId },
+			const selectedId = useDeviceStore.getState().selectedDeviceId;
+			sendLocation("start-playback", {
+				waypoints,
+				speedMs: kmhToMs(speedKmh),
+				multiplier,
+				loop,
+				deviceId: selectedId,
 			});
 		}
-	};
+	}
 
-	const handleStop = () => {
-		send({
-			channel: "location",
-			type: "stop-playback",
-			payload: { deviceId: selectedDeviceId },
-		});
-	};
+	function handlePause() {
+		sendLocation("pause-playback", {});
+	}
 
-	const handleSpeedChange = (value: number) => {
-		setSpeed(value);
-		if (playbackState !== "idle") {
-			send({
-				channel: "location",
-				type: "set-speed",
-				payload: { deviceId: selectedDeviceId, speedMs: value },
+	function handleStop() {
+		sendLocation("stop-playback", {});
+	}
+
+	function sendSpeedUpdate(newKmh: number, newMultiplier: number) {
+		if (status === "playing") {
+			sendLocation("update-playback-speed", {
+				speedMs: kmhToMs(newKmh),
+				multiplier: newMultiplier,
 			});
 		}
-	};
+	}
+
+	const matchingPreset = SPEED_PRESETS.find((p) => p.speedKmh === speedKmh);
+
+	function handlePresetChange(e: React.ChangeEvent<HTMLSelectElement>) {
+		const val = Number(e.target.value);
+		if (val > 0) {
+			setSpeedKmh(val);
+			setCustomSpeed(speedUnit === "ms" ? kmhToMs(val).toFixed(1) : String(val));
+			sendSpeedUpdate(val, multiplier);
+		}
+	}
+
+	function handleUnitToggle(unit: "kmh" | "ms") {
+		if (unit === speedUnit) return;
+		setSpeedUnit(unit);
+		setCustomSpeed(unit === "ms" ? kmhToMs(speedKmh).toFixed(1) : String(Math.round(speedKmh)));
+	}
+
+	function handleMultiplierClick(m: number) {
+		setMultiplier(m);
+		sendSpeedUpdate(speedKmh, m);
+	}
 
 	return (
-		<div className="playback-controls">
-			<button
-				type="button"
-				onClick={handlePlay}
-				title={playbackState === "playing" ? "Pause" : "Play"}
-			>
-				{playbackState === "playing" ? "⏸" : "▶"}
-			</button>
-			<button type="button" onClick={handleStop} title="Stop" disabled={playbackState === "idle"}>
-				⏹
-			</button>
+		<div className="playback-controls glass-panel">
+			<div className="playback-row">
+				{status === "playing" ? (
+					<button
+						type="button"
+						className="glass-button playback-btn"
+						onClick={handlePause}
+						title="Pause"
+					>
+						⏸
+					</button>
+				) : (
+					<button
+						type="button"
+						className="glass-button playback-btn"
+						onClick={handlePlay}
+						title="Play"
+					>
+						▶
+					</button>
+				)}
 
-			<div className="playback-progress">
-				<div
-					className="playback-progress-bar"
-					style={{ width: `${(progress * 100).toFixed(1)}%` }}
+				<button
+					type="button"
+					className="glass-button playback-btn"
+					onClick={handleStop}
+					disabled={status === "idle"}
+					title="Stop"
+				>
+					⏹
+				</button>
+
+				<span className="playback-sep" />
+
+				<select
+					className="playback-select"
+					value={matchingPreset ? matchingPreset.speedKmh : ""}
+					onChange={handlePresetChange}
+				>
+					{!matchingPreset && <option value="">Custom</option>}
+					{SPEED_PRESETS.map((p) => (
+						<option key={p.label} value={p.speedKmh}>
+							{p.label}
+						</option>
+					))}
+				</select>
+
+				<input
+					type="number"
+					className="playback-speed-input"
+					value={customSpeed}
+					onChange={(e) => setCustomSpeed(e.target.value)}
+					onBlur={commitCustomSpeed}
+					onKeyDown={(e) => e.key === "Enter" && commitCustomSpeed()}
+					min={0.1}
+					step={speedUnit === "ms" ? 0.1 : 1}
 				/>
-			</div>
 
-			<span className="text-xs text-text-muted whitespace-nowrap">
-				{(progress * 100).toFixed(0)}%
-			</span>
+				<div className="playback-unit-toggle">
+					<button
+						type="button"
+						className={`playback-unit-btn ${speedUnit === "kmh" ? "active" : ""}`}
+						onClick={() => handleUnitToggle("kmh")}
+					>
+						km/h
+					</button>
+					<button
+						type="button"
+						className={`playback-unit-btn ${speedUnit === "ms" ? "active" : ""}`}
+						onClick={() => handleUnitToggle("ms")}
+					>
+						m/s
+					</button>
+				</div>
 
-			<select
-				className="speed-selector"
-				value={speedMs}
-				onChange={(e) => handleSpeedChange(Number(e.target.value))}
-			>
-				{SPEEDS.map((s) => (
-					<option key={s.value} value={s.value}>
-						{s.label}
-					</option>
+				<span className="playback-sep" />
+
+				{MULTIPLIERS.map((m) => (
+					<button
+						key={m}
+						type="button"
+						className={`glass-button playback-mult-btn ${multiplier === m ? "active" : ""}`}
+						onClick={() => handleMultiplierClick(m)}
+					>
+						{m}x
+					</button>
 				))}
-			</select>
+
+				<span className="playback-sep" />
+
+				<button
+					type="button"
+					className={`glass-button playback-loop-btn ${loop ? "active" : ""}`}
+					onClick={() => setLoop(!loop)}
+					title="Loop"
+				>
+					↻
+				</button>
+
+				<div className="playback-progress-container">
+					<div className="playback-progress-bar">
+						<div className="playback-progress-fill" style={{ width: `${progress * 100}%` }} />
+					</div>
+					<span className="playback-progress-text">{Math.round(progress * 100)}%</span>
+				</div>
+			</div>
 		</div>
 	);
 }
