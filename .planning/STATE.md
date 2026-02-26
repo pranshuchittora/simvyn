@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 16 — Home Screen & Capture Management
+**Phase:** Phase 17 — Tool Settings
 **Plan:** 01 (complete)
-**Status:** Phase 16 complete (1/1 plans)
-**Progress:** [█████████░] 91%
+**Status:** Phase 17 complete (1/1 plans)
+**Progress:** [█████████░] 93%
 
 ## Phase Overview
 
@@ -36,16 +36,16 @@
 | 14. Module Icons | ✅ Complete (1/1 plans) |
 | 15. Command Palette | ✅ Complete (1/1 plans) |
 | 16. Home Screen & Capture Management | ✅ Complete (1/1 plans) |
-| 17. Tool Settings | ⬜ Not started |
+| 17. Tool Settings | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 15/17 (v1.0: 11/12, v1.1: 4/5) |
-| Plans completed | 45/45 (v1.0: 41, v1.1: 4) |
+| Phases completed | 16/17 (v1.0: 11/12, v1.1: 5/5) |
+| Plans completed | 46/46 (v1.0: 41, v1.1: 5) |
 | v1.0 requirements delivered | 126/126 |
-| v1.1 requirements delivered | 15/20 |
+| v1.1 requirements delivered | 20/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
@@ -101,6 +101,7 @@
 | Phase 14 P01 | 2min | 2 tasks | 2 files |
 | Phase 15 P01 | 3min | 2 tasks | 6 files |
 | Phase 16 P01 | 3min | 2 tasks | 5 files |
+| Phase 17 P01 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -233,6 +234,9 @@
 - Clear All captures uses window.confirm guard — lightweight destructive action confirmation without modal component
 - Landing page pattern: render HomeScreen component in ModuleShell !activeModule branch instead of placeholder text
 - Server DELETE endpoints for screenshot history try/catch each file unlink — tolerant of already-deleted files
+- Module registry injection checks hasDecorator('moduleRegistry') — creates standalone registry with /api/modules route if moduleLoaderPlugin wasn't registered
+- Tool config saved via createModuleStorage('tool-settings') at ~/.simvyn/tool-settings/config.json — reuses existing storage pattern
+- ToolSettingsPanel is a non-device panel (no device selector) — operates on server-level config only
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -266,10 +270,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-26T21:19:00Z
-**Stopped at:** Completed 16-01-PLAN.md (Phase 16 Home Screen & Capture Management complete)
-**Context for next session:** Phase 16 complete — HomeScreen landing page with device summary, module grid, quick-start tips; screenshot capture deletion and clear-all. Next action: Phase 17 (Tool Settings) or remaining Phase 12 plans.
+**Last session:** 2026-02-26T21:26:00Z
+**Stopped at:** Completed 17-01-PLAN.md (Phase 17 Tool Settings complete — v1.1 milestone complete)
+**Context for next session:** v1.1 milestone (phases 13-17) fully complete. Phase 12 still has 4 incomplete plans from v1.0 scope. All 20 v1.1 requirements delivered.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 16 Home Screen & Capture Management complete*
+*Last updated: 2026-02-27 — Phase 17 Tool Settings complete, v1.1 milestone complete*

@@ -27,7 +27,7 @@
 - [x] **Phase 14: Module Icons** — Custom liquid glass SVG icons for every module, replacing Lucide icons in sidebar, palette, and home screen (completed 2026-02-26)
 - [x] **Phase 15: Command Palette** — Cmd+K spotlight-style search with fuzzy module/action navigation and Liquid Glass styling (completed 2026-02-26)
 - [x] **Phase 16: Home Screen & Capture Management** — Welcome landing page with quick-start tips, device summary, recent modules; plus capture history deletion (completed 2026-02-26)
-- [ ] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage
+- [x] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage (completed 2026-02-26)
 
 ## Phase Details
 
@@ -253,7 +253,7 @@ Plans:
   2. User can wipe all saved data (favorites, history, preferences) from the settings page with confirmation
   3. User can configure the server port and toggle whether the browser auto-opens on launch
   4. User can see total storage usage (disk space consumed by `~/.simvyn/`) displayed on the settings page
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 17-01-PLAN.md — Tool settings API endpoints, sidebar panel with config, storage usage, and data wipe
@@ -280,7 +280,7 @@ Plans:
 | 14. Module Icons | 1/1 | Complete   | 2026-02-26 |
 | 15. Command Palette | 1/1 | Complete   | 2026-02-26 |
 | 16. Home Screen & Capture Management | 1/1 | Complete   | 2026-02-26 |
-| 17. Tool Settings | 0/? | Not started | - |
+| 17. Tool Settings | 1/1 | Complete   | 2026-02-26 |
 
 ## Coverage Map
 

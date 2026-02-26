@@ -358,11 +358,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Tool Settings
 
-- [ ] **TSET-01**: Dedicated settings page accessible from the sidebar for the entire tool
-- [ ] **TSET-02**: User can wipe all saved data and settings (favorites, history, preferences)
-- [ ] **TSET-03**: User can configure server port
-- [ ] **TSET-04**: User can toggle auto-open browser on launch
-- [ ] **TSET-05**: User can see storage usage (how much data in `~/.simvyn/`)
+- [x] **TSET-01**: Dedicated settings page accessible from the sidebar for the entire tool
+- [x] **TSET-02**: User can wipe all saved data and settings (favorites, history, preferences)
+- [x] **TSET-03**: User can configure server port
+- [x] **TSET-04**: User can toggle auto-open browser on launch
+- [x] **TSET-05**: User can see storage usage (how much data in `~/.simvyn/`)
 
 ## v1.1 Traceability
 
@@ -383,11 +383,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ICON-02 | Phase 14 | Complete |
 | CAP-01 | Phase 16 | Complete |
 | CAP-02 | Phase 16 | Complete |
-| TSET-01 | Phase 17 | Pending |
-| TSET-02 | Phase 17 | Pending |
-| TSET-03 | Phase 17 | Pending |
-| TSET-04 | Phase 17 | Pending |
-| TSET-05 | Phase 17 | Pending |
+| TSET-01 | Phase 17 | Complete |
+| TSET-02 | Phase 17 | Complete |
+| TSET-03 | Phase 17 | Complete |
+| TSET-04 | Phase 17 | Complete |
+| TSET-05 | Phase 17 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 20 total
