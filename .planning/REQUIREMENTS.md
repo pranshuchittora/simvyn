@@ -41,7 +41,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **LOC-07**: Interactive map UI for picking coordinates and drawing routes (Leaflet)
 - [x] **LOC-08**: Geocoding search (forward and reverse) via Nominatim proxy with rate limiting
 - [x] **LOC-09**: Save favorite locations and routes with persistence
-- [ ] **LOC-10**: CLI subcommands: `simvyn location set <device> <lat> <lng>`, `simvyn location route <device> <file>`
+- [x] **LOC-10**: CLI subcommands: `simvyn location set <device> <lat> <lng>`, `simvyn location route <device> <file>`
 
 ### File System
 
@@ -236,7 +236,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LOC-07 | Phase 2 | Pending |
 | LOC-08 | Phase 2 | Complete |
 | LOC-09 | Phase 2 | Complete |
-| LOC-10 | Phase 2 | Pending |
+| LOC-10 | Phase 2 | Complete |
 | APP-01 | Phase 3 | Pending |
 | APP-02 | Phase 3 | Pending |
 | APP-03 | Phase 3 | Pending |
