@@ -10,7 +10,7 @@
 
 **Phase:** 11 of 11 — Location Module Rewrite
 **Plan:** 4 of 4
-**Status:** Complete
+**Status:** Milestone complete
 **Progress:** [██████████] 100%
 
 ## Phase Overview
