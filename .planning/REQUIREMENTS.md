@@ -12,7 +12,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INFRA-01**: TypeScript monorepo with npm workspaces — shared types, core, server, dashboard, CLI packages
 - [ ] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
 - [ ] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
-- [ ] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
+- [x] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
 - [ ] **INFRA-05**: CLI entry point via commander.js — `simvyn` starts server + opens dashboard, subcommands for headless use
 - [ ] **INFRA-06**: Published as `simvyn` npm package, invocable via `npx simvyn`
 - [x] **INFRA-07**: State persistence in `~/.simvyn/` for module state, device preferences, favorites
@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **DEV-04**: Boot, shutdown, and erase iOS simulators from dashboard and CLI
 - [x] **DEV-05**: Boot and kill Android emulators from dashboard and CLI
 - [x] **DEV-06**: Real-time device status updates via polling with configurable interval
-- [ ] **DEV-07**: Device selector in UI — pick a single device or target all (broadcast mode)
+- [x] **DEV-07**: Device selector in UI — pick a single device or target all (broadcast mode)
 - [x] **DEV-08**: Platform capability detection — report which features are available per device type
 
 ### Location
@@ -213,7 +213,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 1 | Pending |
 | INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
+| INFRA-04 | Phase 1 | Complete |
 | INFRA-05 | Phase 1 | Pending |
 | INFRA-06 | Phase 1 | Pending |
 | INFRA-07 | Phase 1 | Complete |
@@ -225,7 +225,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DEV-04 | Phase 1 | Complete |
 | DEV-05 | Phase 1 | Complete |
 | DEV-06 | Phase 1 | Complete |
-| DEV-07 | Phase 1 | Pending |
+| DEV-07 | Phase 1 | Complete |
 | DEV-08 | Phase 1 | Complete |
 | LOC-01 | Phase 2 | Pending |
 | LOC-02 | Phase 2 | Pending |
