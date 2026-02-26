@@ -11,7 +11,11 @@
 		}
 	},
 	"dependencies": {
+		"@fastify/static": "^9.0.0",
+		"@fastify/websocket": "^11.2.0",
 		"@simvyn/core": "*",
-		"@simvyn/types": "*"
+		"@simvyn/types": "*",
+		"fastify": "^5.7.4",
+		"fastify-plugin": "^5.1.0"
 	}
 }
