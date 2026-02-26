@@ -131,7 +131,7 @@
 	backdrop-filter: blur(20px) saturate(1.4);
 	-webkit-backdrop-filter: blur(20px) saturate(1.4);
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 16px;
+	border-radius: var(--radius-panel);
 	box-shadow:
 		0 4px 24px rgba(0, 0, 0, 0.3),
 		inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
@@ -251,7 +251,7 @@
 	backdrop-filter: blur(20px) saturate(1.4);
 	-webkit-backdrop-filter: blur(20px) saturate(1.4);
 	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 16px;
+	border-radius: var(--radius-panel);
 	box-shadow:
 		0 4px 24px rgba(0, 0, 0, 0.3),
 		inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
@@ -359,38 +359,6 @@
 	font-size: 0.85rem;
 	pointer-events: none;
 	white-space: nowrap;
-}
-
-/* ─── Glass reusable base classes ─── */
-
-.glass-panel {
-	background: rgba(30, 30, 40, 0.55);
-	backdrop-filter: blur(20px) saturate(1.4);
-	-webkit-backdrop-filter: blur(20px) saturate(1.4);
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 16px;
-	box-shadow:
-		0 4px 24px rgba(0, 0, 0, 0.3),
-		inset 0 0.5px 0 rgba(255, 255, 255, 0.06);
-	color: #e8e8ed;
-}
-
-.glass-button {
-	background: rgba(255, 255, 255, 0.08);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	border-radius: 10px;
-	padding: 6px 12px;
-	color: #e8e8ed;
-	cursor: pointer;
-	font-size: 0.75rem;
-	transition:
-		background 0.2s ease,
-		border-color 0.2s ease;
-}
-
-.glass-button:hover {
-	background: rgba(255, 255, 255, 0.14);
-	border-color: rgba(255, 255, 255, 0.18);
 }
 
 /* ─── Device panel — glass ─── */
