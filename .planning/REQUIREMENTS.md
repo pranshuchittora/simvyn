@@ -139,10 +139,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Media Injection
 
-- [ ] **MED-01**: Push photos and videos to iOS simulator camera roll via `simctl addmedia`
-- [ ] **MED-02**: Push photos and videos to Android device via `adb push` + media scanner broadcast
-- [ ] **MED-03**: Drag-and-drop media files in dashboard for injection
-- [ ] **MED-04**: CLI subcommand: `simvyn media add <device> <file>`
+- [x] **MED-01**: Push photos and videos to iOS simulator camera roll via `simctl addmedia`
+- [x] **MED-02**: Push photos and videos to Android device via `adb push` + media scanner broadcast
+- [x] **MED-03**: Drag-and-drop media files in dashboard for injection
+- [x] **MED-04**: CLI subcommand: `simvyn media add <device> <file>`
 
 ### Clipboard
 
@@ -310,10 +310,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CRASH-02 | Phase 9 | Pending |
 | CRASH-03 | Phase 9 | Pending |
 | CRASH-04 | Phase 9 | Pending |
-| MED-01 | Phase 9 | Pending |
-| MED-02 | Phase 9 | Pending |
-| MED-03 | Phase 9 | Pending |
-| MED-04 | Phase 9 | Pending |
+| MED-01 | Phase 9 | Complete |
+| MED-02 | Phase 9 | Complete |
+| MED-03 | Phase 9 | Complete |
+| MED-04 | Phase 9 | Complete |
 | CLIP-01 | Phase 9 | Pending |
 | CLIP-02 | Phase 9 | Pending |
 | CLIP-03 | Phase 9 | Pending |
