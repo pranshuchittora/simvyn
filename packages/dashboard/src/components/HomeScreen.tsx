@@ -28,19 +28,19 @@ export default function HomeScreen() {
 				<img
 					src="/icon-192.png"
 					alt="simvyn"
-					className="w-48 h-48 rounded-[2rem] opacity-60"
+					className="w-48 h-48 rounded-[2rem]"
 					draggable={false}
 				/>
 
-				<h1 className="text-4xl font-semibold text-text-secondary tracking-wide">simvyn</h1>
+				<h1 className="text-4xl font-semibold text-text-primary tracking-wide">simvyn</h1>
 
-				<p className="text-base text-text-muted text-center leading-relaxed">{tip}</p>
+				<p className="text-base text-text-secondary text-center leading-relaxed">{tip}</p>
 
-				<div className="flex items-center gap-2 text-sm text-text-muted/70">
-					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/40 border border-white/10 font-mono">
+				<div className="flex items-center gap-2 text-sm text-text-secondary">
+					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/60 border border-white/15 font-mono">
 						{modKey}
 					</kbd>
-					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/40 border border-white/10 font-mono">
+					<kbd className="px-2.5 py-1 rounded-md bg-bg-surface/60 border border-white/15 font-mono">
 						K
 					</kbd>
 					<span className="ml-2">to search</span>
