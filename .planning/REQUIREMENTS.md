@@ -13,8 +13,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INFRA-02**: Module/plugin system with auto-discovery — each module registers routes, WebSocket handlers, CLI commands, and UI panel
 - [x] **INFRA-03**: Fastify server with WebSocket support (multi-channel envelope-based multiplexing)
 - [x] **INFRA-04**: React + Vite + Tailwind v4 web dashboard with lazy-loaded module panels
-- [ ] **INFRA-05**: CLI entry point via commander.js — `simvyn` starts server + opens dashboard, subcommands for headless use
-- [ ] **INFRA-06**: Published as `simvyn` npm package, invocable via `npx simvyn`
+- [x] **INFRA-05**: CLI entry point via commander.js — `simvyn` starts server + opens dashboard, subcommands for headless use
+- [x] **INFRA-06**: Published as `simvyn` npm package, invocable via `npx simvyn`
 - [x] **INFRA-07**: State persistence in `~/.simvyn/` for module state, device preferences, favorites
 - [x] **INFRA-08**: Process lifecycle manager for safe child process spawning/cleanup (simctl, adb calls)
 - [x] **INFRA-09**: Cross-platform support — macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
@@ -214,8 +214,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
-| INFRA-05 | Phase 1 | Pending |
-| INFRA-06 | Phase 1 | Pending |
+| INFRA-05 | Phase 1 | Complete |
+| INFRA-06 | Phase 1 | Complete |
 | INFRA-07 | Phase 1 | Complete |
 | INFRA-08 | Phase 1 | Complete |
 | INFRA-09 | Phase 1 | Complete |

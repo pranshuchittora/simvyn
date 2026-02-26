@@ -7,7 +7,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation & Device Management** — Monorepo, module system, server, dashboard shell, CLI, device discovery and lifecycle
+- [x] **Phase 1: Foundation & Device Management** — Monorepo, module system, server, dashboard shell, CLI, device discovery and lifecycle
 - [ ] **Phase 2: Location Module (sim-location Migration)** — Migrate sim-location into module architecture, validating the module system end-to-end
 - [ ] **Phase 3: App Management Module** — Install, uninstall, launch, terminate, inspect apps on both platforms
 - [ ] **Phase 4: Log Viewer Module** — Real-time log streaming with filtering, search, and export
@@ -29,15 +29,15 @@
   3. Device list updates in real-time — booting a simulator outside simvyn is reflected in the dashboard within the polling interval
   4. A new module folder dropped into the modules directory is auto-discovered and its routes, CLI commands, and WS handlers are registered without modifying core code
   5. Running on Linux gracefully hides iOS-specific features and shows only Android device management
-**Plans:** 2/6 plans executed
+**Plans:** 6/6 plans executed ✅ Complete
 
 Plans:
 - [x] 01-01-PLAN.md — Monorepo scaffold & shared types
 - [x] 01-02-PLAN.md — Core library: adapters, services, DeviceManager
-- [ ] 01-03-PLAN.md — Fastify server, WebSocket & module system
-- [ ] 01-04-PLAN.md — Dashboard shell (React + Vite + Tailwind v4)
-- [ ] 01-05-PLAN.md — Device management module
-- [ ] 01-06-PLAN.md — CLI entry point & packaging
+- [x] 01-03-PLAN.md — Fastify server, WebSocket & module system
+- [x] 01-04-PLAN.md — Dashboard shell (React + Vite + Tailwind v4)
+- [x] 01-05-PLAN.md — Device management module
+- [x] 01-06-PLAN.md — CLI entry point & packaging
 
 ### Phase 2: Location Module (sim-location Migration)
 **Goal:** Developers can set GPS coordinates and simulate routes on any simulator/emulator, proving the module architecture works end-to-end

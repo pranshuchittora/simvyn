@@ -9,15 +9,15 @@
 ## Current Position
 
 **Phase:** 1 of 9 — Foundation & Device Management
-**Plan:** 6 of 6 in Phase 1
-**Status:** In progress
-**Progress:** [████████░░] 83%
+**Plan:** 6 of 6 in Phase 1 (complete)
+**Status:** Phase 1 complete
+**Progress:** [██████████] 100%
 
 ## Phase Overview
 
 | Phase | Status |
 |-------|--------|
-| 1. Foundation & Device Management | 🔄 In progress (5/6 plans) |
+| 1. Foundation & Device Management | ✅ Complete (6/6 plans) |
 | 2. Location Module | ⬜ Not started |
 | 3. App Management Module | ⬜ Not started |
 | 4. Log Viewer Module | ⬜ Not started |
@@ -31,13 +31,14 @@
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 0/9 |
-| Plans completed | 5/6 (Phase 1) |
-| Requirements delivered | 18/108 |
+| Phases completed | 1/9 |
+| Plans completed | 6/6 (Phase 1) |
+| Requirements delivered | 20/108 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
 | Phase 01 P03 | 5min | 3 tasks | 5 files |
 | Phase 01 P04 | 3min | 2 tasks | 15 files |
 | Phase 01 P05 | 3min | 3 tasks | 8 files |
+| Phase 01 P06 | 5min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -61,6 +62,8 @@
 - Modules import `type {} from "@simvyn/server"` for Fastify decorator type augmentations
 - CLI commands in modules are headless — create own adapters/DeviceManager without server
 - Device ID prefix matching in CLI for convenience (short UUIDs)
+- Commander isDefault for start command — avoids duplicate option conflicts between program and subcommand
+- tsx for TypeScript execution in dev — Node 24 type-stripping doesn't rewrite .js import specifiers in NodeNext mode
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -83,10 +86,10 @@
 
 ## Session Continuity
 
-**Last session:** Completed 01-05-PLAN.md (Device management module with dashboard panel)
-**Next action:** Execute 01-06-PLAN.md (CLI scaffold and final integration)
-**Context for next session:** Device management module complete at packages/modules/device-management/ — proves full module architecture: manifest auto-discovery → Fastify routes + WS handler + CLI commands + dashboard panel. REST API at /api/modules/devices/ (list, boot, shutdown, erase, refresh, capabilities). WebSocket "devices" channel broadcasts real-time updates. Dashboard DevicePanel renders in ModuleShell with device cards grouped by platform.
+**Last session:** Completed 01-06-PLAN.md (CLI entry point and startup flow)
+**Next action:** Plan and execute Phase 2 (Location Module)
+**Context for next session:** Phase 1 complete. Full stack: CLI (`simvyn`) → Fastify server (port 3847) → dashboard (React/Vite) → WebSocket (device updates) → device management module. CLI has device subcommands for headless use. Module CLI auto-discovery from manifests. tsx used for running TypeScript source.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-26 (after 01-05 execution)*
+*Last updated: 2026-02-26 (after 01-06 execution)*
