@@ -37,7 +37,7 @@ export default function FileEditor({ deviceId, bundleId }: FileEditorProps) {
 					<button
 						type="button"
 						onClick={handleSave}
-						className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-accent-blue/20 border border-accent-blue/30 px-3 py-1.5 text-xs text-accent-blue hover:bg-accent-blue/30 transition-colors"
+						className="glass-button-primary flex items-center gap-1.5"
 					>
 						<Save size={14} />
 						Save
@@ -45,7 +45,7 @@ export default function FileEditor({ deviceId, bundleId }: FileEditorProps) {
 					<button
 						type="button"
 						onClick={handleClose}
-						className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-bg-surface px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+						className="glass-button flex items-center gap-1.5"
 					>
 						<X size={14} />
 						Close
@@ -59,7 +59,7 @@ export default function FileEditor({ deviceId, bundleId }: FileEditorProps) {
 					value={content}
 					onChange={(e) => setContent(e.target.value)}
 					spellCheck={false}
-					className="w-full h-[calc(100vh-240px)] bg-transparent p-4 font-mono text-sm text-text-primary resize-none outline-none"
+					className="glass-textarea h-[calc(100vh-240px)]"
 				/>
 			</div>
 		</div>

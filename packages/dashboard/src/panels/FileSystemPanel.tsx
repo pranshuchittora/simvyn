@@ -71,7 +71,7 @@ function FileSystemPanel() {
 					<select
 						value={selectedDeviceId ?? ""}
 						onChange={handleDeviceChange}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[200px] truncate"
+						className="glass-select max-w-[200px] truncate"
 					>
 						<option value="">No device</option>
 						{devices.map((d) => (
@@ -83,7 +83,7 @@ function FileSystemPanel() {
 					<select
 						value={selectedApp ?? ""}
 						onChange={handleAppChange}
-						className="rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1.5 text-xs text-text-secondary max-w-[220px] truncate"
+						className="glass-select max-w-[220px] truncate"
 					>
 						<option value="">No app</option>
 						{apps.map((a) => (
@@ -97,19 +97,17 @@ function FileSystemPanel() {
 
 			{/* No selection */}
 			{(!selectedDeviceId || !selectedApp) && (
-				<div className="glass-panel p-12 text-center">
-					<p className="text-text-secondary">Select a device and app to browse files</p>
-				</div>
+				<div className="glass-panel glass-empty-state">Select a device and app to browse files</div>
 			)}
 
 			{/* Content */}
-			{selectedDeviceId && selectedApp && (
-				editingFile ? (
+			{selectedDeviceId &&
+				selectedApp &&
+				(editingFile ? (
 					<FileEditor deviceId={selectedDeviceId} bundleId={selectedApp} />
 				) : (
 					<FileBrowser deviceId={selectedDeviceId} bundleId={selectedApp} />
-				)
-			)}
+				))}
 		</div>
 	);
 }

@@ -17,7 +17,12 @@ function formatDate(iso: string) {
 	if (!iso) return "";
 	const d = new Date(iso);
 	if (isNaN(d.getTime())) return iso;
-	return d.toLocaleDateString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+	return d.toLocaleDateString(undefined, {
+		month: "short",
+		day: "numeric",
+		hour: "2-digit",
+		minute: "2-digit",
+	});
 }
 
 export default function FileBrowser({ deviceId, bundleId }: FileBrowserProps) {
@@ -90,7 +95,7 @@ export default function FileBrowser({ deviceId, bundleId }: FileBrowserProps) {
 				<button
 					type="button"
 					onClick={() => fileInputRef.current?.click()}
-					className="flex items-center gap-1.5 rounded-[var(--radius-button)] bg-bg-surface px-3 py-1.5 text-xs text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+					className="glass-button-primary flex items-center gap-1.5"
 				>
 					<Upload size={14} />
 					Upload
@@ -115,28 +120,25 @@ export default function FileBrowser({ deviceId, bundleId }: FileBrowserProps) {
 
 			{/* Empty */}
 			{!loading && !error && sorted.length === 0 && (
-				<div className="glass-panel p-8 text-center text-text-secondary text-sm">No files found</div>
+				<div className="glass-panel glass-empty-state">No files found</div>
 			)}
 
 			{/* File table */}
 			{!loading && sorted.length > 0 && (
 				<div className="glass-panel overflow-hidden">
-					<table className="w-full text-sm">
+					<table className="glass-table">
 						<thead>
-							<tr className="border-b border-border text-left text-xs text-text-muted uppercase tracking-wider">
-								<th className="px-4 py-2 font-medium">Name</th>
-								<th className="px-4 py-2 font-medium">Size</th>
-								<th className="px-4 py-2 font-medium">Modified</th>
-								<th className="px-4 py-2 font-medium text-right">Actions</th>
+							<tr>
+								<th>Name</th>
+								<th>Size</th>
+								<th>Modified</th>
+								<th className="text-right">Actions</th>
 							</tr>
 						</thead>
 						<tbody>
 							{sorted.map((entry) => (
-								<tr
-									key={entry.path}
-									className="border-b border-border/50 hover:bg-white/[0.03] transition-colors"
-								>
-									<td className="px-4 py-2">
+								<tr key={entry.path}>
+									<td>
 										<button
 											type="button"
 											onClick={() => handleFileClick(entry)}
@@ -152,16 +154,16 @@ export default function FileBrowser({ deviceId, bundleId }: FileBrowserProps) {
 											{entry.name}
 										</button>
 									</td>
-									<td className="px-4 py-2 text-text-secondary text-xs">
+									<td className="text-text-secondary text-xs">
 										{entry.isDirectory ? "--" : formatSize(entry.size)}
 									</td>
-									<td className="px-4 py-2 text-text-secondary text-xs">{formatDate(entry.modified)}</td>
-									<td className="px-4 py-2 text-right">
+									<td className="text-text-secondary text-xs">{formatDate(entry.modified)}</td>
+									<td className="text-right">
 										{!entry.isDirectory && (
 											<button
 												type="button"
 												onClick={() => downloadFile(deviceId, bundleId, entry.path)}
-												className="inline-flex items-center gap-1 rounded-[var(--radius-button)] bg-bg-surface/60 border border-border px-2 py-1 text-[11px] text-text-secondary hover:text-text-primary hover:bg-glass transition-colors"
+												className="glass-button text-xs inline-flex items-center gap-1"
 											>
 												<Download size={12} />
 												Download
