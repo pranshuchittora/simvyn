@@ -19,7 +19,7 @@
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
 - [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - [x] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED) (completed 2026-02-26)
-- [ ] **Phase 12.2: Unified Device Selector** — Single top-bar selector with per-module multi/single select (INSERTED)
+- [x] **Phase 12.2: Unified Device Selector** — Single top-bar selector with per-module multi/single select (INSERTED) (completed 2026-02-26)
 
 ## Phase Details
 
@@ -294,7 +294,7 @@ Plans:
   2. All module panels consume the selected device from a shared global store, not their own selector
   3. Location module supports multi-device select (set location on multiple devices at once)
   4. All other modules use single-device select
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 12.2-01-PLAN.md — Upgrade device store + DeviceSelector for adaptive single/multi mode
