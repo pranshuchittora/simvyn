@@ -1,4 +1,4 @@
-import { execFile, spawn } from "node:child_process";
+import { type ChildProcess, execFile, spawn } from "node:child_process";
 import { mkdtemp, readdir, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -236,6 +236,27 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		clearAppData: undefined,
+
+		async openUrl(deviceId: string, url: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "openurl", deviceId, url]);
+		},
+
+		async screenshot(deviceId: string, outputPath: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "io", deviceId, "screenshot", outputPath]);
+		},
+
+		startRecording(deviceId: string, outputPath: string) {
+			const child = spawn("xcrun", ["simctl", "io", deviceId, "recordVideo", outputPath]);
+			return Promise.resolve(child);
+		},
+
+		async stopRecording(child: ChildProcess) {
+			child.kill("SIGINT");
+			await new Promise<void>((resolve, reject) => {
+				child.on("close", () => resolve());
+				child.on("error", reject);
+			});
+		},
 
 		capabilities(): PlatformCapability[] {
 			return [

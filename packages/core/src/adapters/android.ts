@@ -1,4 +1,4 @@
-import { execFile, spawn } from "node:child_process";
+import { type ChildProcess, execFile, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import type { AppInfo, Device, PlatformAdapter, PlatformCapability } from "@simvyn/types";
 
@@ -262,6 +262,70 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async clearAppData(deviceId: string, bundleId: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
 			await execFileAsync("adb", ["-s", deviceId, "shell", "pm", "clear", bundleId]);
+		},
+
+		async openUrl(deviceId: string, url: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for deep link operations");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"am",
+				"start",
+				"-a",
+				"android.intent.action.VIEW",
+				"-d",
+				url,
+			]);
+		},
+
+		async screenshot(deviceId: string, outputPath: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for screenshot");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"screencap",
+				"-p",
+				"/sdcard/simvyn_screenshot.png",
+			]);
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"pull",
+				"/sdcard/simvyn_screenshot.png",
+				outputPath,
+			]);
+			await execFileAsync("adb", ["-s", deviceId, "shell", "rm", "/sdcard/simvyn_screenshot.png"]);
+		},
+
+		startRecording(deviceId: string, outputPath: string) {
+			if (deviceId.startsWith("avd:"))
+				return Promise.reject(new Error("Device must be booted for recording"));
+			const child = spawn("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"screenrecord",
+				"/sdcard/simvyn_recording.mp4",
+			]);
+			// stash metadata on the child for stopRecording
+			(child as any).__simvyn_deviceId = deviceId;
+			(child as any).__simvyn_outputPath = outputPath;
+			return Promise.resolve(child);
+		},
+
+		async stopRecording(child: ChildProcess, deviceId: string, outputPath: string) {
+			child.kill("SIGINT");
+			await new Promise<void>((resolve) => {
+				child.on("close", () => resolve());
+				setTimeout(resolve, 3000);
+			});
+			const did = deviceId || (child as any).__simvyn_deviceId;
+			const out = outputPath || (child as any).__simvyn_outputPath;
+			await execFileAsync("adb", ["-s", did, "pull", "/sdcard/simvyn_recording.mp4", out]);
+			await execFileAsync("adb", ["-s", did, "shell", "rm", "/sdcard/simvyn_recording.mp4"]);
 		},
 
 		capabilities(): PlatformCapability[] {

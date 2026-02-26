@@ -64,5 +64,16 @@ export interface PlatformAdapter {
 	terminateApp?(deviceId: string, bundleId: string): Promise<void>;
 	getAppInfo?(deviceId: string, bundleId: string): Promise<AppInfo | null>;
 	clearAppData?(deviceId: string, bundleId: string): Promise<void>;
+	openUrl?(deviceId: string, url: string): Promise<void>;
+	screenshot?(deviceId: string, outputPath: string): Promise<void>;
+	startRecording?(
+		deviceId: string,
+		outputPath: string,
+	): Promise<import("node:child_process").ChildProcess>;
+	stopRecording?(
+		process: import("node:child_process").ChildProcess,
+		deviceId: string,
+		outputPath: string,
+	): Promise<void>;
 	capabilities(): PlatformCapability[];
 }
