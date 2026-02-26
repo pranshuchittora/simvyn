@@ -10,7 +10,7 @@
 
 **Phase:** 12.2 — Unified Device Selector
 **Plan:** 2 of 2 (Complete)
-**Status:** Phase Complete
+**Status:** Milestone complete
 **Progress:** [██████████] 90%
 
 ## Phase Overview
