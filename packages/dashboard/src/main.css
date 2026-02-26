@@ -427,6 +427,29 @@ body {
 	font-size: 0.875rem;
 }
 
+/* ─── Command Palette hint button ─── */
+.cmdk-hint {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	padding: 4px 10px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	color: var(--color-text-muted);
+	font-size: 0.6875rem;
+	font-family: inherit;
+	cursor: pointer;
+	transition:
+		background 0.15s ease,
+		color 0.15s ease;
+}
+
+.cmdk-hint:hover {
+	background: rgba(255, 255, 255, 0.1);
+	color: var(--color-text-secondary);
+}
+
 /* ─── Command Palette (cmdk) ─── */
 .cmdk-overlay {
 	position: fixed;

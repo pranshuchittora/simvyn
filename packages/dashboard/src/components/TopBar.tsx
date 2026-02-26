@@ -1,8 +1,15 @@
+import { Search } from "lucide-react";
 import { useWs } from "../hooks/use-ws";
+import { useCommandPaletteStore } from "./CommandPalette";
 import DeviceSelector from "./DeviceSelector";
+
+function isMac() {
+	return navigator.platform.toUpperCase().includes("MAC");
+}
 
 export default function TopBar() {
 	const { connected } = useWs();
+	const toggle = useCommandPaletteStore((s) => s.toggle);
 
 	return (
 		<header className="top-bar relative z-30 flex h-12 shrink-0 items-center justify-between px-4">
@@ -11,6 +18,10 @@ export default function TopBar() {
 			</div>
 
 			<div className="flex items-center gap-4">
+				<button type="button" onClick={toggle} className="cmdk-hint">
+					<Search size={13} />
+					<span>{isMac() ? "\u2318K" : "Ctrl+K"}</span>
+				</button>
 				<DeviceSelector />
 				<div className="flex items-center gap-2">
 					<span
