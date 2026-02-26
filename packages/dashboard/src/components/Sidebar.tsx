@@ -1,10 +1,13 @@
 import {
 	AppWindow,
 	Bell,
+	Bug,
 	Camera,
+	ClipboardCopy,
 	Database,
 	ExternalLink,
 	FolderOpen,
+	ImagePlus,
 	MapPin,
 	MonitorSmartphone,
 	ScrollText,
@@ -24,6 +27,9 @@ const iconMap: Record<string, ComponentType<{ size?: number; strokeWidth?: numbe
 	fs: FolderOpen,
 	database: Database,
 	settings: Settings2,
+	"crash-logs": Bug,
+	media: ImagePlus,
+	clipboard: ClipboardCopy,
 };
 
 const labelMap: Record<string, string> = {
@@ -37,6 +43,9 @@ const labelMap: Record<string, string> = {
 	fs: "Files",
 	database: "Database",
 	settings: "Settings",
+	"crash-logs": "Crashes",
+	media: "Media",
+	clipboard: "Clipboard",
 };
 
 export default function Sidebar() {
