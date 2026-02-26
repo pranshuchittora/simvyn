@@ -97,7 +97,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **SCRN-03**: Record screen on iOS via `simctl io recordVideo` with start/stop controls
 - [x] **SCRN-04**: Record screen on Android via `adb shell screenrecord` with start/stop controls
 - [x] **SCRN-05**: Save screenshot/recording history with timestamps and device info
-- [ ] **SCRN-06**: Copy screenshot to host clipboard from dashboard
+- [x] **SCRN-06**: Copy screenshot to host clipboard from dashboard
 - [x] **SCRN-07**: CLI subcommands: `simvyn screenshot <device> [--output <path>]`, `simvyn record <device> [--output <path>]`
 
 ### Device Settings
@@ -268,7 +268,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCRN-03 | Phase 6 | Complete |
 | SCRN-04 | Phase 6 | Complete |
 | SCRN-05 | Phase 6 | Complete |
-| SCRN-06 | Phase 6 | Pending |
+| SCRN-06 | Phase 6 | Complete |
 | SCRN-07 | Phase 6 | Complete |
 | LINK-01 | Phase 6 | Complete |
 | LINK-02 | Phase 6 | Complete |
