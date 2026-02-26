@@ -2,15 +2,18 @@ import { Command } from "cmdk";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import DevicePicker from "./DevicePicker";
+import LocalePicker from "./LocalePicker";
+import LocationPicker from "./LocationPicker";
 import type { ConfirmStep, DeviceSelectStep, MultiStepAction, StepContext } from "./types";
 
 interface StepRendererProps {
 	action: MultiStepAction;
+	search: string;
 	onComplete: () => void;
 	onBack: () => void;
 }
 
-export default function StepRenderer({ action, onComplete, onBack }: StepRendererProps) {
+export default function StepRenderer({ action, search, onComplete, onBack }: StepRendererProps) {
 	const [stepIndex, setStepIndex] = useState(0);
 	const [context, setContext] = useState<StepContext>({
 		selectedDeviceIds: [],
@@ -60,6 +63,18 @@ export default function StepRenderer({ action, onComplete, onBack }: StepRendere
 		advance(updated);
 	}
 
+	function handleLocaleSelect(localeCode: string) {
+		const updated = { ...context, params: { ...context.params, locale: localeCode } };
+		setContext(updated);
+		advance(updated);
+	}
+
+	function handleLocationSelect(location: { lat: number; lon: number; name: string }) {
+		const updated = { ...context, params: { ...context.params, location } };
+		setContext(updated);
+		advance(updated);
+	}
+
 	function handleConfirm() {
 		advance(context);
 	}
@@ -99,6 +114,12 @@ export default function StepRenderer({ action, onComplete, onBack }: StepRendere
 			<div className="transition-opacity duration-150">
 				{currentStep.type === "device-select" && (
 					<DevicePicker step={currentStep as DeviceSelectStep} onSelect={handleDeviceSelect} />
+				)}
+
+				{currentStep.type === "locale-select" && <LocalePicker onSelect={handleLocaleSelect} />}
+
+				{currentStep.type === "location-select" && (
+					<LocationPicker search={search} onSelect={handleLocationSelect} />
 				)}
 
 				{currentStep.type === "confirm" && (

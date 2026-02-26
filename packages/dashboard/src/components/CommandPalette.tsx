@@ -143,6 +143,7 @@ export default function CommandPalette() {
 				{activeAction ? (
 					<StepRenderer
 						action={activeAction}
+						search={search}
 						onComplete={close}
 						onBack={() => setActiveAction(null)}
 					/>

@@ -1,6 +1,12 @@
 import type { Device } from "@simvyn/types";
 
-export type StepType = "device-select" | "confirm" | "parameter" | "execute";
+export type StepType =
+	| "device-select"
+	| "confirm"
+	| "parameter"
+	| "execute"
+	| "locale-select"
+	| "location-select";
 
 export interface Step {
 	id: string;
@@ -20,13 +26,21 @@ export interface ConfirmStep extends Step {
 	destructive?: boolean;
 }
 
+export interface LocaleSelectStep extends Step {
+	type: "locale-select";
+}
+
+export interface LocationSelectStep extends Step {
+	type: "location-select";
+}
+
 export interface StepContext {
 	selectedDeviceIds: string[];
 	selectedDeviceNames: string[];
 	params: Record<string, unknown>;
 }
 
-export type AnyStep = DeviceSelectStep | ConfirmStep | Step;
+export type AnyStep = DeviceSelectStep | ConfirmStep | LocaleSelectStep | LocationSelectStep | Step;
 
 export interface MultiStepAction {
 	id: string;
