@@ -42,22 +42,42 @@ export function parseIosLogLine(line: string): LogEntry | null {
 	}
 }
 
+// threadtime format: "MM-DD HH:MM:SS.mmm  PID  TID PRIORITY TAG: MESSAGE"
+const THREADTIME_RE =
+	/^(\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+(\d+)\s+\d+\s+([VDIWEFA])\s+(.+?)\s*:\s(.*)$/;
+
 export function parseAndroidLogLine(line: string): LogEntry | null {
-	try {
-		const obj = JSON.parse(line);
-		return {
-			timestamp:
-				(obj.timestamp ?? obj.sec != null)
-					? new Date(obj.sec * 1000 + (obj.nsec ?? 0) / 1e6).toISOString()
-					: new Date().toISOString(),
-			level: mapAndroidPriority(obj.priority),
-			message: obj.message ?? "",
-			processName: obj.tag ?? "",
-			pid: obj.pid ?? 0,
-		};
-	} catch {
-		return null;
+	// try JSON first (newer logcat)
+	if (line.startsWith("{")) {
+		try {
+			const obj = JSON.parse(line);
+			return {
+				timestamp:
+					obj.sec != null
+						? new Date(obj.sec * 1000 + (obj.nsec ?? 0) / 1e6).toISOString()
+						: new Date().toISOString(),
+				level: mapAndroidPriority(obj.priority),
+				message: obj.message ?? "",
+				processName: obj.tag ?? "",
+				pid: obj.pid ?? 0,
+			};
+		} catch {
+			/* fall through to threadtime */
+		}
 	}
+
+	const m = THREADTIME_RE.exec(line);
+	if (!m) return null;
+
+	const [, ts, pid, pri, tag, msg] = m;
+	const year = new Date().getFullYear();
+	return {
+		timestamp: new Date(`${year}-${ts}`).toISOString(),
+		level: mapAndroidPriorityChar(pri),
+		message: msg,
+		processName: tag,
+		pid: Number(pid),
+	};
 }
 
 export function mapIosLevel(messageType: string): LogLevel {
@@ -90,6 +110,26 @@ export function mapAndroidPriority(priority: number): LogLevel {
 		case 6:
 			return "error";
 		case 7:
+			return "fatal";
+		default:
+			return "info";
+	}
+}
+
+function mapAndroidPriorityChar(ch: string): LogLevel {
+	switch (ch) {
+		case "V":
+			return "verbose";
+		case "D":
+			return "debug";
+		case "I":
+			return "info";
+		case "W":
+			return "warning";
+		case "E":
+			return "error";
+		case "F":
+		case "A":
 			return "fatal";
 		default:
 			return "info";
@@ -169,7 +209,7 @@ export function createLogStreamer(opts: LogStreamerOptions): LogStreamer {
 					"debug",
 				]);
 			} else {
-				child = processManager.spawn("adb", ["-s", deviceId, "logcat", "-v", "json"]);
+				child = processManager.spawn("adb", ["-s", deviceId, "logcat", "-v", "threadtime"]);
 			}
 
 			const rl = createInterface({ input: child.stdout! });

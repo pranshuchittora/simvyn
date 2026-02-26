@@ -78,7 +78,7 @@ const logViewerModule: SimvynModule = {
 										"--level",
 										"debug",
 									])
-								: pm.spawn("adb", ["-s", target.id, "logcat", "-v", "json"]);
+								: pm.spawn("adb", ["-s", target.id, "logcat", "-v", "threadtime"]);
 
 						const rl = createInterface({ input: child.stdout! });
 
