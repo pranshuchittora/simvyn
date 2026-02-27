@@ -1,6 +1,7 @@
-import { resolve, dirname } from "node:path";
 import { existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import type { SimvynModule } from "@simvyn/types";
 import { createApp } from "./app.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -9,6 +10,9 @@ export interface StartOptions {
 	port?: number;
 	host?: string;
 	open?: boolean;
+	dashboardDir?: string;
+	modulesDir?: string;
+	modules?: SimvynModule[];
 }
 
 export async function startServer(opts: StartOptions = {}): Promise<void> {
@@ -16,8 +20,10 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 	const host = opts.host ?? "127.0.0.1";
 	const shouldOpen = opts.open !== false;
 
-	// dashboard dist is at monorepo root dist/dashboard/
-	const dashboardDir = resolve(__dirname, "..", "..", "..", "dist", "dashboard");
+	let dashboardDir = opts.dashboardDir;
+	if (!dashboardDir) {
+		dashboardDir = resolve(__dirname, "..", "..", "..", "dist", "dashboard");
+	}
 	const hasDashboard = existsSync(dashboardDir);
 
 	if (!hasDashboard) {
@@ -25,13 +31,13 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 		console.log("Starting server without dashboard...\n");
 	}
 
-	// modules dir at packages/modules/
-	const modulesDir = resolve(__dirname, "..", "..", "modules");
+	const modulesDir = opts.modulesDir ?? resolve(__dirname, "..", "..", "modules");
 
 	const app = await createApp({
 		port,
 		host,
-		modulesDir,
+		modulesDir: opts.modules ? undefined : modulesDir,
+		modules: opts.modules,
 		dashboardDir: hasDashboard ? dashboardDir : undefined,
 		logger: { level: "warn" },
 	});

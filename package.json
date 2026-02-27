@@ -15,6 +15,8 @@
 		"dev:dashboard": "npm run dev -w @simvyn/dashboard",
 		"start": "npx tsx packages/cli/src/index.ts",
 		"build": "npm run build -w @simvyn/dashboard",
+		"build:cli": "npm run bundle -w simvyn && rm -rf packages/cli/dist/dashboard && cp -r dist/dashboard packages/cli/dist/dashboard",
+		"build:release": "npm run build && npm run build:cli && cp README.md packages/cli/README.md",
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
 		"lint": "biome check .",
@@ -25,6 +27,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2",
+		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}

@@ -9,9 +9,9 @@ import { promisify } from "node:util";
 import fastifyStatic from "@fastify/static";
 import fastifyWebsocket from "@fastify/websocket";
 import { createModuleStorage, getSimvynDir } from "@simvyn/core";
-import type { Device, PlatformAdapter } from "@simvyn/types";
+import type { Device, PlatformAdapter, SimvynModule } from "@simvyn/types";
 import Fastify, { type FastifyInstance } from "fastify";
-import { moduleLoaderPlugin } from "./module-loader.js";
+import { moduleLoaderFromArrayPlugin, moduleLoaderPlugin } from "./module-loader.js";
 import { wsBrokerPlugin } from "./ws-broker.js";
 
 const execFileAsync = promisify(nodeExecFile);
@@ -20,6 +20,7 @@ export interface AppOptions {
 	port?: number;
 	host?: string;
 	modulesDir?: string;
+	modules?: SimvynModule[];
 	dashboardDir?: string;
 	logger?: boolean | object;
 }
@@ -80,7 +81,7 @@ function createStubProcessManager(): ProcessManager {
 }
 
 export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance> {
-	const { modulesDir, dashboardDir, logger = true } = opts;
+	const { modulesDir, modules, dashboardDir, logger = true } = opts;
 
 	const fastify = Fastify({ logger });
 
@@ -138,7 +139,9 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 
 	await fastify.register(wsBrokerPlugin);
 
-	if (modulesDir) {
+	if (modules && modules.length > 0) {
+		await fastify.register(moduleLoaderFromArrayPlugin, { modules });
+	} else if (modulesDir) {
 		await fastify.register(moduleLoaderPlugin, { modulesDir });
 	}
 

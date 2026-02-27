@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build dashboard
-        run: npm run build
+      - name: Build release (dashboard + CLI bundle + assets)
+        run: npm run build:release
 
       - name: Verify tarball contents
         working-directory: packages/cli

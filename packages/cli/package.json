@@ -3,23 +3,23 @@
 	"version": "1.0.1",
 	"type": "module",
 	"description": "Universal mobile device devtool — control iOS Simulators and Android Emulators from a single dashboard and CLI",
-	"main": "./src/index.ts",
-	"types": "./src/index.ts",
+	"main": "./dist/index.js",
 	"bin": {
-		"simvyn": "./src/index.ts"
+		"simvyn": "./dist/index.js"
 	},
 	"exports": {
 		".": {
-			"types": "./src/index.ts",
-			"default": "./src/index.ts"
+			"default": "./dist/index.js"
 		}
 	},
 	"files": [
-		"src/",
 		"dist/",
 		"README.md",
 		"LICENSE"
 	],
+	"scripts": {
+		"bundle": "tsup"
+	},
 	"engines": {
 		"node": ">=22.12.0"
 	},
@@ -41,14 +41,18 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/pranshuchittora/simvyn.git",
-		"directory": "packages/cli"
+		"url": "https://github.com/pranshuchittora/simvyn.git"
 	},
 	"dependencies": {
-		"@simvyn/core": "*",
-		"@simvyn/server": "*",
-		"@simvyn/types": "*",
+		"@fastify/multipart": "^9.4.0",
+		"@fastify/static": "^9.0.0",
+		"@fastify/websocket": "^11.2.0",
+		"@tmcw/togeojson": "^7.1.2",
+		"@xmldom/xmldom": "^0.8.11",
+		"better-sqlite3": "^12.6.2",
 		"commander": "^14",
+		"fastify": "^5.7.4",
+		"fastify-plugin": "^5.1.0",
 		"open": "^10"
 	}
 }
