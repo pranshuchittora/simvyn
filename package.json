@@ -19,7 +19,7 @@
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
 		"lint": "biome check .",
-		"test": "node --test --experimental-strip-types packages/core/src/__tests__/**/*.test.ts"
+		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts"
 	},
 	"engines": {
 		"node": ">=22.12.0"
