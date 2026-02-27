@@ -52,7 +52,7 @@ declare module "fastify" {
 function createStubDeviceManager(): DeviceManager {
 	return {
 		devices: [],
-		pollInterval: 3000,
+		pollInterval: 5000,
 		start() {},
 		stop() {},
 		async refresh() {
@@ -106,7 +106,7 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 
 	const toolSettingsStorage = createModuleStorage("tool-settings");
 	const savedConfig = await toolSettingsStorage.read<{ pollInterval?: number }>("config");
-	const savedPollInterval = savedConfig?.pollInterval ?? 3000;
+	const savedPollInterval = savedConfig?.pollInterval ?? 5000;
 
 	let deviceManager: DeviceManager;
 	let processManager: ProcessManager;
@@ -178,7 +178,7 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 
 	fastify.get("/api/tool-settings/config", async () => {
 		const config = await toolSettingsStorage.read<ToolConfig>("config");
-		return config ?? { port: 3847, autoOpen: true, pollInterval: 3000 };
+		return config ?? { port: 3847, autoOpen: true, pollInterval: 5000 };
 	});
 
 	fastify.put("/api/tool-settings/config", async (request) => {
@@ -187,7 +187,7 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 		const updated: ToolConfig = {
 			port: body.port ?? existing?.port ?? 3847,
 			autoOpen: body.autoOpen ?? existing?.autoOpen ?? true,
-			pollInterval: body.pollInterval ?? existing?.pollInterval ?? 3000,
+			pollInterval: body.pollInterval ?? existing?.pollInterval ?? 5000,
 		};
 		await toolSettingsStorage.write("config", updated);
 

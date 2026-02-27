@@ -35,7 +35,7 @@ export function createDeviceManager(
 	opts?: { pollInterval?: number },
 ): DeviceManager {
 	const emitter = new EventEmitter();
-	let currentPollInterval = opts?.pollInterval ?? 3000;
+	let currentPollInterval = opts?.pollInterval ?? 5000;
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 	let currentDevices: Device[] = [];
 	let lastFingerprint = "";

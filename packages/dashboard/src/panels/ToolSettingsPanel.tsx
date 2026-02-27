@@ -17,7 +17,7 @@ function ToolSettingsPanel() {
 	const [config, setConfig] = useState<ToolConfig>({
 		port: 3847,
 		autoOpen: true,
-		pollInterval: 3000,
+		pollInterval: 5000,
 	});
 	const [storage, setStorage] = useState<StorageInfo | null>(null);
 	const [saving, setSaving] = useState(false);
