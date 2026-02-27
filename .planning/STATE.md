@@ -10,7 +10,7 @@
 
 **Phase:** 22-cli-build-dx
 **Plan:** 1 of 1 complete
-**Status:** Phase complete
+**Status:** Milestone complete
 **Progress:** [██████████] 100%
 
 ## Phase Overview
