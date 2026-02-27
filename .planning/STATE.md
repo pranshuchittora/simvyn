@@ -10,7 +10,7 @@
 
 **Phase:** 22.2-test-suite
 **Plan:** 3 of 3 complete
-**Status:** Complete
+**Status:** Ready to plan
 **Progress:** [██████████] 100%
 
 ## Phase Overview

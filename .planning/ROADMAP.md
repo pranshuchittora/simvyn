@@ -312,7 +312,7 @@ Plans:
 | 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
-| 22.2 Test Suite | 3/3 | Complete   | 2026-02-27 |
+| 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
 | 22.3 NPM Package & README | 0/0 | Not Planned | - |
 
 ## Coverage Map
