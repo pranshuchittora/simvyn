@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 22.3-npm-package-readme
-**Plan:** 2 of 3 complete
-**Status:** Executing
-**Progress:** [█████████░] 92%
+**Plan:** 3 of 3 complete
+**Status:** Phase Complete
+**Progress:** [█████████░] 93%
 
 ## Phase Overview
 
@@ -49,7 +49,7 @@
 | **v1.5 — Public Release** | |
 | 22.1 Code Audit | ⏳ Not Planned |
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
-| 22.3 NPM Package & README | 🔄 Executing (2/3 plans) |
+| 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
 
 ## Performance Metrics
 
@@ -130,10 +130,12 @@
 | Phase 22.2 P02 | 6min | 1 tasks | 1 files |
 | Phase 22.3 P02 | 1min | 1 tasks | 1 files |
 | Phase 22.3 P01 | 1min | 1 tasks | 18 files |
+| Phase 22.3 P03 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
 ### Key Decisions
+- GitHub Actions release workflow uses `npm publish --provenance --ignore-scripts` with separate github-release job depending on publish success
 - HTML `<p align=center>` for README logo/badges — renders correctly on both npm and GitHub
 - tsx loader (`--import tsx`) instead of `--experimental-strip-types` for test runner — mock.module's ESM loader conflicts with type-stripping loader
 - mock.module() with call-tracking array for iOS adapter test mocking — captures all verboseExec/verboseSpawn invocations
@@ -319,10 +321,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-27T15:13:59.609Z
-**Stopped at:** Completed 22.3-01-PLAN.md
-**Context for next session:** Phase 22.3 in progress (2/3 plans). README.md created. Next: 22.3-03 (GitHub Actions release workflow).
+**Last session:** 2026-02-27T15:16:47.239Z
+**Stopped at:** Completed 22.3-03-PLAN.md
+**Context for next session:** Phase 22.3 complete (3/3 plans). README, package.json, and GitHub Actions release workflow all done. Phase ready for transition.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 22.3 plan 02 complete (README)*
+*Last updated: 2026-02-27 — Phase 22.3 plan 03 complete (Release workflow)*

@@ -46,7 +46,7 @@
 
 - [x] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED) (completed 2026-02-27)
 - [x] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED) (completed 2026-02-27)
-- [ ] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED)
+- [x] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED) (completed 2026-02-27)
 
 ## Phase Details
 
@@ -313,7 +313,7 @@ Plans:
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
-| 22.3 NPM Package & README | 2/3 | In Progress|  |
+| 22.3 NPM Package & README | 3/3 | Complete   | 2026-02-27 |
 
 ## Coverage Map
 
@@ -633,7 +633,7 @@ Plans:
   4. All `package.json` files have `"private"` removed or set to `false` for publishable packages
   5. Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
 **Requirements:** NPM-01, NPM-02, NPM-03, NPM-04, NPM-05
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 22.3-01-PLAN.md — Package configuration (private flags, CLI metadata, files whitelist, repository URL)
