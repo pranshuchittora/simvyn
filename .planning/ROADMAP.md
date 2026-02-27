@@ -292,7 +292,7 @@ Plans:
 | **v1.2 — Interactive Command Palette** | | | |
 | 18. Interactive Command Palette | 2/2 | Complete | 2026-02-26 |
 | **v1.3 — Platform Capabilities** | | | |
-| 19. Device Lifecycle | 2/2 | Complete   | 2026-02-27 |
+| 19. Device Lifecycle | 2/2 | Complete    | 2026-02-27 |
 | 20. Developer Utilities | 0/? | Not Started | - |
 
 ## Coverage Map
