@@ -198,7 +198,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			const apps: AppInfo[] = [];
 			for (const line of stdout.trim().split("\n")) {
 				if (!line) continue;
-				const match = line.match(/^package:(.+?)=([^\s]+)$/);
+				const match = line.match(/^package:(.+)=([^\s=]+)$/);
 				if (!match) continue;
 				apps.push({
 					bundleId: match[2],
