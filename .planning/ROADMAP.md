@@ -554,10 +554,10 @@ Plans:
   2. No separate "Settings" or "Dev Utils" entries appear in sidebar, command palette, or home screen
   3. All existing API endpoints from both modules continue to function (no regression)
   4. Dock icons show tooltip label on hover without any scale animation
-**Plans:** 0 plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 21 to break down)
+- [ ] 21-01-PLAN.md — Combined DeviceSettingsPanel, module store merge, icon/label update, dock CSS fix
 
 ### Phase 22: CLI & Build DX
 **Goal:** Every adb/simctl command is visible in verbose mode with colored output; builds are readable for open source contributors
