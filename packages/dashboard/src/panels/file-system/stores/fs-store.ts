@@ -1,5 +1,5 @@
-import { create } from "zustand";
 import { toast } from "sonner";
+import { create } from "zustand";
 
 interface FileEntry {
 	name: string;
@@ -20,15 +20,34 @@ interface FsStore {
 	downloadFile: (deviceId: string, bundleId: string, filePath: string) => void;
 	uploadFile: (deviceId: string, bundleId: string, destPath: string, file: File) => Promise<void>;
 	openFile: (deviceId: string, bundleId: string, filePath: string) => Promise<void>;
-	saveFile: (deviceId: string, bundleId: string, filePath: string, content: string) => Promise<void>;
+	saveFile: (
+		deviceId: string,
+		bundleId: string,
+		filePath: string,
+		content: string,
+	) => Promise<void>;
 	closeEditor: () => void;
 }
 
 export type { FileEntry };
 
 const TEXT_EXTENSIONS = new Set([
-	".txt", ".json", ".xml", ".plist", ".sql", ".csv", ".html", ".css",
-	".js", ".ts", ".md", ".log", ".cfg", ".ini", ".yaml", ".yml",
+	".txt",
+	".json",
+	".xml",
+	".plist",
+	".sql",
+	".csv",
+	".html",
+	".css",
+	".js",
+	".ts",
+	".md",
+	".log",
+	".cfg",
+	".ini",
+	".yaml",
+	".yml",
 ]);
 
 function isTextFile(name: string) {
@@ -49,16 +68,21 @@ export const useFsStore = create<FsStore>((set, get) => ({
 	fetchEntries: async (deviceId, bundleId, path = ".") => {
 		set({ loading: true, error: null });
 		try {
-			const res = await fetch(`/api/modules/fs/ls/${deviceId}/${bundleId}?path=${encodeURIComponent(path)}`);
+			const res = await fetch(
+				`/api/modules/fs/ls/${deviceId}/${bundleId}?path=${encodeURIComponent(path)}`,
+			);
 			if (!res.ok) {
-				const data = await res.json().catch(() => ({ error: "Failed to fetch files" }));
-				set({ error: data.error || "Failed to fetch files", loading: false });
+				const data = await res.json().catch(() => null);
+				set({
+					error: data?.error || data?.message || `Server error (${res.status})`,
+					loading: false,
+				});
 				return;
 			}
 			const data = await res.json();
 			set({ entries: data.entries, currentPath: path, loading: false });
-		} catch {
-			set({ error: "Network error", loading: false });
+		} catch (err) {
+			set({ error: err instanceof Error ? err.message : "Network error", loading: false });
 		}
 	},
 
@@ -76,10 +100,13 @@ export const useFsStore = create<FsStore>((set, get) => ({
 		try {
 			const form = new FormData();
 			form.append("file", file);
-			const res = await fetch(`/api/modules/fs/push/${deviceId}/${bundleId}?path=${encodeURIComponent(destPath + "/" + file.name)}`, {
-				method: "POST",
-				body: form,
-			});
+			const res = await fetch(
+				`/api/modules/fs/push/${deviceId}/${bundleId}?path=${encodeURIComponent(destPath + "/" + file.name)}`,
+				{
+					method: "POST",
+					body: form,
+				},
+			);
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({ error: "Upload failed" }));
 				toast.error(data.error || "Upload failed");
@@ -94,7 +121,9 @@ export const useFsStore = create<FsStore>((set, get) => ({
 
 	openFile: async (deviceId, bundleId, filePath) => {
 		try {
-			const res = await fetch(`/api/modules/fs/read/${deviceId}/${bundleId}?path=${encodeURIComponent(filePath)}`);
+			const res = await fetch(
+				`/api/modules/fs/read/${deviceId}/${bundleId}?path=${encodeURIComponent(filePath)}`,
+			);
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({ error: "Cannot read file" }));
 				toast.error(data.error || "Cannot read file");
@@ -103,7 +132,11 @@ export const useFsStore = create<FsStore>((set, get) => ({
 			const data = await res.json();
 			let content = data.content;
 			if (filePath.endsWith(".json")) {
-				try { content = JSON.stringify(JSON.parse(content), null, 2); } catch { /* keep as-is */ }
+				try {
+					content = JSON.stringify(JSON.parse(content), null, 2);
+				} catch {
+					/* keep as-is */
+				}
 			}
 			set({ editingFile: { path: filePath, content, original: content } });
 		} catch {

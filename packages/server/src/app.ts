@@ -88,7 +88,14 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 			wildcard: false,
 		});
 
-		fastify.setNotFoundHandler((_req, reply) => {
+		fastify.setNotFoundHandler((req, reply) => {
+			if (req.url.startsWith("/api/")) {
+				return reply.status(404).send({
+					statusCode: 404,
+					error: "Not Found",
+					message: `Route ${req.method}:${req.url} not found`,
+				});
+			}
 			return reply.sendFile("index.html");
 		});
 	}
