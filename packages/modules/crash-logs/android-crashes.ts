@@ -36,7 +36,6 @@ function parseLogcatOutput(output: string): LogcatGroup[] {
 
 		if (match) {
 			const [, date, time, pid, tag, message] = match;
-			const key = `${pid}:${tag}`;
 
 			if (current && (current.pid !== pid || current.tag !== tag)) {
 				groups.push(current);

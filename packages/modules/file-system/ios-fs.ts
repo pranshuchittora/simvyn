@@ -24,7 +24,10 @@ export async function iosGetContainerPath(deviceId: string, bundleId: string): P
 	return stdout.trim();
 }
 
-export async function iosListDir(containerPath: string, relativePath: string): Promise<FileEntry[]> {
+export async function iosListDir(
+	containerPath: string,
+	relativePath: string,
+): Promise<FileEntry[]> {
 	const fullPath = join(containerPath, relativePath);
 	const entries = await readdir(fullPath, { withFileTypes: true });
 	return Promise.all(

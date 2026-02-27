@@ -1,4 +1,4 @@
-import type { LogEntry, LogLevel } from "@simvyn/types";
+import type { LogLevel } from "@simvyn/types";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { filterEntries, useLogStore } from "./stores/log-store";

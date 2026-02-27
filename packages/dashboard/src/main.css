@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-	--color-bg-base: oklch(0.10 0.012 270);
+	--color-bg-base: oklch(0.1 0.012 270);
 	--color-bg-surface: oklch(0.17 0.014 270);
 	--color-bg-elevated: oklch(0.21 0.016 270);
-	--color-glass: oklch(0.19 0.015 270 / 0.50);
+	--color-glass: oklch(0.19 0.015 270 / 0.5);
 	--color-glass-hover: oklch(0.24 0.015 270 / 0.65);
 	--color-glass-border: oklch(1 0 0 / 0.08);
 	--color-glass-border-hover: oklch(1 0 0 / 0.18);
@@ -34,7 +34,11 @@ body {
 		oklch(0.11 0.02 270) 100%
 	);
 	color: var(--color-text-primary);
-	font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	font-family:
+		"Inter",
+		-apple-system,
+		BlinkMacSystemFont,
+		sans-serif;
 	font-feature-settings: "cv11", "ss01";
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;

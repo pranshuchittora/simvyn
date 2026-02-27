@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { afterEach, beforeEach, describe, it, mock } from "node:test";
+import { afterEach, beforeEach, describe, it } from "node:test";
 
 // We test verbose-exec by importing the real module and controlling its behavior.
 // For verboseExec: we can test with a real command (echo) since it's lightweight.
@@ -146,7 +146,6 @@ describe("setVerbose logging", () => {
 	it("other commands get no prefix bracket", async () => {
 		setVerbose(true);
 		await verboseExec("echo", ["test"]);
-		const DIM = "\x1b[2m";
 		// Should NOT have [adb] or [simctl] brackets
 		const hasPrefix = stderrWrites.some((w) => w.includes("[adb]") || w.includes("[simctl]"));
 		assert.ok(!hasPrefix, "Expected no prefix bracket for 'echo' command");

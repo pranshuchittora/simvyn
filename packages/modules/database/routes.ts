@@ -8,7 +8,14 @@ import type { Device } from "@simvyn/types";
 import Database from "better-sqlite3";
 import type { FastifyInstance } from "fastify";
 import { readNSUserDefaults, readSharedPreferences } from "./prefs-reader.js";
-import { findDatabases, getTables, openReadonly, queryTable, runQuery, updateCell } from "./sqlite-inspector.js";
+import {
+	findDatabases,
+	getTables,
+	openReadonly,
+	queryTable,
+	runQuery,
+	updateCell,
+} from "./sqlite-inspector.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -21,13 +28,16 @@ function resolveDevice(fastify: FastifyInstance, deviceId: string) {
 async function getContainerPath(fastify: FastifyInstance, deviceId: string, bundleId: string) {
 	const device = resolveDevice(fastify, deviceId);
 	if (!device) return { error: "Device not found" as const, device: null, platform: null };
-	if (device.state !== "booted") return { error: "Device must be booted" as const, device: null, platform: null };
+	if (device.state !== "booted")
+		return { error: "Device must be booted" as const, device: null, platform: null };
 
 	if (device.platform === "ios") {
 		const adapter = fastify.deviceManager.getAdapter("ios");
-		if (!adapter?.getAppInfo) return { error: "Not supported" as const, device: null, platform: null };
+		if (!adapter?.getAppInfo)
+			return { error: "Not supported" as const, device: null, platform: null };
 		const info = await adapter.getAppInfo(device.id, bundleId);
-		if (!info?.dataContainer) return { error: "App not found or no data container" as const, device: null, platform: null };
+		if (!info?.dataContainer)
+			return { error: "App not found or no data container" as const, device: null, platform: null };
 		return { error: null, device, platform: "ios" as const, containerPath: info.dataContainer };
 	}
 
@@ -47,23 +57,31 @@ async function withLocalDb<T>(
 
 	try {
 		// Pull db from device
-		await execFileAsync("adb", ["-s", deviceId, "exec-out", "run-as", packageName, "cat", remotePath], {
-			encoding: "buffer" as any,
-			maxBuffer: 100 * 1024 * 1024,
-		});
+		await execFileAsync(
+			"adb",
+			["-s", deviceId, "exec-out", "run-as", packageName, "cat", remotePath],
+			{
+				encoding: "buffer" as any,
+				maxBuffer: 100 * 1024 * 1024,
+			},
+		);
 		// Actually use shell + base64 for binary safety
-		const { stdout } = await execFileAsync("adb", [
-			"-s", deviceId, "shell", "run-as", packageName, "cat", remotePath,
-		], { encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 });
+		const { stdout } = await execFileAsync(
+			"adb",
+			["-s", deviceId, "shell", "run-as", packageName, "cat", remotePath],
+			{ encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 },
+		);
 		const { writeFile } = await import("node:fs/promises");
 		await writeFile(localPath, stdout as unknown as Buffer);
 
 		// Also pull WAL and SHM if they exist
 		for (const suffix of ["-wal", "-shm"]) {
 			try {
-				const { stdout: walData } = await execFileAsync("adb", [
-					"-s", deviceId, "shell", "run-as", packageName, "cat", `${remotePath}${suffix}`,
-				], { encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 });
+				const { stdout: walData } = await execFileAsync(
+					"adb",
+					["-s", deviceId, "shell", "run-as", packageName, "cat", `${remotePath}${suffix}`],
+					{ encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 },
+				);
 				await writeFile(localPath + suffix, walData as unknown as Buffer);
 			} catch {
 				// not present
@@ -78,7 +96,9 @@ async function withLocalDb<T>(
 			const data = await readFile(localPath);
 			const b64 = data.toString("base64");
 			await execFileAsync("adb", [
-				"-s", deviceId, "shell",
+				"-s",
+				deviceId,
+				"shell",
 				`echo '${b64}' | run-as ${packageName} sh -c 'base64 -d > ${remotePath}'`,
 			]);
 		}
@@ -106,15 +126,31 @@ export async function dbRoutes(fastify: FastifyInstance) {
 
 				// Android: use adb find
 				const { stdout } = await execFileAsync("adb", [
-					"-s", deviceId, "shell", "run-as", bundleId,
-					"find", `/data/data/${bundleId}`, "-name", "*.db",
-					"-o", "-name", "*.sqlite", "-o", "-name", "*.sqlite3",
+					"-s",
+					deviceId,
+					"shell",
+					"run-as",
+					bundleId,
+					"find",
+					`/data/data/${bundleId}`,
+					"-name",
+					"*.db",
+					"-o",
+					"-name",
+					"*.sqlite",
+					"-o",
+					"-name",
+					"*.sqlite3",
 				]);
-				const databases = stdout.trim().split("\n").filter(Boolean).map((p) => ({
-					name: p.split("/").pop()!,
-					path: p.trim(),
-					size: 0,
-				}));
+				const databases = stdout
+					.trim()
+					.split("\n")
+					.filter(Boolean)
+					.map((p) => ({
+						name: p.split("/").pop()!,
+						path: p.trim(),
+						size: 0,
+					}));
 				return { databases };
 			} catch (err) {
 				return reply.status(500).send({ error: (err as Error).message });
@@ -162,11 +198,19 @@ export async function dbRoutes(fastify: FastifyInstance) {
 	// GET /table-data/:deviceId/:bundleId?db=&table=&limit=&offset=&orderBy=&orderDir=
 	fastify.get<{
 		Params: { deviceId: string; bundleId: string };
-		Querystring: { db: string; table: string; limit?: string; offset?: string; orderBy?: string; orderDir?: string };
+		Querystring: {
+			db: string;
+			table: string;
+			limit?: string;
+			offset?: string;
+			orderBy?: string;
+			orderDir?: string;
+		};
 	}>("/table-data/:deviceId/:bundleId", async (req, reply) => {
 		const { deviceId, bundleId } = req.params;
 		const { db: dbParam, table, limit: limitStr, offset: offsetStr, orderBy, orderDir } = req.query;
-		if (!dbParam || !table) return reply.status(400).send({ error: "db and table query params required" });
+		if (!dbParam || !table)
+			return reply.status(400).send({ error: "db and table query params required" });
 
 		const limit = parseInt(limitStr ?? "50", 10);
 		const offset = parseInt(offsetStr ?? "0", 10);
@@ -178,7 +222,9 @@ export async function dbRoutes(fastify: FastifyInstance) {
 				const db = openReadonly(localPath);
 				try {
 					const { rows, columns } = queryTable(db, table, { limit, offset, orderBy, orderDir });
-					const { cnt } = db.prepare(`SELECT count(*) as cnt FROM "${table}"`).get() as { cnt: number };
+					const { cnt } = db.prepare(`SELECT count(*) as cnt FROM "${table}"`).get() as {
+						cnt: number;
+					};
 					return { rows, columns, total: cnt };
 				} finally {
 					db.close();
@@ -197,77 +243,81 @@ export async function dbRoutes(fastify: FastifyInstance) {
 	});
 
 	// POST /query/:deviceId/:bundleId — run arbitrary SQL
-	fastify.post<{ Params: { deviceId: string; bundleId: string }; Body: { db: string; sql: string } }>(
-		"/query/:deviceId/:bundleId",
-		async (req, reply) => {
-			const { deviceId, bundleId } = req.params;
-			const { db: dbParam, sql } = req.body;
-			if (!dbParam || !sql) return reply.status(400).send({ error: "db and sql required" });
+	fastify.post<{
+		Params: { deviceId: string; bundleId: string };
+		Body: { db: string; sql: string };
+	}>("/query/:deviceId/:bundleId", async (req, reply) => {
+		const { deviceId, bundleId } = req.params;
+		const { db: dbParam, sql } = req.body;
+		if (!dbParam || !sql) return reply.status(400).send({ error: "db and sql required" });
 
-			const ctx = await getContainerPath(fastify, deviceId, bundleId);
-			if (ctx.error) return reply.status(400).send({ error: ctx.error });
+		const ctx = await getContainerPath(fastify, deviceId, bundleId);
+		if (ctx.error) return reply.status(400).send({ error: ctx.error });
 
-			try {
-				// Detect if it's a read or write query
-				const isRead = /^\s*(SELECT|PRAGMA|EXPLAIN|WITH)\b/i.test(sql);
+		try {
+			// Detect if it's a read or write query
+			const isRead = /^\s*(SELECT|PRAGMA|EXPLAIN|WITH)\b/i.test(sql);
 
-				if (ctx.platform === "ios") {
-					const dbPath = dbParam.startsWith("/") ? dbParam : join(ctx.containerPath!, dbParam);
-					if (isRead) {
-						const db = openReadonly(dbPath);
-						try {
-							return runQuery(db, sql);
-						} finally {
-							db.close();
-						}
-					}
-					// Write query: copy-on-write
-					const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-sql-"));
-					const tmpPath = join(tmpDir, "db.sqlite");
-					try {
-						await copyFile(dbPath, tmpPath);
-						for (const suffix of ["-wal", "-shm"]) {
-							try { await copyFile(dbPath + suffix, tmpPath + suffix); } catch { /* noop */ }
-						}
-						const db = new Database(tmpPath, { readonly: false, timeout: 10000 });
-						try {
-							const result = runQuery(db, sql);
-							await copyFile(tmpPath, dbPath);
-							return result;
-						} finally {
-							db.close();
-						}
-					} finally {
-						await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
-					}
-				}
-
-				// Android
+			if (ctx.platform === "ios") {
+				const dbPath = dbParam.startsWith("/") ? dbParam : join(ctx.containerPath!, dbParam);
 				if (isRead) {
-					return await withLocalDb(deviceId, bundleId, dbParam, true, (localPath) => {
-						const db = openReadonly(localPath);
-						try {
-							return runQuery(db, sql);
-						} finally {
-							db.close();
-						}
-					});
+					const db = openReadonly(dbPath);
+					try {
+						return runQuery(db, sql);
+					} finally {
+						db.close();
+					}
 				}
+				// Write query: copy-on-write
+				const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-sql-"));
+				const tmpPath = join(tmpDir, "db.sqlite");
+				try {
+					await copyFile(dbPath, tmpPath);
+					for (const suffix of ["-wal", "-shm"]) {
+						try {
+							await copyFile(dbPath + suffix, tmpPath + suffix);
+						} catch {
+							/* noop */
+						}
+					}
+					const db = new Database(tmpPath, { readonly: false, timeout: 10000 });
+					try {
+						const result = runQuery(db, sql);
+						await copyFile(tmpPath, dbPath);
+						return result;
+					} finally {
+						db.close();
+					}
+				} finally {
+					await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
+				}
+			}
 
-				return await withLocalDb(deviceId, bundleId, dbParam, false, (localPath) => {
-					const db = new Database(localPath, { readonly: false, timeout: 10000 });
+			// Android
+			if (isRead) {
+				return await withLocalDb(deviceId, bundleId, dbParam, true, (localPath) => {
+					const db = openReadonly(localPath);
 					try {
 						return runQuery(db, sql);
 					} finally {
 						db.close();
 					}
 				});
-			} catch (err) {
-				const msg = (err as Error).message;
-				return reply.status(400).send({ error: msg });
 			}
-		},
-	);
+
+			return await withLocalDb(deviceId, bundleId, dbParam, false, (localPath) => {
+				const db = new Database(localPath, { readonly: false, timeout: 10000 });
+				try {
+					return runQuery(db, sql);
+				} finally {
+					db.close();
+				}
+			});
+		} catch (err) {
+			const msg = (err as Error).message;
+			return reply.status(400).send({ error: msg });
+		}
+	});
 
 	// POST /update-cell/:deviceId/:bundleId — update a single cell
 	fastify.post<{

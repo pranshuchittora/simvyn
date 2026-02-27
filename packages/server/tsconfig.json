@@ -5,8 +5,5 @@
 		"rootDir": "src"
 	},
 	"include": ["src"],
-	"references": [
-		{ "path": "../types" },
-		{ "path": "../core" }
-	]
+	"references": [{ "path": "../types" }, { "path": "../core" }]
 }

@@ -1,0 +1,8 @@
+dist/
+node_modules/
+packages/cli/dist/
+packages/dashboard/dist/
+*.png
+*.ico
+*.svg
+.planning/

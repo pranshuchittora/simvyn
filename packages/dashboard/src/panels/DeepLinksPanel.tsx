@@ -1,4 +1,4 @@
-import { ChevronDown, ChevronUp, ExternalLink, Plus, Star, Trash2 } from "lucide-react";
+import { ChevronUp, ExternalLink, Plus, Star, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";

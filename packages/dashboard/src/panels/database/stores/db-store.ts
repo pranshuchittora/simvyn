@@ -37,9 +37,25 @@ interface DbStore {
 	setPageSize: (size: number) => void;
 	fetchDatabases: (deviceId: string, bundleId: string) => Promise<void>;
 	fetchTables: (deviceId: string, bundleId: string, dbPath: string) => Promise<void>;
-	fetchTableData: (deviceId: string, bundleId: string, dbPath: string, table: string, page?: number, orderBy?: string | null, orderDir?: "ASC" | "DESC") => Promise<void>;
+	fetchTableData: (
+		deviceId: string,
+		bundleId: string,
+		dbPath: string,
+		table: string,
+		page?: number,
+		orderBy?: string | null,
+		orderDir?: "ASC" | "DESC",
+	) => Promise<void>;
 	runQuery: (deviceId: string, bundleId: string, dbPath: string, sql: string) => Promise<void>;
-	updateCell: (deviceId: string, bundleId: string, dbPath: string, table: string, rowid: number, column: string, value: unknown) => Promise<void>;
+	updateCell: (
+		deviceId: string,
+		bundleId: string,
+		dbPath: string,
+		table: string,
+		rowid: number,
+		column: string,
+		value: unknown,
+	) => Promise<void>;
 	fetchPrefs: (deviceId: string, bundleId: string) => Promise<void>;
 	setSelectedTable: (table: string | null) => void;
 }
@@ -83,7 +99,9 @@ export const useDbStore = create<DbStore>((set, get) => ({
 	fetchTables: async (deviceId, bundleId, dbPath) => {
 		set({ loading: true, selectedDb: dbPath });
 		try {
-			const res = await fetch(`/api/modules/database/tables/${deviceId}/${bundleId}?db=${encodeURIComponent(dbPath)}`);
+			const res = await fetch(
+				`/api/modules/database/tables/${deviceId}/${bundleId}?db=${encodeURIComponent(dbPath)}`,
+			);
 			if (!res.ok) {
 				set({ loading: false });
 				return;
@@ -95,7 +113,15 @@ export const useDbStore = create<DbStore>((set, get) => ({
 		}
 	},
 
-	fetchTableData: async (deviceId, bundleId, dbPath, table, page = 0, orderBy = null, orderDir = "ASC") => {
+	fetchTableData: async (
+		deviceId,
+		bundleId,
+		dbPath,
+		table,
+		page = 0,
+		orderBy = null,
+		orderDir = "ASC",
+	) => {
 		const { pageSize } = get();
 		set({ loading: true, selectedTable: table, page, orderBy, orderDir });
 		try {
@@ -131,11 +157,17 @@ export const useDbStore = create<DbStore>((set, get) => ({
 			});
 			const data = await res.json();
 			if (!res.ok) {
-				set({ queryResult: { type: "error", message: data.error || "Query failed" }, loading: false });
+				set({
+					queryResult: { type: "error", message: data.error || "Query failed" },
+					loading: false,
+				});
 				return;
 			}
 			if (data.rows) {
-				set({ queryResult: { type: "rows", rows: data.rows, columns: data.columns }, loading: false });
+				set({
+					queryResult: { type: "rows", rows: data.rows, columns: data.columns },
+					loading: false,
+				});
 			} else {
 				set({ queryResult: { type: "run", changes: data.changes ?? 0 }, loading: false });
 			}

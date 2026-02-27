@@ -62,9 +62,7 @@ const fileSystemModule: SimvynModule = {
 						e.modified.slice(0, 16).replace("T", " "),
 						e.name,
 					]);
-					const widths = header.map((h, i) =>
-						Math.max(h.length, ...rows.map((r) => r[i].length)),
-					);
+					const widths = header.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
 					const pad = (s: string, w: number) => s + " ".repeat(Math.max(0, w - s.length));
 
 					console.log(header.map((h, i) => pad(h, widths[i])).join("  "));
@@ -93,9 +91,7 @@ const fileSystemModule: SimvynModule = {
 					const dm = createDeviceManager(adapters);
 					try {
 						const devices = await dm.refresh();
-						const target = devices.find(
-							(d) => d.id === deviceId || d.id.startsWith(deviceId),
-						);
+						const target = devices.find((d) => d.id === deviceId || d.id.startsWith(deviceId));
 						if (!target) {
 							console.error(`Device not found: ${deviceId}`);
 							process.exit(1);
@@ -127,47 +123,38 @@ const fileSystemModule: SimvynModule = {
 
 		fs.command("push <device> <bundle-id> <local-path> <remote-path>")
 			.description("Upload a file to an app's data container")
-			.action(
-				async (
-					deviceId: string,
-					bundleId: string,
-					localPath: string,
-					remotePath: string,
-				) => {
-					const { readFile } = await import("node:fs/promises");
-					const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
-					const adapters = await createAvailableAdapters();
-					const dm = createDeviceManager(adapters);
-					try {
-						const devices = await dm.refresh();
-						const target = devices.find(
-							(d) => d.id === deviceId || d.id.startsWith(deviceId),
-						);
-						if (!target) {
-							console.error(`Device not found: ${deviceId}`);
-							process.exit(1);
-						}
-						if (target.state !== "booted") {
-							console.error("Device must be booted");
-							process.exit(1);
-						}
-
-						if (target.platform === "ios") {
-							const { iosGetContainerPath, iosWriteFile } = await import("./ios-fs.js");
-							const containerPath = await iosGetContainerPath(target.id, bundleId);
-							const buf = await readFile(localPath);
-							await iosWriteFile(containerPath, remotePath, buf);
-						} else {
-							const { androidPushFile } = await import("./android-fs.js");
-							await androidPushFile(target.id, bundleId, localPath, remotePath);
-						}
-
-						console.log(`Uploaded ${localPath} to ${remotePath}`);
-					} finally {
-						dm.stop();
+			.action(async (deviceId: string, bundleId: string, localPath: string, remotePath: string) => {
+				const { readFile } = await import("node:fs/promises");
+				const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
+				const adapters = await createAvailableAdapters();
+				const dm = createDeviceManager(adapters);
+				try {
+					const devices = await dm.refresh();
+					const target = devices.find((d) => d.id === deviceId || d.id.startsWith(deviceId));
+					if (!target) {
+						console.error(`Device not found: ${deviceId}`);
+						process.exit(1);
 					}
-				},
-			);
+					if (target.state !== "booted") {
+						console.error("Device must be booted");
+						process.exit(1);
+					}
+
+					if (target.platform === "ios") {
+						const { iosGetContainerPath, iosWriteFile } = await import("./ios-fs.js");
+						const containerPath = await iosGetContainerPath(target.id, bundleId);
+						const buf = await readFile(localPath);
+						await iosWriteFile(containerPath, remotePath, buf);
+					} else {
+						const { androidPushFile } = await import("./android-fs.js");
+						await androidPushFile(target.id, bundleId, localPath, remotePath);
+					}
+
+					console.log(`Uploaded ${localPath} to ${remotePath}`);
+				} finally {
+					dm.stop();
+				}
+			});
 	},
 
 	capabilities: ["fileSystem"],

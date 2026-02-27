@@ -7,10 +7,20 @@ const execFileAsync = promisify(execFile);
 
 // iOS NSUserDefaults
 
-export async function readNSUserDefaults(dataContainer: string, bundleId: string): Promise<Record<string, unknown>> {
+export async function readNSUserDefaults(
+	dataContainer: string,
+	bundleId: string,
+): Promise<Record<string, unknown>> {
 	const plistPath = join(dataContainer, "Library", "Preferences", `${bundleId}.plist`);
 	try {
-		const { stdout } = await execFileAsync("plutil", ["-convert", "json", "-r", "-o", "-", plistPath]);
+		const { stdout } = await execFileAsync("plutil", [
+			"-convert",
+			"json",
+			"-r",
+			"-o",
+			"-",
+			plistPath,
+		]);
 		return JSON.parse(stdout);
 	} catch {
 		return {};
@@ -39,19 +49,27 @@ export async function readSharedPreferences(
 	deviceId: string,
 	packageName: string,
 ): Promise<Record<string, PrefEntry[]>> {
-	if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for SharedPreferences access");
+	if (deviceId.startsWith("avd:"))
+		throw new Error("Device must be booted for SharedPreferences access");
 
 	let fileList: string;
 	try {
 		const { stdout } = await execFileAsync("adb", [
-			"-s", deviceId, "shell", "run-as", packageName,
-			"ls", `/data/data/${packageName}/shared_prefs/`,
+			"-s",
+			deviceId,
+			"shell",
+			"run-as",
+			packageName,
+			"ls",
+			`/data/data/${packageName}/shared_prefs/`,
 		]);
 		fileList = stdout.trim();
 	} catch (err) {
 		const msg = (err as Error).message;
 		if (msg.includes("not debuggable") || msg.includes("is not debuggable")) {
-			throw new Error(`Package ${packageName} is not debuggable — SharedPreferences access requires a debug build`);
+			throw new Error(
+				`Package ${packageName} is not debuggable — SharedPreferences access requires a debug build`,
+			);
 		}
 		return {};
 	}
@@ -64,8 +82,13 @@ export async function readSharedPreferences(
 	for (const file of files) {
 		try {
 			const { stdout } = await execFileAsync("adb", [
-				"-s", deviceId, "shell", "run-as", packageName,
-				"cat", `/data/data/${packageName}/shared_prefs/${file}`,
+				"-s",
+				deviceId,
+				"shell",
+				"run-as",
+				packageName,
+				"cat",
+				`/data/data/${packageName}/shared_prefs/${file}`,
 			]);
 			result[file] = parseSharedPrefsXml(stdout);
 		} catch {

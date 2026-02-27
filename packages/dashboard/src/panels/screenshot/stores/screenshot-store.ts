@@ -26,14 +26,16 @@ interface ScreenshotStore {
 
 export type { CaptureEntry };
 
-export const useScreenshotStore = create<ScreenshotStore>((set, get) => ({
+export const useScreenshotStore = create<ScreenshotStore>((set, _get) => ({
 	captures: [],
 	isRecording: {},
 	loading: false,
 
 	captureScreenshot: async (deviceId) => {
 		try {
-			const res = await fetch(`/api/modules/screenshot/capture/${deviceId}`, { method: "POST" });
+			const res = await fetch(`/api/modules/screenshot/capture/${deviceId}`, {
+				method: "POST",
+			});
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({ error: "Capture failed" }));
 				toast.error(data.error || "Capture failed");

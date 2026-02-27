@@ -21,9 +21,7 @@ const screenshotModule: SimvynModule = {
 			.description("Capture a screenshot from a device")
 			.option("-o, --output <path>", "Output file path")
 			.action(async (deviceId: string, opts: { output?: string }) => {
-				const { createAvailableAdapters, createDeviceManager, getSimvynDir } = await import(
-					"@simvyn/core"
-				);
+				const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
 				const adapters = await createAvailableAdapters();
 				const dm = createDeviceManager(adapters);
 
@@ -62,9 +60,8 @@ const screenshotModule: SimvynModule = {
 			.description("Record the device screen")
 			.option("-o, --output <path>", "Output file path")
 			.action(async (deviceId: string, opts: { output?: string }) => {
-				const { createAvailableAdapters, createDeviceManager, getSimvynDir } = await import(
-					"@simvyn/core"
-				);
+				const { createAvailableAdapters, createDeviceManager, getSimvynDir } =
+					await import("@simvyn/core");
 				const adapters = await createAvailableAdapters();
 				const dm = createDeviceManager(adapters);
 

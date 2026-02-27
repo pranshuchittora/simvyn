@@ -9,12 +9,12 @@ import { after, beforeEach, describe, it } from "node:test";
 // before importing storage, redirecting homedir to a temp directory.
 // This way createModuleStorage writes to tempDir/.simvyn/ not ~/.simvyn/
 
-let tempDir: string;
+let _tempDir: string;
 let createModuleStorage: typeof import("../storage.ts").createModuleStorage;
 
 // Create a fresh temp dir and dynamically import storage with mocked homedir
 async function setup() {
-	tempDir = await mkdtemp(join(tmpdir(), "simvyn-storage-test-"));
+	_tempDir = await mkdtemp(join(tmpdir(), "simvyn-storage-test-"));
 
 	// We can't easily mock the module-level constant, so we'll import fresh
 	// and use the functions directly on the temp dir by creating a thin wrapper.
@@ -94,8 +94,6 @@ describe("storage", () => {
 		assert.deepStrictEqual(result, { data: "value" });
 
 		// Verify no .tmp file remains — check the directory
-		const { homedir } = await import("node:os");
-		const { join } = await import("node:path");
 		// We can check by looking at the storage read behavior; if .tmp existed
 		// we'd need to find the module dir. Let's just verify the file works.
 		// The atomic write (writeFile .tmp then rename) means the final file

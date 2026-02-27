@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { beforeEach, describe, it, mock } from "node:test";
+import { describe, it } from "node:test";
 import type { Device, PlatformAdapter } from "@simvyn/types";
 import { createDeviceManager } from "../device-manager.ts";
 
@@ -82,8 +82,18 @@ describe("refresh", () => {
 
 describe("sorting", () => {
 	it("sorts booted devices first", async () => {
-		const booted = makeDevice({ id: "b", name: "Booted", state: "booted", platform: "ios" });
-		const shutdown = makeDevice({ id: "s", name: "Shutdown", state: "shutdown", platform: "ios" });
+		const booted = makeDevice({
+			id: "b",
+			name: "Booted",
+			state: "booted",
+			platform: "ios",
+		});
+		const shutdown = makeDevice({
+			id: "s",
+			name: "Shutdown",
+			state: "shutdown",
+			platform: "ios",
+		});
 		const adapter = makeMockAdapter("ios", [shutdown, booted]);
 		const dm = createDeviceManager([adapter]);
 
@@ -93,8 +103,18 @@ describe("sorting", () => {
 	});
 
 	it("sorts by platform (android < ios) within same state", async () => {
-		const ios = makeDevice({ id: "i", name: "iPhone", platform: "ios", state: "booted" });
-		const android = makeDevice({ id: "a", name: "Pixel", platform: "android", state: "booted" });
+		const ios = makeDevice({
+			id: "i",
+			name: "iPhone",
+			platform: "ios",
+			state: "booted",
+		});
+		const android = makeDevice({
+			id: "a",
+			name: "Pixel",
+			platform: "android",
+			state: "booted",
+		});
 		const iosAdapter = makeMockAdapter("ios", [ios]);
 		const androidAdapter = makeMockAdapter("android", [android]);
 		const dm = createDeviceManager([iosAdapter, androidAdapter]);
@@ -105,8 +125,18 @@ describe("sorting", () => {
 	});
 
 	it("sorts by name alphabetically within same state and platform", async () => {
-		const devB = makeDevice({ id: "b", name: "Zeta", platform: "ios", state: "booted" });
-		const devA = makeDevice({ id: "a", name: "Alpha", platform: "ios", state: "booted" });
+		const devB = makeDevice({
+			id: "b",
+			name: "Zeta",
+			platform: "ios",
+			state: "booted",
+		});
+		const devA = makeDevice({
+			id: "a",
+			name: "Alpha",
+			platform: "ios",
+			state: "booted",
+		});
 		const adapter = makeMockAdapter("ios", [devB, devA]);
 		const dm = createDeviceManager([adapter]);
 
@@ -211,7 +241,13 @@ describe("start and stop", () => {
 			...makeMockAdapter("ios"),
 			listDevices: async () => {
 				callCount++;
-				return [makeDevice({ id: `d-${callCount}`, name: `D${callCount}`, state: "booted" })];
+				return [
+					makeDevice({
+						id: `d-${callCount}`,
+						name: `D${callCount}`,
+						state: "booted",
+					}),
+				];
 			},
 		};
 		const dm = createDeviceManager([adapter], { pollInterval: 30 });

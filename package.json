@@ -19,14 +19,17 @@
 		"build:release": "npm run build && npm run build:cli && cp README.md packages/cli/README.md",
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
-		"lint": "biome check .",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "oxlint .",
 		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts"
 	},
 	"engines": {
 		"node": ">=22.12.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2",
+		"oxlint": "^1.50.0",
+		"prettier": "^3.8.1",
 		"tsup": "^8.5.1",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"

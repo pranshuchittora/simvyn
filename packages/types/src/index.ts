@@ -16,9 +16,4 @@ export type {
 
 export type { SimvynModule } from "./module.js";
 export type { ModuleStorage } from "./storage.js";
-export type {
-	DeviceChannel,
-	WsClientMessage,
-	WsEnvelope,
-	WsServerMessage,
-} from "./ws.js";
+export type { DeviceChannel, WsClientMessage, WsEnvelope, WsServerMessage } from "./ws.js";

@@ -11,8 +11,5 @@
 		"rootDir": "."
 	},
 	"include": ["."],
-	"references": [
-		{ "path": "../../types" },
-		{ "path": "../../core" }
-	]
+	"references": [{ "path": "../../types" }, { "path": "../../core" }]
 }

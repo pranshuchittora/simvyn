@@ -40,6 +40,7 @@ npx simvyn
 ```
 
 **Requirements:**
+
 - Node.js >= 22.12.0
 - macOS (full iOS + Android support) or Linux (Android only)
 
@@ -80,9 +81,9 @@ simvyn wraps `xcrun simctl` (iOS) and `adb` (Android) behind a unified interface
 ## Supported Platforms
 
 | Platform | iOS Simulators | Android Emulators | Android Devices |
-|----------|---------------|-------------------|-----------------|
-| macOS    | Yes           | Yes               | Yes             |
-| Linux    | No            | Yes               | Yes             |
+| -------- | -------------- | ----------------- | --------------- |
+| macOS    | Yes            | Yes               | Yes             |
+| Linux    | No             | Yes               | Yes             |
 
 ## License
 

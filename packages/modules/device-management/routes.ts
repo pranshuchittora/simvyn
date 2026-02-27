@@ -1,5 +1,5 @@
 import type {} from "@simvyn/server";
-import type { Device, PlatformAdapter } from "@simvyn/types";
+import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
 
 export async function deviceRoutes(fastify: FastifyInstance) {
@@ -105,26 +105,25 @@ export async function deviceRoutes(fastify: FastifyInstance) {
 		}
 	});
 
-	fastify.post<{ Body: { name: string; deviceTypeId: string; runtimeId?: string } }>(
-		"/create",
-		async (req, reply) => {
-			const { name, deviceTypeId, runtimeId } = req.body;
-			if (!name?.trim()) {
-				return reply.status(400).send({ error: "Name is required" });
-			}
-			const adapter = fastify.deviceManager.getAdapter("ios");
-			if (!adapter?.createDevice) {
-				return reply.status(500).send({ error: "Create device not available" });
-			}
-			try {
-				const deviceId = await adapter.createDevice(name, deviceTypeId, runtimeId);
-				await fastify.deviceManager.refresh();
-				return { success: true, deviceId };
-			} catch (err) {
-				return reply.status(500).send({ error: (err as Error).message });
-			}
-		},
-	);
+	fastify.post<{
+		Body: { name: string; deviceTypeId: string; runtimeId?: string };
+	}>("/create", async (req, reply) => {
+		const { name, deviceTypeId, runtimeId } = req.body;
+		if (!name?.trim()) {
+			return reply.status(400).send({ error: "Name is required" });
+		}
+		const adapter = fastify.deviceManager.getAdapter("ios");
+		if (!adapter?.createDevice) {
+			return reply.status(500).send({ error: "Create device not available" });
+		}
+		try {
+			const deviceId = await adapter.createDevice(name, deviceTypeId, runtimeId);
+			await fastify.deviceManager.refresh();
+			return { success: true, deviceId };
+		} catch (err) {
+			return reply.status(500).send({ error: (err as Error).message });
+		}
+	});
 
 	fastify.post<{ Body: { deviceId: string; newName: string } }>("/clone", async (req, reply) => {
 		const { deviceId, newName } = req.body;
@@ -195,30 +194,29 @@ export async function deviceRoutes(fastify: FastifyInstance) {
 		}
 	});
 
-	fastify.post<{ Body: { deviceId: string; certBase64: string; isRoot: boolean } }>(
-		"/keychain/add-cert",
-		async (req, reply) => {
-			const { deviceId, certBase64, isRoot } = req.body;
-			const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
-			if (!device) {
-				return reply.status(404).send({ error: "Device not found" });
-			}
-			if (device.platform !== "ios") {
-				return reply.status(400).send({ error: "Keychain is only supported for iOS simulators" });
-			}
-			const adapter = fastify.deviceManager.getAdapter("ios");
-			if (!adapter?.addKeychainCert) {
-				return reply.status(500).send({ error: "Keychain cert not available" });
-			}
-			try {
-				const certBuffer = Buffer.from(certBase64, "base64");
-				await adapter.addKeychainCert(deviceId, certBuffer, isRoot);
-				return { success: true };
-			} catch (err) {
-				return reply.status(500).send({ error: (err as Error).message });
-			}
-		},
-	);
+	fastify.post<{
+		Body: { deviceId: string; certBase64: string; isRoot: boolean };
+	}>("/keychain/add-cert", async (req, reply) => {
+		const { deviceId, certBase64, isRoot } = req.body;
+		const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
+		if (!device) {
+			return reply.status(404).send({ error: "Device not found" });
+		}
+		if (device.platform !== "ios") {
+			return reply.status(400).send({ error: "Keychain is only supported for iOS simulators" });
+		}
+		const adapter = fastify.deviceManager.getAdapter("ios");
+		if (!adapter?.addKeychainCert) {
+			return reply.status(500).send({ error: "Keychain cert not available" });
+		}
+		try {
+			const certBuffer = Buffer.from(certBase64, "base64");
+			await adapter.addKeychainCert(deviceId, certBuffer, isRoot);
+			return { success: true };
+		} catch (err) {
+			return reply.status(500).send({ error: (err as Error).message });
+		}
+	});
 
 	fastify.post<{ Body: { deviceId: string } }>("/keychain/reset", async (req, reply) => {
 		const { deviceId } = req.body;

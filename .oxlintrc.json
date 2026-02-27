@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+	"rules": {
+		"no-await-in-loop": "off",
+		"no-async-endpoint-handlers": "off",
+		"unicorn/require-module-specifiers": "off",
+		"unicorn/prefer-add-event-listener": "off",
+		"unicorn/consistent-function-scoping": "off",
+		"unicorn/no-array-sort": "off",
+		"unicorn/no-array-reverse": "off"
+	},
+	"categories": {
+		"correctness": "error",
+		"suspicious": "warn",
+		"pedantic": "off",
+		"perf": "warn",
+		"style": "off",
+		"nursery": "off",
+		"restriction": "off"
+	},
+	"ignorePatterns": ["dist/", "node_modules/", ".planning/"]
+}
