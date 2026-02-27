@@ -5,6 +5,7 @@ import { registerPanel } from "../stores/panel-registry";
 interface ToolConfig {
 	port: number;
 	autoOpen: boolean;
+	pollInterval: number;
 }
 
 interface StorageInfo {
@@ -13,7 +14,11 @@ interface StorageInfo {
 }
 
 function ToolSettingsPanel() {
-	const [config, setConfig] = useState<ToolConfig>({ port: 3847, autoOpen: true });
+	const [config, setConfig] = useState<ToolConfig>({
+		port: 3847,
+		autoOpen: true,
+		pollInterval: 3000,
+	});
 	const [storage, setStorage] = useState<StorageInfo | null>(null);
 	const [saving, setSaving] = useState(false);
 
@@ -112,6 +117,26 @@ function ToolSettingsPanel() {
 							{config.autoOpen ? "Opens browser on launch" : "No auto-open"}
 						</span>
 					</div>
+					<div className="flex items-center gap-3">
+						<label htmlFor="ts-poll" className="text-xs text-text-secondary w-20">
+							Polling
+						</label>
+						<input
+							id="ts-poll"
+							type="range"
+							min={1}
+							max={30}
+							step={1}
+							value={config.pollInterval / 1000}
+							onChange={(e) =>
+								setConfig((c) => ({ ...c, pollInterval: Number(e.target.value) * 1000 }))
+							}
+							className="w-28 accent-accent"
+						/>
+						<span className="text-xs text-text-muted tabular-nums w-8">
+							{config.pollInterval / 1000}s
+						</span>
+					</div>
 					<div className="flex items-center gap-2 pt-1">
 						<button
 							type="button"
@@ -122,7 +147,9 @@ function ToolSettingsPanel() {
 							{saving ? "Saving..." : "Save"}
 						</button>
 					</div>
-					<p className="text-[11px] text-text-muted">Changes take effect on next server restart</p>
+					<p className="text-[11px] text-text-muted">
+						Port and auto-open take effect on next restart. Polling applies immediately.
+					</p>
 				</div>
 			</div>
 

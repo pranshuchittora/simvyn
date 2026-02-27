@@ -3,9 +3,11 @@ import type { Device, Platform, PlatformAdapter } from "@simvyn/types";
 
 export interface DeviceManager {
 	devices: Device[];
+	pollInterval: number;
 	start(): void;
 	stop(): void;
 	refresh(): Promise<Device[]>;
+	setPollInterval(ms: number): void;
 	on(event: "devices-changed", cb: (devices: Device[]) => void): void;
 	off(event: "devices-changed", cb: (devices: Device[]) => void): void;
 	getAdapter(platform: Platform): PlatformAdapter | undefined;
@@ -33,7 +35,7 @@ export function createDeviceManager(
 	opts?: { pollInterval?: number },
 ): DeviceManager {
 	const emitter = new EventEmitter();
-	const pollInterval = opts?.pollInterval ?? 3000;
+	let currentPollInterval = opts?.pollInterval ?? 3000;
 	let intervalId: ReturnType<typeof setInterval> | null = null;
 	let currentDevices: Device[] = [];
 	let lastFingerprint = "";
@@ -57,16 +59,28 @@ export function createDeviceManager(
 			return currentDevices;
 		},
 
+		get pollInterval() {
+			return currentPollInterval;
+		},
+
 		start() {
 			if (intervalId) return;
 			poll();
-			intervalId = setInterval(poll, pollInterval);
+			intervalId = setInterval(poll, currentPollInterval);
 		},
 
 		stop() {
 			if (intervalId) {
 				clearInterval(intervalId);
 				intervalId = null;
+			}
+		},
+
+		setPollInterval(ms: number) {
+			currentPollInterval = ms;
+			if (intervalId) {
+				clearInterval(intervalId);
+				intervalId = setInterval(poll, currentPollInterval);
 			}
 		},
 
