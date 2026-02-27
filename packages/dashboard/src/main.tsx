@@ -1,3 +1,4 @@
+import "./stores/console-capture";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./main.css";

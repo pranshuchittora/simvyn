@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useWs } from "../hooks/use-ws";
 import { useCommandPaletteStore } from "./CommandPalette";
@@ -30,6 +30,15 @@ export default function TopBar() {
 			</button>
 
 			<div className="flex items-center gap-4">
+				<a
+					href="https://github.com/pranshuchittora/simvyn"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="glass-star-button"
+				>
+					<Star size={12} />
+					<span>Star on GitHub</span>
+				</a>
 				<button type="button" onClick={toggle} className="cmdk-hint">
 					<Search size={13} />
 					<span>{isMac() ? "\u2318K" : "Ctrl+K"}</span>
