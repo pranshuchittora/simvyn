@@ -45,7 +45,7 @@
 ### Milestone v1.5 — Public Release
 
 - [x] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED) (completed 2026-02-27)
-- [ ] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED)
+- [x] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED) (completed 2026-02-27)
 - [ ] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED)
 
 ## Phase Details
@@ -312,7 +312,7 @@ Plans:
 | 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
-| 22.2 Test Suite | 1/3 | In Progress|  |
+| 22.2 Test Suite | 3/3 | Complete   | 2026-02-27 |
 | 22.3 NPM Package & README | 0/0 | Not Planned | - |
 
 ## Coverage Map
@@ -615,7 +615,7 @@ Plans:
   3. Tests mock the exec/spawn layer and assert on command strings — no real devices needed to run tests
   4. `npm test` passes from a clean checkout with zero external dependencies
   5. Core utilities (device-manager, storage, verbose-exec) have unit tests
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 22.2-01-PLAN.md — Test infrastructure (node:test + npm script) + iOS adapter tests

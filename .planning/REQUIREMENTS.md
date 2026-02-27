@@ -518,8 +518,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 ### Test Suite
 
 - [ ] **TEST-01**: Every iOS adapter method has tests verifying the correct `xcrun simctl` command and arguments are constructed
-- [ ] **TEST-02**: Every Android adapter method has tests verifying the correct `adb` / `emulator` command and arguments are constructed
-- [ ] **TEST-03**: Tests mock the exec/spawn layer and assert on command strings — no real devices needed to run tests
+- [x] **TEST-02**: Every Android adapter method has tests verifying the correct `adb` / `emulator` command and arguments are constructed
+- [x] **TEST-03**: Tests mock the exec/spawn layer and assert on command strings — no real devices needed to run tests
 - [x] **TEST-04**: `npm test` passes from a clean checkout with zero external dependencies (node:test built-in runner)
 - [x] **TEST-05**: Core utilities (device-manager, storage, verbose-exec) have unit tests
 
@@ -528,8 +528,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | TEST-01 | Phase 22.2 | Pending |
-| TEST-02 | Phase 22.2 | Pending |
-| TEST-03 | Phase 22.2 | Pending |
+| TEST-02 | Phase 22.2 | Complete |
+| TEST-03 | Phase 22.2 | Complete |
 | TEST-04 | Phase 22.2 | Complete |
 | TEST-05 | Phase 22.2 | Complete |
 

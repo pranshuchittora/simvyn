@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 22.2-test-suite
-**Plan:** 1 of 3 complete
-**Status:** Executing
-**Progress:** [█████████░] 90%
+**Plan:** 3 of 3 complete
+**Status:** Complete
+**Progress:** [██████████] 100%
 
 ## Phase Overview
 
@@ -48,7 +48,7 @@
 | 22. CLI & Build DX | ✅ Complete (1/1 plans) |
 | **v1.5 — Public Release** | |
 | 22.1 Code Audit | ⏳ Not Planned |
-| 22.2 Test Suite | 🔄 Executing (1/3 plans) |
+| 22.2 Test Suite | ✅ Complete (3/3 plans) |
 | 22.3 NPM Package & README | ⏳ Not Planned |
 
 ## Performance Metrics
@@ -125,11 +125,15 @@
 | Phase 20.1 P01 | 1min | 1 task | 1 file |
 | Phase 21 P01 | 1min | 2 tasks | 27 files |
 | Phase 22 P01 | 3min | 2 tasks | 6 files |
+| Phase 22.2 P01 | 5min | 2 tasks | 2 files |
 | Phase 22.2 P03 | 4min | 2 tasks | 3 files |
+| Phase 22.2 P02 | 6min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
 ### Key Decisions
+- tsx loader (`--import tsx`) instead of `--experimental-strip-types` for test runner — mock.module's ESM loader conflicts with type-stripping loader
+- mock.module() with call-tracking array for iOS adapter test mocking — captures all verboseExec/verboseSpawn invocations
 - Test files use `.ts` import extensions (not `.js`) since `--experimental-strip-types` doesn't rewrite import specifiers
 - `module: NodeNext` in tsconfig (not ESNext) — required by TypeScript 5.9 when using `moduleResolution: NodeNext`
 - TypeScript monorepo with npm workspaces (types → core → modules → server → cli, dashboard independent)
@@ -312,8 +316,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-27
-**Stopped at:** Completed 22.2-03-PLAN.md (core utilities tests)
+**Last session:** 2026-02-27T14:15:05.804Z
+**Stopped at:** Completed 22.2-02-PLAN.md
 **Context for next session:** Phase 22.2 test suite in progress. Plan 03 complete (DeviceManager/Storage/verbose-exec tests). Plans 01 and 02 (adapter tests) still need execution.
 
 ---
