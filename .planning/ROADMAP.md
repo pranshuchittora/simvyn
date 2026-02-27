@@ -292,7 +292,7 @@ Plans:
 | **v1.2 — Interactive Command Palette** | | | |
 | 18. Interactive Command Palette | 2/2 | Complete | 2026-02-26 |
 | **v1.3 — Platform Capabilities** | | | |
-| 19. Device Lifecycle | 0/2 | Not Started | - |
+| 19. Device Lifecycle | 1/2 | In Progress|  |
 | 20. Developer Utilities | 0/? | Not Started | - |
 
 ## Coverage Map
@@ -415,7 +415,7 @@ Plans:
   3. User can add SSL root certificates to an iOS simulator for MITM proxy testing and reset the keychain to defaults
   4. All device lifecycle and keychain operations are available via CLI (`simvyn device create/clone/rename`, `simvyn keychain add/reset`)
   5. Command palette includes create, clone, and rename device actions
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 19-01-PLAN.md — Backend: types, iOS adapter, routes, CLI for lifecycle + keychain

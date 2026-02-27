@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Phase 19 — Device Lifecycle (not yet planned)
-**Plan:** 0 of ? (0 complete)
-**Status:** Roadmap defined, planning pending
-**Progress:** [█████████░] 92%
+**Phase:** Phase 19 — Device Lifecycle
+**Plan:** 2 of 2 (1 complete)
+**Status:** Executing
+**Progress:** [█████████░] 93%
 
 ## Phase Overview
 
@@ -40,7 +40,7 @@
 | 17.1. Typography Update | ✅ Complete (1/1 plans) |
 | 18. Interactive Command Palette | ✅ Complete (2/2 plans) |
 | **v1.3 — Platform Capabilities** | |
-| 19. Device Lifecycle | ⬜ Not Started |
+| 19. Device Lifecycle | 🔄 Executing (1/2 plans) |
 | 20. Developer Utilities | ⬜ Not Started |
 
 ## Performance Metrics
@@ -110,6 +110,7 @@
 | Phase 17.1 P01 | 1min | 2 tasks | 4 files |
 | Phase 18 P01 | 3min | 2 tasks | 5 files |
 | Phase 18 P02 | 4min | 2 tasks | 6 files |
+| Phase 19 P01 | 18min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -250,6 +251,9 @@
 - AnyStep union type (DeviceSelectStep | ConfirmStep | Step) for type-safe multi-step action definitions in command palette
 - DevicePicker uses local selection state — never mutates global selectedDeviceIds store
 - ConfirmStep message accepts string or `(ctx: StepContext) => string` for dynamic device name interpolation
+- Device lifecycle CLI subcommands in built-in CLI (packages/cli) not module manifest — Commander command name precedence means module manifest device commands silently fail
+- Keychain CLI as top-level command group via module manifest — no conflict with built-in commands
+- Base64-encoded cert upload for keychain REST endpoint — certs are small, avoids multipart complexity
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -285,9 +289,9 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Inserted v1.3 milestone (Phases 19-20) from adb/simctl gap analysis
-**Context for next session:** v1.3 milestone defined — Phase 19 (Device Lifecycle: create/clone/rename simulators, SSL keychain) and Phase 20 (Developer Utilities: port forwarding, display overrides, battery sim, input injection, bug reports). Both phases need planning via `/gsd-plan-phase`.
+**Stopped at:** Completed 19-01-PLAN.md
+**Context for next session:** Phase 19 plan 01 done (backend). Plan 02 remaining (likely dashboard UI). Phase 20 (Developer Utilities) still needs planning.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 18 Plan 02 complete (Interactive Command Palette)*
+*Last updated: 2026-02-27 — Phase 19 Plan 01 complete (Device Lifecycle Backend)*
