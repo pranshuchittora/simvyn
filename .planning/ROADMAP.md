@@ -313,7 +313,7 @@ Plans:
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
-| 22.3 NPM Package & README | 0/0 | Not Planned | - |
+| 22.3 NPM Package & README | 0/3 | Planned | - |
 
 ## Coverage Map
 
@@ -632,7 +632,10 @@ Plans:
   3. GitHub Actions workflow publishes to npm on version tag push (matching react-native-duckdb pattern)
   4. All `package.json` files have `"private"` removed or set to `false` for publishable packages
   5. Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
-**Plans:** 0 plans
+**Requirements:** NPM-01, NPM-02, NPM-03, NPM-04, NPM-05
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 22.3 to break down)
+- [ ] 22.3-01-PLAN.md — Package configuration (private flags, CLI metadata, files whitelist, repository URL)
+- [ ] 22.3-02-PLAN.md — README creation (logo, tagline, features, installation, CLI examples)
+- [ ] 22.3-03-PLAN.md — GitHub Actions release workflow (tag-triggered npm publish with provenance)

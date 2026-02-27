@@ -523,6 +523,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 - [x] **TEST-04**: `npm test` passes from a clean checkout with zero external dependencies (node:test built-in runner)
 - [x] **TEST-05**: Core utilities (device-manager, storage, verbose-exec) have unit tests
 
+### NPM Package & README
+
+- [ ] **NPM-01**: Running `npx simvyn` installs and launches the tool correctly
+- [ ] **NPM-02**: README.md has the simvyn logo (large, centered), package name, tagline, feature list, installation instructions, usage examples, and screenshots
+- [ ] **NPM-03**: GitHub Actions workflow publishes to npm on version tag push (matching react-native-duckdb pattern with `npm publish --provenance`)
+- [ ] **NPM-04**: All internal `package.json` files have `"private": true`; only the CLI package is publishable
+- [ ] **NPM-05**: Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
+
 ## v1.5 Traceability
 
 | Requirement | Phase | Status |
@@ -532,12 +540,17 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-03 | Phase 22.2 | Complete |
 | TEST-04 | Phase 22.2 | Complete |
 | TEST-05 | Phase 22.2 | Complete |
+| NPM-01 | Phase 22.3 | Pending |
+| NPM-02 | Phase 22.3 | Pending |
+| NPM-03 | Phase 22.3 | Pending |
+| NPM-04 | Phase 22.3 | Pending |
+| NPM-05 | Phase 22.3 | Pending |
 
 **Coverage:**
-- v1.5 requirements (test suite): 5 total
-- Mapped to phases: 5
+- v1.5 requirements: 10 total (5 test suite + 5 npm package)
+- Mapped to phases: 10
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-27 after v1.5 test suite requirements*
+*Last updated: 2026-02-27 after v1.5 npm package requirements*
