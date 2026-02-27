@@ -14,12 +14,9 @@
   <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/node/v/simvyn" alt="node version" /></a>
 </p>
 
----
-
-<!-- Add dashboard screenshot here -->
-*Dashboard screenshot coming soon*
-
----
+<p align="center">
+  <img src="assets/banner.png" alt="simvyn dashboard" />
+</p>
 
 ## Quick Start
 
