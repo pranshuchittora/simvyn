@@ -1,6 +1,6 @@
-import type { Command } from "commander";
+import { createAvailableAdapters, createDeviceManager, createIosAdapter } from "@simvyn/core";
 import type { Device, Platform, PlatformAdapter } from "@simvyn/types";
-import { createAvailableAdapters, createDeviceManager } from "@simvyn/core";
+import type { Command } from "commander";
 
 function padRight(str: string, len: number): string {
 	return str.length >= len ? str : str + " ".repeat(len - str.length);
@@ -16,9 +16,7 @@ function printTable(devices: Device[]): void {
 	const rows = devices.map((d) => [d.id, d.name, d.platform, d.state, d.osVersion]);
 
 	// calculate column widths
-	const widths = headers.map((h, i) =>
-		Math.max(h.length, ...rows.map((r) => r[i].length)),
-	);
+	const widths = headers.map((h, i) => Math.max(h.length, ...rows.map((r) => r[i].length)));
 
 	const headerLine = headers.map((h, i) => padRight(h, widths[i])).join("  ");
 	console.log(headerLine);
@@ -27,14 +25,14 @@ function printTable(devices: Device[]): void {
 	}
 }
 
-async function getAllDevices(platform?: string): Promise<{ devices: Device[]; adapters: PlatformAdapter[] }> {
+async function getAllDevices(
+	platform?: string,
+): Promise<{ devices: Device[]; adapters: PlatformAdapter[] }> {
 	const adapters = await createAvailableAdapters();
 	const dm = createDeviceManager(adapters);
 	const devices = await dm.refresh();
 
-	const filtered = platform
-		? devices.filter((d) => d.platform === platform)
-		: devices;
+	const filtered = platform ? devices.filter((d) => d.platform === platform) : devices;
 
 	return { devices: filtered, adapters };
 }
@@ -61,9 +59,7 @@ async function findDevice(id: string): Promise<{ device: Device; adapter: Platfo
 }
 
 export function registerDeviceCommand(program: Command): void {
-	const device = program
-		.command("device")
-		.description("Device management commands");
+	const device = program.command("device").description("Device management commands");
 
 	// simvyn device list
 	device
@@ -156,6 +152,122 @@ export function registerDeviceCommand(program: Command): void {
 				console.log(`\u2713 ${dev.name} erased`);
 			} catch (err) {
 				console.error(`Failed to erase device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device create <name> <deviceTypeId> [runtimeId]
+	device
+		.command("create <name> <deviceTypeId> [runtimeId]")
+		.description("Create a new iOS simulator")
+		.option("--list-types", "List available device types")
+		.option("--list-runtimes", "List available runtimes")
+		.action(
+			async (
+				name: string,
+				deviceTypeId: string,
+				runtimeId: string | undefined,
+				opts: { listTypes?: boolean; listRuntimes?: boolean },
+			) => {
+				try {
+					const adapter = createIosAdapter();
+					if (opts.listTypes) {
+						const types = await adapter.listDeviceTypes!();
+						console.table(types.map((t) => ({ Identifier: t.identifier, Name: t.name })));
+						return;
+					}
+					if (opts.listRuntimes) {
+						const runtimes = await adapter.listRuntimes!();
+						console.table(
+							runtimes.map((r) => ({
+								Identifier: r.identifier,
+								Name: r.name,
+								Version: r.version,
+								Available: r.isAvailable,
+							})),
+						);
+						return;
+					}
+					const newId = await adapter.createDevice!(name, deviceTypeId, runtimeId);
+					console.log(`\u2713 Created: ${name} (${newId})`);
+				} catch (err) {
+					console.error(`Failed to create device: ${(err as Error).message}`);
+					process.exit(1);
+				}
+			},
+		);
+
+	// simvyn device clone <id> <newName>
+	device
+		.command("clone <id> <newName>")
+		.description("Clone an iOS simulator")
+		.action(async (id: string, newName: string) => {
+			try {
+				const { device: dev, adapter } = await findDevice(id);
+				if (dev.platform !== "ios") {
+					console.error("Clone is only supported for iOS simulators");
+					process.exit(1);
+				}
+				if (!adapter.cloneDevice) {
+					console.error("Clone not available for this adapter");
+					process.exit(1);
+				}
+				const newId = await adapter.cloneDevice(dev.id, newName);
+				console.log(`\u2713 Cloned: ${dev.name} → ${newName} (${newId})`);
+			} catch (err) {
+				console.error(`Failed to clone device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device rename <id> <newName>
+	device
+		.command("rename <id> <newName>")
+		.description("Rename an iOS simulator")
+		.action(async (id: string, newName: string) => {
+			try {
+				const { device: dev, adapter } = await findDevice(id);
+				if (dev.platform !== "ios") {
+					console.error("Rename is only supported for iOS simulators");
+					process.exit(1);
+				}
+				if (!adapter.renameDevice) {
+					console.error("Rename not available for this adapter");
+					process.exit(1);
+				}
+				await adapter.renameDevice(dev.id, newName);
+				console.log(`\u2713 Renamed: ${dev.name} → ${newName} (${dev.id})`);
+			} catch (err) {
+				console.error(`Failed to rename device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device delete <id>
+	device
+		.command("delete <id>")
+		.description("Delete an iOS simulator (must be shutdown)")
+		.action(async (id: string) => {
+			try {
+				const { device: dev, adapter } = await findDevice(id);
+				if (dev.platform !== "ios") {
+					console.error("Delete is only supported for iOS simulators");
+					process.exit(1);
+				}
+				if (dev.state !== "shutdown") {
+					console.error(
+						`${dev.name} must be shut down before deleting: simvyn device shutdown ${id}`,
+					);
+					process.exit(1);
+				}
+				if (!adapter.deleteDevice) {
+					console.error("Delete not available for this adapter");
+					process.exit(1);
+				}
+				await adapter.deleteDevice(dev.id);
+				console.log(`\u2713 Deleted: ${dev.name} (${dev.id})`);
+			} catch (err) {
+				console.error(`Failed to delete device: ${(err as Error).message}`);
 				process.exit(1);
 			}
 		});
