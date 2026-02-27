@@ -444,7 +444,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - [x] **DUTIL-03**: Battery simulation on Android — set battery level, charging state, and power source via `dumpsys battery` with reset
 - [x] **DUTIL-04**: Input injection on Android — tap coordinates, swipe gestures, text input, and key events via `adb input`
 - [x] **DUTIL-05**: Bug report collection — gather diagnostic data from iOS (`simctl diagnose`) and Android (`adb bugreport`), save to host
-- [ ] **DUTIL-06**: Dashboard panel for developer utilities with sections for each capability
+- [x] **DUTIL-06**: Dashboard panel for developer utilities with sections for each capability
 - [x] **DUTIL-07**: CLI subcommands: `simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`
 
 ## v1.3 Traceability
@@ -463,7 +463,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DUTIL-03 | Phase 20 | Complete |
 | DUTIL-04 | Phase 20 | Complete |
 | DUTIL-05 | Phase 20 | Complete |
-| DUTIL-06 | Phase 20 | Pending |
+| DUTIL-06 | Phase 20 | Complete |
 | DUTIL-07 | Phase 20 | Complete |
 
 **Coverage:**

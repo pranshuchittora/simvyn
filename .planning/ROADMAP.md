@@ -34,7 +34,7 @@
 ### Milestone v1.3 — Platform Capabilities
 
 - [x] **Phase 19: Device Lifecycle** — Create, clone, rename iOS simulators; SSL certificate management for proxy testing (completed 2026-02-27)
-- [ ] **Phase 20: Developer Utilities** — Port forwarding, display overrides, battery simulation, input injection, bug reports
+- [x] **Phase 20: Developer Utilities** — Port forwarding, display overrides, battery simulation, input injection, bug reports (completed 2026-02-27)
 
 ## Phase Details
 
@@ -293,7 +293,7 @@ Plans:
 | 18. Interactive Command Palette | 2/2 | Complete | 2026-02-26 |
 | **v1.3 — Platform Capabilities** | | | |
 | 19. Device Lifecycle | 2/2 | Complete    | 2026-02-27 |
-| 20. Developer Utilities | 1/2 | In Progress|  |
+| 20. Developer Utilities | 2/2 | Complete   | 2026-02-27 |
 
 ## Coverage Map
 
@@ -432,7 +432,7 @@ Plans:
   4. User can inject tap, swipe, text input, and key events on Android devices from the dashboard
   5. User can collect and download bug reports from iOS (simctl diagnose) and Android (adb bugreport)
   6. All operations available via CLI subcommands (`simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`)
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 20-01-PLAN.md — Backend: types, adapter implementations, dev-utils module (routes + CLI)
