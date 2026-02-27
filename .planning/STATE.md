@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 22.2-test-suite
-**Plan:** 3 of 3 complete
-**Status:** Ready to plan
-**Progress:** [██████████] 100%
+**Phase:** 22.3-npm-package-readme
+**Plan:** 2 of 3 complete
+**Status:** Executing
+**Progress:** [█████████░] 92%
 
 ## Phase Overview
 
@@ -49,7 +49,7 @@
 | **v1.5 — Public Release** | |
 | 22.1 Code Audit | ⏳ Not Planned |
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
-| 22.3 NPM Package & README | ⏳ Not Planned |
+| 22.3 NPM Package & README | 🔄 Executing (2/3 plans) |
 
 ## Performance Metrics
 
@@ -128,10 +128,12 @@
 | Phase 22.2 P01 | 5min | 2 tasks | 2 files |
 | Phase 22.2 P03 | 4min | 2 tasks | 3 files |
 | Phase 22.2 P02 | 6min | 1 tasks | 1 files |
+| Phase 22.3 P02 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
 ### Key Decisions
+- HTML `<p align=center>` for README logo/badges — renders correctly on both npm and GitHub
 - tsx loader (`--import tsx`) instead of `--experimental-strip-types` for test runner — mock.module's ESM loader conflicts with type-stripping loader
 - mock.module() with call-tracking array for iOS adapter test mocking — captures all verboseExec/verboseSpawn invocations
 - Test files use `.ts` import extensions (not `.js`) since `--experimental-strip-types` doesn't rewrite import specifiers
@@ -317,9 +319,9 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Completed 22.2-01-PLAN.md (test infrastructure + iOS adapter tests)
-**Context for next session:** Phase 22.2 test suite complete (3/3 plans). All adapter tests written. Ready for 22.3 NPM Package & README.
+**Stopped at:** Completed 22.3-02-PLAN.md (README creation)
+**Context for next session:** Phase 22.3 in progress (2/3 plans). README.md created. Next: 22.3-03 (GitHub Actions release workflow).
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 22.2 complete (test suite)*
+*Last updated: 2026-02-27 — Phase 22.3 plan 02 complete (README)*
