@@ -131,7 +131,8 @@ export default function CommandPalette() {
 					? "Search for a location..."
 					: "";
 
-	const hideSearch = activeAction && currentStepType === "confirm";
+	const hideSearch =
+		activeAction && (currentStepType === "confirm" || currentStepType === "device-select");
 
 	return (
 		<Command.Dialog
@@ -147,6 +148,7 @@ export default function CommandPalette() {
 			overlayClassName="cmdk-overlay"
 			contentClassName="cmdk-dialog"
 			loop
+			shouldFilter={!activeAction}
 		>
 			{!hideSearch && (
 				<div className="cmdk-search-row">

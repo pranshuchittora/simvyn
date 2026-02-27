@@ -54,13 +54,29 @@ const LOCALES: Locale[] = [
 ];
 
 interface LocalePickerProps {
+	search: string;
 	onSelect: (localeCode: string) => void;
 }
 
-export default function LocalePicker({ onSelect }: LocalePickerProps) {
+export default function LocalePicker({ search, onSelect }: LocalePickerProps) {
+	const query = search.toLowerCase().trim();
+	const filtered = query
+		? LOCALES.filter(
+				(l) => l.name.toLowerCase().includes(query) || l.code.toLowerCase().includes(query),
+			)
+		: LOCALES;
+
+	if (filtered.length === 0) {
+		return (
+			<div className="flex items-center justify-center py-8 text-text-muted text-sm">
+				No matching locales
+			</div>
+		);
+	}
+
 	return (
 		<Command.Group heading="Locales">
-			{LOCALES.map((locale) => (
+			{filtered.map((locale) => (
 				<Command.Item
 					key={locale.code}
 					value={`${locale.name} ${locale.code}`}

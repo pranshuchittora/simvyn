@@ -1,6 +1,6 @@
 import { Command } from "cmdk";
 import { Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDeviceStore } from "../../stores/device-store";
 import type { DeviceSelectStep } from "./types";
 
@@ -8,6 +8,8 @@ interface DevicePickerProps {
 	step: DeviceSelectStep;
 	onSelect: (deviceIds: string[], deviceNames: string[]) => void;
 }
+
+const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
 export default function DevicePicker({ step, onSelect }: DevicePickerProps) {
 	const devices = useDeviceStore((s) => s.devices);
@@ -33,6 +35,19 @@ export default function DevicePicker({ step, onSelect }: DevicePickerProps) {
 		const names = ids.map((id) => filtered.find((d) => d.id === id)?.name ?? id);
 		onSelect(ids, names);
 	}
+
+	// Cmd/Ctrl+Enter to submit multi-selection
+	useEffect(() => {
+		if (!step.multi) return;
+		function onKeyDown(e: KeyboardEvent) {
+			if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && selected.size > 0) {
+				e.preventDefault();
+				handleApply();
+			}
+		}
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	});
 
 	if (filtered.length === 0) {
 		return (
@@ -70,15 +85,22 @@ export default function DevicePicker({ step, onSelect }: DevicePickerProps) {
 					</Command.Item>
 				);
 			})}
-			{step.multi && selected.size > 0 && (
-				<div className="flex justify-end px-2 pt-2 pb-1 border-t border-glass-border">
-					<button
-						type="button"
-						className="glass-button-primary text-xs px-3 py-1.5"
-						onClick={handleApply}
-					>
-						Apply ({selected.size})
-					</button>
+			{step.multi && (
+				<div className="flex items-center justify-between px-3 pt-2 pb-1 border-t border-glass-border">
+					<span className="text-[10px] text-text-muted">
+						{selected.size > 0
+							? `${selected.size} selected · ${isMac ? "⌘" : "Ctrl+"}↵ to apply`
+							: "Select devices with Enter"}
+					</span>
+					{selected.size > 0 && (
+						<button
+							type="button"
+							className="glass-button-primary text-xs px-3 py-1.5"
+							onClick={handleApply}
+						>
+							Apply ({selected.size})
+						</button>
+					)}
 				</div>
 			)}
 		</>

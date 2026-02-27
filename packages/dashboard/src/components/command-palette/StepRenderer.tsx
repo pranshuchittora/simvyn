@@ -127,7 +127,9 @@ export default function StepRenderer({
 					<DevicePicker step={currentStep as DeviceSelectStep} onSelect={handleDeviceSelect} />
 				)}
 
-				{currentStep.type === "locale-select" && <LocalePicker onSelect={handleLocaleSelect} />}
+				{currentStep.type === "locale-select" && (
+					<LocalePicker search={search} onSelect={handleLocaleSelect} />
+				)}
 
 				{currentStep.type === "location-select" && (
 					<LocationPicker search={search} onSelect={handleLocationSelect} />
