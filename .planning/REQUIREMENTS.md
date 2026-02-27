@@ -475,13 +475,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Settings Consolidation
 
-- [ ] **SCON-01**: Dev Utils and Device Settings dashboard panels merged into single "Device Settings" panel with organized sections for all device-level operations (appearance, permissions, accessibility, port forwarding, display overrides, battery simulation, input injection, bug reports)
-- [ ] **SCON-02**: Sidebar shows single "Device Settings" entry replacing separate "Settings" and "Dev Utils" entries
-- [ ] **SCON-03**: Command palette and home screen reflect the merged module (single entry, not two)
+- [x] **SCON-01**: Dev Utils and Device Settings dashboard panels merged into single "Device Settings" panel with organized sections for all device-level operations (appearance, permissions, accessibility, port forwarding, display overrides, battery simulation, input injection, bug reports)
+- [x] **SCON-02**: Sidebar shows single "Device Settings" entry replacing separate "Settings" and "Dev Utils" entries
+- [x] **SCON-03**: Command palette and home screen reflect the merged module (single entry, not two)
 
 ### Dock Polish
 
-- [ ] **DOCK-01**: Dock icons no longer scale on hover — tooltip popup label is the sole hover feedback
+- [x] **DOCK-01**: Dock icons no longer scale on hover — tooltip popup label is the sole hover feedback
 
 ### Verbose CLI
 
@@ -498,10 +498,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| SCON-01 | Phase 21 | Pending |
-| SCON-02 | Phase 21 | Pending |
-| SCON-03 | Phase 21 | Pending |
-| DOCK-01 | Phase 21 | Pending |
+| SCON-01 | Phase 21 | Complete |
+| SCON-02 | Phase 21 | Complete |
+| SCON-03 | Phase 21 | Complete |
+| DOCK-01 | Phase 21 | Complete |
 | VCLI-01 | Phase 22 | Pending |
 | VCLI-02 | Phase 22 | Pending |
 | VCLI-03 | Phase 22 | Pending |

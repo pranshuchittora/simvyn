@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** Not started (defining requirements)
-**Plan:** —
-**Status:** Defining requirements
-**Progress:** [░░░░░░░░░░] 0%
+**Phase:** 21-settings-consolidation-dock-polish
+**Plan:** 1 of 1 complete
+**Status:** Phase 21 complete — ready for Phase 22
+**Progress:** [██████████] 100%
 
 ## Phase Overview
 
@@ -43,6 +43,8 @@
 | 19. Device Lifecycle | ✅ Complete (2/2 plans) |
 | 20. Developer Utilities | ✅ Complete (2/2 plans) |
 | 20.1 Liquid Glass Module Icons | ✅ Complete (1/1 plans) |
+| **v1.4 — Quality of Life** | |
+| 21. Settings Consolidation & Dock Polish | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -116,6 +118,7 @@
 | Phase 20 P01 | 6min | 2 tasks | 8 files |
 | Phase 20 P02 | 3min | 2 tasks | 3 files |
 | Phase 20.1 P01 | 1min | 1 task | 1 file |
+| Phase 21 P01 | 1min | 2 tasks | 27 files |
 
 ## Accumulated Context
 
@@ -262,6 +265,7 @@
 - DevicePicker uses step.filter on all devices when filter provided, booted-only as fallback — enables lifecycle actions on non-booted devices
 - ParameterStep type for generic text input steps in command palette — reusable for clone/rename names and future inputs
 - CreateSimulatorPicker manages own 3-phase internal state (name → deviceType → runtime) with per-phase search
+- Backend modules also merged for settings consolidation — single device-settings module replaces settings + dev-utils, eliminating need for dashboard-side merge logic
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -298,9 +302,9 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Milestone v1.4 started — defining requirements
-**Context for next session:** Milestone v1.4 Quality of Life started. 9 requirements across 4 categories, 2 phases (21-22). Ready for roadmap creation and execution.
+**Stopped at:** Completed 21-01-PLAN.md
+**Context for next session:** Phase 21 complete. Phase 22 (CLI & Build DX) is the next step — verbose logging and unminified build.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 19 Plan 02 complete (Device Lifecycle Dashboard UI)*
+*Last updated: 2026-02-27 — Phase 21 Plan 01 complete (Settings Consolidation & Dock Polish)*

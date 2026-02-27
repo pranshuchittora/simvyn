@@ -39,7 +39,7 @@
 
 ### Milestone v1.4 — Quality of Life
 
-- [ ] **Phase 21: Settings Consolidation & Dock Polish** — Merge Dev Utils and Device Settings into unified panel; remove dock hover scale
+- [x] **Phase 21: Settings Consolidation & Dock Polish** — Merge Dev Utils and Device Settings into unified panel; remove dock hover scale (completed 2026-02-27)
 - [ ] **Phase 22: CLI & Build DX** — Verbose command logging with colored output; open source friendly build
 
 ## Phase Details
@@ -300,6 +300,9 @@ Plans:
 | **v1.3 — Platform Capabilities** | | | |
 | 19. Device Lifecycle | 2/2 | Complete    | 2026-02-27 |
 | 20. Developer Utilities | 2/2 | Complete    | 2026-02-27 |
+| 20.1 Liquid Glass Module Icons | 1/1 | Complete | 2026-02-27 |
+| **v1.4 — Quality of Life** | | | |
+| 21. Settings Consolidation & Dock Polish | 1/1 | Complete | 2026-02-27 |
 
 ## Coverage Map
 
@@ -557,7 +560,7 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 21-01-PLAN.md — Combined DeviceSettingsPanel, module store merge, icon/label update, dock CSS fix
+- [x] 21-01-PLAN.md — Combined DeviceSettingsPanel, module store merge, icon/label update, dock CSS fix
 
 ### Phase 22: CLI & Build DX
 **Goal:** Every adb/simctl command is visible in verbose mode with colored output; builds are readable for open source contributors
@@ -575,4 +578,4 @@ Plans:
 
 ---
 *Roadmap created: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 22 planned (1 plan, 1 wave)*
+*Last updated: 2026-02-27 — Phase 21 complete (1/1 plans)*
