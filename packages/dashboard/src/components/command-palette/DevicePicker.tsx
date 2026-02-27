@@ -46,17 +46,18 @@ export default function DevicePicker({ step, search, onSelect }: DevicePickerPro
 		onSelect(ids, names);
 	}
 
-	// Cmd/Ctrl+Enter to submit multi-selection
+	// Capture phase so we intercept Cmd+Enter before cmdk's onSelect toggles the item
 	useEffect(() => {
 		if (!step.multi) return;
 		function onKeyDown(e: KeyboardEvent) {
 			if ((e.metaKey || e.ctrlKey) && e.key === "Enter" && selected.size > 0) {
 				e.preventDefault();
+				e.stopPropagation();
 				handleApply();
 			}
 		}
-		window.addEventListener("keydown", onKeyDown);
-		return () => window.removeEventListener("keydown", onKeyDown);
+		window.addEventListener("keydown", onKeyDown, true);
+		return () => window.removeEventListener("keydown", onKeyDown, true);
 	});
 
 	if (filtered.length === 0) {
