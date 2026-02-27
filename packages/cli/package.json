@@ -16,7 +16,9 @@
 	},
 	"files": [
 		"src/",
-		"dist/"
+		"dist/",
+		"README.md",
+		"LICENSE"
 	],
 	"engines": {
 		"node": ">=22.12.0"
@@ -32,9 +34,14 @@
 		"mobile"
 	],
 	"license": "MIT",
+	"author": "Pranshu Chittora",
+	"homepage": "https://github.com/pranshuchittora/simvyn#readme",
+	"bugs": {
+		"url": "https://github.com/pranshuchittora/simvyn/issues"
+	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nicepkg/simvyn.git",
+		"url": "https://github.com/pranshuchittora/simvyn.git",
 		"directory": "packages/cli"
 	},
 	"dependencies": {
