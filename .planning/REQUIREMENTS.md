@@ -202,7 +202,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | Windows native support | Use WSL. No Windows-specific code paths. |
 | iOS real device support | simctl only works with simulators. USB iPhone requires entirely different tooling. |
 | Remote device access | Security nightmare, tunneling infrastructure. Keep it local. |
-| Emulator/simulator creation | Complex (AVD management, runtime downloads), rarely a pain point, IDEs handle this. |
+| Android emulator (AVD) creation | Complex (system image downloads, hardware profiles). Android Studio handles this. iOS simulator creation IS supported via `simctl create` (Phase 19). |
 
 ## Traceability
 
@@ -425,6 +425,52 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Mapped to phases: 8
 - Unmapped: 0
 
+## v1.3 Requirements — Platform Capabilities
+
+### Device Lifecycle
+
+- [ ] **DLIF-01**: Create new iOS simulators by selecting from available device types and runtimes via `simctl create`
+- [ ] **DLIF-02**: Clone existing iOS simulators to create identical copies via `simctl clone`
+- [ ] **DLIF-03**: Rename iOS simulators via `simctl rename`
+- [ ] **DLIF-04**: Manage SSL certificates on iOS simulators — add root certificates, add certs, reset keychain via `simctl keychain`
+- [ ] **DLIF-05**: Dashboard UI for device lifecycle (create/clone/rename in device panel, certificate management section)
+- [ ] **DLIF-06**: CLI subcommands: `simvyn device create`, `simvyn device clone`, `simvyn device rename`, `simvyn keychain add/reset`
+- [ ] **DLIF-07**: Command palette actions for create, clone, and rename device
+
+### Developer Utilities
+
+- [ ] **DUTIL-01**: Port forwarding on Android — forward local ports to device and reverse device ports to local via `adb forward/reverse`, list and remove active forwards
+- [ ] **DUTIL-02**: Display overrides on Android — change screen resolution and density via `adb shell wm size/density` with reset to defaults
+- [ ] **DUTIL-03**: Battery simulation on Android — set battery level, charging state, and power source via `dumpsys battery` with reset
+- [ ] **DUTIL-04**: Input injection on Android — tap coordinates, swipe gestures, text input, and key events via `adb input`
+- [ ] **DUTIL-05**: Bug report collection — gather diagnostic data from iOS (`simctl diagnose`) and Android (`adb bugreport`), save to host
+- [ ] **DUTIL-06**: Dashboard panel for developer utilities with sections for each capability
+- [ ] **DUTIL-07**: CLI subcommands: `simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`
+
+## v1.3 Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| DLIF-01 | Phase 19 | Pending |
+| DLIF-02 | Phase 19 | Pending |
+| DLIF-03 | Phase 19 | Pending |
+| DLIF-04 | Phase 19 | Pending |
+| DLIF-05 | Phase 19 | Pending |
+| DLIF-06 | Phase 19 | Pending |
+| DLIF-07 | Phase 19 | Pending |
+| DUTIL-01 | Phase 20 | Pending |
+| DUTIL-02 | Phase 20 | Pending |
+| DUTIL-03 | Phase 20 | Pending |
+| DUTIL-04 | Phase 20 | Pending |
+| DUTIL-05 | Phase 20 | Pending |
+| DUTIL-06 | Phase 20 | Pending |
+| DUTIL-07 | Phase 20 | Pending |
+
+**Coverage:**
+- v1.3 requirements: 14 total
+- Mapped to phases: 14
+- Unmapped: 0
+
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-27 after v1.2 interactive command palette requirements*
+*Last updated: 2026-02-27 after v1.3 platform capabilities requirements*

@@ -2,8 +2,8 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 18 (13 v1.0 + 5 v1.1)
-**Coverage:** 108/108 v1.0 requirements mapped, 20/20 v1.1 requirements mapped
+**Phases:** 20 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3)
+**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3 requirements mapped
 
 ## Phases
 
@@ -30,6 +30,11 @@
 - [x] **Phase 17: Tool Settings** — Dedicated settings page for server port, auto-open, data wipe, and storage usage (completed 2026-02-26)
 - [x] **Phase 17.1: Typography Update** — Cascadia Code for branding, adjust all dashboard text styling (INSERTED) (completed 2026-02-26)
 - [x] **Phase 18: Interactive Command Palette** — Multi-step actions with parameter selection, device targeting, and inline autocomplete (completed 2026-02-26)
+
+### Milestone v1.3 — Platform Capabilities
+
+- [ ] **Phase 19: Device Lifecycle** — Create, clone, rename iOS simulators; SSL certificate management for proxy testing
+- [ ] **Phase 20: Developer Utilities** — Port forwarding, display overrides, battery simulation, input injection, bug reports
 
 ## Phase Details
 
@@ -283,6 +288,12 @@ Plans:
 | 15. Command Palette | 1/1 | Complete   | 2026-02-26 |
 | 16. Home Screen & Capture Management | 1/1 | Complete   | 2026-02-26 |
 | 17. Tool Settings | 1/1 | Complete   | 2026-02-26 |
+| 17.1 Typography Update | 1/1 | Complete | 2026-02-26 |
+| **v1.2 — Interactive Command Palette** | | | |
+| 18. Interactive Command Palette | 2/2 | Complete | 2026-02-26 |
+| **v1.3 — Platform Capabilities** | | | |
+| 19. Device Lifecycle | 0/? | Not Started | - |
+| 20. Developer Utilities | 0/? | Not Started | - |
 
 ## Coverage Map
 
@@ -356,7 +367,32 @@ TSET-04 → Phase 17
 TSET-05 → Phase 17
 ```
 
-**v1.1 Mapped: 20/20 ✓ — No orphaned requirements**
+**v1.1 Mapped: 20/20 — No orphaned requirements**
+
+### v1.2 Coverage
+
+```
+IPAL-01 → Phase 18   IPAL-05 → Phase 18
+IPAL-02 → Phase 18   IPAL-06 → Phase 18
+IPAL-03 → Phase 18   IPAL-07 → Phase 18
+IPAL-04 → Phase 18   IPAL-08 → Phase 18
+```
+
+**v1.2 Mapped: 8/8 — No orphaned requirements**
+
+### v1.3 Coverage
+
+```
+DLIF-01 → Phase 19    DUTIL-01 → Phase 20
+DLIF-02 → Phase 19    DUTIL-02 → Phase 20
+DLIF-03 → Phase 19    DUTIL-03 → Phase 20
+DLIF-04 → Phase 19    DUTIL-04 → Phase 20
+DLIF-05 → Phase 19    DUTIL-05 → Phase 20
+DLIF-06 → Phase 19    DUTIL-06 → Phase 20
+DLIF-07 → Phase 19    DUTIL-07 → Phase 20
+```
+
+**v1.3 Mapped: 14/14 — No orphaned requirements**
 
 ### Phase 18: Interactive Command Palette
 
@@ -368,6 +404,31 @@ TSET-05 → Phase 17
 Plans:
 - [ ] 18-01-PLAN.md — Multi-step flow architecture, device picker, simple actions (screenshot, dark mode, erase)
 - [ ] 18-02-PLAN.md — Complex actions (set locale, set location with geocoding), expanded action catalog
+
+### Phase 19: Device Lifecycle
+**Goal:** Developers can create, clone, and rename iOS simulators and manage SSL certificates for proxy testing — all from the dashboard and CLI
+**Depends on:** Phase 1 (device management foundation)
+**Requirements:** DLIF-01, DLIF-02, DLIF-03, DLIF-04, DLIF-05, DLIF-06, DLIF-07
+**Success Criteria** (what must be TRUE):
+  1. User can create a new iOS simulator by selecting a device type and runtime from the available options in the dashboard
+  2. User can clone an existing iOS simulator to create an identical copy, and rename any simulator from the dashboard or CLI
+  3. User can add SSL root certificates to an iOS simulator for MITM proxy testing and reset the keychain to defaults
+  4. All device lifecycle and keychain operations are available via CLI (`simvyn device create/clone/rename`, `simvyn keychain add/reset`)
+  5. Command palette includes create, clone, and rename device actions
+**Plans:** [To be planned]
+
+### Phase 20: Developer Utilities
+**Goal:** Developers can forward ports, override display settings, simulate battery states, inject input events, and collect bug reports — expanding platform-specific capabilities
+**Depends on:** Phase 1 (device management foundation), Phase 8 (settings module pattern)
+**Requirements:** DUTIL-01, DUTIL-02, DUTIL-03, DUTIL-04, DUTIL-05, DUTIL-06, DUTIL-07
+**Success Criteria** (what must be TRUE):
+  1. User can set up port forwarding and reverse forwarding on Android devices, with a panel showing active forwards and one-click teardown
+  2. User can override display resolution and density on Android devices, with one-click reset to defaults
+  3. User can simulate battery level and charging state on Android for testing low-battery and charging scenarios
+  4. User can inject tap, swipe, text input, and key events on Android devices from the dashboard
+  5. User can collect and download bug reports from iOS (simctl diagnose) and Android (adb bugreport)
+  6. All operations available via CLI subcommands (`simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`)
+**Plans:** [To be planned]
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
