@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Milestone v1.4 — Quality of Life
+**Current Focus:** Milestone v1.5 — Public Release
 
 ## Current Position
 
-**Phase:** 22-cli-build-dx
-**Plan:** 1 of 1 complete
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
+**Phase:** 22.1-code-audit (next)
+**Plan:** 0 of 0 (not planned yet)
+**Status:** Phase inserted, awaiting planning
+**Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
 
@@ -46,6 +46,10 @@
 | **v1.4 — Quality of Life** | |
 | 21. Settings Consolidation & Dock Polish | ✅ Complete (1/1 plans) |
 | 22. CLI & Build DX | ✅ Complete (1/1 plans) |
+| **v1.5 — Public Release** | |
+| 22.1 Code Audit | ⏳ Not Planned |
+| 22.2 Test Suite | ⏳ Not Planned |
+| 22.3 NPM Package & README | ⏳ Not Planned |
 
 ## Performance Metrics
 
@@ -289,6 +293,9 @@
 - v1.1 milestone phases 13-17 added: URL Routing → Module Icons → Command Palette → Home Screen & Capture Management → Tool Settings
 - Phase 17.1 inserted after Phase 17: Typography Update (URGENT) — Cascadia Code for branding, adjust all dashboard text styling
 - Phase 20.1 inserted after Phase 20: Liquid Glass Module Icons (URGENT) — improve all sidebar/palette icons to have liquid glass effect
+- Phase 22.1 inserted after Phase 22: Code Audit (URGENT) — security audit commit-by-commit for credentials and secrets before going public
+- Phase 22.2 inserted after Phase 22: Test Suite (URGENT) — extensive adapter command tests verifying correct adb/xcrun invocations
+- Phase 22.3 inserted after Phase 22: NPM Package & README (URGENT) — README with logo, npx support, npm publish CI, make package public
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -304,8 +311,8 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Completed 22-01-PLAN.md
-**Context for next session:** Phase 22 complete. Verbose exec wrapper in core, CLI --verbose flag, and unminified dashboard build with source maps all in place.
+**Stopped at:** Inserted v1.5 milestone phases (22.1, 22.2, 22.3)
+**Context for next session:** v1.4 complete. 3 new phases for public release: code audit → test suite → npm package & README. None planned yet.
 
 ---
 *State initialized: 2026-02-26*

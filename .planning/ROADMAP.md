@@ -2,7 +2,7 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 22 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4)
+**Phases:** 25 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4 + 3 v1.5)
 **Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4 requirements mapped
 
 ## Phases
@@ -41,6 +41,12 @@
 
 - [x] **Phase 21: Settings Consolidation & Dock Polish** — Merge Dev Utils and Device Settings into unified panel; remove dock hover scale (completed 2026-02-27)
 - [x] **Phase 22: CLI & Build DX** — Verbose command logging with colored output; open source friendly build (completed 2026-02-27)
+
+### Milestone v1.5 — Public Release
+
+- [ ] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED)
+- [ ] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED)
+- [ ] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED)
 
 ## Phase Details
 
@@ -304,6 +310,10 @@ Plans:
 | **v1.4 — Quality of Life** | | | |
 | 21. Settings Consolidation & Dock Polish | 1/1 | Complete    | 2026-02-27 |
 | 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
+| **v1.5 — Public Release** | | | |
+| 22.1 Code Audit | 0/0 | Not Planned | - |
+| 22.2 Test Suite | 0/0 | Not Planned | - |
+| 22.3 NPM Package & README | 0/0 | Not Planned | - |
 
 ## Coverage Map
 
@@ -580,3 +590,46 @@ Plans:
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-02-27 — Phase 22 complete (1/1 plans)*
+
+### Phase 22.1: Code Audit (INSERTED)
+
+**Goal:** Verify no credentials, secrets, API keys, or sensitive data are committed in the repository history before making it public
+**Depends on:** Phase 22
+**Success Criteria** (what must be TRUE):
+  1. Every commit in the repository has been audited for secrets (env files, API keys, tokens, credentials)
+  2. No `.env` files, credential JSON files, or hardcoded secrets exist in the codebase or git history
+  3. `.gitignore` covers all sensitive patterns (`.env*`, `*.pem`, `credentials.*`, `~/.simvyn/`)
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 22.1 to break down)
+
+### Phase 22.2: Test Suite (INSERTED)
+
+**Goal:** Comprehensive test coverage verifying correct adb/xcrun/simctl commands are invoked for each adapter method
+**Depends on:** Phase 22.1
+**Success Criteria** (what must be TRUE):
+  1. Every iOS adapter method has tests verifying the correct `xcrun simctl` command and arguments are constructed
+  2. Every Android adapter method has tests verifying the correct `adb` / `emulator` command and arguments are constructed
+  3. Tests mock the exec/spawn layer and assert on command strings — no real devices needed to run tests
+  4. `npm test` passes from a clean checkout with zero external dependencies
+  5. Core utilities (device-manager, storage, verbose-exec) have unit tests
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 22.2 to break down)
+
+### Phase 22.3: NPM Package & README (INSERTED)
+
+**Goal:** Package is published on npm, installable via `npx simvyn`, with professional README and automated release CI
+**Depends on:** Phase 22.2
+**Success Criteria** (what must be TRUE):
+  1. Running `npx simvyn` installs and launches the tool correctly
+  2. README.md has the simvyn logo (large, centered), package name, tagline, feature list, installation instructions, usage examples, and screenshots
+  3. GitHub Actions workflow publishes to npm on version tag push (matching react-native-duckdb pattern)
+  4. All `package.json` files have `"private"` removed or set to `false` for publishable packages
+  5. Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 22.3 to break down)
