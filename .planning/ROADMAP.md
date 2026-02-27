@@ -44,7 +44,7 @@
 
 ### Milestone v1.5 — Public Release
 
-- [ ] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED)
+- [x] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED) (completed 2026-02-27)
 - [ ] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED)
 - [ ] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED)
 
@@ -311,7 +311,7 @@ Plans:
 | 21. Settings Consolidation & Dock Polish | 1/1 | Complete    | 2026-02-27 |
 | 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
 | **v1.5 — Public Release** | | | |
-| 22.1 Code Audit | 0/0 | Not Planned | - |
+| 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
 | 22.2 Test Suite | 0/0 | Not Planned | - |
 | 22.3 NPM Package & README | 0/0 | Not Planned | - |
 
@@ -599,7 +599,7 @@ Plans:
   1. Every commit in the repository has been audited for secrets (env files, API keys, tokens, credentials)
   2. No `.env` files, credential JSON files, or hardcoded secrets exist in the codebase or git history
   3. `.gitignore` covers all sensitive patterns (`.env*`, `*.pem`, `credentials.*`, `~/.simvyn/`)
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 22.1-01-PLAN.md — Git history security audit + harden .gitignore

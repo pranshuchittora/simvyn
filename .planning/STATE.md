@@ -10,7 +10,7 @@
 
 **Phase:** 22.1-code-audit (next)
 **Plan:** 0 of 0 (not planned yet)
-**Status:** Phase inserted, awaiting planning
+**Status:** Ready to plan
 **Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
