@@ -10,7 +10,7 @@
 
 **Phase:** 21-settings-consolidation-dock-polish
 **Plan:** 1 of 1 complete
-**Status:** Phase 21 complete — ready for Phase 22
+**Status:** Ready to plan
 **Progress:** [██████████] 100%
 
 ## Phase Overview

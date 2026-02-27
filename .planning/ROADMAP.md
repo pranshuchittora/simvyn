@@ -302,7 +302,7 @@ Plans:
 | 20. Developer Utilities | 2/2 | Complete    | 2026-02-27 |
 | 20.1 Liquid Glass Module Icons | 1/1 | Complete | 2026-02-27 |
 | **v1.4 — Quality of Life** | | | |
-| 21. Settings Consolidation & Dock Polish | 1/1 | Complete | 2026-02-27 |
+| 21. Settings Consolidation & Dock Polish | 1/1 | Complete    | 2026-02-27 |
 
 ## Coverage Map
 
@@ -557,7 +557,7 @@ Plans:
   2. No separate "Settings" or "Dev Utils" entries appear in sidebar, command palette, or home screen
   3. All existing API endpoints from both modules continue to function (no regression)
   4. Dock icons show tooltip label on hover without any scale animation
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [x] 21-01-PLAN.md — Combined DeviceSettingsPanel, module store merge, icon/label update, dock CSS fix
