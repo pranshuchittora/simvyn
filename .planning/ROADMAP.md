@@ -293,7 +293,7 @@ Plans:
 | 18. Interactive Command Palette | 2/2 | Complete | 2026-02-26 |
 | **v1.3 — Platform Capabilities** | | | |
 | 19. Device Lifecycle | 2/2 | Complete    | 2026-02-27 |
-| 20. Developer Utilities | 0/? | Not Started | - |
+| 20. Developer Utilities | 0/2 | Planned | - |
 
 ## Coverage Map
 
@@ -432,7 +432,11 @@ Plans:
   4. User can inject tap, swipe, text input, and key events on Android devices from the dashboard
   5. User can collect and download bug reports from iOS (simctl diagnose) and Android (adb bugreport)
   6. All operations available via CLI subcommands (`simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`)
-**Plans:** [To be planned]
+**Plans:** 2 plans
+
+Plans:
+- [ ] 20-01-PLAN.md — Backend: types, adapter implementations, dev-utils module (routes + CLI)
+- [ ] 20-02-PLAN.md — Dashboard: DevUtilsPanel with 5 capability-gated sections + module icon
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
