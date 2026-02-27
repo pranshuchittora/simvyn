@@ -87,7 +87,7 @@ export default function DeviceSelector() {
 			</button>
 
 			{open && (
-				<div className="glass-panel absolute top-full right-0 z-50 mt-2 w-72 overflow-hidden p-1 shadow-xl shadow-black/30">
+				<div className="glass-panel absolute top-full right-0 z-50 mt-2 w-72 overflow-hidden p-1 shadow-xl shadow-black/30 !backdrop-blur-2xl !bg-[rgba(30,30,45,0.6)]">
 					{Object.entries(groups).map(([platform, devs]) => (
 						<div key={platform}>
 							<div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
