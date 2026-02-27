@@ -17,6 +17,10 @@
   <img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/assets/banner.png" alt="simvyn dashboard" />
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/assets/demo.gif" alt="simvyn demo" />
+</p>
+
 ## Quick Start
 
 ```bash
