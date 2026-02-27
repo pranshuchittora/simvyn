@@ -1,8 +1,7 @@
-import { type ChildProcess, execFile, spawn } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { mkdir, stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
-import { promisify } from "node:util";
 import type {
 	AppInfo,
 	BugReportResult,
@@ -11,12 +10,11 @@ import type {
 	PlatformCapability,
 	PortMapping,
 } from "@simvyn/types";
-
-const execFileAsync = promisify(execFile);
+import { verboseExec, verboseSpawn } from "../verbose-exec.js";
 
 async function getAvdList(): Promise<string[]> {
 	try {
-		const { stdout } = await execFileAsync("emulator", ["-list-avds"]);
+		const { stdout } = await verboseExec("emulator", ["-list-avds"]);
 		return stdout.trim().split("\n").filter(Boolean);
 	} catch {
 		return [];
@@ -30,7 +28,7 @@ interface AdbDevice {
 
 async function getAdbDevices(): Promise<AdbDevice[]> {
 	try {
-		const { stdout } = await execFileAsync("adb", ["devices"]);
+		const { stdout } = await verboseExec("adb", ["devices"]);
 		const lines = stdout.trim().split("\n").slice(1); // skip "List of devices attached"
 		return lines
 			.map((line) => {
@@ -45,7 +43,7 @@ async function getAdbDevices(): Promise<AdbDevice[]> {
 
 async function getEmulatorAvdName(serial: string): Promise<string> {
 	try {
-		const { stdout } = await execFileAsync("adb", ["-s", serial, "emu", "avd", "name"]);
+		const { stdout } = await verboseExec("adb", ["-s", serial, "emu", "avd", "name"]);
 		return stdout.trim().split("\n")[0]?.trim() ?? serial;
 	} catch {
 		return serial;
@@ -54,7 +52,7 @@ async function getEmulatorAvdName(serial: string): Promise<string> {
 
 async function getDeviceProp(serial: string, prop: string): Promise<string> {
 	try {
-		const { stdout } = await execFileAsync("adb", ["-s", serial, "shell", "getprop", prop]);
+		const { stdout } = await verboseExec("adb", ["-s", serial, "shell", "getprop", prop]);
 		return stdout.trim();
 	} catch {
 		return "";
@@ -67,7 +65,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async isAvailable(): Promise<boolean> {
 			try {
-				await execFileAsync("adb", ["version"]);
+				await verboseExec("adb", ["version"]);
 				return true;
 			} catch {
 				return false;
@@ -141,7 +139,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			}
 
 			const avdName = id.slice(4);
-			const child = spawn("emulator", [`@${avdName}`], {
+			const child = verboseSpawn("emulator", [`@${avdName}`], {
 				stdio: "ignore",
 				detached: true,
 			});
@@ -166,7 +164,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			if (id.startsWith("avd:")) return; // can't shut down something not running
 
 			try {
-				await execFileAsync("adb", ["-s", id, "emu", "kill"]);
+				await verboseExec("adb", ["-s", id, "emu", "kill"]);
 			} catch {
 				// no-op for physical devices or already-dead emulators
 			}
@@ -176,16 +174,16 @@ export function createAndroidAdapter(): PlatformAdapter {
 		erase: undefined,
 
 		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
-			await execFileAsync("adb", ["-s", deviceId, "emu", "geo", "fix", String(lon), String(lat)]);
+			await verboseExec("adb", ["-s", deviceId, "emu", "geo", "fix", String(lon), String(lat)]);
 		},
 
 		async clearLocation(deviceId: string): Promise<void> {
-			await execFileAsync("adb", ["-s", deviceId, "emu", "geo", "fix", "0", "0"]);
+			await verboseExec("adb", ["-s", deviceId, "emu", "geo", "fix", "0", "0"]);
 		},
 
 		async listApps(deviceId: string): Promise<AppInfo[]> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			const { stdout } = await execFileAsync("adb", [
+			const { stdout } = await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -213,17 +211,17 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async installApp(deviceId: string, appPath: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			await execFileAsync("adb", ["-s", deviceId, "install", appPath]);
+			await verboseExec("adb", ["-s", deviceId, "install", appPath]);
 		},
 
 		async uninstallApp(deviceId: string, bundleId: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			await execFileAsync("adb", ["-s", deviceId, "uninstall", bundleId]);
+			await verboseExec("adb", ["-s", deviceId, "uninstall", bundleId]);
 		},
 
 		async launchApp(deviceId: string, bundleId: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -238,13 +236,13 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async terminateApp(deviceId: string, bundleId: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "am", "force-stop", bundleId]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "am", "force-stop", bundleId]);
 		},
 
 		async getAppInfo(deviceId: string, bundleId: string): Promise<AppInfo | null> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
 			try {
-				const { stdout } = await execFileAsync("adb", [
+				const { stdout } = await verboseExec("adb", [
 					"-s",
 					deviceId,
 					"shell",
@@ -271,13 +269,13 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async clearAppData(deviceId: string, bundleId: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "pm", "clear", bundleId]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "pm", "clear", bundleId]);
 		},
 
 		async openUrl(deviceId: string, url: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for deep link operations");
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -292,7 +290,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async screenshot(deviceId: string, outputPath: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for screenshot");
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -300,20 +298,20 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"-p",
 				"/sdcard/simvyn_screenshot.png",
 			]);
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"pull",
 				"/sdcard/simvyn_screenshot.png",
 				outputPath,
 			]);
-			await execFileAsync("adb", ["-s", deviceId, "shell", "rm", "/sdcard/simvyn_screenshot.png"]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "rm", "/sdcard/simvyn_screenshot.png"]);
 		},
 
 		startRecording(deviceId: string, outputPath: string) {
 			if (deviceId.startsWith("avd:"))
 				return Promise.reject(new Error("Device must be booted for recording"));
-			const child = spawn("adb", [
+			const child = verboseSpawn("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -334,8 +332,8 @@ export function createAndroidAdapter(): PlatformAdapter {
 			});
 			const did = deviceId || (child as any).__simvyn_deviceId;
 			const out = outputPath || (child as any).__simvyn_outputPath;
-			await execFileAsync("adb", ["-s", did, "pull", "/sdcard/simvyn_recording.mp4", out]);
-			await execFileAsync("adb", ["-s", did, "shell", "rm", "/sdcard/simvyn_recording.mp4"]);
+			await verboseExec("adb", ["-s", did, "pull", "/sdcard/simvyn_recording.mp4", out]);
+			await verboseExec("adb", ["-s", did, "shell", "rm", "/sdcard/simvyn_recording.mp4"]);
 		},
 
 		getClipboard: undefined,
@@ -346,7 +344,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 			// Try Android 12+ clipboard service first
 			try {
-				await execFileAsync("adb", ["-s", deviceId, "shell", "cmd", "clipboard", "set-text", text]);
+				await verboseExec("adb", ["-s", deviceId, "shell", "cmd", "clipboard", "set-text", text]);
 				return;
 			} catch {
 				// Fall back to input text for older Android
@@ -358,13 +356,13 @@ export function createAndroidAdapter(): PlatformAdapter {
 				.replace(/\\/g, "\\\\")
 				.replace(/ /g, "%s")
 				.replace(/[()&|;<>*~"'`]/g, (c) => `\\${c}`);
-			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
 		},
 
 		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for settings operations");
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -379,8 +377,8 @@ export function createAndroidAdapter(): PlatformAdapter {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for media operations");
 			const filename = basename(filePath);
-			await execFileAsync("adb", ["-s", deviceId, "push", filePath, `/sdcard/DCIM/${filename}`]);
-			await execFileAsync("adb", [
+			await verboseExec("adb", ["-s", deviceId, "push", filePath, `/sdcard/DCIM/${filename}`]);
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -399,15 +397,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			const fullPermission = permission.startsWith("android.permission.")
 				? permission
 				: `android.permission.${permission}`;
-			await execFileAsync("adb", [
-				"-s",
-				deviceId,
-				"shell",
-				"pm",
-				"grant",
-				bundleId,
-				fullPermission,
-			]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "pm", "grant", bundleId, fullPermission]);
 		},
 
 		async revokePermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
@@ -416,15 +406,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			const fullPermission = permission.startsWith("android.permission.")
 				? permission
 				: `android.permission.${permission}`;
-			await execFileAsync("adb", [
-				"-s",
-				deviceId,
-				"shell",
-				"pm",
-				"revoke",
-				bundleId,
-				fullPermission,
-			]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "pm", "revoke", bundleId, fullPermission]);
 		},
 
 		resetPermissions: undefined,
@@ -435,7 +417,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			// Android expects BCP 47 tags (en-US) not POSIX (en_US)
 			const bcp47 = locale.replace("_", "-");
 			// setprop persist.sys.locale requires root — emulators have su
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -445,7 +427,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"persist.sys.locale",
 				bcp47,
 			]);
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -463,7 +445,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			const service = enabled
 				? "com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService"
 				: "";
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -473,7 +455,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"enabled_accessibility_services",
 				service,
 			]);
-			await execFileAsync("adb", [
+			await verboseExec("adb", [
 				"-s",
 				deviceId,
 				"shell",
@@ -492,17 +474,17 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async addForward(deviceId: string, local: string, remote: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			await execFileAsync("adb", ["-s", deviceId, "forward", local, remote]);
+			await verboseExec("adb", ["-s", deviceId, "forward", local, remote]);
 		},
 
 		async removeForward(deviceId: string, local: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			await execFileAsync("adb", ["-s", deviceId, "forward", "--remove", local]);
+			await verboseExec("adb", ["-s", deviceId, "forward", "--remove", local]);
 		},
 
 		async listForwards(deviceId: string): Promise<PortMapping[]> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			const { stdout } = await execFileAsync("adb", ["-s", deviceId, "forward", "--list"]);
+			const { stdout } = await verboseExec("adb", ["-s", deviceId, "forward", "--list"]);
 			const mappings: PortMapping[] = [];
 			for (const line of stdout.trim().split("\n")) {
 				if (!line) continue;
@@ -516,17 +498,17 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async addReverse(deviceId: string, remote: string, local: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			await execFileAsync("adb", ["-s", deviceId, "reverse", remote, local]);
+			await verboseExec("adb", ["-s", deviceId, "reverse", remote, local]);
 		},
 
 		async removeReverse(deviceId: string, remote: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			await execFileAsync("adb", ["-s", deviceId, "reverse", "--remove", remote]);
+			await verboseExec("adb", ["-s", deviceId, "reverse", "--remove", remote]);
 		},
 
 		async listReverses(deviceId: string): Promise<PortMapping[]> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
-			const { stdout } = await execFileAsync("adb", ["-s", deviceId, "reverse", "--list"]);
+			const { stdout } = await verboseExec("adb", ["-s", deviceId, "reverse", "--list"]);
 			const mappings: PortMapping[] = [];
 			for (const line of stdout.trim().split("\n")) {
 				if (!line) continue;
@@ -541,25 +523,25 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async setDisplaySize(deviceId: string, width: number, height: number): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for display operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "size", `${width}x${height}`]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "wm", "size", `${width}x${height}`]);
 		},
 
 		async resetDisplaySize(deviceId: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for display operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "size", "reset"]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "wm", "size", "reset"]);
 		},
 
 		async setDisplayDensity(deviceId: string, dpi: number): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for display operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "density", String(dpi)]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "wm", "density", String(dpi)]);
 		},
 
 		async resetDisplayDensity(deviceId: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for display operations");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "density", "reset"]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "wm", "density", "reset"]);
 		},
 
 		async setBattery(
@@ -569,7 +551,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for battery simulation");
 			if (options.level !== undefined) {
-				await execFileAsync("adb", [
+				await verboseExec("adb", [
 					"-s",
 					deviceId,
 					"shell",
@@ -581,7 +563,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				]);
 			}
 			if (options.status !== undefined) {
-				await execFileAsync("adb", [
+				await verboseExec("adb", [
 					"-s",
 					deviceId,
 					"shell",
@@ -593,7 +575,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				]);
 			}
 			if (options.ac !== undefined) {
-				await execFileAsync("adb", [
+				await verboseExec("adb", [
 					"-s",
 					deviceId,
 					"shell",
@@ -605,7 +587,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				]);
 			}
 			if (options.usb !== undefined) {
-				await execFileAsync("adb", [
+				await verboseExec("adb", [
 					"-s",
 					deviceId,
 					"shell",
@@ -621,18 +603,18 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async unplugBattery(deviceId: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for battery simulation");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "unplug"]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "unplug"]);
 		},
 
 		async resetBattery(deviceId: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for battery simulation");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "reset"]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "reset"]);
 		},
 
 		async inputTap(deviceId: string, x: number, y: number): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "tap", String(x), String(y)]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "input", "tap", String(x), String(y)]);
 		},
 
 		async inputSwipe(
@@ -656,18 +638,18 @@ export function createAndroidAdapter(): PlatformAdapter {
 				String(y2),
 			];
 			if (durationMs !== undefined) args.push(String(durationMs));
-			await execFileAsync("adb", args);
+			await verboseExec("adb", args);
 		},
 
 		async inputText(deviceId: string, text: string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
 			const escaped = text.replace(/ /g, "%s").replace(/[()&|;<>*~"'`]/g, (c) => `\\${c}`);
-			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
 		},
 
 		async inputKeyEvent(deviceId: string, keyCode: number | string): Promise<void> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
-			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "keyevent", String(keyCode)]);
+			await verboseExec("adb", ["-s", deviceId, "shell", "input", "keyevent", String(keyCode)]);
 		},
 
 		async collectBugReport(deviceId: string, outputDir: string): Promise<BugReportResult> {
@@ -676,7 +658,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 			await mkdir(dir, { recursive: true });
 			const filename = `bugreport-${deviceId}-${Date.now()}.zip`;
 			const outputPath = join(dir, filename);
-			await execFileAsync("adb", ["-s", deviceId, "bugreport", outputPath], { timeout: 300_000 });
+			await verboseExec("adb", ["-s", deviceId, "bugreport", outputPath], { timeout: 300_000 });
 			const info = await stat(outputPath);
 			return { path: outputPath, filename, size: info.size };
 		},

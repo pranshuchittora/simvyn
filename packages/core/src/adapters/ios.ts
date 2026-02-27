@@ -1,8 +1,7 @@
-import { type ChildProcess, execFile, spawn } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import { promisify } from "node:util";
 import type {
 	AppInfo,
 	BugReportResult,
@@ -13,8 +12,7 @@ import type {
 	PlatformCapability,
 	SimRuntime,
 } from "@simvyn/types";
-
-const execFileAsync = promisify(execFile);
+import { verboseExec, verboseSpawn } from "../verbose-exec.js";
 
 interface SimctlDevice {
 	udid: string;
@@ -59,20 +57,20 @@ function parseDeviceType(identifier?: string): string {
 
 function plistToJson(plistStr: string): Promise<string> {
 	return new Promise((resolve, reject) => {
-		const proc = spawn("plutil", ["-convert", "json", "-r", "-o", "-", "--", "-"]);
+		const proc = verboseSpawn("plutil", ["-convert", "json", "-r", "-o", "-", "--", "-"]);
 		let out = "";
 		let err = "";
-		proc.stdout.on("data", (d: Buffer) => {
+		proc.stdout!.on("data", (d: Buffer) => {
 			out += d.toString();
 		});
-		proc.stderr.on("data", (d: Buffer) => {
+		proc.stderr!.on("data", (d: Buffer) => {
 			err += d.toString();
 		});
-		proc.on("close", (code) =>
+		proc.on("close", (code: number | null) =>
 			code === 0 ? resolve(out) : reject(new Error(`plutil exit ${code}: ${err}`)),
 		);
-		proc.stdin.write(plistStr);
-		proc.stdin.end();
+		proc.stdin!.write(plistStr);
+		proc.stdin!.end();
 	});
 }
 
@@ -82,7 +80,7 @@ export function createIosAdapter(): PlatformAdapter {
 
 		async isAvailable(): Promise<boolean> {
 			try {
-				await execFileAsync("xcrun", ["simctl", "list", "devices", "--json"]);
+				await verboseExec("xcrun", ["simctl", "list", "devices", "--json"]);
 				return true;
 			} catch {
 				return false;
@@ -91,7 +89,7 @@ export function createIosAdapter(): PlatformAdapter {
 
 		async listDevices(): Promise<Device[]> {
 			try {
-				const { stdout } = await execFileAsync("xcrun", ["simctl", "list", "devices", "--json"]);
+				const { stdout } = await verboseExec("xcrun", ["simctl", "list", "devices", "--json"]);
 				const data = JSON.parse(stdout);
 				const devices: Device[] = [];
 
@@ -120,7 +118,7 @@ export function createIosAdapter(): PlatformAdapter {
 
 		async boot(id: string): Promise<void> {
 			try {
-				await execFileAsync("xcrun", ["simctl", "boot", id]);
+				await verboseExec("xcrun", ["simctl", "boot", id]);
 			} catch (err) {
 				const msg = (err as Error).message ?? "";
 				if (!msg.includes("already booted")) throw err;
@@ -129,7 +127,7 @@ export function createIosAdapter(): PlatformAdapter {
 
 		async shutdown(id: string): Promise<void> {
 			try {
-				await execFileAsync("xcrun", ["simctl", "shutdown", id]);
+				await verboseExec("xcrun", ["simctl", "shutdown", id]);
 			} catch (err) {
 				const msg = (err as Error).message ?? "";
 				if (!msg.includes("current state: Shutdown")) throw err;
@@ -137,19 +135,19 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async erase(id: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "erase", id]);
+			await verboseExec("xcrun", ["simctl", "erase", id]);
 		},
 
 		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "location", deviceId, "set", `${lat},${lon}`]);
+			await verboseExec("xcrun", ["simctl", "location", deviceId, "set", `${lat},${lon}`]);
 		},
 
 		async clearLocation(deviceId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "location", deviceId, "clear"]);
+			await verboseExec("xcrun", ["simctl", "location", deviceId, "clear"]);
 		},
 
 		async listApps(deviceId: string): Promise<AppInfo[]> {
-			const { stdout: plist } = await execFileAsync("xcrun", ["simctl", "listapps", deviceId]);
+			const { stdout: plist } = await verboseExec("xcrun", ["simctl", "listapps", deviceId]);
 			const json = await plistToJson(plist);
 			const data = JSON.parse(json) as Record<
 				string,
@@ -180,7 +178,7 @@ export function createIosAdapter(): PlatformAdapter {
 
 			if (appPath.endsWith(".ipa")) {
 				tmpDir = await mkdtemp(join(tmpdir(), "simvyn-ipa-"));
-				await execFileAsync("unzip", ["-q", appPath, "-d", tmpDir]);
+				await verboseExec("unzip", ["-q", appPath, "-d", tmpDir]);
 				const entries = await readdir(join(tmpDir, "Payload"));
 				const appBundle = entries.find((e) => e.endsWith(".app"));
 				if (!appBundle) throw new Error("No .app found in IPA");
@@ -188,27 +186,27 @@ export function createIosAdapter(): PlatformAdapter {
 			}
 
 			try {
-				await execFileAsync("xcrun", ["simctl", "install", deviceId, installPath]);
+				await verboseExec("xcrun", ["simctl", "install", deviceId, installPath]);
 			} finally {
 				if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
 			}
 		},
 
 		async uninstallApp(deviceId: string, bundleId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "uninstall", deviceId, bundleId]);
+			await verboseExec("xcrun", ["simctl", "uninstall", deviceId, bundleId]);
 		},
 
 		async launchApp(deviceId: string, bundleId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "launch", deviceId, bundleId]);
+			await verboseExec("xcrun", ["simctl", "launch", deviceId, bundleId]);
 		},
 
 		async terminateApp(deviceId: string, bundleId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "terminate", deviceId, bundleId]);
+			await verboseExec("xcrun", ["simctl", "terminate", deviceId, bundleId]);
 		},
 
 		async getAppInfo(deviceId: string, bundleId: string): Promise<AppInfo | null> {
 			try {
-				const { stdout: plist } = await execFileAsync("xcrun", [
+				const { stdout: plist } = await verboseExec("xcrun", [
 					"simctl",
 					"appinfo",
 					deviceId,
@@ -241,15 +239,15 @@ export function createIosAdapter(): PlatformAdapter {
 		clearAppData: undefined,
 
 		async openUrl(deviceId: string, url: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "openurl", deviceId, url]);
+			await verboseExec("xcrun", ["simctl", "openurl", deviceId, url]);
 		},
 
 		async screenshot(deviceId: string, outputPath: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "io", deviceId, "screenshot", outputPath]);
+			await verboseExec("xcrun", ["simctl", "io", deviceId, "screenshot", outputPath]);
 		},
 
 		startRecording(deviceId: string, outputPath: string) {
-			const child = spawn("xcrun", ["simctl", "io", deviceId, "recordVideo", outputPath]);
+			const child = verboseSpawn("xcrun", ["simctl", "io", deviceId, "recordVideo", outputPath]);
 			return Promise.resolve(child);
 		},
 
@@ -262,28 +260,28 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async getClipboard(deviceId: string): Promise<string> {
-			const { stdout } = await execFileAsync("xcrun", ["simctl", "pbpaste", deviceId]);
+			const { stdout } = await verboseExec("xcrun", ["simctl", "pbpaste", deviceId]);
 			return stdout;
 		},
 
 		async setClipboard(deviceId: string, text: string): Promise<void> {
 			await new Promise<void>((resolve, reject) => {
-				const proc = spawn("xcrun", ["simctl", "pbcopy", deviceId]);
-				proc.on("close", (code) =>
+				const proc = verboseSpawn("xcrun", ["simctl", "pbcopy", deviceId]);
+				proc.on("close", (code: number | null) =>
 					code === 0 ? resolve() : reject(new Error(`pbcopy exit ${code}`)),
 				);
 				proc.on("error", reject);
-				proc.stdin.write(text);
-				proc.stdin.end();
+				proc.stdin!.write(text);
+				proc.stdin!.end();
 			});
 		},
 
 		async addMedia(deviceId: string, filePath: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "addmedia", deviceId, filePath]);
+			await verboseExec("xcrun", ["simctl", "addmedia", deviceId, filePath]);
 		},
 
 		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "ui", deviceId, "appearance", mode]);
+			await verboseExec("xcrun", ["simctl", "ui", deviceId, "appearance", mode]);
 		},
 
 		async setStatusBar(deviceId: string, overrides: Record<string, string>): Promise<void> {
@@ -301,27 +299,27 @@ export function createIosAdapter(): PlatformAdapter {
 				const flag = flagMap[key];
 				if (flag) args.push(flag, value);
 			}
-			await execFileAsync("xcrun", args);
+			await verboseExec("xcrun", args);
 		},
 
 		async clearStatusBar(deviceId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "status_bar", deviceId, "clear"]);
+			await verboseExec("xcrun", ["simctl", "status_bar", deviceId, "clear"]);
 		},
 
 		async grantPermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "grant", permission, bundleId]);
+			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "grant", permission, bundleId]);
 		},
 
 		async revokePermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "revoke", permission, bundleId]);
+			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "revoke", permission, bundleId]);
 		},
 
 		async resetPermissions(deviceId: string, bundleId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "privacy", deviceId, "reset", "all", bundleId]);
+			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "reset", "all", bundleId]);
 		},
 
 		async setLocale(deviceId: string, locale: string): Promise<void> {
-			await execFileAsync("xcrun", [
+			await verboseExec("xcrun", [
 				"simctl",
 				"spawn",
 				deviceId,
@@ -333,7 +331,7 @@ export function createIosAdapter(): PlatformAdapter {
 				locale,
 			]);
 			const langCode = locale.split("_")[0];
-			await execFileAsync("xcrun", [
+			await verboseExec("xcrun", [
 				"simctl",
 				"spawn",
 				deviceId,
@@ -348,11 +346,11 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async setContentSize(deviceId: string, size: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "ui", deviceId, "content_size", size]);
+			await verboseExec("xcrun", ["simctl", "ui", deviceId, "content_size", size]);
 		},
 
 		async setIncreaseContrast(deviceId: string, enabled: boolean): Promise<void> {
-			await execFileAsync("xcrun", [
+			await verboseExec("xcrun", [
 				"simctl",
 				"ui",
 				deviceId,
@@ -364,7 +362,7 @@ export function createIosAdapter(): PlatformAdapter {
 		setTalkBack: undefined,
 
 		async listDeviceTypes(): Promise<DeviceType[]> {
-			const { stdout } = await execFileAsync("xcrun", ["simctl", "list", "devicetypes", "--json"]);
+			const { stdout } = await verboseExec("xcrun", ["simctl", "list", "devicetypes", "--json"]);
 			const data = JSON.parse(stdout);
 			return (data.devicetypes as { identifier: string; name: string }[])
 				.filter((dt) => dt.name)
@@ -372,7 +370,7 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async listRuntimes(): Promise<SimRuntime[]> {
-			const { stdout } = await execFileAsync("xcrun", ["simctl", "list", "runtimes", "--json"]);
+			const { stdout } = await verboseExec("xcrun", ["simctl", "list", "runtimes", "--json"]);
 			const data = JSON.parse(stdout);
 			return (
 				data.runtimes as {
@@ -395,22 +393,22 @@ export function createIosAdapter(): PlatformAdapter {
 		async createDevice(name: string, deviceTypeId: string, runtimeId?: string): Promise<string> {
 			const args = ["simctl", "create", name, deviceTypeId];
 			if (runtimeId) args.push(runtimeId);
-			const { stdout } = await execFileAsync("xcrun", args);
+			const { stdout } = await verboseExec("xcrun", args);
 			return stdout.trim();
 		},
 
 		async cloneDevice(deviceId: string, newName: string): Promise<string> {
-			const { stdout } = await execFileAsync("xcrun", ["simctl", "clone", deviceId, newName]);
+			const { stdout } = await verboseExec("xcrun", ["simctl", "clone", deviceId, newName]);
 			return stdout.trim();
 		},
 
 		async renameDevice(deviceId: string, newName: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "rename", deviceId, newName]);
+			await verboseExec("xcrun", ["simctl", "rename", deviceId, newName]);
 		},
 
 		async deleteDevice(deviceId: string): Promise<void> {
 			try {
-				await execFileAsync("xcrun", ["simctl", "delete", deviceId]);
+				await verboseExec("xcrun", ["simctl", "delete", deviceId]);
 			} catch (err) {
 				const msg = (err as Error).message ?? "";
 				if (msg.includes("Invalid device state")) {
@@ -426,14 +424,14 @@ export function createIosAdapter(): PlatformAdapter {
 			try {
 				await writeFile(certPath, certData);
 				const subcmd = isRoot ? "add-root-cert" : "add-cert";
-				await execFileAsync("xcrun", ["simctl", "keychain", deviceId, subcmd, certPath]);
+				await verboseExec("xcrun", ["simctl", "keychain", deviceId, subcmd, certPath]);
 			} finally {
 				await rm(tmpDir, { recursive: true, force: true });
 			}
 		},
 
 		async resetKeychain(deviceId: string): Promise<void> {
-			await execFileAsync("xcrun", ["simctl", "keychain", deviceId, "reset"]);
+			await verboseExec("xcrun", ["simctl", "keychain", deviceId, "reset"]);
 		},
 
 		async collectBugReport(deviceId: string, outputDir: string): Promise<BugReportResult> {
@@ -441,7 +439,7 @@ export function createIosAdapter(): PlatformAdapter {
 			await mkdir(dir, { recursive: true });
 			const filename = `diagnose-${deviceId}-${Date.now()}.tar.gz`;
 			const outputPath = join(dir, filename);
-			await execFileAsync("xcrun", ["simctl", "diagnose", "-b", "--output", outputPath], {
+			await verboseExec("xcrun", ["simctl", "diagnose", "-b", "--output", outputPath], {
 				timeout: 300_000,
 			});
 			const info = await stat(outputPath);
