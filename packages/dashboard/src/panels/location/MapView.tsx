@@ -193,6 +193,21 @@ interface MapViewProps {
 	onTileStyleChange: (style: TileStyle) => void;
 }
 
+function ResizeHandler() {
+	const map = useMap();
+
+	useEffect(() => {
+		const container = map.getContainer();
+		const observer = new ResizeObserver(() => {
+			map.invalidateSize();
+		});
+		observer.observe(container);
+		return () => observer.disconnect();
+	}, [map]);
+
+	return null;
+}
+
 function MinZoomEnforcer() {
 	const map = useMap();
 
@@ -229,6 +244,7 @@ export default function MapView({ tileStyle, onTileStyleChange }: MapViewProps) 
 			zoomControl={false}
 		>
 			<ZoomControl position="bottomright" />
+			<ResizeHandler />
 			<MinZoomEnforcer />
 			<TileLayer
 				key={tileStyle.id}

@@ -11,7 +11,6 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/v/simvyn" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/l/simvyn" alt="license" /></a>
-  <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/node/v/simvyn" alt="node version" /></a>
 </p>
 
 <p align="center">
