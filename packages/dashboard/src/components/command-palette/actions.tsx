@@ -1,4 +1,18 @@
-import { Camera, Download, Eraser, Globe, Link, MapPin, Moon, Power, PowerOff } from "lucide-react";
+import {
+	Camera,
+	CopyPlus,
+	Download,
+	Eraser,
+	Globe,
+	Link,
+	MapPin,
+	Moon,
+	Pencil,
+	Plus,
+	Power,
+	PowerOff,
+	Trash2,
+} from "lucide-react";
 import type { NavigateFunction } from "react-router";
 import { toast } from "sonner";
 import type { MultiStepAction } from "./types";
@@ -201,6 +215,168 @@ export function getActions(navigate: NavigateFunction): MultiStepAction[] {
 					} catch {
 						toast.error("Location change failed");
 					}
+				}
+			},
+		},
+
+		// --- Simulator lifecycle ---
+		{
+			id: "create-simulator",
+			label: "Create Simulator",
+			description: "Create a new iOS simulator",
+			icon: <Plus size={18} />,
+			steps: [
+				{
+					id: "configure",
+					type: "create-simulator" as const,
+					label: "Configure new simulator",
+				},
+				{
+					id: "confirm-create",
+					type: "confirm" as const,
+					label: "Confirm",
+					message: (ctx) => `Create "${ctx.params.name}" (${ctx.params.deviceTypeName})?`,
+				},
+			],
+			execute: async (ctx) => {
+				try {
+					const res = await fetch("/api/modules/devices/create", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							name: ctx.params.name,
+							deviceTypeId: ctx.params.deviceTypeId,
+							runtimeId: ctx.params.runtimeId,
+						}),
+					});
+					if (res.ok) toast.success("Simulator created");
+					else toast.error("Create failed");
+				} catch {
+					toast.error("Create failed");
+				}
+			},
+		},
+		{
+			id: "clone-simulator",
+			label: "Clone Simulator",
+			description: "Duplicate an existing iOS simulator",
+			icon: <CopyPlus size={18} />,
+			steps: [
+				{
+					id: "pick-device",
+					type: "device-select",
+					label: "Select simulator to clone",
+					multi: false,
+					filter: (d) => d.platform === "ios",
+				},
+				{
+					id: "clone-name",
+					type: "parameter",
+					label: "Name for clone",
+					placeholder: "Clone name",
+					paramKey: "newName",
+				},
+				{
+					id: "confirm-clone",
+					type: "confirm",
+					label: "Confirm",
+					message: (ctx) => `Clone to "${ctx.params.newName}"?`,
+				},
+			],
+			execute: async (ctx) => {
+				try {
+					const res = await fetch("/api/modules/devices/clone", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							deviceId: ctx.selectedDeviceIds[0],
+							newName: ctx.params.newName,
+						}),
+					});
+					if (res.ok) toast.success("Simulator cloned");
+					else toast.error("Clone failed");
+				} catch {
+					toast.error("Clone failed");
+				}
+			},
+		},
+		{
+			id: "rename-simulator",
+			label: "Rename Simulator",
+			description: "Change a simulator's name",
+			icon: <Pencil size={18} />,
+			steps: [
+				{
+					id: "pick-device",
+					type: "device-select",
+					label: "Select simulator to rename",
+					multi: false,
+					filter: (d) => d.platform === "ios",
+				},
+				{
+					id: "new-name",
+					type: "parameter",
+					label: "New name",
+					placeholder: "New simulator name",
+					paramKey: "newName",
+				},
+				{
+					id: "confirm-rename",
+					type: "confirm",
+					label: "Confirm",
+					message: (ctx) => `Rename to "${ctx.params.newName}"?`,
+				},
+			],
+			execute: async (ctx) => {
+				try {
+					const res = await fetch("/api/modules/devices/rename", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							deviceId: ctx.selectedDeviceIds[0],
+							newName: ctx.params.newName,
+						}),
+					});
+					if (res.ok) toast.success("Simulator renamed");
+					else toast.error("Rename failed");
+				} catch {
+					toast.error("Rename failed");
+				}
+			},
+		},
+		{
+			id: "delete-simulator",
+			label: "Delete Simulator",
+			description: "Permanently remove an iOS simulator",
+			icon: <Trash2 size={18} />,
+			steps: [
+				{
+					id: "pick-device",
+					type: "device-select",
+					label: "Select simulator to delete",
+					multi: false,
+					filter: (d) => d.platform === "ios" && d.state === "shutdown",
+				},
+				{
+					id: "confirm-delete",
+					type: "confirm",
+					label: "Confirm",
+					message: (ctx) =>
+						`Permanently delete "${ctx.selectedDeviceNames[0]}"? This cannot be undone.`,
+					destructive: true,
+				},
+			],
+			execute: async (ctx) => {
+				try {
+					const res = await fetch("/api/modules/devices/delete", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ deviceId: ctx.selectedDeviceIds[0] }),
+					});
+					if (res.ok) toast.success("Simulator deleted");
+					else toast.error("Delete failed");
+				} catch {
+					toast.error("Delete failed");
 				}
 			},
 		},

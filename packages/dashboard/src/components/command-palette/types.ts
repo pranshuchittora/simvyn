@@ -6,7 +6,8 @@ export type StepType =
 	| "parameter"
 	| "execute"
 	| "locale-select"
-	| "location-select";
+	| "location-select"
+	| "create-simulator";
 
 export interface Step {
 	id: string;
@@ -34,13 +35,30 @@ export interface LocationSelectStep extends Step {
 	type: "location-select";
 }
 
+export interface ParameterStep extends Step {
+	type: "parameter";
+	placeholder?: string;
+	paramKey: string;
+}
+
+export interface CreateSimulatorStep extends Step {
+	type: "create-simulator";
+}
+
 export interface StepContext {
 	selectedDeviceIds: string[];
 	selectedDeviceNames: string[];
 	params: Record<string, unknown>;
 }
 
-export type AnyStep = DeviceSelectStep | ConfirmStep | LocaleSelectStep | LocationSelectStep | Step;
+export type AnyStep =
+	| DeviceSelectStep
+	| ConfirmStep
+	| ParameterStep
+	| LocaleSelectStep
+	| LocationSelectStep
+	| CreateSimulatorStep
+	| Step;
 
 export interface MultiStepAction {
 	id: string;

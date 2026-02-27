@@ -1,10 +1,16 @@
-import { Command } from "cmdk";
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import CreateSimulatorPicker from "./CreateSimulatorPicker";
 import DevicePicker from "./DevicePicker";
 import LocalePicker from "./LocalePicker";
 import LocationPicker from "./LocationPicker";
-import type { ConfirmStep, DeviceSelectStep, MultiStepAction, StepContext } from "./types";
+import type {
+	ConfirmStep,
+	DeviceSelectStep,
+	MultiStepAction,
+	ParameterStep,
+	StepContext,
+} from "./types";
 
 interface StepRendererProps {
 	action: MultiStepAction;
@@ -86,6 +92,26 @@ export default function StepRenderer({
 		advance(updated);
 	}
 
+	function handleCreateSimulator(params: {
+		name: string;
+		deviceTypeId: string;
+		runtimeId: string;
+		deviceTypeName: string;
+	}) {
+		const updated = {
+			...context,
+			params: { ...context.params, ...params },
+		};
+		setContext(updated);
+		advance(updated);
+	}
+
+	function handleParameter(paramKey: string, value: string) {
+		const updated = { ...context, params: { ...context.params, [paramKey]: value } };
+		setContext(updated);
+		advance(updated);
+	}
+
 	function handleConfirm() {
 		advance(context);
 	}
@@ -139,6 +165,17 @@ export default function StepRenderer({
 					<LocationPicker search={search} onSelect={handleLocationSelect} />
 				)}
 
+				{currentStep.type === "create-simulator" && (
+					<CreateSimulatorPicker onSelect={handleCreateSimulator} />
+				)}
+
+				{currentStep.type === "parameter" && (
+					<ParameterInput
+						step={currentStep as ParameterStep}
+						onSubmit={(value) => handleParameter((currentStep as ParameterStep).paramKey, value)}
+					/>
+				)}
+
 				{currentStep.type === "confirm" && (
 					<ConfirmView
 						step={currentStep as ConfirmStep}
@@ -149,6 +186,41 @@ export default function StepRenderer({
 				)}
 			</div>
 		</>
+	);
+}
+
+function ParameterInput({
+	step,
+	onSubmit,
+}: {
+	step: ParameterStep;
+	onSubmit: (value: string) => void;
+}) {
+	const [value, setValue] = useState("");
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		inputRef.current?.focus();
+	}, []);
+
+	return (
+		<div className="px-3 py-4">
+			<input
+				ref={inputRef}
+				type="text"
+				value={value}
+				onChange={(e) => setValue(e.target.value)}
+				onKeyDown={(e) => {
+					if (e.key === "Enter" && value.trim()) {
+						e.preventDefault();
+						onSubmit(value.trim());
+					}
+				}}
+				placeholder={step.placeholder ?? step.label}
+				className="w-full bg-white/5 border border-glass-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent-blue"
+			/>
+			<p className="text-[10px] text-text-muted mt-2 px-1">Press Enter to continue</p>
+		</div>
 	);
 }
 
@@ -177,7 +249,7 @@ function ConfirmView({
 					className={`text-xs px-4 py-2 ${step.destructive ? "glass-button-destructive" : "glass-button-primary"}`}
 					onClick={onConfirm}
 				>
-					{step.destructive ? "Erase" : "Confirm"}
+					{step.destructive ? "Delete" : "Confirm"}
 				</button>
 			</div>
 		</div>

@@ -129,9 +129,17 @@ export default function CommandPalette() {
 				? "Search locales..."
 				: currentStepType === "location-select"
 					? "Search for a location..."
-					: "";
+					: currentStepType === "create-simulator"
+						? ""
+						: currentStepType === "parameter"
+							? ""
+							: "";
 
-	const hideSearch = activeAction && currentStepType === "confirm";
+	const hideSearch =
+		activeAction &&
+		(currentStepType === "confirm" ||
+			currentStepType === "create-simulator" ||
+			currentStepType === "parameter");
 
 	return (
 		<Command.Dialog
