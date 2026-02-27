@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 22.1-code-audit (next)
-**Plan:** 0 of 0 (not planned yet)
-**Status:** Ready to plan
-**Progress:** [░░░░░░░░░░] 0%
+**Phase:** 22.2-test-suite
+**Plan:** 1 of 3 complete
+**Status:** Executing
+**Progress:** [█████████░] 90%
 
 ## Phase Overview
 
@@ -48,7 +48,7 @@
 | 22. CLI & Build DX | ✅ Complete (1/1 plans) |
 | **v1.5 — Public Release** | |
 | 22.1 Code Audit | ⏳ Not Planned |
-| 22.2 Test Suite | ⏳ Not Planned |
+| 22.2 Test Suite | 🔄 Executing (1/3 plans) |
 | 22.3 NPM Package & README | ⏳ Not Planned |
 
 ## Performance Metrics
@@ -125,10 +125,12 @@
 | Phase 20.1 P01 | 1min | 1 task | 1 file |
 | Phase 21 P01 | 1min | 2 tasks | 27 files |
 | Phase 22 P01 | 3min | 2 tasks | 6 files |
+| Phase 22.2 P03 | 4min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
 ### Key Decisions
+- Test files use `.ts` import extensions (not `.js`) since `--experimental-strip-types` doesn't rewrite import specifiers
 - `module: NodeNext` in tsconfig (not ESNext) — required by TypeScript 5.9 when using `moduleResolution: NodeNext`
 - TypeScript monorepo with npm workspaces (types → core → modules → server → cli, dashboard independent)
 - Fastify 5 for server (plugin encapsulation maps to module system)
@@ -311,8 +313,8 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Inserted v1.5 milestone phases (22.1, 22.2, 22.3)
-**Context for next session:** v1.4 complete. 3 new phases for public release: code audit → test suite → npm package & README. None planned yet.
+**Stopped at:** Completed 22.2-03-PLAN.md (core utilities tests)
+**Context for next session:** Phase 22.2 test suite in progress. Plan 03 complete (DeviceManager/Storage/verbose-exec tests). Plans 01 and 02 (adapter tests) still need execution.
 
 ---
 *State initialized: 2026-02-26*
