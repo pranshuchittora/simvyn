@@ -423,6 +423,8 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async setLocale(deviceId: string, locale: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for locale operations");
+			// Android expects BCP 47 tags (en-US) not POSIX (en_US)
+			const bcp47 = locale.replace("_", "-");
 			// setprop persist.sys.locale requires root — emulators have su
 			await execFileAsync("adb", [
 				"-s",
@@ -432,7 +434,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"0",
 				"setprop",
 				"persist.sys.locale",
-				locale,
+				bcp47,
 			]);
 			await execFileAsync("adb", [
 				"-s",
