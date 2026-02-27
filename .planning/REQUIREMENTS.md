@@ -439,13 +439,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Developer Utilities
 
-- [ ] **DUTIL-01**: Port forwarding on Android — forward local ports to device and reverse device ports to local via `adb forward/reverse`, list and remove active forwards
-- [ ] **DUTIL-02**: Display overrides on Android — change screen resolution and density via `adb shell wm size/density` with reset to defaults
-- [ ] **DUTIL-03**: Battery simulation on Android — set battery level, charging state, and power source via `dumpsys battery` with reset
-- [ ] **DUTIL-04**: Input injection on Android — tap coordinates, swipe gestures, text input, and key events via `adb input`
-- [ ] **DUTIL-05**: Bug report collection — gather diagnostic data from iOS (`simctl diagnose`) and Android (`adb bugreport`), save to host
+- [x] **DUTIL-01**: Port forwarding on Android — forward local ports to device and reverse device ports to local via `adb forward/reverse`, list and remove active forwards
+- [x] **DUTIL-02**: Display overrides on Android — change screen resolution and density via `adb shell wm size/density` with reset to defaults
+- [x] **DUTIL-03**: Battery simulation on Android — set battery level, charging state, and power source via `dumpsys battery` with reset
+- [x] **DUTIL-04**: Input injection on Android — tap coordinates, swipe gestures, text input, and key events via `adb input`
+- [x] **DUTIL-05**: Bug report collection — gather diagnostic data from iOS (`simctl diagnose`) and Android (`adb bugreport`), save to host
 - [ ] **DUTIL-06**: Dashboard panel for developer utilities with sections for each capability
-- [ ] **DUTIL-07**: CLI subcommands: `simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`
+- [x] **DUTIL-07**: CLI subcommands: `simvyn forward`, `simvyn display`, `simvyn battery`, `simvyn input`, `simvyn bugreport`
 
 ## v1.3 Traceability
 
@@ -458,13 +458,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DLIF-05 | Phase 19 | Complete |
 | DLIF-06 | Phase 19 | Complete |
 | DLIF-07 | Phase 19 | Complete |
-| DUTIL-01 | Phase 20 | Pending |
-| DUTIL-02 | Phase 20 | Pending |
-| DUTIL-03 | Phase 20 | Pending |
-| DUTIL-04 | Phase 20 | Pending |
-| DUTIL-05 | Phase 20 | Pending |
+| DUTIL-01 | Phase 20 | Complete |
+| DUTIL-02 | Phase 20 | Complete |
+| DUTIL-03 | Phase 20 | Complete |
+| DUTIL-04 | Phase 20 | Complete |
+| DUTIL-05 | Phase 20 | Complete |
 | DUTIL-06 | Phase 20 | Pending |
-| DUTIL-07 | Phase 20 | Pending |
+| DUTIL-07 | Phase 20 | Complete |
 
 **Coverage:**
 - v1.3 requirements: 14 total
