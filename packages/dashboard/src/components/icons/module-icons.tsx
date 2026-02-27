@@ -341,6 +341,29 @@ function ToolSettingsIcon({ size = 24, className }: IconProps) {
 	);
 }
 
+function DevUtilsIcon({ size = 24, className }: IconProps) {
+	return (
+		<svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+			<path
+				d="M15.7 5.3L18.7 2.3a1 1 0 011.4 0l1.6 1.6a1 1 0 010 1.4l-3 3"
+				stroke="#F97316"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			/>
+			<path
+				d="M15.7 5.3l-7.3 7.3a2 2 0 00-.5.8l-1.2 3.8a.5.5 0 00.6.6l3.8-1.2a2 2 0 00.8-.5l7.3-7.3"
+				stroke="#F97316"
+				strokeWidth="1.5"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				opacity="0.5"
+			/>
+			<path d="M4 20h16" stroke="#F97316" strokeWidth="1.5" strokeLinecap="round" opacity="0.3" />
+		</svg>
+	);
+}
+
 export type { IconProps };
 
 export const moduleIconMap: Record<string, ComponentType<IconProps>> = {
@@ -358,6 +381,7 @@ export const moduleIconMap: Record<string, ComponentType<IconProps>> = {
 	media: MediaIcon,
 	clipboard: ClipboardIcon,
 	"tool-settings": ToolSettingsIcon,
+	"dev-utils": DevUtilsIcon,
 };
 
 export const moduleLabelMap: Record<string, string> = {
@@ -375,4 +399,5 @@ export const moduleLabelMap: Record<string, string> = {
 	media: "Media",
 	clipboard: "Clipboard",
 	"tool-settings": "Tool Settings",
+	"dev-utils": "Dev Utils",
 };
