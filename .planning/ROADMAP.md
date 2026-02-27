@@ -35,6 +35,7 @@
 
 - [x] **Phase 19: Device Lifecycle** — Create, clone, rename iOS simulators; SSL certificate management for proxy testing (completed 2026-02-27)
 - [x] **Phase 20: Developer Utilities** — Port forwarding, display overrides, battery simulation, input injection, bug reports (completed 2026-02-27)
+- [x] **Phase 20.1: Liquid Glass Module Icons** — Redesign all 15 sidebar icons with SVG gradient glass fills (INSERTED) (completed 2026-02-27)
 
 ## Phase Details
 
@@ -437,6 +438,21 @@ Plans:
 Plans:
 - [ ] 20-01-PLAN.md — Backend: types, adapter implementations, dev-utils module (routes + CLI)
 - [ ] 20-02-PLAN.md — Dashboard: DevUtilsPanel with 5 capability-gated sections + module icon
+
+### Phase 20.1: Liquid Glass Module Icons (INSERTED)
+
+**Goal:** Redesign all 15 module icons with Apple Liquid Glass SVG technique — translucent gradient fills, inner highlights, soft glowing edges
+**Depends on:** Phase 20
+**Requirements:** GLASS-ICONS-01
+**Success Criteria** (what must be TRUE):
+  1. Every module icon in the sidebar has a visible liquid glass effect — translucent gradient fill, inner highlight, soft glow
+  2. Icons remain visually distinct from each other with unique accent colors
+  3. Icons render correctly at dock size (24px) without losing clarity
+  4. Dashboard compiles without errors
+**Plans:** 1/1 plans complete
+
+Plans:
+- [x] 20.1-01-PLAN.md — Redesign all 15 module icons with liquid glass SVG gradients
 
 ### Phase 17.1: Typography Update — Cascadia Code for branding, font adjustments across dashboard (INSERTED)
 
