@@ -10,7 +10,7 @@
 
 **Phase:** 22.3-npm-package-readme
 **Plan:** 3 of 3 complete
-**Status:** Phase Complete
+**Status:** Milestone complete
 **Progress:** [█████████░] 93%
 
 ## Phase Overview

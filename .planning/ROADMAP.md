@@ -313,7 +313,7 @@ Plans:
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
-| 22.3 NPM Package & README | 3/3 | Complete   | 2026-02-27 |
+| 22.3 NPM Package & README | 3/3 | Complete    | 2026-02-27 |
 
 ## Coverage Map
 
