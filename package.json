@@ -1,6 +1,5 @@
 {
 	"name": "simvyn-monorepo",
-	"private": true,
 	"type": "module",
 	"workspaces": [
 		"packages/types",
