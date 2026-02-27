@@ -1,4 +1,45 @@
-node_modules
-dist
-.DS_Store
+# Dependencies
+node_modules/
+
+# Build output
+dist/
 *.tsbuildinfo
+
+# Environment / Secrets
+.env
+.env.*
+.env.local
+
+# Credentials
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+credentials.json
+serviceAccountKey.json
+
+# Simvyn runtime data
+.simvyn/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# npm / package
+*.tgz
+.npmrc
+
+# Test / Coverage
+coverage/
+.nyc_output/
+
+# Misc
+*.log
+tmp/
+.tmp/
