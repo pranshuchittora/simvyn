@@ -471,6 +471,48 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Mapped to phases: 14
 - Unmapped: 0
 
+## v1.4 Requirements — Quality of Life
+
+### Settings Consolidation
+
+- [ ] **SCON-01**: Dev Utils and Device Settings dashboard panels merged into single "Device Settings" panel with organized sections for all device-level operations (appearance, permissions, accessibility, port forwarding, display overrides, battery simulation, input injection, bug reports)
+- [ ] **SCON-02**: Sidebar shows single "Device Settings" entry replacing separate "Settings" and "Dev Utils" entries
+- [ ] **SCON-03**: Command palette and home screen reflect the merged module (single entry, not two)
+
+### Dock Polish
+
+- [ ] **DOCK-01**: Dock icons no longer scale on hover — tooltip popup label is the sole hover feedback
+
+### Verbose CLI
+
+- [ ] **VCLI-01**: CLI supports `--verbose` / `-v` flag that logs every adb and simctl command with full arguments before execution
+- [ ] **VCLI-02**: Verbose output uses colored platform prefixes — green for Android (adb), blue for iOS (simctl), red for errors
+- [ ] **VCLI-03**: Structured logging library used for clear visual distinction between log types and levels
+
+### Open Source Build
+
+- [ ] **OSBLD-01**: Dashboard build produces unminified JavaScript for readable error stack traces and open source transparency
+- [ ] **OSBLD-02**: Source maps generated and served alongside the dashboard build for accurate browser console error traces
+
+## v1.4 Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| SCON-01 | Phase 21 | Pending |
+| SCON-02 | Phase 21 | Pending |
+| SCON-03 | Phase 21 | Pending |
+| DOCK-01 | Phase 21 | Pending |
+| VCLI-01 | Phase 22 | Pending |
+| VCLI-02 | Phase 22 | Pending |
+| VCLI-03 | Phase 22 | Pending |
+| OSBLD-01 | Phase 22 | Pending |
+| OSBLD-02 | Phase 22 | Pending |
+
+**Coverage:**
+- v1.4 requirements: 9 total
+- Mapped to phases: 9
+- Unmapped: 0
+
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-27 after v1.3 platform capabilities requirements*
+*Last updated: 2026-02-27 after v1.4 quality of life requirements*

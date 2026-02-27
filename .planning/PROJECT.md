@@ -41,14 +41,15 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - [ ] Published as `simvyn` npm package, invocable via `npx simvyn`
 - [ ] Cross-platform: macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
 
-## Current Milestone: v1.1 Dashboard UX Polish
+## Current Milestone: v1.4 Quality of Life
 
-**Goal:** Improve dashboard navigation and discoverability with URL routing, command palette search, and a welcoming home screen.
+**Goal:** Consolidate settings panels, improve open source developer experience with readable builds and verbose CLI logging, and polish dock hover behavior.
 
 **Target features:**
-- URL-based routing — module selection persists across page refresh
-- Cmd+K command palette — spotlight-style search with Liquid Glass styling
-- Home/welcome screen — VS Code-inspired landing when no module is active
+- Merge Dev Utils and Device Settings into single "Device Settings" panel
+- Open source friendly build — no minification, source maps for readable error traces
+- Verbose CLI mode — `--verbose` flag logs all adb/simctl commands with colored platform prefixes
+- Dock hover polish — tooltip label instead of scale animation
 
 ### Out of Scope
 
@@ -111,4 +112,4 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 | File-based persistence at ~/.simvyn/ | Simple, no database dependency; JSON files like sim-location | — Pending |
 
 ---
-*Last updated: 2026-02-27 after milestone v1.1 start*
+*Last updated: 2026-02-27 after milestone v1.4 start*

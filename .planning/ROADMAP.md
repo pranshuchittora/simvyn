@@ -2,8 +2,8 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 20 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3)
-**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3 requirements mapped
+**Phases:** 22 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4)
+**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4 requirements mapped
 
 ## Phases
 
@@ -36,6 +36,11 @@
 - [x] **Phase 19: Device Lifecycle** — Create, clone, rename iOS simulators; SSL certificate management for proxy testing (completed 2026-02-27)
 - [x] **Phase 20: Developer Utilities** — Port forwarding, display overrides, battery simulation, input injection, bug reports (completed 2026-02-27)
 - [x] **Phase 20.1: Liquid Glass Module Icons** — Redesign all 15 sidebar icons with SVG gradient glass fills (INSERTED) (completed 2026-02-27)
+
+### Milestone v1.4 — Quality of Life
+
+- [ ] **Phase 21: Settings Consolidation & Dock Polish** — Merge Dev Utils and Device Settings into unified panel; remove dock hover scale
+- [ ] **Phase 22: CLI & Build DX** — Verbose command logging with colored output; open source friendly build
 
 ## Phase Details
 
@@ -540,6 +545,34 @@ Plans:
 - [ ] 12.1-02-PLAN.md — Client log store redesign for paginated model + ModuleShell unmount + install react-virtuoso
 - [ ] 12.1-03-PLAN.md — LogList react-virtuoso rewrite + LogPanel pagination wiring + LogToolbar device-clear + search revamp
 
+### Phase 21: Settings Consolidation & Dock Polish
+**Goal:** Single "Device Settings" panel combines all device-level operations; dock hover behavior refined
+**Depends on:** Phase 20 (Dev Utils panel exists)
+**Requirements:** SCON-01, SCON-02, SCON-03, DOCK-01
+**Success Criteria** (what must be TRUE):
+  1. Dashboard shows a single "Device Settings" module in the sidebar containing all device-level settings (appearance, permissions, locale, accessibility, status bar) and all developer utilities (port forwarding, display overrides, battery simulation, input injection, bug reports)
+  2. No separate "Settings" or "Dev Utils" entries appear in sidebar, command palette, or home screen
+  3. All existing API endpoints from both modules continue to function (no regression)
+  4. Dock icons show tooltip label on hover without any scale animation
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 21 to break down)
+
+### Phase 22: CLI & Build DX
+**Goal:** Every adb/simctl command is visible in verbose mode with colored output; builds are readable for open source contributors
+**Depends on:** Phase 21 (independent, can run in parallel)
+**Requirements:** VCLI-01, VCLI-02, VCLI-03, OSBLD-01, OSBLD-02
+**Success Criteria** (what must be TRUE):
+  1. Running `simvyn --verbose` logs every adb and simctl command with full argument arrays before execution
+  2. adb commands show green-colored prefix, simctl commands show blue-colored prefix, errors show red
+  3. Dashboard `npm run build` produces unminified JavaScript output (readable function names, no mangled variables)
+  4. Source maps are generated alongside the build and error stack traces in browser console point to original TypeScript source
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 22 to break down)
+
 ---
 *Roadmap created: 2026-02-26*
-*Last updated: 2026-02-27 — v1.1 phases 13-17 added*
+*Last updated: 2026-02-27 — v1.4 quality of life phases 21-22 added*
