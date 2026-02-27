@@ -485,14 +485,14 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Verbose CLI
 
-- [ ] **VCLI-01**: CLI supports `--verbose` / `-v` flag that logs every adb and simctl command with full arguments before execution
-- [ ] **VCLI-02**: Verbose output uses colored platform prefixes — green for Android (adb), blue for iOS (simctl), red for errors
-- [ ] **VCLI-03**: Structured logging library used for clear visual distinction between log types and levels
+- [x] **VCLI-01**: CLI supports `--verbose` / `-v` flag that logs every adb and simctl command with full arguments before execution
+- [x] **VCLI-02**: Verbose output uses colored platform prefixes — green for Android (adb), blue for iOS (simctl), red for errors
+- [x] **VCLI-03**: Structured logging library used for clear visual distinction between log types and levels
 
 ### Open Source Build
 
-- [ ] **OSBLD-01**: Dashboard build produces unminified JavaScript for readable error stack traces and open source transparency
-- [ ] **OSBLD-02**: Source maps generated and served alongside the dashboard build for accurate browser console error traces
+- [x] **OSBLD-01**: Dashboard build produces unminified JavaScript for readable error stack traces and open source transparency
+- [x] **OSBLD-02**: Source maps generated and served alongside the dashboard build for accurate browser console error traces
 
 ## v1.4 Traceability
 
@@ -502,11 +502,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCON-02 | Phase 21 | Complete |
 | SCON-03 | Phase 21 | Complete |
 | DOCK-01 | Phase 21 | Complete |
-| VCLI-01 | Phase 22 | Pending |
-| VCLI-02 | Phase 22 | Pending |
-| VCLI-03 | Phase 22 | Pending |
-| OSBLD-01 | Phase 22 | Pending |
-| OSBLD-02 | Phase 22 | Pending |
+| VCLI-01 | Phase 22 | Complete |
+| VCLI-02 | Phase 22 | Complete |
+| VCLI-03 | Phase 22 | Complete |
+| OSBLD-01 | Phase 22 | Complete |
+| OSBLD-02 | Phase 22 | Complete |
 
 **Coverage:**
 - v1.4 requirements: 9 total

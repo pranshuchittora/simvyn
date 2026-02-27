@@ -40,7 +40,7 @@
 ### Milestone v1.4 — Quality of Life
 
 - [x] **Phase 21: Settings Consolidation & Dock Polish** — Merge Dev Utils and Device Settings into unified panel; remove dock hover scale (completed 2026-02-27)
-- [ ] **Phase 22: CLI & Build DX** — Verbose command logging with colored output; open source friendly build
+- [x] **Phase 22: CLI & Build DX** — Verbose command logging with colored output; open source friendly build (completed 2026-02-27)
 
 ## Phase Details
 
@@ -303,6 +303,7 @@ Plans:
 | 20.1 Liquid Glass Module Icons | 1/1 | Complete | 2026-02-27 |
 | **v1.4 — Quality of Life** | | | |
 | 21. Settings Consolidation & Dock Polish | 1/1 | Complete    | 2026-02-27 |
+| 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
 
 ## Coverage Map
 
@@ -574,8 +575,8 @@ Plans:
 **Plans:** 1 plan
 
 Plans:
-- [ ] 22-01-PLAN.md — Verbose exec wrapper, adapter refactor, CLI --verbose flag, unminified build with source maps
+- [x] 22-01-PLAN.md — Verbose exec wrapper, adapter refactor, CLI --verbose flag, unminified build with source maps
 
 ---
 *Roadmap created: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 21 complete (1/1 plans)*
+*Last updated: 2026-02-27 — Phase 22 complete (1/1 plans)*

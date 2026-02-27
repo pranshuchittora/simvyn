@@ -8,9 +8,9 @@
 
 ## Current Position
 
-**Phase:** 21-settings-consolidation-dock-polish
+**Phase:** 22-cli-build-dx
 **Plan:** 1 of 1 complete
-**Status:** Ready to plan
+**Status:** Phase complete
 **Progress:** [██████████] 100%
 
 ## Phase Overview
@@ -45,6 +45,7 @@
 | 20.1 Liquid Glass Module Icons | ✅ Complete (1/1 plans) |
 | **v1.4 — Quality of Life** | |
 | 21. Settings Consolidation & Dock Polish | ✅ Complete (1/1 plans) |
+| 22. CLI & Build DX | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -119,6 +120,7 @@
 | Phase 20 P02 | 3min | 2 tasks | 3 files |
 | Phase 20.1 P01 | 1min | 1 task | 1 file |
 | Phase 21 P01 | 1min | 2 tasks | 27 files |
+| Phase 22 P01 | 3min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -302,9 +304,9 @@
 ## Session Continuity
 
 **Last session:** 2026-02-27
-**Stopped at:** Completed 21-01-PLAN.md
-**Context for next session:** Phase 21 complete. Phase 22 (CLI & Build DX) is the next step — verbose logging and unminified build.
+**Stopped at:** Completed 22-01-PLAN.md
+**Context for next session:** Phase 22 complete. Verbose exec wrapper in core, CLI --verbose flag, and unminified dashboard build with source maps all in place.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 21 Plan 01 complete (Settings Consolidation & Dock Polish)*
+*Last updated: 2026-02-27 — Phase 22 Plan 01 complete (CLI & Build DX)*
