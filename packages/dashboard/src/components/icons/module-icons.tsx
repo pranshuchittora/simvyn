@@ -445,7 +445,7 @@ function DatabaseIcon({ size = 24, className }: IconProps) {
 	);
 }
 
-function SettingsIcon({ size = 24, className }: IconProps) {
+function DeviceSettingsIcon({ size = 24, className }: IconProps) {
 	return (
 		<svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
 			<defs>
@@ -642,56 +642,6 @@ function ToolSettingsIcon({ size = 24, className }: IconProps) {
 	);
 }
 
-function DevUtilsIcon({ size = 24, className }: IconProps) {
-	return (
-		<svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-			<defs>
-				<linearGradient id="duGrad" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0%" stopColor="#F97316" stopOpacity="0.4" />
-					<stop offset="100%" stopColor="#F97316" stopOpacity="0.12" />
-				</linearGradient>
-				<linearGradient id="duHi" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0%" stopColor="#ffffff" stopOpacity="0.2" />
-					<stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-				</linearGradient>
-			</defs>
-			<path
-				d="M15.7 5.3l-7.3 7.3a2 2 0 00-.5.8l-1.2 3.8a.5.5 0 00.6.6l3.8-1.2a2 2 0 00.8-.5l7.3-7.3"
-				fill="url(#duGrad)"
-				stroke="#F97316"
-				strokeWidth="1"
-				strokeOpacity="0.5"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M15.7 5.3L18.7 2.3a1 1 0 011.4 0l1.6 1.6a1 1 0 010 1.4l-3 3"
-				fill="url(#duGrad)"
-				stroke="#F97316"
-				strokeWidth="1"
-				strokeOpacity="0.7"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			/>
-			<path
-				d="M16 5.5l2-2c.3.2.6.5.8.8"
-				fill="none"
-				stroke="#ffffff"
-				strokeWidth="0.8"
-				strokeOpacity="0.15"
-				strokeLinecap="round"
-			/>
-			<path
-				d="M4 20h16"
-				stroke="#F97316"
-				strokeWidth="1"
-				strokeLinecap="round"
-				strokeOpacity="0.3"
-			/>
-		</svg>
-	);
-}
-
 export type { IconProps };
 
 export const moduleIconMap: Record<string, ComponentType<IconProps>> = {
@@ -704,12 +654,11 @@ export const moduleIconMap: Record<string, ComponentType<IconProps>> = {
 	push: PushIcon,
 	fs: FsIcon,
 	database: DatabaseIcon,
-	settings: SettingsIcon,
+	"device-settings": DeviceSettingsIcon,
 	"crash-logs": CrashLogsIcon,
 	media: MediaIcon,
 	clipboard: ClipboardIcon,
 	"tool-settings": ToolSettingsIcon,
-	"dev-utils": DevUtilsIcon,
 };
 
 export const moduleLabelMap: Record<string, string> = {
@@ -722,10 +671,9 @@ export const moduleLabelMap: Record<string, string> = {
 	push: "Push",
 	fs: "Files",
 	database: "Database",
-	settings: "Settings",
+	"device-settings": "Device Settings",
 	"crash-logs": "Crashes",
 	media: "Media",
 	clipboard: "Clipboard",
 	"tool-settings": "Tool Settings",
-	"dev-utils": "Dev Utils",
 };

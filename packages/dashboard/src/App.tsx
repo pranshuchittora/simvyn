@@ -20,12 +20,11 @@ import "./panels/DeepLinksPanel";
 import "./panels/PushPanel";
 import "./panels/FileSystemPanel";
 import "./panels/DatabasePanel";
-import "./panels/SettingsPanel";
+import "./panels/DeviceSettingsPanel";
 import "./panels/CrashLogsPanel";
 import "./panels/MediaPanel";
 import "./panels/ClipboardPanel";
 import "./panels/ToolSettingsPanel";
-import "./panels/DevUtilsPanel";
 
 function RouterSync() {
 	const { moduleName } = useParams<{ moduleName: string }>();

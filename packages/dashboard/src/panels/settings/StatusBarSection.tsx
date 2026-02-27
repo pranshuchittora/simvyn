@@ -36,7 +36,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 		}
 
 		try {
-			const res = await fetch("/api/modules/settings/status-bar", {
+			const res = await fetch("/api/modules/device-settings/status-bar", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, overrides }),
@@ -53,7 +53,7 @@ export default function StatusBarSection({ deviceId }: Props) {
 
 	const handleClear = async () => {
 		try {
-			const res = await fetch("/api/modules/settings/status-bar/clear", {
+			const res = await fetch("/api/modules/device-settings/status-bar/clear", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId }),

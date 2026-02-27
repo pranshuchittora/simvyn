@@ -3,11 +3,16 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
+import BatterySimulationSection from "./device-settings/BatterySimulationSection";
+import BugReportsSection from "./device-settings/BugReportsSection";
+import DisplayOverridesSection from "./device-settings/DisplayOverridesSection";
+import InputInjectionSection from "./device-settings/InputInjectionSection";
+import PortForwardingSection from "./device-settings/PortForwardingSection";
 import AccessibilitySection from "./settings/AccessibilitySection";
 import PermissionsSection from "./settings/PermissionsSection";
 import StatusBarSection from "./settings/StatusBarSection";
 
-interface Capabilities {
+interface SettingsCaps {
 	appearance: boolean;
 	statusBar: boolean;
 	permissions: boolean;
@@ -18,7 +23,17 @@ interface Capabilities {
 	talkBack: boolean;
 }
 
-const DEFAULT_CAPS: Capabilities = {
+interface DevUtilsCaps {
+	portForward: boolean;
+	displayOverride: boolean;
+	batterySimulation: boolean;
+	inputInjection: boolean;
+	bugReport: boolean;
+}
+
+interface AllCaps extends SettingsCaps, DevUtilsCaps {}
+
+const DEFAULT_CAPS: AllCaps = {
 	appearance: false,
 	statusBar: false,
 	permissions: false,
@@ -27,33 +42,38 @@ const DEFAULT_CAPS: Capabilities = {
 	contentSize: false,
 	increaseContrast: false,
 	talkBack: false,
+	portForward: false,
+	displayOverride: false,
+	batterySimulation: false,
+	inputInjection: false,
+	bugReport: false,
 };
 
-function SettingsPanel() {
+function DeviceSettingsPanel() {
 	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
 	const selectedDevice = useDeviceStore((s) =>
 		s.devices.find((d) => d.id === s.selectedDeviceIds[0]),
 	);
-	const [capabilities, setCapabilities] = useState<Capabilities>(DEFAULT_CAPS);
+	const [caps, setCaps] = useState<AllCaps>(DEFAULT_CAPS);
 	const [activeMode, setActiveMode] = useState<"light" | "dark">("dark");
 	const [locale, setLocale] = useState("");
 
 	useEffect(() => {
 		if (!selectedDeviceId) {
-			setCapabilities(DEFAULT_CAPS);
+			setCaps(DEFAULT_CAPS);
 			return;
 		}
-		fetch(`/api/modules/settings/capabilities?deviceId=${selectedDeviceId}`)
+		fetch(`/api/modules/device-settings/capabilities?deviceId=${selectedDeviceId}`)
 			.then((r) => r.json())
-			.then((data) => setCapabilities(data as Capabilities))
-			.catch(() => setCapabilities(DEFAULT_CAPS));
+			.then((data) => setCaps({ ...DEFAULT_CAPS, ...data }))
+			.catch(() => {});
 	}, [selectedDeviceId]);
 
 	const setAppearance = async (mode: "light" | "dark") => {
 		if (!selectedDeviceId) return;
 		setActiveMode(mode);
 		try {
-			const res = await fetch("/api/modules/settings/appearance", {
+			const res = await fetch("/api/modules/device-settings/appearance", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId: selectedDeviceId, mode }),
@@ -71,7 +91,7 @@ function SettingsPanel() {
 	const applyLocale = async () => {
 		if (!selectedDeviceId || !locale.trim()) return;
 		try {
-			const res = await fetch("/api/modules/settings/locale", {
+			const res = await fetch("/api/modules/device-settings/locale", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId: selectedDeviceId, locale: locale.trim() }),
@@ -86,17 +106,14 @@ function SettingsPanel() {
 		}
 	};
 
-	const hasAccessibility =
-		capabilities.contentSize || capabilities.increaseContrast || capabilities.talkBack;
+	const hasAccessibility = caps.contentSize || caps.increaseContrast || caps.talkBack;
 
 	return (
 		<div className="p-6 space-y-4">
-			{/* Header */}
 			<div className="flex items-center justify-between">
-				<h1 className="text-base font-medium text-text-primary">Settings</h1>
+				<h1 className="text-base font-medium text-text-primary">Device Settings</h1>
 			</div>
 
-			{/* No device */}
 			{!selectedDeviceId && (
 				<div className="glass-empty-state">
 					<p>Select a booted device to manage settings</p>
@@ -106,7 +123,7 @@ function SettingsPanel() {
 			{selectedDeviceId && (
 				<div className="space-y-4">
 					{/* Appearance */}
-					{capabilities.appearance && (
+					{caps.appearance && (
 						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
 							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
 								Appearance
@@ -132,20 +149,20 @@ function SettingsPanel() {
 						</div>
 					)}
 
-					{/* Status Bar (iOS only) */}
-					{capabilities.statusBar && <StatusBarSection deviceId={selectedDeviceId} />}
+					{/* Status Bar (iOS) */}
+					{caps.statusBar && <StatusBarSection deviceId={selectedDeviceId} />}
 
 					{/* Permissions */}
-					{capabilities.permissions && selectedDevice && (
+					{caps.permissions && selectedDevice && (
 						<PermissionsSection
 							deviceId={selectedDeviceId}
 							platform={selectedDevice.platform as "ios" | "android"}
-							canReset={capabilities.resetPermissions}
+							canReset={caps.resetPermissions}
 						/>
 					)}
 
 					{/* Locale */}
-					{capabilities.locale && (
+					{caps.locale && (
 						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
 							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
 								Locale
@@ -172,14 +189,29 @@ function SettingsPanel() {
 
 					{/* Accessibility */}
 					{hasAccessibility && (
-						<AccessibilitySection deviceId={selectedDeviceId} capabilities={capabilities} />
+						<AccessibilitySection deviceId={selectedDeviceId} capabilities={caps} />
 					)}
+
+					{/* Port Forwarding */}
+					{caps.portForward && <PortForwardingSection deviceId={selectedDeviceId} />}
+
+					{/* Display Overrides */}
+					{caps.displayOverride && <DisplayOverridesSection deviceId={selectedDeviceId} />}
+
+					{/* Battery Simulation */}
+					{caps.batterySimulation && <BatterySimulationSection deviceId={selectedDeviceId} />}
+
+					{/* Input Injection */}
+					{caps.inputInjection && <InputInjectionSection deviceId={selectedDeviceId} />}
+
+					{/* Bug Reports */}
+					{caps.bugReport && <BugReportsSection deviceId={selectedDeviceId} />}
 				</div>
 			)}
 		</div>
 	);
 }
 
-registerPanel("settings", SettingsPanel);
+registerPanel("device-settings", DeviceSettingsPanel);
 
-export default SettingsPanel;
+export default DeviceSettingsPanel;

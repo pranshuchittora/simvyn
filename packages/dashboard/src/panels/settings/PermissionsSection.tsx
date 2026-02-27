@@ -68,7 +68,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 	const handleGrant = async () => {
 		if (!selectedApp || !selectedPermission) return;
 		try {
-			const res = await fetch("/api/modules/settings/permission/grant", {
+			const res = await fetch("/api/modules/device-settings/permission/grant", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, bundleId: selectedApp, permission: selectedPermission }),
@@ -86,7 +86,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 	const handleRevoke = async () => {
 		if (!selectedApp || !selectedPermission) return;
 		try {
-			const res = await fetch("/api/modules/settings/permission/revoke", {
+			const res = await fetch("/api/modules/device-settings/permission/revoke", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, bundleId: selectedApp, permission: selectedPermission }),
@@ -104,7 +104,7 @@ export default function PermissionsSection({ deviceId, platform, canReset }: Pro
 	const handleReset = async () => {
 		if (!selectedApp) return;
 		try {
-			const res = await fetch("/api/modules/settings/permission/reset", {
+			const res = await fetch("/api/modules/device-settings/permission/reset", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, bundleId: selectedApp }),

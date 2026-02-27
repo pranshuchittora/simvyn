@@ -147,7 +147,7 @@ export function getActions(navigate: NavigateFunction): MultiStepAction[] {
 			execute: async (ctx) => {
 				for (const deviceId of ctx.selectedDeviceIds) {
 					try {
-						const res = await fetch("/api/modules/settings/appearance", {
+						const res = await fetch("/api/modules/device-settings/appearance", {
 							method: "POST",
 							headers: { "Content-Type": "application/json" },
 							body: JSON.stringify({ deviceId, mode: "dark" }),
@@ -175,7 +175,7 @@ export function getActions(navigate: NavigateFunction): MultiStepAction[] {
 				const locale = ctx.params.locale as string;
 				for (const deviceId of ctx.selectedDeviceIds) {
 					try {
-						const res = await fetch("/api/modules/settings/locale", {
+						const res = await fetch("/api/modules/device-settings/locale", {
 							method: "POST",
 							headers: { "Content-Type": "application/json" },
 							body: JSON.stringify({ deviceId, locale }),

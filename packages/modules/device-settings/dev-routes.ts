@@ -410,7 +410,7 @@ export async function devUtilsRoutes(fastify: FastifyInstance) {
 			return {
 				success: true,
 				filename: result.filename,
-				downloadUrl: `/api/modules/dev-utils/bugreport/download/${result.filename}`,
+				downloadUrl: `/api/modules/device-settings/bugreport/download/${result.filename}`,
 				size: result.size,
 			};
 		} catch (err) {
@@ -434,21 +434,4 @@ export async function devUtilsRoutes(fastify: FastifyInstance) {
 			return reply.send(createReadStream(filePath));
 		},
 	);
-
-	// --- Capabilities ---
-
-	fastify.get<{ Querystring: { deviceId: string } }>("/capabilities", async (req, reply) => {
-		const { deviceId } = req.query;
-		const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
-		if (!device) return reply.status(404).send({ error: "Device not found" });
-
-		const adapter = fastify.deviceManager.getAdapter(device.platform);
-		return {
-			portForward: !!adapter?.addForward,
-			displayOverride: !!adapter?.setDisplaySize,
-			batterySimulation: !!adapter?.setBattery,
-			inputInjection: !!adapter?.inputTap,
-			bugReport: !!adapter?.collectBugReport,
-		};
-	});
 }

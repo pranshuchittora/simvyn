@@ -35,7 +35,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 	const applyContentSize = async (size: string) => {
 		setContentSize(size);
 		try {
-			const res = await fetch("/api/modules/settings/content-size", {
+			const res = await fetch("/api/modules/device-settings/content-size", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, size }),
@@ -53,7 +53,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 	const toggleContrast = async (enabled: boolean) => {
 		setContrastEnabled(enabled);
 		try {
-			const res = await fetch("/api/modules/settings/increase-contrast", {
+			const res = await fetch("/api/modules/device-settings/increase-contrast", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, enabled }),
@@ -71,7 +71,7 @@ export default function AccessibilitySection({ deviceId, capabilities }: Props) 
 	const toggleTalkBack = async (enabled: boolean) => {
 		setTalkBackEnabled(enabled);
 		try {
-			const res = await fetch("/api/modules/settings/talkback", {
+			const res = await fetch("/api/modules/device-settings/talkback", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ deviceId, enabled }),

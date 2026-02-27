@@ -187,7 +187,6 @@ body {
 	color: var(--color-text-secondary);
 	cursor: pointer;
 	transition:
-		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
 		background 0.15s ease,
 		color 0.15s ease;
 	user-select: none;
@@ -197,7 +196,6 @@ body {
 }
 
 .dock-icon:hover {
-	transform: scale(1.15);
 	background: rgba(255, 255, 255, 0.08);
 	color: var(--color-text-primary);
 }

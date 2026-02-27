@@ -242,6 +242,11 @@ export async function settingsRoutes(fastify: FastifyInstance) {
 			contentSize: !!adapter?.setContentSize,
 			increaseContrast: !!adapter?.setIncreaseContrast,
 			talkBack: !!adapter?.setTalkBack,
+			portForward: !!adapter?.addForward,
+			displayOverride: !!adapter?.setDisplaySize,
+			batterySimulation: !!adapter?.setBattery,
+			inputInjection: !!adapter?.inputTap,
+			bugReport: !!adapter?.collectBugReport,
 		};
 	});
 }
