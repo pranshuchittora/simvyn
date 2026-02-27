@@ -599,10 +599,10 @@ Plans:
   1. Every commit in the repository has been audited for secrets (env files, API keys, tokens, credentials)
   2. No `.env` files, credential JSON files, or hardcoded secrets exist in the codebase or git history
   3. `.gitignore` covers all sensitive patterns (`.env*`, `*.pem`, `credentials.*`, `~/.simvyn/`)
-**Plans:** 0 plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 22.1 to break down)
+- [ ] 22.1-01-PLAN.md — Git history security audit + harden .gitignore
 
 ### Phase 22.2: Test Suite (INSERTED)
 
