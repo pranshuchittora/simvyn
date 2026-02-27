@@ -3,6 +3,7 @@
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { setVerbose } from "@simvyn/core";
 import { Command } from "commander";
 import { registerDeviceCommand } from "./commands/device.js";
 import { registerStartCommand } from "./commands/start.js";
@@ -13,6 +14,12 @@ const pkg = require("../package.json");
 
 const program = new Command();
 program.name("simvyn").version(pkg.version).description("Universal mobile device devtool");
+program.option("-v, --verbose", "Log every adb/simctl command before execution");
+
+program.hook("preAction", (thisCommand) => {
+	const opts = thisCommand.optsWithGlobals();
+	if (opts.verbose) setVerbose(true);
+});
 
 registerStartCommand(program);
 registerDeviceCommand(program);

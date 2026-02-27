@@ -1,5 +1,5 @@
-import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -7,6 +7,8 @@ export default defineConfig({
 	build: {
 		outDir: "../../dist/dashboard",
 		emptyOutDir: true,
+		minify: false,
+		sourcemap: true,
 	},
 	server: {
 		port: 5173,

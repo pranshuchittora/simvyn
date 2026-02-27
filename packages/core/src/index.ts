@@ -1,12 +1,16 @@
 // adapters
-export { createIosAdapter, createAndroidAdapter, createAvailableAdapters } from "./adapters/index.js";
-
+export {
+	createAndroidAdapter,
+	createAvailableAdapters,
+	createIosAdapter,
+} from "./adapters/index.js";
+export type { DeviceManager } from "./device-manager.js";
+export { createDeviceManager } from "./device-manager.js";
+// platform utils
+export { hasBinary, isLinux, isMacOS } from "./platform.js";
+export type { ProcessManager } from "./process-manager.js";
 // services
 export { createProcessManager } from "./process-manager.js";
-export type { ProcessManager } from "./process-manager.js";
 export { createModuleStorage, getSimvynDir } from "./storage.js";
-export { createDeviceManager } from "./device-manager.js";
-export type { DeviceManager } from "./device-manager.js";
-
-// platform utils
-export { isMacOS, isLinux, hasBinary } from "./platform.js";
+// verbose exec
+export { setVerbose, verboseExec, verboseSpawn } from "./verbose-exec.js";
