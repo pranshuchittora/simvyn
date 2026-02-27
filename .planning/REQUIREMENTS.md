@@ -433,9 +433,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 - [x] **DLIF-02**: Clone existing iOS simulators to create identical copies via `simctl clone`
 - [x] **DLIF-03**: Rename iOS simulators via `simctl rename`
 - [x] **DLIF-04**: Manage SSL certificates on iOS simulators — add root certificates, add certs, reset keychain via `simctl keychain`
-- [ ] **DLIF-05**: Dashboard UI for device lifecycle (create/clone/rename in device panel, certificate management section)
+- [x] **DLIF-05**: Dashboard UI for device lifecycle (create/clone/rename in device panel, certificate management section)
 - [x] **DLIF-06**: CLI subcommands: `simvyn device create`, `simvyn device clone`, `simvyn device rename`, `simvyn keychain add/reset`
-- [ ] **DLIF-07**: Command palette actions for create, clone, and rename device
+- [x] **DLIF-07**: Command palette actions for create, clone, and rename device
 
 ### Developer Utilities
 
@@ -455,9 +455,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DLIF-02 | Phase 19 | Complete |
 | DLIF-03 | Phase 19 | Complete |
 | DLIF-04 | Phase 19 | Complete |
-| DLIF-05 | Phase 19 | Pending |
+| DLIF-05 | Phase 19 | Complete |
 | DLIF-06 | Phase 19 | Complete |
-| DLIF-07 | Phase 19 | Pending |
+| DLIF-07 | Phase 19 | Complete |
 | DUTIL-01 | Phase 20 | Pending |
 | DUTIL-02 | Phase 20 | Pending |
 | DUTIL-03 | Phase 20 | Pending |
