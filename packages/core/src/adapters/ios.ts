@@ -1,10 +1,11 @@
 import { type ChildProcess, execFile, spawn } from "node:child_process";
-import { mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import type {
 	AppInfo,
+	BugReportResult,
 	Device,
 	DeviceState,
 	DeviceType,
@@ -435,6 +436,18 @@ export function createIosAdapter(): PlatformAdapter {
 			await execFileAsync("xcrun", ["simctl", "keychain", deviceId, "reset"]);
 		},
 
+		async collectBugReport(deviceId: string, outputDir: string): Promise<BugReportResult> {
+			const dir = outputDir || join(homedir(), ".simvyn", "bug-reports");
+			await mkdir(dir, { recursive: true });
+			const filename = `diagnose-${deviceId}-${Date.now()}.tar.gz`;
+			const outputPath = join(dir, filename);
+			await execFileAsync("xcrun", ["simctl", "diagnose", "-b", "--output", outputPath], {
+				timeout: 300_000,
+			});
+			const info = await stat(outputPath);
+			return { path: outputPath, filename, size: info.size };
+		},
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
@@ -454,6 +467,7 @@ export function createIosAdapter(): PlatformAdapter {
 				"accessibility",
 				"deviceLifecycle",
 				"keychain",
+				"bugReport",
 			];
 		},
 	};

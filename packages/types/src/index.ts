@@ -1,5 +1,6 @@
 export type {
 	AppInfo,
+	BugReportResult,
 	CrashLogEntry,
 	Device,
 	DeviceState,
@@ -9,6 +10,7 @@ export type {
 	Platform,
 	PlatformAdapter,
 	PlatformCapability,
+	PortMapping,
 	SimRuntime,
 } from "./device.js";
 

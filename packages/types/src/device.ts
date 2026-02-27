@@ -12,6 +12,17 @@ export interface Device {
 	isAvailable: boolean;
 }
 
+export interface PortMapping {
+	local: string;
+	remote: string;
+}
+
+export interface BugReportResult {
+	path: string;
+	filename: string;
+	size: number;
+}
+
 export type PlatformCapability =
 	| "setLocation"
 	| "push"
@@ -32,7 +43,12 @@ export type PlatformCapability =
 	| "accessibility"
 	| "crashLogs"
 	| "deviceLifecycle"
-	| "keychain";
+	| "keychain"
+	| "portForward"
+	| "displayOverride"
+	| "batterySimulation"
+	| "inputInjection"
+	| "bugReport";
 
 export interface CrashLogEntry {
 	id: string;
@@ -123,5 +139,33 @@ export interface PlatformAdapter {
 	deleteDevice?(deviceId: string): Promise<void>;
 	addKeychainCert?(deviceId: string, certData: Buffer, isRoot: boolean): Promise<void>;
 	resetKeychain?(deviceId: string): Promise<void>;
+	addForward?(deviceId: string, local: string, remote: string): Promise<void>;
+	removeForward?(deviceId: string, local: string): Promise<void>;
+	listForwards?(deviceId: string): Promise<PortMapping[]>;
+	addReverse?(deviceId: string, remote: string, local: string): Promise<void>;
+	removeReverse?(deviceId: string, remote: string): Promise<void>;
+	listReverses?(deviceId: string): Promise<PortMapping[]>;
+	setDisplaySize?(deviceId: string, width: number, height: number): Promise<void>;
+	resetDisplaySize?(deviceId: string): Promise<void>;
+	setDisplayDensity?(deviceId: string, dpi: number): Promise<void>;
+	resetDisplayDensity?(deviceId: string): Promise<void>;
+	setBattery?(
+		deviceId: string,
+		options: { level?: number; status?: number; ac?: boolean; usb?: boolean },
+	): Promise<void>;
+	unplugBattery?(deviceId: string): Promise<void>;
+	resetBattery?(deviceId: string): Promise<void>;
+	inputTap?(deviceId: string, x: number, y: number): Promise<void>;
+	inputSwipe?(
+		deviceId: string,
+		x1: number,
+		y1: number,
+		x2: number,
+		y2: number,
+		durationMs?: number,
+	): Promise<void>;
+	inputText?(deviceId: string, text: string): Promise<void>;
+	inputKeyEvent?(deviceId: string, keyCode: number | string): Promise<void>;
+	collectBugReport?(deviceId: string, outputDir: string): Promise<BugReportResult>;
 	capabilities(): PlatformCapability[];
 }

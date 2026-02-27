@@ -1,7 +1,16 @@
 import { type ChildProcess, execFile, spawn } from "node:child_process";
-import { basename } from "node:path";
+import { mkdir, stat } from "node:fs/promises";
+import { homedir } from "node:os";
+import { basename, join } from "node:path";
 import { promisify } from "node:util";
-import type { AppInfo, Device, PlatformAdapter, PlatformCapability } from "@simvyn/types";
+import type {
+	AppInfo,
+	BugReportResult,
+	Device,
+	PlatformAdapter,
+	PlatformCapability,
+	PortMapping,
+} from "@simvyn/types";
 
 const execFileAsync = promisify(execFile);
 
@@ -481,6 +490,197 @@ export function createAndroidAdapter(): PlatformAdapter {
 		setContentSize: undefined,
 		setIncreaseContrast: undefined,
 
+		async addForward(deviceId: string, local: string, remote: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			await execFileAsync("adb", ["-s", deviceId, "forward", local, remote]);
+		},
+
+		async removeForward(deviceId: string, local: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			await execFileAsync("adb", ["-s", deviceId, "forward", "--remove", local]);
+		},
+
+		async listForwards(deviceId: string): Promise<PortMapping[]> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			const { stdout } = await execFileAsync("adb", ["-s", deviceId, "forward", "--list"]);
+			const mappings: PortMapping[] = [];
+			for (const line of stdout.trim().split("\n")) {
+				if (!line) continue;
+				const parts = line.trim().split(/\s+/);
+				if (parts.length >= 3) {
+					mappings.push({ local: parts[1], remote: parts[2] });
+				}
+			}
+			return mappings;
+		},
+
+		async addReverse(deviceId: string, remote: string, local: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			await execFileAsync("adb", ["-s", deviceId, "reverse", remote, local]);
+		},
+
+		async removeReverse(deviceId: string, remote: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			await execFileAsync("adb", ["-s", deviceId, "reverse", "--remove", remote]);
+		},
+
+		async listReverses(deviceId: string): Promise<PortMapping[]> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for port forwarding");
+			const { stdout } = await execFileAsync("adb", ["-s", deviceId, "reverse", "--list"]);
+			const mappings: PortMapping[] = [];
+			for (const line of stdout.trim().split("\n")) {
+				if (!line) continue;
+				const parts = line.trim().split(/\s+/);
+				if (parts.length >= 3) {
+					mappings.push({ local: parts[1], remote: parts[2] });
+				}
+			}
+			return mappings;
+		},
+
+		async setDisplaySize(deviceId: string, width: number, height: number): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for display operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "size", `${width}x${height}`]);
+		},
+
+		async resetDisplaySize(deviceId: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for display operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "size", "reset"]);
+		},
+
+		async setDisplayDensity(deviceId: string, dpi: number): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for display operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "density", String(dpi)]);
+		},
+
+		async resetDisplayDensity(deviceId: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for display operations");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "wm", "density", "reset"]);
+		},
+
+		async setBattery(
+			deviceId: string,
+			options: { level?: number; status?: number; ac?: boolean; usb?: boolean },
+		): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for battery simulation");
+			if (options.level !== undefined) {
+				await execFileAsync("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys",
+					"battery",
+					"set",
+					"level",
+					String(options.level),
+				]);
+			}
+			if (options.status !== undefined) {
+				await execFileAsync("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys",
+					"battery",
+					"set",
+					"status",
+					String(options.status),
+				]);
+			}
+			if (options.ac !== undefined) {
+				await execFileAsync("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys",
+					"battery",
+					"set",
+					"ac",
+					options.ac ? "1" : "0",
+				]);
+			}
+			if (options.usb !== undefined) {
+				await execFileAsync("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys",
+					"battery",
+					"set",
+					"usb",
+					options.usb ? "1" : "0",
+				]);
+			}
+		},
+
+		async unplugBattery(deviceId: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for battery simulation");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "unplug"]);
+		},
+
+		async resetBattery(deviceId: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for battery simulation");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "dumpsys", "battery", "reset"]);
+		},
+
+		async inputTap(deviceId: string, x: number, y: number): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "tap", String(x), String(y)]);
+		},
+
+		async inputSwipe(
+			deviceId: string,
+			x1: number,
+			y1: number,
+			x2: number,
+			y2: number,
+			durationMs?: number,
+		): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
+			const args = [
+				"-s",
+				deviceId,
+				"shell",
+				"input",
+				"swipe",
+				String(x1),
+				String(y1),
+				String(x2),
+				String(y2),
+			];
+			if (durationMs !== undefined) args.push(String(durationMs));
+			await execFileAsync("adb", args);
+		},
+
+		async inputText(deviceId: string, text: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
+			const escaped = text.replace(/ /g, "%s").replace(/[()&|;<>*~"'`]/g, (c) => `\\${c}`);
+			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "text", escaped]);
+		},
+
+		async inputKeyEvent(deviceId: string, keyCode: number | string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for input injection");
+			await execFileAsync("adb", ["-s", deviceId, "shell", "input", "keyevent", String(keyCode)]);
+		},
+
+		async collectBugReport(deviceId: string, outputDir: string): Promise<BugReportResult> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for bug reports");
+			const dir = outputDir || join(homedir(), ".simvyn", "bug-reports");
+			await mkdir(dir, { recursive: true });
+			const filename = `bugreport-${deviceId}-${Date.now()}.zip`;
+			const outputPath = join(dir, filename);
+			await execFileAsync("adb", ["-s", deviceId, "bugreport", outputPath], { timeout: 300_000 });
+			const info = await stat(outputPath);
+			return { path: outputPath, filename, size: info.size };
+		},
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
@@ -495,6 +695,11 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"accessibility",
 				"fileSystem",
 				"database",
+				"portForward",
+				"displayOverride",
+				"batterySimulation",
+				"inputInjection",
+				"bugReport",
 			];
 		},
 	};
