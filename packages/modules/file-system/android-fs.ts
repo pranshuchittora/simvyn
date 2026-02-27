@@ -1,6 +1,5 @@
 import { execFile } from "node:child_process";
-import { readFile, rm, writeFile } from "node:fs/promises";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -31,14 +30,7 @@ export async function androidGetContainerPath(
 ): Promise<string> {
 	guardDeviceId(deviceId);
 	try {
-		await execFileAsync("adb", [
-			"-s",
-			deviceId,
-			"shell",
-			"run-as",
-			packageName,
-			"pwd",
-		]);
+		await execFileAsync("adb", ["-s", deviceId, "shell", "run-as", packageName, "pwd"]);
 	} catch (err) {
 		handleRunAsError(err, packageName);
 	}
@@ -106,26 +98,16 @@ export async function androidPullFile(
 	remotePath: string,
 ): Promise<Buffer> {
 	guardDeviceId(deviceId);
-	const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-pull-"));
-	const localPath = join(tmpDir, "file");
 	try {
-		await execFileAsync("adb", [
-			"-s",
-			deviceId,
-			"shell",
-			"run-as",
-			packageName,
-			"cp",
-			remotePath,
-			STAGING_PATH,
-		]);
-		await execFileAsync("adb", ["-s", deviceId, "pull", STAGING_PATH, localPath]);
-		await execFileAsync("adb", ["-s", deviceId, "shell", "rm", STAGING_PATH]);
-		return readFile(localPath);
+		// Use exec-out + run-as cat to pipe file content directly (avoids SELinux cp block)
+		const { stdout } = await execFileAsync(
+			"adb",
+			["-s", deviceId, "exec-out", "run-as", packageName, "cat", remotePath],
+			{ encoding: "buffer" as BufferEncoding, maxBuffer: 100 * 1024 * 1024 },
+		);
+		return Buffer.from(stdout);
 	} catch (err) {
 		return handleRunAsError(err, packageName);
-	} finally {
-		await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
 	}
 }
 
@@ -137,16 +119,18 @@ export async function androidPushFile(
 ): Promise<void> {
 	guardDeviceId(deviceId);
 	try {
+		// Push to world-readable staging area first
 		await execFileAsync("adb", ["-s", deviceId, "push", localPath, STAGING_PATH]);
+		// Use sh -c with cat redirect inside run-as to avoid SELinux cp block
 		await execFileAsync("adb", [
 			"-s",
 			deviceId,
 			"shell",
 			"run-as",
 			packageName,
-			"cp",
-			STAGING_PATH,
-			remotePath,
+			"sh",
+			"-c",
+			`cat ${STAGING_PATH} > ${remotePath}`,
 		]);
 		await execFileAsync("adb", ["-s", deviceId, "shell", "rm", STAGING_PATH]);
 	} catch (err) {

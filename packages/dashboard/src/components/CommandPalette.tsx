@@ -131,8 +131,7 @@ export default function CommandPalette() {
 					? "Search for a location..."
 					: "";
 
-	const hideSearch =
-		activeAction && (currentStepType === "confirm" || currentStepType === "device-select");
+	const hideSearch = activeAction && currentStepType === "confirm";
 
 	return (
 		<Command.Dialog

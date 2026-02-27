@@ -6,15 +6,25 @@ import type { DeviceSelectStep } from "./types";
 
 interface DevicePickerProps {
 	step: DeviceSelectStep;
+	search: string;
 	onSelect: (deviceIds: string[], deviceNames: string[]) => void;
 }
 
 const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 
-export default function DevicePicker({ step, onSelect }: DevicePickerProps) {
+export default function DevicePicker({ step, search, onSelect }: DevicePickerProps) {
 	const devices = useDeviceStore((s) => s.devices);
 	const booted = devices.filter((d) => d.state === "booted");
-	const filtered = step.filter ? booted.filter(step.filter) : booted;
+	const stepFiltered = step.filter ? booted.filter(step.filter) : booted;
+	const query = search.toLowerCase().trim();
+	const filtered = query
+		? stepFiltered.filter(
+				(d) =>
+					d.name.toLowerCase().includes(query) ||
+					d.platform.toLowerCase().includes(query) ||
+					(d.osVersion?.toLowerCase().includes(query) ?? false),
+			)
+		: stepFiltered;
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	function handleSelect(id: string, name: string) {

@@ -124,7 +124,11 @@ export default function StepRenderer({
 
 			<div className="transition-opacity duration-150">
 				{currentStep.type === "device-select" && (
-					<DevicePicker step={currentStep as DeviceSelectStep} onSelect={handleDeviceSelect} />
+					<DevicePicker
+						step={currentStep as DeviceSelectStep}
+						search={search}
+						onSelect={handleDeviceSelect}
+					/>
 				)}
 
 				{currentStep.type === "locale-select" && (

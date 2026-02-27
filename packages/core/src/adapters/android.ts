@@ -423,16 +423,27 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async setLocale(deviceId: string, locale: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for locale operations");
+			// setprop persist.sys.locale requires root — emulators have su
 			await execFileAsync("adb", [
 				"-s",
 				deviceId,
 				"shell",
+				"su",
+				"0",
 				"setprop",
 				"persist.sys.locale",
 				locale,
 			]);
-			await execFileAsync("adb", ["-s", deviceId, "shell", "setprop", "ctl.restart", "zygote"]);
-			console.log("Warning: locale change restarts the Android runtime");
+			await execFileAsync("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"su",
+				"0",
+				"setprop",
+				"ctl.restart",
+				"zygote",
+			]);
 		},
 
 		async setTalkBack(deviceId: string, enabled: boolean): Promise<void> {
@@ -480,6 +491,8 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"clipboard",
 				"settings",
 				"accessibility",
+				"fileSystem",
+				"database",
 			];
 		},
 	};
