@@ -312,7 +312,7 @@ Plans:
 | 22. CLI & Build DX | 1/1 | Complete    | 2026-02-27 |
 | **v1.5 — Public Release** | | | |
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
-| 22.2 Test Suite | 0/0 | Not Planned | - |
+| 22.2 Test Suite | 0/3 | Planned | - |
 | 22.3 NPM Package & README | 0/0 | Not Planned | - |
 
 ## Coverage Map
@@ -608,16 +608,19 @@ Plans:
 
 **Goal:** Comprehensive test coverage verifying correct adb/xcrun/simctl commands are invoked for each adapter method
 **Depends on:** Phase 22.1
+**Requirements:** TEST-01, TEST-02, TEST-03, TEST-04, TEST-05
 **Success Criteria** (what must be TRUE):
   1. Every iOS adapter method has tests verifying the correct `xcrun simctl` command and arguments are constructed
   2. Every Android adapter method has tests verifying the correct `adb` / `emulator` command and arguments are constructed
   3. Tests mock the exec/spawn layer and assert on command strings — no real devices needed to run tests
   4. `npm test` passes from a clean checkout with zero external dependencies
   5. Core utilities (device-manager, storage, verbose-exec) have unit tests
-**Plans:** 0 plans
+**Plans:** 3 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 22.2 to break down)
+- [ ] 22.2-01-PLAN.md — Test infrastructure (node:test + npm script) + iOS adapter tests
+- [ ] 22.2-02-PLAN.md — Android adapter tests
+- [ ] 22.2-03-PLAN.md — Core utility tests (device-manager, storage, verbose-exec)
 
 ### Phase 22.3: NPM Package & README (INSERTED)
 
