@@ -30,7 +30,9 @@ export type PlatformCapability =
 	| "database"
 	| "settings"
 	| "accessibility"
-	| "crashLogs";
+	| "crashLogs"
+	| "deviceLifecycle"
+	| "keychain";
 
 export interface CrashLogEntry {
 	id: string;
@@ -38,6 +40,18 @@ export interface CrashLogEntry {
 	timestamp: string;
 	path?: string;
 	preview: string;
+}
+
+export interface DeviceType {
+	identifier: string;
+	name: string;
+}
+
+export interface SimRuntime {
+	identifier: string;
+	name: string;
+	version: string;
+	isAvailable: boolean;
 }
 
 export interface AppInfo {
@@ -101,5 +115,13 @@ export interface PlatformAdapter {
 	setContentSize?(deviceId: string, size: string): Promise<void>;
 	setIncreaseContrast?(deviceId: string, enabled: boolean): Promise<void>;
 	setTalkBack?(deviceId: string, enabled: boolean): Promise<void>;
+	listDeviceTypes?(): Promise<DeviceType[]>;
+	listRuntimes?(): Promise<SimRuntime[]>;
+	createDevice?(name: string, deviceTypeId: string, runtimeId?: string): Promise<string>;
+	cloneDevice?(deviceId: string, newName: string): Promise<string>;
+	renameDevice?(deviceId: string, newName: string): Promise<void>;
+	deleteDevice?(deviceId: string): Promise<void>;
+	addKeychainCert?(deviceId: string, certData: Buffer, isRoot: boolean): Promise<void>;
+	resetKeychain?(deviceId: string): Promise<void>;
 	capabilities(): PlatformCapability[];
 }

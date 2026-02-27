@@ -3,11 +3,13 @@ export type {
 	CrashLogEntry,
 	Device,
 	DeviceState,
+	DeviceType,
 	LogEntry,
 	LogLevel,
 	Platform,
 	PlatformAdapter,
 	PlatformCapability,
+	SimRuntime,
 } from "./device.js";
 
 export type { SimvynModule } from "./module.js";

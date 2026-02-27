@@ -1,5 +1,5 @@
 import { type ChildProcess, execFile, spawn } from "node:child_process";
-import { mkdtemp, readdir, rm } from "node:fs/promises";
+import { mkdtemp, readdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -7,8 +7,10 @@ import type {
 	AppInfo,
 	Device,
 	DeviceState,
+	DeviceType,
 	PlatformAdapter,
 	PlatformCapability,
+	SimRuntime,
 } from "@simvyn/types";
 
 const execFileAsync = promisify(execFile);
@@ -360,6 +362,79 @@ export function createIosAdapter(): PlatformAdapter {
 
 		setTalkBack: undefined,
 
+		async listDeviceTypes(): Promise<DeviceType[]> {
+			const { stdout } = await execFileAsync("xcrun", ["simctl", "list", "devicetypes", "--json"]);
+			const data = JSON.parse(stdout);
+			return (data.devicetypes as { identifier: string; name: string }[])
+				.filter((dt) => dt.name)
+				.map((dt) => ({ identifier: dt.identifier, name: dt.name }));
+		},
+
+		async listRuntimes(): Promise<SimRuntime[]> {
+			const { stdout } = await execFileAsync("xcrun", ["simctl", "list", "runtimes", "--json"]);
+			const data = JSON.parse(stdout);
+			return (
+				data.runtimes as {
+					identifier: string;
+					name: string;
+					version?: string;
+					isAvailable: boolean;
+				}[]
+			).map((rt) => {
+				const versionMatch = rt.name.match(/[\d.]+$/);
+				return {
+					identifier: rt.identifier,
+					name: rt.name,
+					version: rt.version ?? versionMatch?.[0] ?? "unknown",
+					isAvailable: rt.isAvailable,
+				};
+			});
+		},
+
+		async createDevice(name: string, deviceTypeId: string, runtimeId?: string): Promise<string> {
+			const args = ["simctl", "create", name, deviceTypeId];
+			if (runtimeId) args.push(runtimeId);
+			const { stdout } = await execFileAsync("xcrun", args);
+			return stdout.trim();
+		},
+
+		async cloneDevice(deviceId: string, newName: string): Promise<string> {
+			const { stdout } = await execFileAsync("xcrun", ["simctl", "clone", deviceId, newName]);
+			return stdout.trim();
+		},
+
+		async renameDevice(deviceId: string, newName: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "rename", deviceId, newName]);
+		},
+
+		async deleteDevice(deviceId: string): Promise<void> {
+			try {
+				await execFileAsync("xcrun", ["simctl", "delete", deviceId]);
+			} catch (err) {
+				const msg = (err as Error).message ?? "";
+				if (msg.includes("Invalid device state")) {
+					throw new Error("Device must be shut down before deleting");
+				}
+				throw err;
+			}
+		},
+
+		async addKeychainCert(deviceId: string, certData: Buffer, isRoot: boolean): Promise<void> {
+			const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-cert-"));
+			const certPath = join(tmpDir, "cert.pem");
+			try {
+				await writeFile(certPath, certData);
+				const subcmd = isRoot ? "add-root-cert" : "add-cert";
+				await execFileAsync("xcrun", ["simctl", "keychain", deviceId, subcmd, certPath]);
+			} finally {
+				await rm(tmpDir, { recursive: true, force: true });
+			}
+		},
+
+		async resetKeychain(deviceId: string): Promise<void> {
+			await execFileAsync("xcrun", ["simctl", "keychain", deviceId, "reset"]);
+		},
+
 		capabilities(): PlatformCapability[] {
 			return [
 				"setLocation",
@@ -377,6 +452,8 @@ export function createIosAdapter(): PlatformAdapter {
 				"appManagement",
 				"settings",
 				"accessibility",
+				"deviceLifecycle",
+				"keychain",
 			];
 		},
 	};
