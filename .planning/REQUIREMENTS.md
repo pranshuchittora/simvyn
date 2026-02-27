@@ -525,11 +525,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### NPM Package & README
 
-- [ ] **NPM-01**: Running `npx simvyn` installs and launches the tool correctly
+- [x] **NPM-01**: Running `npx simvyn` installs and launches the tool correctly
 - [x] **NPM-02**: README.md has the simvyn logo (large, centered), package name, tagline, feature list, installation instructions, usage examples, and screenshots
 - [ ] **NPM-03**: GitHub Actions workflow publishes to npm on version tag push (matching react-native-duckdb pattern with `npm publish --provenance`)
-- [ ] **NPM-04**: All internal `package.json` files have `"private": true`; only the CLI package is publishable
-- [ ] **NPM-05**: Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
+- [x] **NPM-04**: All internal `package.json` files have `"private": true`; only the CLI package is publishable
+- [x] **NPM-05**: Package tarball (`npm pack --dry-run`) contains only intended files (no test fixtures, planning docs, etc.)
 
 ## v1.5 Traceability
 
@@ -540,11 +540,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | TEST-03 | Phase 22.2 | Complete |
 | TEST-04 | Phase 22.2 | Complete |
 | TEST-05 | Phase 22.2 | Complete |
-| NPM-01 | Phase 22.3 | Pending |
+| NPM-01 | Phase 22.3 | Complete |
 | NPM-02 | Phase 22.3 | Complete |
 | NPM-03 | Phase 22.3 | Pending |
-| NPM-04 | Phase 22.3 | Pending |
-| NPM-05 | Phase 22.3 | Pending |
+| NPM-04 | Phase 22.3 | Complete |
+| NPM-05 | Phase 22.3 | Complete |
 
 **Coverage:**
 - v1.5 requirements: 10 total (5 test suite + 5 npm package)
