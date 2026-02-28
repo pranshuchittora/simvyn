@@ -27,5 +27,6 @@ export default defineConfig({
 		"@xmldom/xmldom",
 		"commander",
 		"open",
+		"cfonts",
 	],
 });

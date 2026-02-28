@@ -50,6 +50,7 @@
 		"@tmcw/togeojson": "^7.1.2",
 		"@xmldom/xmldom": "^0.8.11",
 		"better-sqlite3": "^12.6.2",
+		"cfonts": "^3.3.1",
 		"commander": "^14",
 		"fastify": "^5.7.4",
 		"fastify-plugin": "^5.1.0",

@@ -45,7 +45,22 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 	await app.listen({ port, host });
 
 	const url = `http://${host}:${port}`;
-	console.log(`\nsimvyn running at ${url}\n`);
+
+	try {
+		const mod = await import("cfonts");
+		const cfonts = mod.default ?? mod;
+		cfonts.say("simvyn", {
+			font: "simple3d",
+			gradient: ["#FF6B9D", "#C44569"],
+			transitionGradient: true,
+			space: false,
+			letterSpacing: 2,
+		});
+	} catch {
+		console.log("\n  simvyn\n");
+	}
+
+	console.log(`  running at ${url}\n`);
 
 	if (shouldOpen) {
 		try {
@@ -58,7 +73,9 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 	}
 
 	const shutdown = async () => {
-		console.log("\nShutting down...");
+		const P = "\x1b[35m";
+		const R = "\x1b[0m";
+		console.log(`\n${P}  /\\_/\\  ~${R}\n${P} ( o.o )  bye!${R}\n${P}  > ^ <${R}\n`);
 		await app.close();
 		process.exit(0);
 	};
