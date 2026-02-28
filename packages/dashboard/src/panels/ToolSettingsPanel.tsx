@@ -32,7 +32,7 @@ function ToolSettingsPanel() {
 
 	const devices = useDeviceStore((s) => s.devices);
 	const modules = useModuleStore((s) => s.modules);
-	const version = modules[0]?.version ?? "unknown";
+	const version: string = __APP_VERSION__;
 
 	const fetchStorage = useCallback(() => {
 		fetch("/api/tool-settings/storage")
