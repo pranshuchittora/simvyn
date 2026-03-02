@@ -38,17 +38,20 @@ export default function SearchBar() {
 				if (!res.ok) return;
 				const data = await res.json();
 				const results: SearchResult[] = data.map(
-					(r: {
-						place_id: number;
-						lat: string;
-						lon: string;
-						display_name: string;
-						type: string;
-					}) => ({
-						placeId: r.place_id,
-						lat: Number.parseFloat(r.lat),
-						lon: Number.parseFloat(r.lon),
-						displayName: r.display_name,
+					(
+						r: {
+							displayName: string;
+							lat: number;
+							lon: number;
+							type: string;
+							importance: number;
+						},
+						i: number,
+					) => ({
+						placeId: i,
+						lat: r.lat,
+						lon: r.lon,
+						displayName: r.displayName,
 						type: r.type,
 					}),
 				);
