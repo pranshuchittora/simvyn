@@ -1,5 +1,5 @@
 import { Command } from "cmdk";
-import { Clock, Search } from "lucide-react";
+import { Clock, Home, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { create } from "zustand";
@@ -224,6 +224,22 @@ export default function CommandPalette() {
 						</Command.Group>
 						<Command.Separator />
 						<Command.Group heading="Pages">
+							<Command.Item
+								key="__home"
+								value="Home"
+								keywords={["home", "dashboard", "landing", "welcome"]}
+								onSelect={() => {
+									pushRecent({ id: "mod:__home", type: "module", label: "Home" });
+									navigate("/");
+									close();
+								}}
+							>
+								<Home size={18} />
+								<div className="cmdk-item-text">
+									<span>Home</span>
+									<span className="cmdk-item-description">Go to the home screen</span>
+								</div>
+							</Command.Item>
 							{modules.map((mod) => {
 								const Icon = moduleIconMap[mod.name];
 								const label = moduleLabelMap[mod.name] ?? mod.name;

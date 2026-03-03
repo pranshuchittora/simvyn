@@ -219,7 +219,9 @@ function ParameterInput({
 				placeholder={step.placeholder ?? step.label}
 				className="w-full bg-white/5 border border-glass-border rounded-lg px-3 py-2 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-accent-blue"
 			/>
-			<p className="text-[10px] text-text-muted mt-2 px-1">Press Enter to continue</p>
+			<p className="text-[10px] text-text-muted mt-2 px-1">
+				Press <kbd className="cmdk-kbd">↵</kbd> to continue
+			</p>
 		</div>
 	);
 }
@@ -237,19 +239,33 @@ function ConfirmView({
 }) {
 	const message = typeof step.message === "function" ? step.message(context) : step.message;
 
+	useEffect(() => {
+		function onKeyDown(e: KeyboardEvent) {
+			if (e.key === "Enter") {
+				e.preventDefault();
+				onConfirm();
+			} else if (e.key === "Escape") {
+				e.preventDefault();
+				onCancel();
+			}
+		}
+		window.addEventListener("keydown", onKeyDown);
+		return () => window.removeEventListener("keydown", onKeyDown);
+	}, [onConfirm, onCancel]);
+
 	return (
 		<div className="flex flex-col items-center gap-4 px-6 py-8">
 			<p className="text-sm text-text-primary text-center leading-relaxed">{message}</p>
 			<div className="flex gap-3">
 				<button type="button" className="glass-button text-xs px-4 py-2" onClick={onCancel}>
-					Cancel
+					Cancel <kbd className="cmdk-kbd">Esc</kbd>
 				</button>
 				<button
 					type="button"
 					className={`text-xs px-4 py-2 ${step.destructive ? "glass-button-destructive" : "glass-button-primary"}`}
 					onClick={onConfirm}
 				>
-					{step.destructive ? "Delete" : "Confirm"}
+					{step.destructive ? "Delete" : "Confirm"} <kbd className="cmdk-kbd">↵</kbd>
 				</button>
 			</div>
 		</div>

@@ -2,10 +2,12 @@ import { setVerbose } from "@simvyn/core";
 import { startServer } from "@simvyn/server";
 import type { SimvynModule } from "@simvyn/types";
 import type { Command } from "commander";
+import { checkForUpdate } from "../update-check.js";
 
 interface StartContext {
 	dashboardDir: string;
 	modules: SimvynModule[];
+	version: string;
 }
 
 async function runStart(
@@ -20,6 +22,28 @@ async function runStart(
 		open: cliOpts.open,
 		dashboardDir: ctx.dashboardDir,
 		modules: ctx.modules,
+	});
+
+	// Non-blocking update check after server is ready
+	checkForUpdate(ctx.version).then((result) => {
+		if (!result || !result.needsUpdate) return;
+		const dim = "\x1b[2m";
+		const yellow = "\x1b[33m";
+		const green = "\x1b[32m";
+		const cyan = "\x1b[36m";
+		const reset = "\x1b[0m";
+		console.log();
+		console.log(`${dim}  ╭──────────────────────────────────────────╮${reset}`);
+		console.log(`${dim}  │                                          │${reset}`);
+		console.log(
+			`${dim}  │${reset}  ${yellow}Update available:${reset} ${dim}${ctx.version}${reset} → ${green}${result.latest}${reset}       ${dim}│${reset}`,
+		);
+		console.log(
+			`${dim}  │${reset}  Run ${cyan}simvyn upgrade${reset} to update           ${dim}│${reset}`,
+		);
+		console.log(`${dim}  │                                          │${reset}`);
+		console.log(`${dim}  ╰──────────────────────────────────────────╯${reset}`);
+		console.log();
 	});
 }
 

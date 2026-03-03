@@ -110,7 +110,7 @@ export default function DevicePicker({ step, search, onSelect }: DevicePickerPro
 							className="glass-button-primary text-xs px-3 py-1.5"
 							onClick={handleApply}
 						>
-							Apply ({selected.size})
+							Apply ({selected.size}) <kbd className="cmdk-kbd">{isMac ? "⌘" : "Ctrl+"}↵</kbd>
 						</button>
 					)}
 				</div>

@@ -1,3 +1,4 @@
+import { execSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
@@ -7,6 +8,7 @@ import { Command } from "commander";
 import { allModules } from "./all-modules.js";
 import { registerDeviceCommand } from "./commands/device.js";
 import { registerStartCommand } from "./commands/start.js";
+import { checkForUpdate } from "./update-check.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
@@ -27,8 +29,43 @@ let dashboardDir = join(__dirname, "dashboard");
 if (!existsSync(dashboardDir)) {
 	dashboardDir = resolve(__dirname, "..", "..", "..", "dist", "dashboard");
 }
-registerStartCommand(program, { dashboardDir, modules: allModules });
+registerStartCommand(program, { dashboardDir, modules: allModules, version: pkg.version });
 registerDeviceCommand(program);
+
+// Upgrade command
+program
+	.command("upgrade")
+	.description("Upgrade simvyn to the latest version")
+	.action(async () => {
+		const cyan = "\x1b[36m";
+		const green = "\x1b[32m";
+		const dim = "\x1b[2m";
+		const reset = "\x1b[0m";
+
+		console.log(`${dim}Checking for updates...${reset}`);
+		const result = await checkForUpdate(pkg.version);
+
+		if (!result) {
+			console.log("Could not reach npm registry. Check your internet connection.");
+			process.exitCode = 1;
+			return;
+		}
+		if (!result.needsUpdate) {
+			console.log(`${green}Already on the latest version${reset} ${dim}(${pkg.version})${reset}`);
+			return;
+		}
+
+		console.log(`Upgrading ${dim}${pkg.version}${reset} → ${green}${result.latest}${reset}\n`);
+		try {
+			execSync(`npm install -g simvyn@${result.latest}`, { stdio: "inherit" });
+			console.log(`\n${green}Successfully upgraded to ${result.latest}${reset}`);
+		} catch {
+			console.error(
+				`\n${cyan}npm install failed.${reset} Try manually: ${cyan}npm install -g simvyn@latest${reset}`,
+			);
+			process.exitCode = 1;
+		}
+	});
 
 // Register CLI commands from all modules
 for (const mod of allModules) {

@@ -1,4 +1,5 @@
 import type { LogLevel } from "@simvyn/types";
+import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { Virtuoso, type VirtuosoHandle } from "react-virtuoso";
 import { filterEntries, useLogStore } from "./stores/log-store";
@@ -54,6 +55,30 @@ export default function LogList({ onLoadMore }: LogListProps) {
 		});
 	}, [entries.length]);
 
+	const LoadMoreHeader = useCallback(
+		() =>
+			hasMore ? (
+				<div className="flex justify-center py-2">
+					<button
+						type="button"
+						className="glass-button text-xs flex items-center gap-1.5"
+						onClick={onLoadMore}
+						disabled={isLoadingHistory}
+					>
+						{isLoadingHistory ? (
+							<>
+								<Loader2 size={12} className="animate-spin" />
+								Loading...
+							</>
+						) : (
+							"Load older logs"
+						)}
+					</button>
+				</div>
+			) : null,
+		[hasMore, isLoadingHistory, onLoadMore],
+	);
+
 	if (entries.length === 0) {
 		return (
 			<div className="glass-empty-state h-full flex items-center justify-center">
@@ -69,15 +94,9 @@ export default function LogList({ onLoadMore }: LogListProps) {
 				firstItemIndex={firstItemIndex}
 				initialTopMostItemIndex={entries.length - 1}
 				data={entries}
-				startReached={() => {
-					if (hasMore && !isLoadingHistory) {
-						onLoadMore();
-					}
-				}}
+				components={{ Header: LoadMoreHeader }}
 				followOutput={() => (locked ? "auto" : false)}
-				atBottomStateChange={(bottom) => {
-					if (!bottom) setLocked(false);
-				}}
+				atBottomStateChange={setLocked}
 				atBottomThreshold={100}
 				increaseViewportBy={200}
 				computeItemKey={(index, entry) => `${entry.timestamp}-${entry.pid}-${index}`}
