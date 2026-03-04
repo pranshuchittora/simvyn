@@ -42,3 +42,33 @@ export interface Collection {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export type DeviceStepStatus = "pending" | "running" | "success" | "failed" | "skipped";
+
+export interface DeviceStepResult {
+	deviceId: string;
+	deviceName: string;
+	status: DeviceStepStatus;
+	error?: string;
+	startedAt?: string;
+	completedAt?: string;
+}
+
+export interface StepExecution {
+	stepId: string;
+	actionId: string;
+	label: string;
+	devices: DeviceStepResult[];
+}
+
+export interface ExecutionRun {
+	runId: string;
+	collectionId: string;
+	collectionName: string;
+	deviceIds: string[];
+	status: "running" | "completed" | "failed" | "cancelled";
+	startedAt: string;
+	completedAt?: string;
+	currentStepIndex: number;
+	steps: StepExecution[];
+}

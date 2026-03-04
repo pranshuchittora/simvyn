@@ -20,6 +20,10 @@ export type {
 	ActionParamType,
 	Collection,
 	CollectionStep,
+	DeviceStepResult,
+	DeviceStepStatus,
+	ExecutionRun,
+	StepExecution,
 } from "./collections.js";
 export type { SimvynModule } from "./module.js";
 export type { ModuleStorage } from "./storage.js";
