@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Milestone v1.5 — Public Release
+**Current Focus:** Milestone v1.6 — Collections & Documentation
 
 ## Current Position
 
-**Phase:** 22.3-npm-package-readme
-**Plan:** 3 of 3 complete
-**Status:** Milestone complete
-**Progress:** [█████████░] 93%
+**Phase:** Not started (defining requirements)
+**Plan:** —
+**Status:** Defining requirements
+**Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
 
@@ -321,10 +321,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-02-27T15:16:47.239Z
-**Stopped at:** Completed 22.3-03-PLAN.md
-**Context for next session:** Phase 22.3 complete (3/3 plans). README, package.json, and GitHub Actions release workflow all done. Phase ready for transition.
+**Last session:** 2026-03-04
+**Stopped at:** Starting milestone v1.6 — Collections & Documentation
+**Context for next session:** Milestone v1.6 started. Defining requirements for Collections feature (reusable device action sets) and Getting Started documentation.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 22.3 plan 03 complete (Release workflow)*
+*Last updated: 2026-03-04 — Milestone v1.6 started*

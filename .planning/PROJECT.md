@@ -41,15 +41,17 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 - [ ] Published as `simvyn` npm package, invocable via `npx simvyn`
 - [ ] Cross-platform: macOS (full iOS+Android), Linux (Android-only, graceful degradation when simctl unavailable)
 
-## Current Milestone: v1.4 Quality of Life
+## Current Milestone: v1.6 Collections & Documentation
 
-**Goal:** Consolidate settings panels, improve open source developer experience with readable builds and verbose CLI logging, and polish dock hover behavior.
+**Goal:** Add reusable device action collections for batch configuration of multiple devices, and comprehensive getting started documentation with per-feature coverage.
 
 **Target features:**
-- Merge Dev Utils and Device Settings into single "Device Settings" panel
-- Open source friendly build — no minification, source maps for readable error traces
-- Verbose CLI mode — `--verbose` flag logs all adb/simctl commands with colored platform prefixes
-- Dock hover polish — tooltip label instead of scale animation
+- Collections module — define reusable sets of device actions (dark mode, location, locale, app launch, etc.) and apply to one or more devices
+- Step-by-step collection builder with categorized action list and per-step parameter configuration
+- Apply modal with device picker, real-time per-step execution feedback (spinner/check/fail/skip), platform compatibility warnings
+- Platform badges (Apple/Android logo) on steps that are platform-specific, with pre-apply warnings and skip-on-execute behavior
+- Command palette integration for quick collection apply
+- Getting started documentation in README.md — per-feature sections with screenshot placeholders
 
 ### Out of Scope
 
@@ -112,4 +114,4 @@ Developers can control and inspect any iOS simulator or Android emulator/device 
 | File-based persistence at ~/.simvyn/ | Simple, no database dependency; JSON files like sim-location | — Pending |
 
 ---
-*Last updated: 2026-02-27 after milestone v1.4 start*
+*Last updated: 2026-03-04 after milestone v1.6 start*
