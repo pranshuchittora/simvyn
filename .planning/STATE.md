@@ -149,6 +149,7 @@
 | Phase 26 P01 | 2min | 2 tasks | 5 files |
 | Phase 27 P01 | 1min | 1 tasks | 1 files |
 | Phase 28 P02 | 2min | 1 tasks | 3 files |
+| Phase 28 P01 | 7min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -341,6 +342,9 @@
 - Phase 22.3 inserted after Phase 22: NPM Package & README (URGENT) — README with logo, npx support, npm publish CI, make package public
 - Phase 28 added: Real Device Support — explore and implement extending all functionality for real Android & iOS devices
 - isAndroidPhysical() uses negative prefix check (!emulator- && !avd:) — physical serials are varied, emulator/AVD prefixes are fixed
+- iOS physical devices use `physical:` prefix on CoreDevice UUIDs — unambiguous branching via `isPhysicalDevice(id)`
+- devicectlJson helper uses temp-file JSON output per Apple's mandated pattern — no stdout parsing
+- terminateApp on physical iOS devices uses two-step: list processes → find by bundleId → terminate by PID
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -356,8 +360,8 @@
 ## Session Continuity
 
 **Last session:** 2026-03-05
-**Stopped at:** Completed 28-02-PLAN.md
-**Context for next session:** Phase 28 plan 02 complete (Android physical device guards). Plan 03 next (iOS real device adapter integration via devicectl).
+**Stopped at:** Completed 28-01-PLAN.md
+**Context for next session:** Phase 28 plans 01 and 02 complete. Plan 03 next (capabilities endpoint device awareness + device selector grouping).
 
 ---
 *State initialized: 2026-02-26*
