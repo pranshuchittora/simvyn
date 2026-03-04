@@ -52,9 +52,12 @@ export async function stopRecording(
 		throw new Error(`Stop recording not supported`);
 	}
 
-	await adapter.stopRecording(rec.process, rec.deviceId, rec.outputPath);
+	try {
+		await adapter.stopRecording(rec.process, rec.deviceId, rec.outputPath);
+	} finally {
+		recordings.delete(deviceId);
+	}
 	const duration = Math.round((Date.now() - rec.startTime) / 1000);
-	recordings.delete(deviceId);
 
 	return { outputPath: rec.outputPath, duration };
 }

@@ -252,10 +252,14 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async stopRecording(child: ChildProcess) {
+			if (child.exitCode !== null) return;
 			child.kill("SIGINT");
-			await new Promise<void>((resolve, reject) => {
-				child.on("close", () => resolve());
-				child.on("error", reject);
+			await new Promise<void>((resolve) => {
+				const timeout = setTimeout(resolve, 5000);
+				child.on("close", () => {
+					clearTimeout(timeout);
+					resolve();
+				});
 			});
 		},
 

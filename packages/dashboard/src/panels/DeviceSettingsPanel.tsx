@@ -1,6 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { LocaleSearchPicker } from "../components/LocaleSearchPicker";
 import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
 import BatterySimulationSection from "./device-settings/BatterySimulationSection";
@@ -168,13 +169,7 @@ function DeviceSettingsPanel() {
 								Locale
 							</h2>
 							<div className="flex items-center gap-2">
-								<input
-									type="text"
-									value={locale}
-									onChange={(e) => setLocale(e.target.value)}
-									placeholder="en_US, ja_JP, fr_FR..."
-									className="glass-input flex-1 text-xs"
-								/>
+								<LocaleSearchPicker value={locale} onChange={setLocale} className="flex-1" />
 								<button
 									type="button"
 									onClick={applyLocale}

@@ -179,7 +179,11 @@ export async function screenshotRoutes(fastify: FastifyInstance) {
 				await stat(filePath);
 				const ext = filename.endsWith(".mp4") ? "video/mp4" : "image/png";
 				reply.header("Content-Type", ext);
-				reply.header("Content-Disposition", `attachment; filename="${filename}"`);
+				const disposition =
+					req.query && (req.query as Record<string, string>).download === "1"
+						? "attachment"
+						: "inline";
+				reply.header("Content-Disposition", `${disposition}; filename="${filename}"`);
 				return reply.send(createReadStream(filePath));
 			} catch {
 				// not in this dir, try next

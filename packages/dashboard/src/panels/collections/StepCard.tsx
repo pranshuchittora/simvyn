@@ -1,5 +1,6 @@
 import type { CollectionStep } from "@simvyn/types";
 import { GripVertical, X } from "lucide-react";
+import { LocaleSearchPicker } from "../../components/LocaleSearchPicker";
 import type { SerializedAction } from "./stores/collections-store";
 
 const IOS_ONLY_ACTIONS = new Set([
@@ -96,15 +97,26 @@ export function StepCard({ step, action, index, onRemove, onUpdateParams }: Step
 									))}
 								</select>
 							)}
-							{param.type === "string" && (
-								<input
-									type="text"
-									className="glass-input text-xs py-1 px-2 w-full"
-									placeholder={param.placeholder}
-									value={(step.params[param.key] as string) ?? (param.defaultValue as string) ?? ""}
-									onChange={(e) => handleParamChange(param.key, e.target.value)}
-								/>
-							)}
+							{param.type === "string" &&
+								step.actionId === "set-locale" &&
+								param.key === "locale" && (
+									<LocaleSearchPicker
+										value={(step.params[param.key] as string) ?? ""}
+										onChange={(code) => handleParamChange(param.key, code)}
+									/>
+								)}
+							{param.type === "string" &&
+								!(step.actionId === "set-locale" && param.key === "locale") && (
+									<input
+										type="text"
+										className="glass-input text-xs py-1 px-2 w-full"
+										placeholder={param.placeholder}
+										value={
+											(step.params[param.key] as string) ?? (param.defaultValue as string) ?? ""
+										}
+										onChange={(e) => handleParamChange(param.key, e.target.value)}
+									/>
+								)}
 							{param.type === "number" && (
 								<input
 									type="number"

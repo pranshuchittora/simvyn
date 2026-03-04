@@ -25,6 +25,11 @@ export function getStarterCollections(): Collection[] {
 					actionId: "set-locale",
 					params: { locale: "ja_JP" },
 				},
+				{
+					id: "b0000000-0000-4000-8000-000000000008",
+					actionId: "restart-device",
+					params: {},
+				},
 			],
 			schemaVersion: 1,
 			createdAt: FIXED_DATE,
@@ -71,6 +76,11 @@ export function getStarterCollections(): Collection[] {
 				{
 					id: "b0000000-0000-4000-8000-000000000007",
 					actionId: "clear-location",
+					params: {},
+				},
+				{
+					id: "b0000000-0000-4000-8000-000000000009",
+					actionId: "restart-device",
 					params: {},
 				},
 			],

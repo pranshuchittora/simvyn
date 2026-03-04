@@ -124,7 +124,12 @@ export const useScreenshotStore = create<ScreenshotStore>((set, _get) => ({
 	},
 
 	downloadFile: (filename) => {
-		window.open(`/api/modules/screenshot/download/${filename}`, "_blank");
+		const a = document.createElement("a");
+		a.href = `/api/modules/screenshot/download/${filename}?download=1`;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
 	},
 
 	copyToClipboard: async (filename) => {

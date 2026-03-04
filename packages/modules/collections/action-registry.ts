@@ -280,6 +280,18 @@ export const actionRegistry: ActionDescriptor[] = [
 		isSupported: () => true,
 	},
 	{
+		id: "restart-device",
+		label: "Restart Device",
+		description: "Shutdown and reboot the device",
+		module: "device-management",
+		params: [],
+		async execute(adapter, deviceId) {
+			await adapter.shutdown(deviceId);
+			await adapter.boot(deviceId);
+		},
+		isSupported: () => true,
+	},
+	{
 		id: "erase-device",
 		label: "Erase Device",
 		description: "Erase all content and settings on the device",

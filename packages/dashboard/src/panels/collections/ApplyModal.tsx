@@ -177,7 +177,10 @@ export function ApplyModal({ collection, actions, open, onClose }: ApplyModalPro
 			onKeyDown={() => {}}
 			role="presentation"
 		>
-			<div className="glass-panel max-w-lg w-full max-h-[80vh] overflow-y-auto mx-4">
+			<div
+				className="glass-panel max-w-lg w-full max-h-[80vh] overflow-y-auto mx-4"
+				style={{ background: "rgba(22, 22, 32, 0.95)", backdropFilter: "blur(24px) saturate(1.3)" }}
+			>
 				<div className="flex items-center justify-between p-4 border-b border-glass-border">
 					<span className="text-base font-medium text-text-primary">{collection.name}</span>
 					<button
