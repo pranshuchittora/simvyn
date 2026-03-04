@@ -2,6 +2,7 @@ import type { SimvynModule } from "@simvyn/types";
 
 import appManagement from "../../modules/app-management/manifest.js";
 import clipboard from "../../modules/clipboard/manifest.js";
+import collections from "../../modules/collections/manifest.js";
 import crashLogs from "../../modules/crash-logs/manifest.js";
 import database from "../../modules/database/manifest.js";
 import deepLinks from "../../modules/deep-links/manifest.js";
@@ -28,4 +29,5 @@ export const allModules: SimvynModule[] = [
 	crashLogs,
 	media,
 	clipboard,
+	collections,
 ];
