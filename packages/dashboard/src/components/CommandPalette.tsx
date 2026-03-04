@@ -3,6 +3,7 @@ import { Clock, Home, Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { create } from "zustand";
+import { useCollectionsStore } from "../panels/collections/stores/collections-store";
 import { useModuleStore } from "../stores/module-store";
 import { getActions } from "./command-palette/actions";
 import StepRenderer from "./command-palette/StepRenderer";
@@ -54,7 +55,14 @@ export default function CommandPalette() {
 	const [activeAction, setActiveAction] = useState<MultiStepAction | null>(null);
 	const [currentStepType, setCurrentStepType] = useState<string | null>(null);
 
-	const actions = useMemo(() => getActions(navigate), [navigate]);
+	const collections = useCollectionsStore((s) => s.collections);
+	const fetchCollections = useCollectionsStore((s) => s.fetchCollections);
+
+	useEffect(() => {
+		if (collections.length === 0) fetchCollections();
+	}, [collections.length, fetchCollections]);
+
+	const actions = useMemo(() => getActions(navigate, collections), [navigate, collections]);
 
 	useEffect(() => {
 		if (open) setRecent(getRecent());

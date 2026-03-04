@@ -4,6 +4,7 @@ import {
 	Download,
 	Eraser,
 	Globe,
+	Layers,
 	Link,
 	MapPin,
 	Moon,
@@ -17,7 +18,16 @@ import type { NavigateFunction } from "react-router";
 import { toast } from "sonner";
 import type { MultiStepAction } from "./types";
 
-export function getActions(navigate: NavigateFunction): MultiStepAction[] {
+interface CollectionRef {
+	id: string;
+	name: string;
+	steps: { actionId: string }[];
+}
+
+export function getActions(
+	navigate: NavigateFunction,
+	collections?: CollectionRef[],
+): MultiStepAction[] {
 	return [
 		// --- Device actions ---
 		{
@@ -402,5 +412,30 @@ export function getActions(navigate: NavigateFunction): MultiStepAction[] {
 				navigate("/app-management");
 			},
 		},
+
+		...(collections ?? []).map(
+			(col): MultiStepAction => ({
+				id: `collection:${col.id}`,
+				label: `Apply: ${col.name}`,
+				description: `Run ${col.steps.length} step collection`,
+				icon: <Layers size={18} />,
+				steps: [
+					{ id: "pick-devices", type: "device-select", label: "Select Devices", multi: true },
+				],
+				execute: async (ctx) => {
+					const res = await fetch(`/api/modules/collections/${col.id}/execute`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ deviceIds: ctx.selectedDeviceIds }),
+					});
+					if (res.ok) {
+						toast.success(`Applying "${col.name}"...`);
+					} else {
+						const data = await res.json().catch(() => ({ error: "Apply failed" }));
+						toast.error(data.error || "Apply failed");
+					}
+				},
+			}),
+		),
 	];
 }
