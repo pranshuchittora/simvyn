@@ -1,8 +1,9 @@
 import type { CollectionStep } from "@simvyn/types";
 import { Reorder } from "framer-motion";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Play, Plus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ActionPicker } from "./ActionPicker";
+import { ApplyModal } from "./ApplyModal";
 import { StepCard } from "./StepCard";
 import { useCollectionsStore } from "./stores/collections-store";
 
@@ -19,6 +20,7 @@ export function StepBuilder({ collectionId, onBack }: StepBuilderProps) {
 	const [steps, setSteps] = useState<CollectionStep[]>(collection?.steps ?? []);
 	const [name, setName] = useState(collection?.name ?? "");
 	const [showActionPicker, setShowActionPicker] = useState(false);
+	const [showApplyModal, setShowApplyModal] = useState(false);
 
 	const saveTimerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
@@ -124,6 +126,14 @@ export function StepBuilder({ collectionId, onBack }: StepBuilderProps) {
 				<span className="text-text-muted text-xs shrink-0">
 					{steps.length} step{steps.length !== 1 ? "s" : ""}
 				</span>
+				<button
+					type="button"
+					onClick={() => setShowApplyModal(true)}
+					className="glass-button-primary flex items-center gap-1.5"
+				>
+					<Play size={14} strokeWidth={1.8} />
+					Apply
+				</button>
 			</div>
 
 			<div className="relative">
@@ -163,6 +173,15 @@ export function StepBuilder({ collectionId, onBack }: StepBuilderProps) {
 						</Reorder.Item>
 					))}
 				</Reorder.Group>
+			)}
+
+			{collection && showApplyModal && (
+				<ApplyModal
+					collection={collection}
+					actions={actions}
+					open={showApplyModal}
+					onClose={() => setShowApplyModal(false)}
+				/>
 			)}
 		</div>
 	);

@@ -1,6 +1,8 @@
-import { Copy, Plus, Trash2 } from "lucide-react";
+import type { Collection } from "@simvyn/types";
+import { Copy, Play, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { registerPanel } from "../stores/panel-registry";
+import { ApplyModal } from "./collections/ApplyModal";
 import { StepBuilder } from "./collections/StepBuilder";
 import { useCollectionsStore } from "./collections/stores/collections-store";
 
@@ -22,6 +24,7 @@ function relativeTime(dateStr: string): string {
 function CollectionsPanel() {
 	const {
 		collections,
+		actions,
 		loading,
 		activeCollectionId,
 		fetchCollections,
@@ -34,6 +37,7 @@ function CollectionsPanel() {
 
 	const [showCreateForm, setShowCreateForm] = useState(false);
 	const [newName, setNewName] = useState("");
+	const [applyingCollection, setApplyingCollection] = useState<Collection | null>(null);
 
 	useEffect(() => {
 		fetchCollections();
@@ -153,6 +157,17 @@ function CollectionsPanel() {
 										type="button"
 										onClick={(e) => {
 											e.stopPropagation();
+											setApplyingCollection(collection);
+										}}
+										className="p-1.5 rounded text-text-muted hover:text-accent-blue transition-colors"
+										title="Apply"
+									>
+										<Play size={13} strokeWidth={1.8} />
+									</button>
+									<button
+										type="button"
+										onClick={(e) => {
+											e.stopPropagation();
 											duplicateCollection(collection.id);
 										}}
 										className="p-1.5 rounded text-text-muted hover:text-text-primary transition-colors"
@@ -176,6 +191,14 @@ function CollectionsPanel() {
 						</div>
 					))}
 				</div>
+			)}
+			{applyingCollection && (
+				<ApplyModal
+					collection={applyingCollection}
+					actions={actions}
+					open={!!applyingCollection}
+					onClose={() => setApplyingCollection(null)}
+				/>
 			)}
 		</div>
 	);
