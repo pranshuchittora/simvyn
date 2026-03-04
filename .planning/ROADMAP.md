@@ -50,7 +50,7 @@
 
 ### Milestone v1.6 — Collections & Documentation
 
-- [ ] **Phase 23: Collections Foundation** — Action registry, collection schema with versioning, storage, CRUD endpoints
+- [ ] **Phase 23: Collections Foundation** — Action registry, collection schema with versioning, storage, CRUD endpoints, CLI subcommands
 - [ ] **Phase 24: Execution Engine** — Server-side sequential step runner with parallel per-device execution, WS progress streaming, shared executor for CLI/dashboard parity
 - [ ] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration
 - [ ] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections
@@ -323,7 +323,7 @@ Plans:
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
 | 22.3 NPM Package & README | 3/3 | Complete    | 2026-02-27 |
 | **v1.6 — Collections & Documentation** | | | |
-| 23. Collections Foundation | 0/? | Not started | - |
+| 23. Collections Foundation | 0/2 | Not started | - |
 | 24. Execution Engine | 0/? | Not started | - |
 | 25. Collection Builder UI | 0/? | Not started | - |
 | 26. Apply Modal & Integration | 0/? | Not started | - |
@@ -664,7 +664,11 @@ Plans:
   3. User can duplicate an existing collection (creating a copy with a new name) and delete a collection with no orphaned data
   4. The action registry returns a typed catalog of all available device actions (dark mode, location, app launch, etc.) with parameter schemas and platform compatibility metadata
   5. Collection storage schema includes `schemaVersion: 1` field on every saved collection document
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 23-01-PLAN.md — Collection types, action registry (14 actions), module scaffold
+- [ ] 23-02-PLAN.md — CRUD routes, action catalog endpoint, CLI subcommands, module registration
 
 ### Phase 24: Execution Engine
 **Goal:** Users can apply a collection to one or more devices with real-time per-step feedback, graceful skip/fail handling, and execution timeouts
