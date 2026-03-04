@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 25 — Collection Builder UI
-**Plan:** 25-02 (Wave 2 of 2)
-**Status:** Executing
-**Progress:** [██████████] 96%
+**Phase:** 26 — Apply Modal & Integration
+**Plan:** 26-01
+**Status:** Ready
+**Progress:** [██████████] 97%
 
 ## Phase Overview
 
@@ -53,7 +53,7 @@
 | **v1.6 — Collections & Documentation** | |
 | 23. Collections Foundation | ✅ Complete (2/2 plans) |
 | 24. Execution Engine | ✅ Complete (2/2 plans) |
-| 25. Collection Builder UI | 🔄 Executing (1/2 plans) |
+| 25. Collection Builder UI | ✅ Complete (2/2 plans) |
 | 26. Apply Modal & Integration | ⏳ Not Planned |
 | 27. Documentation | ⏳ Not Planned |
 
@@ -142,6 +142,7 @@
 | Phase 24 P01 | 1min | 2 tasks | 3 files |
 | Phase 24 P02 | 2min | 2 tasks | 3 files |
 | Phase 25 P01 | 3min | 2 tasks | 5 files |
+| Phase 25 P02 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -305,6 +306,9 @@
 - Module-level activeRuns Map for concurrent execution tracking — auto-cleaned on complete/error callbacks
 - SerializedAction interface defined locally in dashboard store — mirrors server's stripped ActionDescriptor (no execute/isSupported)
 - Inline form for collection creation (not window.prompt) — consistent with DeepLinksPanel add-favorite pattern
+- Static iOS-only Set for platform badge display — set-status-bar, clear-status-bar, set-increase-contrast, set-content-size show Apple-only; all others show both
+- Debounced param saves via setTimeout/clearTimeout with useRef — 500ms delay prevents excessive PUT calls, no new dependencies
+- Inline Apple/Android SVG paths for platform badges — tiny silhouettes, no icon library dependency
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -344,8 +348,8 @@
 ## Session Continuity
 
 **Last session:** 2026-03-04
-**Stopped at:** Completed 25-01-PLAN.md
-**Context for next session:** Plan 25-01 complete — collections module registered in sidebar with Zustand store + list view panel. CRUD operations connected to REST API. Ready for Plan 25-02: step builder with action picker, drag-drop reorder, platform badges, parameter editors.
+**Stopped at:** Completed 25-02-PLAN.md
+**Context for next session:** Phase 25 complete — step builder with categorized action picker, Framer Motion drag-and-drop reorder, Apple/Android platform badges, and inline parameter editors (select, string, number, boolean). Ready for Phase 26 (Apply Modal & Integration).
 
 ---
 *State initialized: 2026-02-26*

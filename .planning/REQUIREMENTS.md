@@ -563,10 +563,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Collections - Builder
 
-- [ ] **CBLD-01**: User can add steps from a categorized action catalog (Device Settings, Location, App Management, Deep Links, Push, Media, Clipboard, Screenshot)
-- [ ] **CBLD-02**: Each step displays platform badges (Apple/Android logo) indicating which platforms support it
-- [ ] **CBLD-03**: User can reorder steps via drag-and-drop
-- [ ] **CBLD-04**: Each step has a parameter picker appropriate to its action type (locale picker, location picker, app picker, URL input, etc.)
+- [x] **CBLD-01**: User can add steps from a categorized action catalog (Device Settings, Location, App Management, Deep Links, Push, Media, Clipboard, Screenshot)
+- [x] **CBLD-02**: Each step displays platform badges (Apple/Android logo) indicating which platforms support it
+- [x] **CBLD-03**: User can reorder steps via drag-and-drop
+- [x] **CBLD-04**: Each step has a parameter picker appropriate to its action type (locale picker, location picker, app picker, URL input, etc.)
 
 ### Collections - Execution
 
@@ -612,10 +612,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COLL-03 | Phase 23 | Complete |
 | COLL-04 | Phase 23 | Complete |
 | COLL-05 | Phase 23 | Complete |
-| CBLD-01 | Phase 25 | Pending |
-| CBLD-02 | Phase 25 | Pending |
-| CBLD-03 | Phase 25 | Pending |
-| CBLD-04 | Phase 25 | Pending |
+| CBLD-01 | Phase 25 | Complete |
+| CBLD-02 | Phase 25 | Complete |
+| CBLD-03 | Phase 25 | Complete |
+| CBLD-04 | Phase 25 | Complete |
 | CEXE-01 | Phase 24 | Complete |
 | CEXE-02 | Phase 24 | Complete |
 | CEXE-03 | Phase 24 | Complete |

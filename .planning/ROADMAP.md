@@ -52,7 +52,7 @@
 
 - [x] **Phase 23: Collections Foundation** — Action registry, collection schema with versioning, storage, CRUD endpoints, CLI subcommands (completed 2026-03-04)
 - [x] **Phase 24: Execution Engine** — Server-side sequential step runner with parallel per-device execution, WS progress streaming, shared executor for CLI/dashboard parity (completed 2026-03-04)
-- [ ] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration
+- [x] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration (completed 2026-03-04)
 - [ ] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections
 - [ ] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference
 
@@ -325,7 +325,7 @@ Plans:
 | **v1.6 — Collections & Documentation** | | | |
 | 23. Collections Foundation | 2/2 | Complete    | 2026-03-04 |
 | 24. Execution Engine | 2/2 | Complete    | 2026-03-04 |
-| 25. Collection Builder UI | 0/2 | Not started | - |
+| 25. Collection Builder UI | 2/2 | Complete    | 2026-03-04 |
 | 26. Apply Modal & Integration | 0/? | Not started | - |
 | 27. Documentation | 0/? | Not started | - |
 
