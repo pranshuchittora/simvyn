@@ -1,5 +1,5 @@
 import type { ChildProcess } from "node:child_process";
-import { mkdir, mkdtemp, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import type {
@@ -74,6 +74,107 @@ function plistToJson(plistStr: string): Promise<string> {
 	});
 }
 
+// --- devicectl integration for physical iOS devices ---
+
+interface DevicectlDevice {
+	identifier: string;
+	hardwareProperties: {
+		reality: string;
+		marketingName: string;
+		platform: string;
+		udid: string;
+		deviceType: string;
+	};
+	deviceProperties: {
+		name: string;
+		osVersionNumber: string;
+		ddiServicesAvailable?: boolean;
+	};
+	connectionProperties: {
+		transportType: string;
+		tunnelState: string;
+		pairingState: string;
+	};
+}
+
+interface DevicectlListResult {
+	devices: DevicectlDevice[];
+}
+
+let hasDevicectl: boolean | null = null;
+
+async function checkDevicectl(): Promise<boolean> {
+	if (hasDevicectl !== null) return hasDevicectl;
+	try {
+		await verboseExec("xcrun", ["devicectl", "list", "devices", "--help"]);
+		hasDevicectl = true;
+	} catch {
+		hasDevicectl = false;
+	}
+	return hasDevicectl;
+}
+
+async function devicectlJson<T>(args: string[]): Promise<T> {
+	const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-dctl-"));
+	const jsonPath = join(tmpDir, "output.json");
+	try {
+		await verboseExec("xcrun", ["devicectl", ...args, "--json-output", jsonPath, "-q"]);
+		const raw = await readFile(jsonPath, "utf-8");
+		const parsed = JSON.parse(raw);
+		return parsed.result as T;
+	} finally {
+		await rm(tmpDir, { recursive: true, force: true });
+	}
+}
+
+export function isPhysicalDevice(id: string): boolean {
+	return id.startsWith("physical:");
+}
+
+export function stripPhysicalPrefix(id: string): string {
+	return id.replace("physical:", "");
+}
+
+async function listPhysicalDevices(): Promise<Device[]> {
+	if (!(await checkDevicectl())) return [];
+	try {
+		const result = await devicectlJson<DevicectlListResult>(["list", "devices"]);
+		return result.devices
+			.filter((d) => d.hardwareProperties.reality === "physical")
+			.filter((d) => d.hardwareProperties.platform === "iOS")
+			.map((d) => ({
+				id: `physical:${d.identifier}`,
+				name: d.deviceProperties.name,
+				platform: "ios" as const,
+				state: "booted" as const,
+				osVersion: `iOS ${d.deviceProperties.osVersionNumber}`,
+				deviceType: d.hardwareProperties.marketingName,
+				isAvailable: true,
+			}));
+	} catch (err) {
+		console.warn("Failed to list physical iOS devices:", (err as Error).message);
+		return [];
+	}
+}
+
+export interface DevicectlStatus {
+	available: boolean;
+	version?: string;
+	error?: string;
+}
+
+export async function getDevicectlStatus(): Promise<DevicectlStatus> {
+	try {
+		await verboseExec("xcrun", ["devicectl", "list", "devices", "--help"]);
+		return { available: true };
+	} catch {
+		return {
+			available: false,
+			error: "devicectl not found — Xcode 15+ is required for physical iOS device support",
+		};
+	}
+}
+
 export function createIosAdapter(): PlatformAdapter {
 	return {
 		platform: "ios",
@@ -88,10 +189,10 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async listDevices(): Promise<Device[]> {
+			const devices: Device[] = [];
 			try {
 				const { stdout } = await verboseExec("xcrun", ["simctl", "list", "devices", "--json"]);
 				const data = JSON.parse(stdout);
-				const devices: Device[] = [];
 
 				for (const [runtimeKey, runtimeDevices] of Object.entries(data.devices)) {
 					const osVersion = parseOsVersion(runtimeKey);
@@ -108,15 +209,18 @@ export function createIosAdapter(): PlatformAdapter {
 						});
 					}
 				}
-
-				return devices;
 			} catch (err) {
 				console.warn("Failed to list iOS simulators:", (err as Error).message);
-				return [];
 			}
+
+			const physical = await listPhysicalDevices();
+			devices.push(...physical);
+
+			return devices;
 		},
 
 		async boot(id: string): Promise<void> {
+			if (isPhysicalDevice(id)) return; // physical devices don't need booting
 			try {
 				await verboseExec("xcrun", ["simctl", "boot", id]);
 			} catch (err) {
@@ -126,6 +230,7 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async shutdown(id: string): Promise<void> {
+			if (isPhysicalDevice(id)) throw new Error("Shutdown is not available for physical devices");
 			try {
 				await verboseExec("xcrun", ["simctl", "shutdown", id]);
 			} catch (err) {
@@ -147,6 +252,30 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async listApps(deviceId: string): Promise<AppInfo[]> {
+			if (isPhysicalDevice(deviceId)) {
+				interface DevicectlAppsResult {
+					apps: Array<{
+						bundleIdentifier: string;
+						bundleDisplayName?: string;
+						bundleName?: string;
+						bundleShortVersion?: string;
+						bundleVersion?: string;
+					}>;
+				}
+				const result = await devicectlJson<DevicectlAppsResult>([
+					"device",
+					"info",
+					"apps",
+					"--device",
+					stripPhysicalPrefix(deviceId),
+				]);
+				return (result.apps ?? []).map((app) => ({
+					bundleId: app.bundleIdentifier,
+					name: app.bundleDisplayName ?? app.bundleName ?? app.bundleIdentifier,
+					version: app.bundleShortVersion ?? app.bundleVersion ?? "unknown",
+					type: "user" as const,
+				}));
+			}
 			const { stdout: plist } = await verboseExec("xcrun", ["simctl", "listapps", deviceId]);
 			const json = await plistToJson(plist);
 			const data = JSON.parse(json) as Record<
@@ -173,6 +302,19 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async installApp(deviceId: string, appPath: string): Promise<void> {
+			if (isPhysicalDevice(deviceId)) {
+				await verboseExec("xcrun", [
+					"devicectl",
+					"device",
+					"install",
+					"app",
+					"--device",
+					stripPhysicalPrefix(deviceId),
+					appPath,
+					"-q",
+				]);
+				return;
+			}
 			let installPath = appPath;
 			let tmpDir: string | undefined;
 
@@ -193,18 +335,86 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async uninstallApp(deviceId: string, bundleId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId)) {
+				await verboseExec("xcrun", [
+					"devicectl",
+					"device",
+					"uninstall",
+					"app",
+					"--device",
+					stripPhysicalPrefix(deviceId),
+					bundleId,
+					"-q",
+				]);
+				return;
+			}
 			await verboseExec("xcrun", ["simctl", "uninstall", deviceId, bundleId]);
 		},
 
 		async launchApp(deviceId: string, bundleId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId)) {
+				await verboseExec("xcrun", [
+					"devicectl",
+					"device",
+					"process",
+					"launch",
+					"--device",
+					stripPhysicalPrefix(deviceId),
+					bundleId,
+					"-q",
+				]);
+				return;
+			}
 			await verboseExec("xcrun", ["simctl", "launch", deviceId, bundleId]);
 		},
 
 		async terminateApp(deviceId: string, bundleId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId)) {
+				try {
+					interface DevicectlProcessesResult {
+						runningProcesses: Array<{
+							processIdentifier: number;
+							executable?: string;
+							bundleIdentifier?: string;
+						}>;
+					}
+					const result = await devicectlJson<DevicectlProcessesResult>([
+						"device",
+						"info",
+						"processes",
+						"--device",
+						stripPhysicalPrefix(deviceId),
+					]);
+					const proc = result.runningProcesses?.find((p) => p.bundleIdentifier === bundleId);
+					if (!proc) return; // app not running, silently succeed
+					await verboseExec("xcrun", [
+						"devicectl",
+						"device",
+						"process",
+						"terminate",
+						"--device",
+						stripPhysicalPrefix(deviceId),
+						"--pid",
+						String(proc.processIdentifier),
+						"-q",
+					]);
+				} catch {
+					// silently succeed if process already terminated
+				}
+				return;
+			}
 			await verboseExec("xcrun", ["simctl", "terminate", deviceId, bundleId]);
 		},
 
 		async getAppInfo(deviceId: string, bundleId: string): Promise<AppInfo | null> {
+			if (isPhysicalDevice(deviceId)) {
+				try {
+					const apps = await this.listApps!(deviceId);
+					return apps.find((a) => a.bundleId === bundleId) ?? null;
+				} catch {
+					return null;
+				}
+			}
 			try {
 				const { stdout: plist } = await verboseExec("xcrun", [
 					"simctl",
@@ -239,6 +449,21 @@ export function createIosAdapter(): PlatformAdapter {
 		clearAppData: undefined,
 
 		async openUrl(deviceId: string, url: string): Promise<void> {
+			if (isPhysicalDevice(deviceId)) {
+				await verboseExec("xcrun", [
+					"devicectl",
+					"device",
+					"process",
+					"launch",
+					"--device",
+					stripPhysicalPrefix(deviceId),
+					"com.apple.mobilesafari",
+					"--payload-url",
+					url,
+					"-q",
+				]);
+				return;
+			}
 			await verboseExec("xcrun", ["simctl", "openurl", deviceId, url]);
 		},
 
@@ -439,6 +664,9 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async collectBugReport(deviceId: string, outputDir: string): Promise<BugReportResult> {
+			if (isPhysicalDevice(deviceId)) {
+				throw new Error("Bug report collection is not available on physical iOS devices");
+			}
 			const dir = outputDir || join(homedir(), ".simvyn", "bug-reports");
 			await mkdir(dir, { recursive: true });
 			const filename = `diagnose-${deviceId}-${Date.now()}.tar.gz`;
