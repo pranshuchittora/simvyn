@@ -1,6 +1,7 @@
-import { ArrowLeft, Copy, Plus, Trash2 } from "lucide-react";
+import { Copy, Plus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { registerPanel } from "../stores/panel-registry";
+import { StepBuilder } from "./collections/StepBuilder";
 import { useCollectionsStore } from "./collections/stores/collections-store";
 
 function relativeTime(dateStr: string): string {
@@ -55,32 +56,9 @@ function CollectionsPanel() {
 		}
 	};
 
-	const activeCollection = activeCollectionId
-		? collections.find((c) => c.id === activeCollectionId)
-		: null;
-
 	if (activeCollectionId) {
 		return (
-			<div className="p-6 space-y-4">
-				<div className="flex items-center gap-3">
-					<button
-						type="button"
-						onClick={() => setActiveCollectionId(null)}
-						className="glass-button flex items-center gap-1.5"
-					>
-						<ArrowLeft size={14} strokeWidth={1.8} />
-						Back
-					</button>
-					<h1 className="text-base font-medium text-text-primary">
-						{activeCollection?.name ?? "Collection"}
-					</h1>
-				</div>
-				<div className="glass-panel">
-					<p className="glass-empty-state">
-						Step builder coming soon — configure actions and execution order here
-					</p>
-				</div>
-			</div>
+			<StepBuilder collectionId={activeCollectionId} onBack={() => setActiveCollectionId(null)} />
 		);
 	}
 
