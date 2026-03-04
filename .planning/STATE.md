@@ -336,6 +336,7 @@
 - Phase 22.1 inserted after Phase 22: Code Audit (URGENT) — security audit commit-by-commit for credentials and secrets before going public
 - Phase 22.2 inserted after Phase 22: Test Suite (URGENT) — extensive adapter command tests verifying correct adb/xcrun invocations
 - Phase 22.3 inserted after Phase 22: NPM Package & README (URGENT) — README with logo, npx support, npm publish CI, make package public
+- Phase 28 added: Real Device Support — explore and implement extending all functionality for real Android & iOS devices
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -350,8 +351,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04T13:34:35.763Z
-**Stopped at:** Completed 27-01-PLAN.md
+**Last session:** 2026-03-04T21:09:04.425Z
+**Stopped at:** Phase 28 context gathered
 **Context for next session:** Phase 25 complete — step builder with categorized action picker, Framer Motion drag-and-drop reorder, Apple/Android platform badges, and inline parameter editors (select, string, number, boolean). Ready for Phase 26 (Apply Modal & Integration).
 
 ---
