@@ -8,9 +8,9 @@
 
 ## Current Position
 
-**Phase:** 23 — Collections Foundation
-**Plan:** Plan 3 of 3
-**Status:** Milestone complete
+**Phase:** 24 — Execution Engine
+**Plan:** Not yet planned
+**Status:** Ready to plan
 **Progress:** [█████████░] 94%
 
 ## Phase Overview
@@ -51,7 +51,7 @@
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
 | 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
 | **v1.6 — Collections & Documentation** | |
-| 23. Collections Foundation | 🔄 Executing (2/3 plans) |
+| 23. Collections Foundation | ✅ Complete (2/2 plans) |
 | 24. Execution Engine | ⏳ Not Planned |
 | 25. Collection Builder UI | ⏳ Not Planned |
 | 26. Apply Modal & Integration | ⏳ Not Planned |
@@ -294,6 +294,10 @@
 - Action descriptors call PlatformAdapter methods directly (not HTTP routes) for execution — avoids coupling to server, enables both CLI and API paths
 - isSupported checks adapter method presence with !! — consistent with capabilities endpoint pattern
 - set-status-bar overrides param is JSON string parsed at execution time — matches adapter's Record<string, string> signature
+- Collections stored as flat JSON array via createModuleStorage("collections") at ~/.simvyn/collections/collections.json — same pattern as all other modules
+- Collection schema includes schemaVersion: 1 literal type for future migration support
+- Collections is a meta-module — no platform capabilities, orchestrates existing adapter methods via action registry
+- GET /actions strips execute/isSupported functions from descriptors — returns serializable catalog for UI consumption
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -332,10 +336,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04T11:19:26Z
-**Stopped at:** Completed 23-02-PLAN.md (CRUD Routes & CLI)
-**Context for next session:** Phase 23 Plan 02 complete — collections CRUD API (7 endpoints) and CLI subcommands fully wired. Plan 03 remaining for phase completion.
+**Last session:** 2026-03-04
+**Stopped at:** Phase 23 complete, verified, ready to plan Phase 24
+**Context for next session:** Phase 23 (Collections Foundation) complete — types, action registry (14 actions), CRUD routes (7 endpoints), CLI subcommands (5), module registration all done. Phase 24 (Execution Engine) is next — needs planning. Key dependency: action registry execute functions are ready to be called by the execution engine.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-04 — v1.6 roadmap created (Phases 23-27)*
+*Last updated: 2026-03-04 — Phase 23 complete, advancing to Phase 24*
