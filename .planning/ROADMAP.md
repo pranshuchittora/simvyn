@@ -601,6 +601,26 @@ Plans:
 Plans:
 - [x] 22-01-PLAN.md — Verbose exec wrapper, adapter refactor, CLI --verbose flag, unminified build with source maps
 
+### Phase 28: Real Device Support
+
+**Goal:** Developers can control and inspect physical Android and iOS devices from the simvyn dashboard and CLI, with the same experience as simulators/emulators minus hardware-limited features
+**Depends on:** Phase 27
+**Requirements:** RDEV-01, RDEV-02, RDEV-03, RDEV-04, RDEV-05, RDEV-06, RDEV-07, RDEV-08, RDEV-09, RDEV-10, RDEV-11, RDEV-12
+**Success Criteria** (what must be TRUE):
+  1. Physical iOS devices connected via USB or WiFi appear in the device selector alongside simulators, with model names and grouped under "Physical Devices" section
+  2. App management (install, uninstall, launch, terminate, list) works on physical iOS devices via devicectl
+  3. Android physical devices work for all adb shell operations; emulator-only operations (location, shutdown) throw descriptive errors
+  4. Capabilities endpoint returns device-type-specific flags — physical devices get reduced capabilities
+  5. Collections auto-skip steps unsupported on physical devices
+  6. Tool settings page shows devicectl availability and Xcode version for diagnostics
+**Plans:** 4 plans
+
+Plans:
+- [ ] 28-01-PLAN.md — iOS adapter devicectl integration (discovery, app mgmt, deep links, file ops, graceful degradation)
+- [ ] 28-02-PLAN.md — Android adapter physical device guards (emu-only method protection)
+- [ ] 28-03-PLAN.md — Device-aware capabilities, disconnect detection, collections skip
+- [ ] 28-04-PLAN.md — Dashboard UI (grouped selector, disconnect toast, disabled tooltips, diagnostics)
+
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
