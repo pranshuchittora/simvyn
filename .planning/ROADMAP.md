@@ -714,8 +714,8 @@ Plans:
 **Plans:** 2/2 plans complete
 
 Plans:
-- [ ] 26-01-PLAN.md — Apply modal (device picker, compatibility summary, WS execution matrix) + command palette integration
-- [ ] 26-02-PLAN.md — Built-in starter collections (3 presets seeded on first launch)
+- [x] 26-01-PLAN.md — Apply modal (device picker, compatibility summary, WS execution matrix) + command palette integration
+- [x] 26-02-PLAN.md — Built-in starter collections (3 presets seeded on first launch)
 
 ### Phase 27: Documentation
 **Goal:** New users can understand what simvyn does, install it, and use every feature from a comprehensive, visual-first README
@@ -726,7 +726,10 @@ Plans:
   2. Each module has a dedicated showcase section with description and screenshot placeholder showing the dashboard panel
   3. Collections feature has a getting-started walkthrough explaining how to create, configure, and apply a collection
   4. CLI reference table lists every command with usage examples, covering all modules including collections
-**Plans:** TBD
+**Plans:** 1 plan
+
+Plans:
+- [ ] 27-01-PLAN.md — README restructure with module showcases, collections guide, and CLI reference
 
 ### v1.6 Coverage
 
