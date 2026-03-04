@@ -3,6 +3,7 @@ export {
 	createAndroidAdapter,
 	createAvailableAdapters,
 	createIosAdapter,
+	isAndroidPhysical,
 } from "./adapters/index.js";
 export type { DeviceManager } from "./device-manager.js";
 export { createDeviceManager } from "./device-manager.js";

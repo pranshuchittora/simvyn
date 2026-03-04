@@ -12,6 +12,14 @@ import type {
 } from "@simvyn/types";
 import { verboseExec, verboseSpawn } from "../verbose-exec.js";
 
+export function isAndroidPhysical(deviceId: string): boolean {
+	return !deviceId.startsWith("emulator-") && !deviceId.startsWith("avd:");
+}
+
+function isEmulatorRunning(deviceId: string): boolean {
+	return deviceId.startsWith("emulator-");
+}
+
 async function getAvdList(): Promise<string[]> {
 	try {
 		const { stdout } = await verboseExec("emulator", ["-list-avds"]);
@@ -162,11 +170,12 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async shutdown(id: string): Promise<void> {
 			if (id.startsWith("avd:")) return; // can't shut down something not running
+			if (isAndroidPhysical(id)) return; // no-op for physical devices — don't attempt emu kill
 
 			try {
 				await verboseExec("adb", ["-s", id, "emu", "kill"]);
 			} catch {
-				// no-op for physical devices or already-dead emulators
+				// no-op for already-dead emulators
 			}
 		},
 
@@ -174,10 +183,18 @@ export function createAndroidAdapter(): PlatformAdapter {
 		erase: undefined,
 
 		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted");
+			if (isAndroidPhysical(deviceId)) {
+				throw new Error("Location simulation is not available on physical Android devices");
+			}
 			await verboseExec("adb", ["-s", deviceId, "emu", "geo", "fix", String(lon), String(lat)]);
 		},
 
 		async clearLocation(deviceId: string): Promise<void> {
+			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted");
+			if (isAndroidPhysical(deviceId)) {
+				throw new Error("Location simulation is not available on physical Android devices");
+			}
 			await verboseExec("adb", ["-s", deviceId, "emu", "geo", "fix", "0", "0"]);
 		},
 
@@ -414,6 +431,11 @@ export function createAndroidAdapter(): PlatformAdapter {
 		async setLocale(deviceId: string, locale: string): Promise<void> {
 			if (deviceId.startsWith("avd:"))
 				throw new Error("Device must be booted for locale operations");
+			if (isAndroidPhysical(deviceId)) {
+				throw new Error(
+					"Locale change requires root access and is not available on most physical devices",
+				);
+			}
 			// Android expects BCP 47 tags (en-US) not POSIX (en_US)
 			const bcp47 = locale.replace("_", "-");
 			// setprop persist.sys.locale requires root — emulators have su
