@@ -1,3 +1,4 @@
+import { isAndroidPhysical, isPhysicalDevice } from "@simvyn/core";
 import type {
 	ActionDescriptor,
 	Collection,
@@ -7,6 +8,25 @@ import type {
 	StepExecution,
 } from "@simvyn/types";
 import { getActionDescriptors } from "./action-registry.js";
+
+const PHYSICAL_UNSUPPORTED_IOS = new Set([
+	"set-location",
+	"clear-location",
+	"set-status-bar",
+	"clear-status-bar",
+	"set-clipboard",
+	"set-appearance",
+	"set-content-size",
+	"set-increase-contrast",
+	"erase-device",
+]);
+
+const PHYSICAL_UNSUPPORTED_ANDROID = new Set([
+	"set-location",
+	"clear-location",
+	"set-locale",
+	"erase-device",
+]);
 
 export interface RunCollectionOpts {
 	collection: Collection;
@@ -83,6 +103,17 @@ export function runCollection(opts: RunCollectionOpts): ExecutionRun {
 							dr.status = "skipped";
 							dr.completedAt = new Date().toISOString();
 							return;
+						}
+
+						const isPhysDevice = isPhysicalDevice(device.id) || isAndroidPhysical(device.id);
+						if (isPhysDevice) {
+							const unsupported =
+								device.platform === "ios" ? PHYSICAL_UNSUPPORTED_IOS : PHYSICAL_UNSUPPORTED_ANDROID;
+							if (unsupported.has(collectionStep.actionId)) {
+								dr.status = "skipped";
+								dr.completedAt = new Date().toISOString();
+								return;
+							}
 						}
 
 						dr.status = "running";

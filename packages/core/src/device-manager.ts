@@ -9,7 +9,9 @@ export interface DeviceManager {
 	refresh(): Promise<Device[]>;
 	setPollInterval(ms: number): void;
 	on(event: "devices-changed", cb: (devices: Device[]) => void): void;
+	on(event: "devices-disconnected", cb: (devices: Device[]) => void): void;
 	off(event: "devices-changed", cb: (devices: Device[]) => void): void;
+	off(event: "devices-disconnected", cb: (devices: Device[]) => void): void;
 	getAdapter(platform: Platform): PlatformAdapter | undefined;
 }
 
@@ -46,9 +48,18 @@ export function createDeviceManager(
 		const fp = devicesFingerprint(allDevices);
 
 		if (fp !== lastFingerprint) {
+			const currentIds = new Set(allDevices.map((d) => d.id));
+			const disconnected = currentDevices.filter(
+				(d) => d.deviceType === "Physical" && !currentIds.has(d.id),
+			);
+
 			lastFingerprint = fp;
 			currentDevices = allDevices;
 			emitter.emit("devices-changed", allDevices);
+
+			if (disconnected.length > 0) {
+				emitter.emit("devices-disconnected", disconnected);
+			}
 		}
 
 		return allDevices;
@@ -88,11 +99,11 @@ export function createDeviceManager(
 			return poll();
 		},
 
-		on(event: "devices-changed", cb: (devices: Device[]) => void) {
+		on(event: "devices-changed" | "devices-disconnected", cb: (devices: Device[]) => void) {
 			emitter.on(event, cb);
 		},
 
-		off(event: "devices-changed", cb: (devices: Device[]) => void) {
+		off(event: "devices-changed" | "devices-disconnected", cb: (devices: Device[]) => void) {
 			emitter.off(event, cb);
 		},
 
