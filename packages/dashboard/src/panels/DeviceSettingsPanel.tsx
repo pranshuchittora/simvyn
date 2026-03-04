@@ -107,6 +107,8 @@ function DeviceSettingsPanel() {
 		}
 	};
 
+	const isPhysical =
+		selectedDevice?.deviceType === "Physical" || selectedDevice?.id.startsWith("physical:");
 	const hasAccessibility = caps.contentSize || caps.increaseContrast || caps.talkBack;
 
 	return (
@@ -124,7 +126,7 @@ function DeviceSettingsPanel() {
 			{selectedDeviceId && (
 				<div className="space-y-4">
 					{/* Appearance */}
-					{caps.appearance && (
+					{caps.appearance ? (
 						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
 							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
 								Appearance
@@ -148,22 +150,60 @@ function DeviceSettingsPanel() {
 								</button>
 							</div>
 						</div>
+					) : (
+						isPhysical && (
+							<div
+								className="rounded-xl bg-bg-surface/10 border-b border-border p-4 opacity-50 cursor-not-allowed"
+								title="Not available on physical devices"
+							>
+								<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+									Appearance
+								</h2>
+								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
+							</div>
+						)
 					)}
 
 					{/* Status Bar (iOS) */}
-					{caps.statusBar && <StatusBarSection deviceId={selectedDeviceId} />}
+					{caps.statusBar ? (
+						<StatusBarSection deviceId={selectedDeviceId} />
+					) : (
+						isPhysical && (
+							<div
+								className="rounded-xl bg-bg-surface/10 border-b border-border p-4 opacity-50 cursor-not-allowed"
+								title="Not available on physical devices"
+							>
+								<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+									Status Bar
+								</h2>
+								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
+							</div>
+						)
+					)}
 
 					{/* Permissions */}
-					{caps.permissions && selectedDevice && (
+					{caps.permissions && selectedDevice ? (
 						<PermissionsSection
 							deviceId={selectedDeviceId}
 							platform={selectedDevice.platform as "ios" | "android"}
 							canReset={caps.resetPermissions}
 						/>
+					) : (
+						isPhysical && (
+							<div
+								className="rounded-xl bg-bg-surface/10 border-b border-border p-4 opacity-50 cursor-not-allowed"
+								title="Not available on physical devices"
+							>
+								<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+									Permissions
+								</h2>
+								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
+							</div>
+						)
 					)}
 
 					{/* Locale */}
-					{caps.locale && (
+					{caps.locale ? (
 						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
 							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
 								Locale
@@ -180,11 +220,35 @@ function DeviceSettingsPanel() {
 								</button>
 							</div>
 						</div>
+					) : (
+						isPhysical && (
+							<div
+								className="rounded-xl bg-bg-surface/10 border-b border-border p-4 opacity-50 cursor-not-allowed"
+								title="Not available on physical devices"
+							>
+								<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+									Locale
+								</h2>
+								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
+							</div>
+						)
 					)}
 
 					{/* Accessibility */}
-					{hasAccessibility && (
+					{hasAccessibility ? (
 						<AccessibilitySection deviceId={selectedDeviceId} capabilities={caps} />
+					) : (
+						isPhysical && (
+							<div
+								className="rounded-xl bg-bg-surface/10 border-b border-border p-4 opacity-50 cursor-not-allowed"
+								title="Not available on physical devices"
+							>
+								<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+									Accessibility
+								</h2>
+								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
+							</div>
+						)
 					)}
 
 					{/* Port Forwarding */}

@@ -18,6 +18,13 @@ interface StorageInfo {
 	humanReadable: string;
 }
 
+interface DiagnosticsInfo {
+	devicectl: { available: boolean; version?: string; error?: string };
+	xcodeVersion?: string;
+	adbVersion?: string;
+	platform: string;
+}
+
 function ToolSettingsPanel() {
 	const [config, setConfig] = useState<ToolConfig>({
 		port: 3847,
@@ -25,6 +32,7 @@ function ToolSettingsPanel() {
 		pollInterval: 5000,
 	});
 	const [storage, setStorage] = useState<StorageInfo | null>(null);
+	const [diagnostics, setDiagnostics] = useState<DiagnosticsInfo | null>(null);
 	const [saving, setSaving] = useState(false);
 	const [debugOpen, setDebugOpen] = useState(false);
 	const [consoleLogs, setConsoleLogs] = useState<ConsoleEntry[]>([]);
@@ -48,6 +56,11 @@ function ToolSettingsPanel() {
 			.catch(() => {});
 
 		fetchStorage();
+
+		fetch("/api/tool-settings/diagnostics")
+			.then((r) => r.json())
+			.then((data) => setDiagnostics(data as DiagnosticsInfo))
+			.catch(() => {});
 	}, [fetchStorage]);
 
 	useEffect(() => {
@@ -257,6 +270,43 @@ function ToolSettingsPanel() {
 				<button type="button" onClick={wipeData} className="glass-button-destructive">
 					Wipe All Data
 				</button>
+			</div>
+
+			{/* Diagnostics */}
+			<div className="glass-panel rounded-xl p-4 space-y-3">
+				<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+					Diagnostics
+				</h2>
+				<div className="space-y-2 text-sm">
+					<div className="flex justify-between">
+						<span className="text-text-secondary">Platform</span>
+						<span className="text-text-primary">{diagnostics?.platform ?? "..."}</span>
+					</div>
+					{diagnostics?.xcodeVersion && (
+						<div className="flex justify-between">
+							<span className="text-text-secondary">Xcode</span>
+							<span className="text-text-primary">{diagnostics.xcodeVersion}</span>
+						</div>
+					)}
+					<div className="flex justify-between">
+						<span className="text-text-secondary">devicectl (iOS devices)</span>
+						<span
+							className={diagnostics?.devicectl.available ? "text-green-400" : "text-amber-400"}
+						>
+							{diagnostics?.devicectl.available
+								? `Available${diagnostics.devicectl.version ? ` (${diagnostics.devicectl.version})` : ""}`
+								: diagnostics
+									? "Not available — Xcode 15+ required for physical iOS devices"
+									: "..."}
+						</span>
+					</div>
+					{diagnostics?.adbVersion && (
+						<div className="flex justify-between">
+							<span className="text-text-secondary">adb</span>
+							<span className="text-text-primary">{diagnostics.adbVersion}</span>
+						</div>
+					)}
+				</div>
 			</div>
 
 			{/* About */}
