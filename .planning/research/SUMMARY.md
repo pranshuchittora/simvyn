@@ -1,210 +1,170 @@
 # Project Research Summary
 
-**Project:** Simvyn — Universal Mobile Device Devtool
-**Domain:** Local-first developer tool (CLI + Node.js server + React web dashboard)
-**Researched:** 2026-02-26
+**Project:** Simvyn v1.6 — Collections & Getting Started Documentation
+**Domain:** Batch-action orchestration system for multi-module mobile devtool + comprehensive onboarding docs
+**Researched:** 2026-03-04
 **Confidence:** HIGH
 
 ## Executive Summary
 
-Simvyn fills a clear gap left by Flipper's archival (Sep 2025): a unified, SDK-free mobile devtool that wraps `xcrun simctl` and `adb` from the host side. The zero-SDK constraint is the product's defining advantage — it works with any app (React Native, Flutter, native, KMP) without build-time integration. The recommended approach is a TypeScript monorepo with Fastify 5 as the server (its plugin encapsulation maps directly to Simvyn's module system), a Commander CLI as the primary interface, and a React 19 + Vite 7 dashboard as the visual layer. sim-location (the existing CLI at `/Users/pranshu/github/sim-location`) will be directly migrated — code copied and refactored into the monorepo module architecture, not rewritten from scratch. Platform support is macOS + Linux only; Windows users use WSL.
+Simvyn v1.6 adds a Collections system — reusable sequences of device actions (set locale, set location, toggle dark mode, launch app, etc.) that can be applied to multiple devices at once — and comprehensive Getting Started documentation. The existing codebase is exceptionally well-suited for this: the 16-module architecture, PlatformAdapter abstraction, WebSocket broker, `createModuleStorage`, and Zustand + Framer Motion frontend provide every primitive needed. **Zero new dependencies required.** This is the strongest possible starting point for a feature addition.
 
-The architecture is module-based: a shared types package, a core platform adapter layer, and self-contained feature modules that each export a Fastify server plugin, Commander subcommand, and WebSocket message types. The dashboard UI panels live separately in the Vite bundle. This structure prevents the circular dependency and build complexity that killed Flipper. The build order flows: types → core → modules → server → cli, with the dashboard building independently against the types package.
+The recommended approach is to build an **adapter-level action registry** as the foundation — a typed, in-process mapping from action IDs to PlatformAdapter method calls with parameter schemas and platform compatibility metadata. This registry serves both the collection builder UI (showing available actions with their parameter forms) and the server-side execution engine (running steps directly via adapter methods, not HTTP roundtrips). Execution is server-side with WebSocket progress streaming, following the exact pattern established by location playback. The dashboard gets a visual step builder with Framer Motion drag-to-reorder, and the CLI gets `simvyn collections list|apply` for automation.
 
-The top risks are: (1) brittle CLI output parsing across Xcode/SDK versions — mitigate with defensive parsing, version detection, and fixture-based tests; (2) zombie child processes from long-running streams like `adb logcat` — mitigate with a process registry built into core from day one; (3) WebSocket bottleneck when log streaming saturates a single connection — mitigate with multi-channel WS architecture or hybrid WS/HTTP approach where binary/heavy data uses REST; (4) broken `npx` packaging from monorepo workspace resolution — mitigate by testing `npm pack` in CI from the first phase. All four risks must be addressed in the foundation phase, not retrofitted.
+The primary risks are: (1) coupling Collections to other modules via HTTP route calls instead of direct adapter invocations — causing 5-10x performance overhead and fragile coupling, (2) WebSocket message flooding during multi-device multi-step execution — requiring batched/coalesced progress broadcasts from day one, and (3) unversioned collection schemas becoming unmigratable as the system evolves. All three are preventable with upfront design decisions that the architecture research has already specified.
 
 ## Key Findings
 
 ### Recommended Stack
 
-The stack centers on TypeScript 5.9 + Node.js 22 LTS across a monorepo managed by npm workspaces. Fastify 5 is the clear server choice — its plugin encapsulation model maps 1:1 to Simvyn's module architecture, and it's 2-3x faster than Express with built-in schema validation and Pino logging. The frontend uses React 19, Vite 7 (with Rolldown), Tailwind v4, and Zustand 5 — all proven in sim-location. Full details in [STACK.md](./STACK.md).
+No new npm packages. Every capability maps to existing dependencies. See [STACK.md](./STACK.md) for full details.
 
-**Core technologies:**
-- **Fastify 5:** HTTP server + module plugin host — encapsulation model isolates modules, built-in validation via AJV
-- **React 19 + Vite 7 + Tailwind v4:** Dashboard SPA — instant HMR, CSS-first config, proven in sim-location
-- **Zustand 5:** Client state — tiny, works both as React hooks and imperative access for WS handlers
-- **Zod 4:** Shared schema validation — single source of truth for WS protocol, CLI args, config
-- **Commander 14:** CLI framework — subcommand-per-module pattern fits naturally
-- **tinyexec + node:child_process spawn:** Process execution — tinyexec for fire-and-get-output, raw spawn for streaming (logcat, screen recording)
-- **better-sqlite3:** SQLite database browser module (v2+ feature)
-- **Biome 2:** Lint + format replacing ESLint + Prettier — 20-100x faster
+**Core technologies (all existing):**
+- **Framer Motion `Reorder`** (`^12.34.3`): Drag-to-reorder step lists — `Reorder.Group` + `Reorder.Item` with `useDragControls` for handle-only dragging. Purpose-built for single-axis sortable lists.
+- **Zustand** (`^5`): Collections store following the `favorites-store.ts` pattern — async methods that fetch/post then refetch. Also holds transient execution state updated via WS.
+- **WebSocket Broker** (`@fastify/websocket`): `collections` channel for execution progress streaming. Same envelope protocol as location playback.
+- **`createModuleStorage("collections")`**: JSON persistence at `~/.simvyn/collections/collections.json`. Proven atomic-write pattern.
+- **`crypto.randomUUID()`**: No `uuid` package needed. Already used in codebase.
 
-**Critical version constraint:** Minimum Node.js 22.12.0 (dictated by Vite 7). All major dependencies (Fastify 5, Commander 14, chokidar 5) have dropped Node 18.
+**What NOT to add:** @dnd-kit (Framer Motion covers it), react-beautiful-dnd (deprecated), @tanstack/react-query (direct fetch + Zustand suffices), zod (never actually installed), Docusaurus/VitePress (README is the right format), p-limit/p-queue (simple `Promise.all` per step suffices), Socket.io (WS broker exists).
 
 ### Expected Features
 
-The feature landscape is well-defined. Everything wraps `simctl` and `adb` — no SDK integration, no app-side code. sim-location's location simulation code migrates directly as the first module. Full analysis in [FEATURES.md](./FEATURES.md).
+See [FEATURES.md](./FEATURES.md) for complete landscape with reference systems analysis (Apple Shortcuts, Playwright fixtures).
 
-**Must have (P1 — CLI-first MVP):**
-- Device discovery & list (foundation for everything)
-- Boot / shutdown / erase (basic lifecycle)
-- App install / uninstall / launch / terminate (core workflow)
-- Log viewer with real-time streaming + filtering (the #1 debugging tool)
-- Screenshots (universal utility, low complexity)
-- Deep links / URL opening (trivial, used constantly)
-- Push notifications — iOS only (simctl's killer feature)
-- Location simulation (migrated from sim-location)
-- CLI interface wrapping all above
+**Must have (table stakes):**
+- Create/edit/delete named collections with step sequences
+- Add steps from categorized action catalog (15+ action types across modules)
+- Configure parameters per step (reusing existing picker components)
+- Platform badge per step showing iOS/Android compatibility
+- Apply collection to selected device(s) with real-time per-step feedback
+- Platform-incompatible steps gracefully skipped (not failed)
+- Persist collections across sessions
 
-**Should have (P2 — dashboard + expanded features):**
-- Web dashboard (visual UI layer over CLI capabilities)
-- Screen recording, status bar override, dark mode toggle
-- Permission control (grant/revoke/reset without reinstall)
-- File management (browse containers, push/pull)
-- Clipboard bridge, media injection, app info inspector
+**Should have (differentiators):**
+- Visual step builder with drag-to-reorder (Apple Shortcuts-inspired)
+- Multi-device parallel apply with per-device × per-step progress matrix
+- Pre-apply compatibility summary
+- Command palette integration ("Apply Collection" from Cmd+K)
+- CLI subcommand (`simvyn collections list|apply|create`)
+- Built-in starter collections (2-3 examples)
+- Step execution timeout (30s default)
 
-**Defer (P3/v2+):**
-- Database inspector (high complexity, needs SQLite parsing)
-- User defaults / SharedPrefs editor
-- Multi-device view, crash logs, performance monitoring
-- Network condition simulation (hard without SDK)
-
-**Anti-features (explicitly excluded):**
-- In-app SDK / bridge (violates zero-SDK principle — this is what killed Flipper)
-- Network inspector (requires MITM proxy — recommend mitmproxy integration instead)
-- Layout inspector, framework-specific devtools (let Xcode/Android Studio handle this)
-- Screen mirroring (scrcpy exists and is unbeatable)
-- Emulator creation / remote device access
-
-**Platform parity note:** iOS has richer simctl support (push, keychain, status bar, clipboard). Android has gaps. Strategy: build with richer platform first, add Android where possible, clearly mark iOS-only features.
+**Defer (v2+):**
+- Conditional logic / branching (keep it linear)
+- Variables / data passing between steps
+- Collection import/export / sharing
+- Scheduled/automatic execution
+- Undo/rollback
+- Nested collections
+- Separate documentation site
 
 ### Architecture Approach
 
-The architecture is a layered monorepo: shared types at the bottom, platform adapters and device management in core, self-contained feature modules in the middle, and server/CLI/dashboard as the three entry points. Each module exports a manifest with its Fastify plugin, Commander subcommand, and WS namespace. The server auto-discovers and registers modules. A single WebSocket connection uses envelope-based multiplexing (with per-module subscription to control message volume), while binary/heavy data flows through HTTP. Full details in [ARCHITECTURE.md](./ARCHITECTURE.md).
+Collections is a **meta-module** — it orchestrates calls to existing modules' adapter methods without importing from them. The architecture has three core server-side components (action registry, collection storage, execution engine) and three dashboard components (step builder, execution view, action picker). Execution is server-side with a sequential-per-step, parallel-per-device model. See [ARCHITECTURE.md](./ARCHITECTURE.md) for full component boundaries, data models, and flow diagrams.
 
 **Major components:**
-1. **Types package (`@simvyn/types`)** — Device model, WS protocol (discriminated unions), ModuleManifest interface. Zero runtime deps. The single source of truth.
-2. **Core package (`@simvyn/core`)** — Platform adapters (iOS/Android), DeviceManager (polling + caching + events), Storage (JSON files in `~/.simvyn/`), process helpers.
-3. **Module packages (`@simvyn/module-*`)** — Self-contained features. Each exports a manifest conforming to `ModuleManifest`. Contains server plugin + CLI command + module-specific types. **No cross-module imports**.
-4. **Server (`@simvyn/server`)** — Fastify app, module loader, WS broker. Thin orchestration — real logic in modules.
-5. **CLI (`@simvyn/cli`)** — Commander entry point. `simvyn` starts server; `simvyn <module> <command>` dispatches to module CLI exports (headless, no server needed).
-6. **Dashboard (`@simvyn/dashboard`)** — React SPA with shell (topbar + sidebar) and lazy-loaded module UI panels. Module UIs live here, not in module packages (avoids bundling Node.js code into browser).
-
-**Key patterns:**
-- Module manifest contract for auto-discovery
-- Fastify plugin encapsulation per module (route prefixing, state isolation)
-- Namespaced WebSocket multiplexing with per-module subscription
-- Lazy-loaded module UI panels via `React.lazy()`
-- DeviceManager as shared singleton (decorate on Fastify instance)
+1. **Action Registry** (`action-registry.ts`) — Maps action IDs to PlatformAdapter method calls with typed parameter schemas. The root dependency for everything else.
+2. **Execution Engine** (`execution-engine.ts`) — Server-side sequential step runner with parallel per-device execution, WS progress broadcasting, and per-step error strategies.
+3. **Collection Storage** — CRUD via `createModuleStorage` with `schemaVersion` field from day one.
+4. **Step Builder UI** (`StepBuilder.tsx` + `StepCard.tsx` + `ActionPicker.tsx`) — Visual builder with categorized action browsing, parameter configuration, and Framer Motion drag reorder.
+5. **Execution View** (`ExecutionView.tsx`) — Live progress display driven by WS, showing per-step × per-device status matrix.
+6. **Collections Store** (`collections-store.ts`) — Zustand store for CRUD + transient execution state, with both hook and imperative (`getState()`) access patterns.
 
 ### Critical Pitfalls
 
-Top pitfalls from [PITFALLS.md](./PITFALLS.md), all requiring Phase 1 prevention:
+See [PITFALLS.md](./PITFALLS.md) for full analysis with detection signals and recovery strategies.
 
-1. **CLI output parsing brittleness** — `simctl` and `adb` change output across Xcode/SDK versions (ControlRoom, Appium have extensive issue histories). Prevent with: defensive JSON parsing, version detection at startup, fixture-based parser tests from multiple Xcode versions, isolated parser in platform adapter.
-
-2. **Zombie child processes** — Long-running streams (`adb logcat`, `simctl io`) leak when users navigate away or close the browser. Prevent with: process registry tracking all spawned processes, AbortController-based cleanup, WS disconnect → process kill wiring, SIGTERM/SIGINT handlers.
-
-3. **WebSocket bottleneck** — A single WS connection saturated by log streaming blocks device status and UI updates. Prevent with: hybrid WS/HTTP approach (logs stream via WS with server-side batching, binary data via HTTP), per-module subscription opt-in, backpressure handling.
-
-4. **Circular dependency chains** — 16+ modules in a monorepo collapse into import spaghetti without strict boundaries. Prevent with: `@simvyn/types` as sole shared dependency, modules never import from other modules, lint rules enforcing boundaries.
-
-5. **Broken `npx` packaging** — Workspace `workspace:*` protocol doesn't resolve after publish; dashboard assets missing from tarball. Prevent with: `tsup` bundling for distribution, `npm pack` test in CI from day one, dashboard pre-built as static assets.
+1. **HTTP route coupling instead of adapter-level calls** — Collections must invoke PlatformAdapter methods directly, not call other modules' HTTP endpoints. Routes are thin wrappers; calling them adds 5-10x overhead and fragile string-based coupling. Build the action registry first.
+2. **Dual capability detection systems diverging** — Use `!!adapter.methodName` checks (per-method granularity), not the coarse `capabilities()` array. The `PlatformCapability` strings don't map 1:1 to adapter methods.
+3. **WebSocket message flooding** — Multi-device multi-step execution can generate 100+ rapid WS messages. Design coalesced state broadcasts from day one (one message with full execution state per step completion, not per-device events).
+4. **Unversioned collection schema** — Add `schemaVersion: 1` to the Collection interface in the first commit. Without it, schema evolution silently corrupts saved collections with no migration path.
+5. **CLI/dashboard execution divergence** — Build a single shared executor function that both CLI and server import. Don't let two implementations drift apart.
 
 ## Implications for Roadmap
 
-Based on combined research, the architecture's build dependency chain and feature dependency graph suggest the following phase structure:
+Based on dependency analysis from ARCHITECTURE.md and pitfall prevention from PITFALLS.md:
 
-### Phase 1: Foundation & Infrastructure
-**Rationale:** Architecture research shows a strict build order (types → core → server → cli). Every pitfall marked "Phase 1" — CLI parsing, zombie processes, circular deps, WS architecture, npm packaging. This must be solid before any feature module exists.
-**Delivers:** Monorepo skeleton with all packages stubbed, types package with Device/Protocol/ModuleManifest, core package with platform adapters (iOS + Android) and DeviceManager, server shell (Fastify + WS broker + module loader), CLI shell (Commander + start command), dashboard shell (React + Vite + Tailwind + sidebar + device selector). No feature modules yet, but the infrastructure to load them.
-**Addresses:** Device discovery & list (P1 feature, foundation for everything)
-**Avoids:** All 6 critical pitfalls — this phase establishes the defensive patterns
+### Phase 1: Collections Foundation (Server)
+**Rationale:** Action registry is the root dependency — everything else (builder UI, execution engine, CLI) depends on knowing what actions exist and their parameter schemas. Storage with versioned schema must be established before any collections can be created.
+**Delivers:** Server-side module with CRUD endpoints, action registry with 5-6 core actions, typed collection schema with `schemaVersion`.
+**Addresses:** Collection schema + storage, action catalog registry (FEATURES table stakes)
+**Avoids:** HTTP route coupling (#1), unversioned schema (#4), dual capability detection (#2)
 
-### Phase 2: First Module — Location (sim-location Migration)
-**Rationale:** sim-location is existing, proven code. Migrating it validates the entire module system (manifest contract, Fastify plugin registration, CLI subcommand, WS messaging). If the module system works for location, it works for all modules. This is the cheapest way to prove the architecture.
-**Delivers:** `@simvyn/module-location` with set/clear/route simulation, `simvyn location` CLI commands, location WS handlers. Location dashboard panel migrated from sim-location.
-**Addresses:** Location simulation (P1), validates module architecture end-to-end
-**Migration note:** Code copied from sim-location and refactored to fit module interfaces. Not a rewrite.
+### Phase 2: Execution Engine (Server)
+**Rationale:** Execution logic must exist before any UI can show progress or CLI can run collections. Building execution as a shared, platform-agnostic function prevents CLI/dashboard divergence.
+**Delivers:** Sequential step runner with parallel per-device execution, WS progress broadcasting with coalesced messages, per-step error strategies, per-device execution locking.
+**Addresses:** Apply collection to devices, real-time feedback, platform skip logic (FEATURES table stakes)
+**Avoids:** WS flooding (#3), all-or-nothing execution (#5), concurrent execution conflicts (#9), CLI divergence (#7)
 
-### Phase 3: Core Device Modules (CLI-First)
-**Rationale:** After the module system is proven, build the remaining P1 table-stakes features. These are all low-complexity wrappers around simctl/adb commands. Group them because they share the same pattern: call adapter → return result. CLI-first — dashboard panels come later.
-**Delivers:** App management (install/uninstall/launch/terminate), screenshots, deep links, push notifications (iOS), boot/shutdown/erase. All available via `simvyn <module> <command>`.
-**Addresses:** All remaining P1 features except log viewer
-**Avoids:** Shell injection (all commands via execFile), cross-platform failures (all behind platform capability checks)
+### Phase 3: Dashboard UI — Collections CRUD & Builder
+**Rationale:** With server-side CRUD and action registry serving data, the dashboard can render the builder. Step builder depends on action descriptors from registry; collection list depends on storage CRUD.
+**Delivers:** Collections panel with list view, visual step builder with drag reorder (Framer Motion), action picker with categories, step cards with platform badges and parameter forms.
+**Addresses:** Step-by-step visual builder, reorder via drag-and-drop, platform badges (FEATURES differentiators)
+**Avoids:** Save-time parameter validation (#10)
 
-### Phase 4: Log Viewer
-**Rationale:** Log streaming is the highest-value debugging feature but is architecturally distinct — it's a long-running streaming process (logcat/log stream), not a fire-and-get-output command. Needs server-side batching, virtual scrolling on client, process lifecycle management for the stream. Pitfalls research explicitly warns: ship search + level filtering in the same release as streaming.
-**Delivers:** Real-time log streaming for iOS (simctl spawn log stream) and Android (adb logcat), with search, log level filtering, device scoping. CLI output + WS streaming to dashboard.
-**Addresses:** Log viewer (P1), validates streaming architecture
-**Avoids:** Log flooding (server-side batching), zombie logcat processes (process registry), WS bottleneck (dedicated log channel or batched delivery)
+### Phase 4: Execution Visualization & Integration
+**Rationale:** Execution view depends on both the execution engine (WS events) and the collections store (state management). Command palette integration should come after the core panel works.
+**Delivers:** Live execution progress display, command palette "Apply Collection" action, CLI `collections list|apply` subcommands.
+**Addresses:** Multi-device progress matrix, command palette integration, CLI automation (FEATURES differentiators)
+**Avoids:** Command palette tangling (#8) — uses navigation action pattern, not MultiStepAction
 
-### Phase 5: Web Dashboard
-**Rationale:** All P1 features now exist as CLI commands and server endpoints. The dashboard is the visual layer over capabilities that already work. Building it after the backend is solid means the dashboard is pure UI — no backend debugging needed.
-**Delivers:** Full React dashboard with glass-morphism design, sidebar navigation, device selector, lazy-loaded module panels for all existing modules, real-time WS updates.
-**Addresses:** Web dashboard (P2), unified cross-platform UI (key differentiator)
-**Uses:** React 19, Vite 7, Tailwind v4, Zustand 5, motion (framer-motion), lucide-react, xterm.js
-
-### Phase 6: Expanded Features
-**Rationale:** With the dashboard live, add the P2 features that enhance the product beyond MVP. These are mostly low-complexity simctl/adb wrappers with straightforward UI panels.
-**Delivers:** Screen recording, status bar override, dark mode toggle, permission control, file management, clipboard bridge, media injection, app info inspector.
-**Addresses:** All P2 features
-**Avoids:** File path traversal (validate against container root in file browser)
-
-### Phase 7: Advanced Inspection (v2)
-**Rationale:** Database inspector, user defaults editor, and crash logs require more complex parsing (SQLite, plist, XML) and are lower priority. Multi-device view is a significant UI challenge. These are v2 features.
-**Delivers:** SQLite database browser, user defaults/SharedPrefs editor, crash log viewer, multi-device view.
-**Uses:** better-sqlite3 for database browsing
-**Addresses:** P3 features
+### Phase 5: Polish & Documentation
+**Rationale:** Built-in starter collections require the full system to exist. Documentation requires screenshots of working features. Both are polish that shouldn't block core development.
+**Delivers:** 2-3 starter collections, comprehensive README restructure with per-feature sections, Getting Started guide, CLI reference, screenshot placeholders.
+**Addresses:** Built-in starters, execution history, all documentation features
+**Avoids:** Docs assuming user context (#11), single-interface examples (#12)
 
 ### Phase Ordering Rationale
 
-- **Foundation first:** Every pitfall and every architecture dependency points to getting the monorepo structure, types, core adapters, and module loading right before writing any features. Recovery cost for these is HIGH if deferred.
-- **Location module second:** sim-location migration is the cheapest path to validating the module system end-to-end. It's existing code, not new development.
-- **CLI before dashboard:** The CLI is the primary interface (scriptable, CI-friendly). Building backend features as CLI commands first means the dashboard is pure UI work with no backend debugging.
-- **Logs separated:** Log streaming is architecturally distinct from request/response commands and exercises the hardest parts of the system (streaming, batching, process lifecycle). It deserves its own phase.
-- **Dashboard after backend is complete:** Avoids the trap of building UI for half-working features.
-- **P2 and P3 features last:** These build on the proven module system and add incremental value.
+- **Registry → Storage → Engine → UI → Polish** follows the dependency graph directly: you can't build a builder without knowing what actions exist, can't show execution without an engine, can't write docs without working features.
+- **Server before dashboard** in each phase ensures the UI always has real APIs to connect to, preventing mock/stub buildup.
+- **Execution engine as a standalone shared function** (Phase 2) before any UI or CLI prevents the #7 divergence pitfall — the most expensive to fix retroactively.
+- **WS protocol designed in Phase 2** with batching prevents the #3 flooding pitfall — adding batching later requires changing both server and client.
+- **Documentation last** because it needs screenshots of working features and should capture the final UX, not a moving target.
 
 ### Research Flags
 
 Phases likely needing deeper research during planning:
-- **Phase 1 (Foundation):** Multi-channel WebSocket architecture design needs more specifics — single connection with envelope multiplexing vs. multiple connections? Pitfalls research flags risks on both approaches. Need to prototype.
-- **Phase 4 (Log Viewer):** `simctl spawn log stream` output format and filtering capabilities vary by macOS version. `adb logcat` has many format options (`-v threadtime`, `--pid`). Research specific parsing approaches.
-- **Phase 7 (Database Inspector):** better-sqlite3 with WAL-mode databases that apps are actively writing to. Need to understand read-only access patterns and locking behavior.
+- **Phase 1 (Action Registry):** The registry design is novel for this codebase — no existing cross-module action abstraction exists. Needs careful type design to cover all 15+ adapter methods with their varying parameter signatures.
+- **Phase 2 (Execution Engine):** Per-device locking, error strategies, and device-state-change detection between steps are implementation details that may need iteration.
 
-Phases with standard patterns (skip research-phase):
-- **Phase 2 (Location Migration):** sim-location is existing working code. Migration is mechanical refactoring.
-- **Phase 3 (Core Device Modules):** Straightforward simctl/adb wrappers. Commands are well-documented.
-- **Phase 5 (Dashboard):** Standard React SPA patterns. sim-location dashboard provides reference implementation.
-- **Phase 6 (Expanded Features):** Same pattern as Phase 3 — simctl/adb wrappers with UI panels.
+Phases with standard patterns (skip research):
+- **Phase 3 (Dashboard UI):** Follows established patterns exactly — `registerPanel`, Zustand store, Framer Motion `Reorder`, existing picker components. Well-documented in codebase.
+- **Phase 5 (Documentation):** README expansion with standard devtool doc patterns. No technical research needed.
 
 ## Confidence Assessment
 
 | Area | Confidence | Notes |
 |------|------------|-------|
-| Stack | HIGH | All versions verified against npm registry (2026-02-26). Compatibility matrix validated. sim-location proves React 19 + Vite 7 + Zustand combination works. |
-| Features | HIGH | simctl subcommands verified locally. Flipper post-mortem and competitor analysis provide clear feature boundaries. Android adb shell commands are MEDIUM confidence (no device to verify). |
-| Architecture | HIGH | Fastify plugin system and monorepo patterns are well-documented. Module manifest pattern synthesized from Fastify plugins + Flipper plugin architecture. Build dependency chain is straightforward. |
-| Pitfalls | HIGH | Based on real issue trackers (ControlRoom, Appium node-simctl, appium-adb) with specific issue numbers. Flipper archival provides high-confidence cautionary tale. Process lifecycle issues are well-documented in Node.js ecosystem. |
+| Stack | HIGH | Zero new dependencies. All APIs verified against official docs (Framer Motion Reorder) and existing codebase usage. |
+| Features | HIGH | Reference systems studied (Apple Shortcuts, Playwright fixtures). Feature scope well-bounded by anti-features list. |
+| Architecture | HIGH | Based entirely on direct codebase analysis. Every pattern cited has an existing precedent in the codebase. |
+| Pitfalls | HIGH | All pitfalls derived from actual code inspection (adapter types, WS broker, module loader). Recovery costs assessed realistically. |
 
 **Overall confidence:** HIGH
 
 ### Gaps to Address
 
-- **Android adb shell commands:** Feature research notes MEDIUM confidence on some `adb shell` commands (no device available to verify). Validate during Phase 3 implementation with actual Android device/emulator.
-- **WebSocket architecture specifics:** Single multiplexed connection vs. multiple connections is debated in pitfalls and architecture research. Phase 1 should prototype both approaches for log streaming performance before committing. The architecture research recommends single connection with envelope multiplexing; the pitfalls research warns this becomes a bottleneck. Resolution: use single connection with per-module subscription opt-in and server-side batching, but route binary data through HTTP.
-- **npm packaging strategy:** Whether to publish workspace packages individually or bundle into a single distributable needs to be decided in Phase 1. Research recommends bundling via tsup for the user-facing `simvyn` package, with internal packages as implementation details.
-- **macOS + Linux only:** Platform detection and adapter code should only target macOS and Linux. No Windows-specific code paths — Windows users use WSL. This simplifies the platform adapter layer (no Windows path handling, no `where` command, no NTFS case-sensitivity issues).
+- **Action registry parameter schemas for all 15+ actions:** STACK.md and ARCHITECTURE.md show the pattern for 5-6 actions. The remaining actions (media, screenshot, deep links, permissions, etc.) need their parameter schemas fully specified during Phase 1 implementation.
+- **Execution timeout implementation:** Mentioned in FEATURES.md as a differentiator (30s default), but no implementation pattern researched. Standard `AbortController` or `Promise.race` with timeout should work.
+- **Device state recovery between steps:** PITFALLS.md identifies the risk of devices rebooting mid-execution but the recovery strategy (wait for reboot with timeout) needs implementation-time experimentation.
+- **Storage race condition during concurrent save/execute:** PITFALLS.md flags the risk. Mitigation (separate execution metadata from collection definitions) needs validation during Phase 1 storage design.
+- **README final structure:** FEATURES.md recommends a 10-section structure. Exact section content depends on which features ship and what screenshots are available. Finalize during Phase 5.
 
 ## Sources
 
 ### Primary (HIGH confidence)
-- npm registry (registry.npmjs.org) — all package versions verified 2026-02-26
-- Fastify v5 official docs — plugin system, encapsulation, WebSocket integration
-- sim-location codebase (`/Users/pranshu/github/sim-location`) — proven patterns for React 19 + Vite 7 + Zustand + ws
-- `xcrun simctl help` — local verification of all simctl subcommands
-- `adb help` — local verification of adb commands
-- Flipper GitHub (facebook/flipper) — archived Sep 2025, cautionary post-mortem
-- ControlRoom issues (#162, #170, #156) — simctl version breakage documentation
-- Appium node-simctl issues (#145, #138, #5) — CLI parsing and process management issues
-- Appium appium-adb issues (#150, #44, #147, #175) — Android SDK integration issues
+- **Simvyn codebase** — Direct analysis of 20+ files: module-loader.ts, ws-broker.ts, storage.ts, device-manager.ts, all module manifests/routes, command palette types/actions, PlatformAdapter interface (171 lines, 50+ methods), panel registry, Zustand stores
+- **Framer Motion Reorder docs** — [motion.dev/docs/react-reorder](https://motion.dev/docs/react-reorder) — verified API: `Reorder.Group`, `Reorder.Item`, `useDragControls`, axis="y", auto-scroll, z-index management
+- **@dnd-kit npm** — [@dnd-kit/core v6.3.1](https://www.npmjs.com/package/@dnd-kit/core), [@dnd-kit/sortable v10.0.0](https://www.npmjs.com/package/@dnd-kit/sortable) — confirmed as unnecessary for this use case
+- **Apple Shortcuts User Guide** — [support.apple.com/guide/shortcuts](https://support.apple.com/guide/shortcuts/welcome/ios) — action-based sequential execution model, categorized action list
+- **Playwright Test Fixtures docs** — [playwright.dev/docs/test-fixtures](https://playwright.dev/docs/test-fixtures) — composable environment setup, parallel execution model
 
 ### Secondary (MEDIUM confidence)
-- Android `adb shell` commands (am, pm, settings, dumpsys) — based on documentation, not device-verified
-- Module manifest pattern — synthesized from Fastify plugins + Flipper plugin architecture
-- "Why you don't need Flipper" (Jamon Holmgren, Infinite Red) — Flipper UX post-mortem
+- **awesome-readme curated list** — [github.com/matiassingers/awesome-readme](https://github.com/matiassingers/awesome-readme) — README best practices and patterns from highly-starred devtool repos
+- **Flipper deprecation** — Plugin-based mobile devtool's failure at scale reinforces module isolation concerns
 
 ---
-*Research completed: 2026-02-26*
+*Research completed: 2026-03-04*
 *Ready for roadmap: yes*

@@ -1,228 +1,250 @@
-# Stack Research
+# Technology Stack — Collections + Getting Started Documentation
 
-**Domain:** Local-first developer tool (web dashboard + CLI + Node.js server)
-**Researched:** 2026-02-26
-**Confidence:** HIGH
+**Project:** Simvyn — Collections feature + Getting Started docs
+**Researched:** 2026-03-04
+**Scope:** Stack ADDITIONS only. Existing stack is validated and not re-researched.
 
-## Recommended Stack
+## Verdict: Zero New Dependencies
 
-### Core Technologies
+The Collections feature and Getting Started documentation require **no new npm packages**. Every capability needed is already available in the existing stack. This is the strongest possible outcome for a feature addition — zero dependency growth, zero version compatibility risk, zero bundle size increase.
 
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| TypeScript | ^5.9.3 | Language | Full-stack type safety across monorepo. Shared types for WebSocket protocol, device models, module interfaces. No alternative worth considering. |
-| Node.js | >=22.12.0 | Runtime | Required by Vite 7. Native ESM, `node:test` available but Vitest better. Node 22 is current LTS (Oct 2025). |
-| React | ^19.2.4 | UI framework | Proven for sim-location. React 19 has use() hook for async data, Actions for server mutations, improved Suspense. Matches existing team experience. |
-| Vite | ^7.3.1 | Frontend build + dev server | Instant HMR, native ESM. Vite 7 drops Node 18 support (requires ^20.19.0 or >=22.12.0). Uses Rolldown internally now (Rust bundler replacing esbuild for production). sim-location already on Vite 7 — proven path. |
-| Fastify | ^5.7.4 | HTTP server | 2-3x faster than Express. First-class TypeScript support with type providers. Plugin architecture maps 1:1 to Simvyn's module system. Schema-based validation with JSON Schema via built-in AJV. Encapsulation model isolates module routes/state. Pino logging built-in. |
-| Tailwind CSS | ^4.2.1 | Styling | v4 is a complete rewrite: CSS-first config (no tailwind.config.js), Lightning CSS engine (10x faster), `@theme` directive. Perfect for glass-morphism with `backdrop-blur`, `bg-opacity`, custom properties. Scales to 16+ module UIs where hand-written CSS fails. |
-| Zustand | ^5.0.11 | Client state management | Tiny (1.2kB), no boilerplate, dual access (React hooks + imperative getState()). Proven in sim-location for device state, playback state. v5 drops deprecated APIs, cleaner TypeScript. Vanilla store mode works without React for shared logic. |
-| Zod | ^4.3.6 | Schema validation | TypeScript-first validation for WebSocket messages, CLI args, config files, module manifests. v4 is 2x faster than v3, new `z.mini` for bundle-sensitive code. Shared schemas = single source of truth for types. |
+## Existing Stack Capabilities for Collections
 
-### Server & Communication
+### Drag-and-Drop Step Reordering: Framer Motion `Reorder`
 
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| @fastify/websocket | ^11.2.0 | WebSocket integration | Wraps `ws` with Fastify route integration. Attach WS handlers to specific routes. Each module gets its own WS namespace. |
-| ws | ^8.19.0 | WebSocket library | Transitive via @fastify/websocket. Fastest pure-JS WebSocket. sim-location already uses it. |
-| Pino | ^10.3.1 | Structured logging | Built into Fastify. JSON output, child loggers per module. pino-pretty for dev. 5x faster than winston. |
+| What | Details |
+|------|---------|
+| Package | `framer-motion` (already `^12.34.3` in dashboard) |
+| Import | `import { Reorder, useDragControls } from "framer-motion"` |
+| API | `Reorder.Group` + `Reorder.Item` — built-in vertical sortable list |
+| Confidence | HIGH — verified at [motion.dev/docs/react-reorder](https://motion.dev/docs/react-reorder) |
 
-### CLI
+**Why this, not @dnd-kit:** Framer Motion's `Reorder` is purpose-built for simple single-axis drag-to-reorder lists. It provides layout animations, exit animations via `AnimatePresence`, drag handle support via `useDragControls`, z-index management during drag, and auto-scrolling in scrollable containers — all out of the box. The Collections step list is a simple vertical reorder inside a builder panel. `Reorder` is explicitly designed for this use case. @dnd-kit would add ~30kB for multi-column/cross-list DnD capabilities we don't need.
 
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| Commander | ^14.0.3 | CLI framework | Mature, well-typed, subcommand support for module CLI registration. 14.x requires Node >=20. Simpler than yargs for declarative command definition. |
-| picocolors | ^1.1.1 | Terminal colors | 3x smaller than chalk, no dependencies, same API surface needed. chalk v5 is ESM-only which complicates CJS interop in CLI tools. |
-| ora | ^9.3.0 | Terminal spinners | For long-running CLI ops (boot simulator, install APK). ESM-only but CLI will be ESM anyway. |
-| open | ^11.0.0 | Open browser | Auto-open dashboard URL on `simvyn` start. Cross-platform. |
+**Usage pattern for step reordering:**
+```tsx
+import { Reorder, useDragControls } from "framer-motion"
 
-### Frontend
+function StepList({ steps, onReorder }) {
+  return (
+    <Reorder.Group axis="y" values={steps} onReorder={onReorder} as="div">
+      {steps.map((step) => (
+        <StepItem key={step.id} step={step} />
+      ))}
+    </Reorder.Group>
+  )
+}
 
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| @vitejs/plugin-react | ^5.1.4 | Vite React plugin | Babel-based Fast Refresh. Compatible with Vite 7. |
-| @tailwindcss/vite | ^4.2.1 | Tailwind Vite plugin | Zero-config Tailwind v4 integration for Vite. Replaces postcss plugin approach from v3. |
-| motion (framer-motion) | ^12.34.3 | Animation | Spring physics animations for Liquid Glass aesthetic. `motion` is the new package name (wraps framer-motion). Layout animations, AnimatePresence for mount/unmount, gesture support. |
-| lucide-react | ^0.575.0 | Icons | Tree-shakeable SVG icons. 1500+ icons covering device, file, network, settings domains. Consistent stroke-based style fits glass UI. |
-| clsx | ^2.1.1 | Class merging | Tiny (239B) conditional className utility. Works with Tailwind v4. |
-| @xterm/xterm | ^6.0.0 | Terminal in browser | For device log streaming in dashboard. Handles ANSI colors, virtualized scrolling for 100k+ log lines. |
-
-### Process Execution
-
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| tinyexec | ^1.0.2 | Shell command execution | Zero-dependency, tiny alternative to execa for spawning `simctl`/`adb`. Returns stdout/stderr as strings. For simple fire-and-get-output commands. |
-| node:child_process (spawn) | built-in | Streaming process execution | Use raw `spawn` for long-running streams: `adb logcat`, `simctl io` screen recording. tinyexec doesn't handle streaming well. No extra dependency needed. |
-
-### Data & Persistence
-
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| better-sqlite3 | ^12.6.2 | SQLite browsing | For the SQLite database browser module — reading app databases from simulator/device sandboxes. Synchronous API is fine for local tool. Native addon: use prebuild for distribution. |
-| JSON files (node:fs) | built-in | Config/state persistence | ~/.simvyn/ stores module state, device preferences, favorites as JSON. No database dependency for tool's own state. Matches sim-location's proven approach. |
-| nanoid | ^5.1.6 | Unique IDs | For session IDs, request correlation, device aliases. URL-safe, 118 bytes. |
-
-### Development & Build
-
-| Technology | Version | Purpose | Why Recommended |
-|------------|---------|---------|-----------------|
-| tsup | ^8.5.1 | Package building | Bundle server/CLI packages for npm publish. esbuild-powered, handles CJS/ESM dual output, .d.ts generation. |
-| tsx | ^4.21.0 | TypeScript execution | Run TS files directly during dev (`tsx watch src/server.ts`). Used by Vite internally. |
-| Vitest | ^4.0.18 | Testing | Vite-native test runner. Same config as app. Workspace support for monorepo. Fast watch mode. Jest-compatible API. |
-| @biomejs/biome | ^2.4.4 | Lint + Format | Single tool replacing ESLint + Prettier. 20-100x faster (Rust). Opinionated defaults match project needs. Less config debt than eslint flat config migration. |
-| npm workspaces | built-in | Monorepo | Native to npm, zero tooling overhead. Sufficient for 5-10 packages. Turborepo/nx overkill for this scale. |
-
-### Supporting Libraries
-
-| Library | Version | Purpose | When to Use |
-|---------|---------|---------|-------------|
-| chokidar | ^5.0.0 | File watching | Module auto-discovery, config hot-reload, watching app sandbox changes. v5 drops Node 18, pure ESM. |
-| @tanstack/react-query | ^5.90.21 | Server state | Optional: if REST endpoints grow complex. Overkill initially — Zustand + WebSocket covers most state. Add when needed. |
-| react-router (v7) | ^7.13.1 | Client routing | If dashboard grows beyond single-page. Module-based routes. Probably unnecessary — sidebar + content panel is simpler with Zustand tab state. |
-
-## Installation
-
-```bash
-# Root package.json workspaces setup
-# packages: ["packages/*"]
-
-# Core server
-npm install fastify @fastify/websocket @fastify/static @fastify/cors zod pino
-
-# CLI
-npm install commander picocolors ora open nanoid
-
-# Process execution
-npm install tinyexec
-
-# Frontend (in packages/dashboard)
-npm install react react-dom zustand motion lucide-react clsx @xterm/xterm
-
-# SQLite browser module
-npm install better-sqlite3
-
-# Dev dependencies (root)
-npm install -D typescript @biomejs/biome vitest tsup tsx @types/node
-
-# Dev dependencies (dashboard)
-npm install -D vite @vitejs/plugin-react @tailwindcss/vite tailwindcss @types/react @types/react-dom
-```
-
-## Alternatives Considered
-
-| Recommended | Alternative | When to Use Alternative |
-|-------------|-------------|-------------------------|
-| Fastify 5 | Express 5 | Never for this project. Express has no built-in validation, no encapsulation, slower. Express 5 finally stable but lacks Fastify's plugin model that maps to Simvyn's module architecture. |
-| Fastify 5 | raw node:http | Only if dependency count is critical. sim-location proved it works but won't scale to 16+ modules with proper routing, validation, error handling. |
-| Tailwind v4 | Hand-written CSS | Only for < 3 views. sim-location's 1200-line CSS shows this breaks down. Tailwind's utility classes + `@apply` handle glass-morphism just fine. |
-| Zustand 5 | Jotai | If you prefer atomic state model. Both from same team (pmndrs). Zustand better for imperative access patterns needed by WebSocket handlers updating state outside React. |
-| Zustand 5 | Redux Toolkit | Never. Massive boilerplate for a local tool's state needs. |
-| Commander 14 | yargs | If you need very complex option parsing or interactive prompts. Commander is simpler for subcommand-per-module pattern. |
-| tinyexec | execa 9 | If you need advanced piping, streaming transforms, or process groups. execa is 40+ dependencies. tinyexec is zero-dependency and sufficient for `simctl`/`adb` output capture. |
-| tinyexec | node:child_process | For streaming outputs (logcat, screen recording). Use raw spawn for these. tinyexec for fire-and-forget commands. |
-| Biome 2 | ESLint + Prettier | If you need very specific ESLint plugins (react-hooks, accessibility). Biome covers 95% of cases at 100x speed. Worth trying Biome first, fallback to ESLint if specific rule needed. |
-| npm workspaces | pnpm workspaces | If install speed is critical. pnpm is faster but npm workspaces are simpler, more universally available, sufficient for this scale. |
-| npm workspaces | Turborepo/nx | Only at 20+ packages. Adds complexity. npm workspaces + tsup covers build orchestration for 5-10 packages. |
-| motion 12 | CSS animations | For simple transitions. motion adds ~35kB but spring physics and layout animations are central to Liquid Glass aesthetic. Worth the bundle. |
-| Pino 10 | winston | Never. Pino is 5x faster and already integrated with Fastify. winston is bloated. |
-| Vitest 4 | Jest | Never. Vitest uses same Vite config, faster, native ESM, workspace support. Jest requires separate config and babel transforms. |
-| better-sqlite3 | sql.js (wasm) | If you need pure JS (no native compilation). better-sqlite3 is 10x faster and Simvyn is a local tool — native addon is fine. |
-
-## What NOT to Use
-
-| Avoid | Why | Use Instead |
-|-------|-----|-------------|
-| Express | No encapsulation model, no schema validation, no TypeScript-first design, slower | Fastify 5 |
-| chalk (v5+) | ESM-only, heavier than needed, 3 dependencies | picocolors (zero-dep, 3x smaller) |
-| webpack | Slow, complex config, Vite is the standard for new React projects | Vite 7 |
-| Electron | Massive overhead for a web dashboard. Simvyn is a web UI served by Node.js, not a desktop app | Fastify + Vite (serve static + WS) |
-| Socket.io | Bloated (200kB client), unnecessary fallback transports for local tool. WebSocket is always available on localhost | ws via @fastify/websocket |
-| Tailwind v3 | v4 is stable, v3 config model is deprecated direction, v4 is 10x faster builds | Tailwind v4 |
-| class-variance-authority (cva) | Adds abstraction over Tailwind classes. Not needed — direct Tailwind + clsx is simpler for a tool UI | clsx + Tailwind directly |
-| Redux / MobX | Overkill state management for a local developer tool | Zustand 5 |
-| Nest.js | Full enterprise framework, massive overhead for a local tool's HTTP API | Fastify 5 (directly) |
-| dotenv | Node 22+ has native --env-file flag. A local tool shouldn't need .env files anyway — it reads system state (simulators, adb). | node:process.env or --env-file flag |
-| Mongoose / Prisma / Drizzle | No database to ORM into. Simvyn uses JSON files for its own state and reads SQLite databases from apps (read-only browsing). | better-sqlite3 (for app DB browsing), JSON files (for Simvyn state) |
-| Next.js / Remix / Astro | SSR frameworks are for deployed web apps. Simvyn is a local tool serving a SPA. | Vite SPA + Fastify API server |
-
-## Stack Patterns by Variant
-
-**If macOS (full iOS + Android support):**
-- All modules available
-- simctl + adb process execution
-- iOS-specific modules: Simulator lifecycle, push notifications via `simctl push`, location via `simctl location`
-
-**If Linux/Windows (Android-only):**
-- iOS modules gracefully degrade (hidden in UI, CLI subcommands print "macOS required")
-- adb-only process execution
-- Platform detection at module registration time, not runtime
-
-**If distributing via npx (no local install):**
-- tsup bundles server + CLI into minimal dist
-- better-sqlite3 needs prebuild binaries — document in install instructions
-- Dashboard built as static assets, served by @fastify/static
-
-## Monorepo Structure
-
-```
-packages/
-  shared/        # Types, Zod schemas, WebSocket protocol, device model
-  server/        # Fastify server, module loader, WS hub
-  cli/           # Commander CLI, module command registration
-  dashboard/     # React + Vite SPA
-  modules/       # Each feature module (location, logs, files, etc.)
-```
-
-**Why this split:**
-- `shared` — single source of truth for TypeScript types and Zod schemas used by server, CLI, and dashboard
-- `server` and `cli` are the two entry points (dashboard served as static by server)
-- `dashboard` builds to static assets, copied into server's dist
-- `modules` — each module is a folder exporting server routes, WS handlers, CLI commands, and dashboard UI components
-
-**npm workspaces config (root package.json):**
-```json
-{
-  "workspaces": ["packages/*", "packages/modules/*"]
+function StepItem({ step }) {
+  const controls = useDragControls()
+  return (
+    <Reorder.Item
+      value={step}
+      dragListener={false}
+      dragControls={controls}
+      as="div"
+    >
+      <div onPointerDown={(e) => controls.start(e)}>⠿</div>
+      {/* step content */}
+    </Reorder.Item>
+  )
 }
 ```
 
+**Key details verified from official docs:**
+- `dragListener={false}` + `useDragControls` restricts dragging to the handle only (prevents accidental drag when interacting with step parameters)
+- `Reorder.Item` auto-sets `z-index` on dragged item (requires `position: relative`)
+- `AnimatePresence` wrapping enables enter/exit animations for added/removed steps
+- `Reorder.Group` auto-scrolls when dragging near container edges
+
+### Real-Time Execution Feedback: WebSocket Broker
+
+| What | Details |
+|------|---------|
+| Server | `WsBroker` (packages/server/src/ws-broker.ts) — channel-based pub/sub |
+| Client | `useWsListener(channel, type, handler)` hook |
+| Pattern | Existing `channel:type` envelope with `requestId` for correlation |
+
+The execution feedback pattern (per-step spinner/check/fail/skip per device) maps directly to the existing WebSocket architecture:
+
+1. Dashboard sends `{ channel: "collections", type: "execute", payload: { collectionId, deviceIds } }`
+2. Server executes steps sequentially per device, broadcasting progress:
+   ```json
+   { "channel": "collections", "type": "step-progress", "payload": {
+     "executionId": "...",
+     "deviceId": "device-abc",
+     "stepIndex": 2,
+     "status": "running" | "success" | "failed" | "skipped",
+     "error": "optional error message"
+   }}
+   ```
+3. Dashboard subscribes via `useWsListener("collections", "step-progress", handler)` and updates a Zustand store
+
+This is the exact same pattern used by location playback (ws-handler.ts broadcasts position updates) and log streaming (batched log entries). No new transport or protocol needed.
+
+### Collection Persistence: `createModuleStorage`
+
+| What | Details |
+|------|---------|
+| API | `createModuleStorage("collections")` from `@simvyn/core` |
+| Storage | JSON files in `~/.simvyn/collections/` |
+| Pattern | `storage.read<Collection[]>("collections")` / `storage.write("collections", data)` |
+
+The existing `ModuleStorage` interface (`read<T>`, `write<T>`, `delete`) with atomic write (write to `.tmp` then rename) is exactly what's needed. The location module's `storage.ts` is the blueprint — it stores `SavedLocation[]` and `SavedRoute[]` the same way collections will store `Collection[]`.
+
+**Collection data shape (JSON file at `~/.simvyn/collections/collections.json`):**
+```typescript
+interface CollectionStep {
+  id: string
+  actionId: string       // references a known action (e.g., "set-location", "toggle-dark-mode")
+  params: Record<string, unknown>  // per-step parameter values
+}
+
+interface Collection {
+  id: string
+  name: string
+  description?: string
+  steps: CollectionStep[]
+  createdAt: number
+  updatedAt: number
+}
+```
+
+### Collection Builder UI: Existing Component Patterns
+
+| Need | Existing Pattern |
+|------|-----------------|
+| Modal/dialog for apply device picker | Command palette `DevicePicker` component (multi-select device list with checkboxes) |
+| Step parameter configuration | Command palette `StepRenderer` + `ParameterStep` type (text inputs, dropdowns keyed by `paramKey`) |
+| Card grid layout | Location `FavoritesPanel` (grid of cards with action buttons) |
+| Action catalog with categories | Command palette `getActions()` returns typed `MultiStepAction[]` with icons |
+| Toast feedback | `sonner` toast (already used throughout for success/error) |
+| Platform compatibility | `PlatformCapability` type + `Device.platform` field for filtering |
+| Unique IDs | `crypto.randomUUID()` (used in location storage, Node.js built-in) |
+
+### Server-Side Module: Existing Module Architecture
+
+| Need | Existing Pattern |
+|------|-----------------|
+| Module manifest | `SimvynModule` interface — `name`, `register`, `cli`, `capabilities` |
+| Route prefix | Auto-registered at `/api/modules/collections/*` by module loader |
+| CLI subcommands | `cli(program)` callback in manifest — `simvyn collections list/run/create` |
+| WebSocket channel | `fastify.wsBroker.registerChannel("collections", handler)` |
+
+The collections module follows the exact pattern of the location module: `manifest.ts` + `routes.ts` + `storage.ts` + `ws-handler.ts`.
+
+### Dashboard Panel: Existing Registration
+
+| Need | Existing Pattern |
+|------|-----------------|
+| Panel registration | `registerPanel("collections", CollectionsPanel)` in a side-effect import |
+| Sidebar icon | Add to `moduleIconMap` and `moduleLabelMap` in `module-icons.tsx` |
+| Route handling | Auto-handled — existing `/:moduleName` route in App.tsx matches "collections" |
+
+## Existing Stack Capabilities for Documentation
+
+### Getting Started Documentation: README.md Expansion
+
+| What | Details |
+|------|---------|
+| Format | Markdown (existing `README.md` at repo root) |
+| Tool | No tool needed — hand-authored Markdown with screenshot placeholders |
+| Hosting | GitHub renders Markdown natively; npm shows README on package page |
+
+No documentation generator (Docusaurus, VitePress, etc.) is needed. The Getting Started content is inline README expansion with per-feature walkthrough sections. This matches the project's existing documentation pattern and is the right approach for a CLI tool's README.
+
+## What NOT to Add
+
+| Library | Why Avoid |
+|---------|-----------|
+| `@dnd-kit/core` + `@dnd-kit/sortable` | Framer Motion `Reorder` already handles vertical list reordering. @dnd-kit adds ~30kB for multi-column/cross-container DnD we don't need. |
+| `react-beautiful-dnd` | Deprecated (archived by Atlassian in 2024). Don't use. |
+| `uuid` | `crypto.randomUUID()` is built into Node.js 22+ and available in all modern browsers. Already used in the codebase. |
+| `immer` | Zustand's `set((state) => ...)` with spread patterns is sufficient. The project already uses this pattern in 15+ stores. |
+| `@tanstack/react-query` | REST calls for collection CRUD are simple fetch calls. The project already uses direct `fetch` + Zustand for the same pattern in favorites-store.ts. |
+| `zod` | Listed in original STACK.md but never actually installed. Collection types are TypeScript interfaces validated by existing patterns. Don't add for this feature. |
+| `Docusaurus` / `VitePress` / `Starlight` | Getting Started docs are README sections, not a docs site. A devtool CLI doesn't need a hosted documentation platform. |
+| `mdx-bundler` / `remark` | No dynamic Markdown rendering. Static README.md only. |
+| `p-limit` / `p-queue` | Batch execution can use a simple sequential `for...of` loop with `Promise.allSettled` per step across devices. No concurrency library needed for serial step execution. |
+| Socket.io | WebSocket broker already handles real-time execution feedback. |
+
+## Integration Points with Existing Stack
+
+### 1. Collections Store ↔ Zustand Pattern
+
+Follow the `favorites-store.ts` pattern exactly: Zustand store with async methods that call REST endpoints, then refetch from server to update local state. No optimistic updates needed — collections are not high-frequency operations.
+
+```typescript
+// Same pattern as useFavoritesStore
+export const useCollectionsStore = create<CollectionsState>()((set, get) => ({
+  collections: [],
+  loading: false,
+  async fetchCollections() { /* fetch /api/modules/collections */ },
+  async saveCollection(data) { /* POST, then refetch */ },
+  async deleteCollection(id) { /* DELETE, then refetch */ },
+  async updateCollection(id, data) { /* PUT, then refetch */ },
+}))
+```
+
+### 2. Execution Engine ↔ Server-Side Sequential Execution
+
+The execution engine runs on the server (not the dashboard). It receives a collection ID + target device IDs, resolves each step to the corresponding adapter method call, and executes steps sequentially per device. This avoids race conditions on device state.
+
+**Important:** Execution uses the same adapter methods the command palette actions use (e.g., `adapter.setLocation()`, `adapter.setAppearance()`), but driven server-side instead of client-side `fetch()` calls. This is intentional — the server has direct access to `fastify.deviceManager.getAdapter()`.
+
+### 3. Action Registry ↔ Collections Builder
+
+The command palette's `getActions()` function (actions.tsx) defines the available actions. The collections builder needs a **server-side action registry** — a list of available actions with their parameter schemas — so the builder knows what parameters each step type needs. This is a new concept but uses existing types:
+
+```typescript
+interface CollectionActionDef {
+  id: string
+  label: string
+  category: string
+  platforms: Platform[]  // which platforms support this action
+  params: Array<{
+    key: string
+    label: string
+    type: "string" | "number" | "boolean" | "select"
+    options?: string[]  // for select type
+    required: boolean
+  }>
+}
+```
+
+This replaces the client-side `MultiStepAction.execute` function with a server-side execution model. The builder UI renders parameter inputs based on `CollectionActionDef.params`, and the server maps `actionId` + `params` to actual adapter calls during execution.
+
+### 4. Device Picker Modal ↔ Existing DevicePicker Component
+
+The command palette already has a `DevicePicker.tsx` that renders a multi-select device list with checkboxes, platform grouping, and state indicators. The collections "Apply to devices" modal can reuse this component (or extract its core logic into a shared component) rather than building a new device selection UI.
+
+### 5. Platform Compatibility ↔ PlatformCapability
+
+Each `CollectionActionDef` declares `platforms: Platform[]`. When a user selects target devices for collection execution, the UI compares each step's platform requirements against each device's `device.platform`. Steps incompatible with a device get `status: "skipped"` in the execution feedback. This uses the existing `Platform` type (`"ios" | "android"`) and `PlatformCapability` enum.
+
 ## Version Compatibility
 
-| Package A | Compatible With | Notes |
-|-----------|-----------------|-------|
-| Vite 7.3.1 | Node ^20.19.0 or >=22.12.0 | Dropped Node 18 support. Uses Rolldown internally. |
-| Vite 7.3.1 | @vitejs/plugin-react ^5.1.4 | v5 explicitly supports Vite 7. |
-| Vite 7.3.1 | @tailwindcss/vite ^4.2.1 | Tailwind vite plugin supports Vite ^5, ^6, ^7. |
-| Vitest 4.0.18 | Vite ^6.0.0 or ^7.0.0 | Vitest 4 supports both Vite 6 and 7. |
-| React 19.2.4 | react-dom 19.2.4 | Must match exactly. |
-| React 19.2.4 | Zustand ^5.0.11 | Zustand 5 supports React >=18. |
-| React 19.2.4 | motion ^12.34.3 | motion supports React ^18 or ^19. |
-| Fastify 5.7.4 | @fastify/websocket ^11.2.0 | v11 is for Fastify 5.x. |
-| Fastify 5.7.4 | Node >=20 | Fastify 5 dropped Node 18. |
-| TypeScript 5.9.3 | Zod ^4.3.6 | Zod 4 requires TS >=5.0. |
-| tsup 8.5.1 | esbuild ^0.27.0 | tsup 8 uses esbuild 0.27. |
-| Commander 14.0.3 | Node >=20 | Dropped Node 18. |
-| better-sqlite3 12.6.2 | Node 20.x, 22.x, 23.x, 24.x, 25.x | Prebuild binaries for these versions. |
-| chokidar 5.0.0 | Node >= 20.19.0 | v5 dropped Node 18. |
+No new packages means no new version compatibility concerns. All existing packages remain at their current pinned versions. The features use only existing APIs from:
 
-**Minimum Node.js version for this stack: 22.12.0** (dictated by Vite 7). Recommend Node 22 LTS.
+| Package | Version | API Used |
+|---------|---------|----------|
+| `framer-motion` | `^12.34.3` | `Reorder.Group`, `Reorder.Item`, `useDragControls`, `AnimatePresence` |
+| `zustand` | `^5` | `create<State>()()` with async methods |
+| `react` | `^19` | `useState`, `useCallback`, `useEffect` |
+| `sonner` | `^2.0.7` | `toast.success()`, `toast.error()` |
+| `lucide-react` | `^0.575.0` | Icons for action categories and collection cards |
+| `@simvyn/core` | `*` | `createModuleStorage()` |
+| `@simvyn/types` | `*` | `Device`, `Platform`, `PlatformCapability`, `WsEnvelope` |
+| `fastify` | `^5.7.4` | Route registration, request validation |
+| `@fastify/websocket` | `^11.2.0` | WsBroker channel for execution feedback |
 
 ## Sources
 
-- npm registry (registry.npmjs.org) — all version numbers verified against latest published versions as of 2026-02-26 (HIGH confidence)
-- Vite 7.3.1: engines `"node": "^20.19.0 || >=22.12.0"`, uses Rolldown (confirmed from package.json devDependencies)
-- Fastify 5.7.4: dependencies include pino ^10.1.0, fast-json-stringify ^6, find-my-way ^9
-- Tailwind 4.2.1: @tailwindcss/vite peer depends on `vite: "^5.2.0 || ^6 || ^7"`
-- Vitest 4.0.18: peer depends on `vite: "^6.0.0 || ^7.0.0"`
-- Zustand 5.0.11: peer depends on `react: ">=18.0.0"` (optional — also works without React)
-- Zod 4.3.6: exports `./mini` for bundle-optimized usage
-- motion 12.34.3: wrapper around framer-motion, peer depends on `react: "^18.0.0 || ^19.0.0"`
-- @fastify/websocket 11.2.0: depends on `ws: "^8.16.0"`, `fastify-plugin: "^5.0.0"`
-- Commander 14.0.3: engines `"node": ">=20"`
-- better-sqlite3 12.6.2: engines `"node": "20.x || 22.x || 23.x || 24.x || 25.x"`
-- @biomejs/biome 2.4.4: Rust-based, covers format + lint
-- Existing reference: sim-location at /Users/pranshu/github/sim-location uses raw node:http, ws, React 19, Vite 7, Zustand (confirmed from PROJECT.md)
+- Framer Motion Reorder docs: [motion.dev/docs/react-reorder](https://motion.dev/docs/react-reorder) — verified API: `Reorder.Group`, `Reorder.Item`, `useDragControls`, axis="y", auto-scroll, z-index management (HIGH confidence)
+- @dnd-kit npm: [@dnd-kit/core v6.3.1](https://www.npmjs.com/package/@dnd-kit/core), [@dnd-kit/sortable v10.0.0](https://www.npmjs.com/package/@dnd-kit/sortable) — 9.2M weekly downloads, confirmed as alternative but unnecessary here (HIGH confidence)
+- Codebase analysis: Direct inspection of existing stores (favorites-store.ts, device-store.ts), WebSocket broker (ws-broker.ts), module loader (module-loader.ts), storage system (storage.ts), command palette actions (actions.tsx, types.ts), module manifests (location/manifest.ts) (HIGH confidence)
+- npm package.json files: All version numbers read directly from repository package.json files (HIGH confidence)
 
 ---
-*Stack research for: Simvyn — universal mobile device devtool*
-*Researched: 2026-02-26*
+*Stack research for: Simvyn — Collections + Getting Started Documentation*
+*Researched: 2026-03-04*

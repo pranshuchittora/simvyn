@@ -1,271 +1,478 @@
-# Pitfalls Research
+# Domain Pitfalls: Collections Feature + Getting Started Documentation
 
-**Domain:** Mobile device devtool — CLI wrapper + web dashboard + plugin system
-**Researched:** 2026-02-26
-**Confidence:** HIGH (based on Flipper, Appium, ControlRoom post-mortems + direct Node.js CLI wrapper experience)
+**Domain:** Batch-action execution system for existing multi-module mobile devtool
+**Researched:** 2026-03-04
+**Confidence:** HIGH (based on direct analysis of simvyn codebase — module-loader, ws-broker, adapter types, command palette, storage patterns)
+
+---
 
 ## Critical Pitfalls
 
-### Pitfall 1: Hardcoding CLI Output Parsing Against a Single Xcode/SDK Version
+Mistakes that cause rewrites or fundamental architecture problems.
+
+### Pitfall 1: Collections Calling Module HTTP Routes Instead of Adapter Methods Directly
 
 **What goes wrong:**
-`xcrun simctl list devices -j` and `adb devices -l` change their JSON/text output format across Xcode and Android SDK versions. Projects that parse against one version's output break silently or catastrophically when Apple ships a new Xcode or Google updates platform-tools. ControlRoom (6k stars, simctl wrapper) has open issues about breakage with every major Xcode release (#162 — "not working with Xcode 14.2", #170 — "errors on Xcode 15 beta 5"). Appium's node-simctl had issue #145: "can't get simulator list by command `xcrun simctl list devices -j`" on specific Xcode versions.
+The natural-seeming approach is to have Collections invoke other modules' actions by calling their HTTP endpoints (e.g., `POST /api/modules/device-settings/appearance`). This seems clean — "just call the API like the dashboard does." But it creates a cascade of problems:
+- Every HTTP call serializes/deserializes JSON, validates auth, looks up the device, resolves the adapter — duplicating work for every step in a multi-step collection
+- HTTP calls within the same process add ~5-10ms of latency per step from Fastify's request lifecycle. A 10-step collection on 5 devices = 50 HTTP calls = 250-500ms of pure overhead
+- Error handling becomes HTTP status codes instead of typed errors — you lose the stack trace and error type, getting only `{ error: "Device must be booted" }` strings
+- If the server changes a route path, body schema, or response format, the Collections module silently breaks with 404s or 400s — there's no compile-time safety
+- The module route handlers in simvyn (e.g., `settingsRoutes`, `locationRoutes`) each independently look up the device and adapter. Collections would repeat this lookup 10+ times per device per collection run
 
 **Why it happens:**
-Apple and Google treat their CLI tools as internal developer tools, not stable APIs. They change JSON keys, add new fields, modify exit codes, and restructure output without notice or versioning. Developers test against their current Xcode/SDK and ship.
+Each existing module's routes (`device-settings/routes.ts`, `location/routes.ts`, `app-management/routes.ts`) are self-contained Fastify handlers that receive raw HTTP requests. There's no shared "action" abstraction — the route IS the action. The codebase has no internal API layer between "HTTP handler" and "business logic." When you need to invoke Module A's capability from Module B, the only visible interface is the HTTP endpoint.
 
-**How to avoid:**
-- Parse defensively: use optional chaining, provide fallbacks, never assume a field exists
-- Version-detect: run `xcrun simctl --version` / `adb version` at startup and log it; if output format changes, you have the version to debug against
-- Use the `-j` (JSON) flag for simctl always — never parse human-readable text output
-- For adb, parse structured output formats when available (`adb devices -l` gives more structured data than `adb devices`)
-- Write parser tests against captured output from multiple Xcode/SDK versions (store fixtures)
-- Design the platform adapter interface so the parser is isolated from business logic — when Apple changes output, you fix one parser, not 16 modules
+**Consequences:**
+- 5-10x slower collection execution than necessary
+- Fragile coupling to URL paths and body schemas that aren't typed
+- Impossible to implement atomic rollback — HTTP calls are fire-and-forget from the caller's perspective
+- Every module route change requires updating Collections (and no compiler will catch it)
 
-**Warning signs:**
-- Tests only run on one Xcode version
-- No output fixtures from prior SDK versions in test suite
-- Parsing with exact string matching or rigid regex instead of flexible JSON traversal
-- Users reporting "no devices found" after OS/Xcode update
+**Prevention:**
+Extract an **action registry** — a typed, in-process function map that both HTTP routes and Collections call. Each module registers its actions as plain async functions:
 
-**Phase to address:**
-Phase 1 (Foundation) — the platform adapter and device detection layer must be built with version resilience from day one. This cannot be retrofitted.
+```typescript
+// Action signature: (deviceId: string, params: Record<string, unknown>, adapter: PlatformAdapter) => Promise<ActionResult>
+type ActionFn = (deviceId: string, params: Record<string, unknown>, ctx: ActionContext) => Promise<ActionResult>;
+
+interface ActionRegistry {
+  register(moduleId: string, actionId: string, fn: ActionFn, meta: ActionMeta): void;
+  execute(moduleId: string, actionId: string, deviceId: string, params: Record<string, unknown>): Promise<ActionResult>;
+  listActions(): ActionMeta[];
+}
+```
+
+Existing module routes become thin wrappers that call `actionRegistry.execute()`. Collections call the same registry. One lookup, one adapter resolution, typed params, typed errors.
+
+**Detection (warning signs during implementation):**
+- Collection executor importing `fetch()` or constructing URL strings
+- Collection steps containing API paths like `/api/modules/...`
+- Tests that need a running HTTP server to test collection execution
+- Collections silently skipping steps after a module route refactor
+
+**Phase to address:** First phase of Collections — the action registry must exist before any collection execution logic. Cannot be retrofitted without rewriting every module route.
 
 ---
 
-### Pitfall 2: Zombie Child Processes and Leaked File Descriptors
+### Pitfall 2: Dual Capability Detection Systems Diverging
 
 **What goes wrong:**
-Spawning CLI processes (`xcrun simctl`, `adb logcat`, `adb shell`) from Node.js and not properly managing their lifecycle leads to zombie processes, leaked file descriptors, and port exhaustion. This is especially dangerous with long-running streaming processes like `adb logcat` or `simctl io` (screen recording). When the user navigates away from a module or closes the browser tab, spawned processes keep running. Over time, the system accumulates dozens of orphaned `adb` and `simctl` processes consuming CPU and memory. Appium explicitly replaced Node.js's built-in `child_process` with their own `teen-process` wrapper (node-simctl issue #5) specifically to handle this.
+Simvyn has TWO different capability detection mechanisms that don't agree:
+
+1. **`PlatformAdapter.capabilities()`**: Returns a `PlatformCapability[]` array (e.g., `["setLocation", "push", "screenshot", ...]`). iOS returns 18 capabilities, Android returns 17. This is a static list.
+
+2. **Runtime `!!adapter?.methodName` checks**: Every route handler checks the actual method existence. For example, `device-settings/routes.ts` line 16: `if (!adapter?.setAppearance)`. The `device-settings/capabilities` endpoint (line 230-251) checks each method individually and returns a dynamic map.
+
+These two systems can diverge. The `capabilities()` array says `"settings"` is supported, but individual method checks like `!!adapter?.setStatusBar` give per-action granularity. If Collections uses the `capabilities()` array to decide "can this platform run this step?", it will claim steps are supported that actually fail at runtime because the capability array is coarse-grained (e.g., Android reports `"settings"` but doesn't have `setStatusBar`).
 
 **Why it happens:**
-- `child_process.spawn()` doesn't automatically kill children when the parent exits
-- WebSocket disconnect doesn't trigger process cleanup if not explicitly wired
-- SIGTERM/SIGINT handlers are forgotten or don't propagate to child process trees
-- `adb logcat` and similar streaming commands run forever by default
-- On macOS, killing a process doesn't kill its children (no process groups by default)
+`PlatformCapability` is a union of 22 string literals, but `PlatformAdapter` has 50+ optional methods. The mapping between capability strings and adapter methods is implicit — there's no formal registry linking `"settings"` to `[setAppearance, setStatusBar, setLocale, ...]`. The device-settings module already solved this with its `/capabilities` endpoint that checks each method individually, but this solution is module-local, not reusable.
 
-**How to avoid:**
-- Use `{ detached: false }` for all spawned processes (Node.js default, but be explicit)
-- Always set up `AbortController` or process group kills (`process.kill(-pid)` on POSIX) for long-running processes
-- Implement a process registry: every spawned process is tracked with its purpose, owning module, and target device. On cleanup, kill all registered processes
-- Wire WebSocket `close` events to process cleanup for streaming operations
-- Implement `process.on('exit')` and `process.on('SIGTERM')` handlers that kill all tracked child processes
-- Set timeouts on one-shot commands (Appium's appium-adb had issue #147: "APK install timeout is hardcoded" — hardcoded timeouts are bad, but *no* timeouts are worse)
-- For `adb logcat`: use `--pid` flag to scope to a specific app process when possible, reducing output volume
+**Consequences:**
+- Collections shows a step as "compatible" with Android, but it fails at runtime
+- Users create cross-platform collections that seem valid but produce confusing partial failures
+- Platform skip logic ("skip this iOS-only step on Android") misclassifies steps
+- The dashboard shows green checkmarks for steps that will actually error
 
-**Warning signs:**
-- `ps aux | grep simctl` shows processes from hours ago
-- System running slow after extended dashboard use
-- "Too many open files" errors
-- Log streaming works once but fails on reconnect (previous stream still holding the pipe)
+**Prevention:**
+Collections must check capability at the **adapter method level**, not the `PlatformCapability` array level. Define a mapping from collection step types to specific adapter method names:
 
-**Phase to address:**
-Phase 1 (Foundation) — build the process lifecycle manager as part of the core server, before any module spawns processes. Every module must go through this manager, never spawn directly.
+```typescript
+const STEP_REQUIREMENTS: Record<CollectionStepType, keyof PlatformAdapter> = {
+  'set-appearance': 'setAppearance',
+  'set-status-bar': 'setStatusBar',
+  'set-location': 'setLocation',
+  'launch-app': 'launchApp',
+  'set-locale': 'setLocale',
+  // ...
+};
+
+function canExecuteStep(step: CollectionStep, adapter: PlatformAdapter): boolean {
+  const method = STEP_REQUIREMENTS[step.type];
+  return typeof adapter[method] === 'function';
+}
+```
+
+This reuses the same pattern that already works in individual module routes. Don't invent a third system.
+
+**Detection:**
+- Code that reads `adapter.capabilities()` to determine step compatibility
+- Steps failing at execution time that were marked as "compatible" in the UI
+- Platform compatibility checks that reference `PlatformCapability` strings instead of adapter methods
+
+**Phase to address:** Step definition phase — when designing the collection step schema. The capability check function must be part of the step definition, not a separate system.
 
 ---
 
-### Pitfall 3: Monolithic Module Discovery = Circular Dependencies and Import Ordering Nightmares
+### Pitfall 3: WebSocket Message Flood During Multi-Device Multi-Step Execution
 
 **What goes wrong:**
-A plugin/module system with 16+ modules and auto-discovery sounds clean in design, but TypeScript monorepos commonly collapse into circular dependency chains when module boundaries aren't enforced. Module A imports a type from Module B which imports a utility from shared which re-exports from Module A. The build succeeds (TypeScript handles circular refs at the type level) but runtime breaks with `undefined` imports or weird initialization ordering bugs. Flipper (Facebook's mobile devtool, 13.5k stars) struggled with this at scale — their plugin system's complexity contributed to React Native dropping it entirely. From the Flipper removal RFC: "longer compilation times, had a slew of gotchas."
+A collection with 8 steps applied to 5 devices generates 40 step-execution events. If each event broadcasts a WS message for "step-started", "step-completed" or "step-failed", and potentially "step-skipped" for incompatible steps, that's 80-160 messages in rapid succession. The existing `wsBroker.broadcast()` iterates all subscribed clients and sends each message individually — there's no batching. The dashboard's `useWsListener` hook fires a handler per message, each potentially triggering a React re-render.
+
+For context, the location module's `set-location` WS handler (location/ws-handler.ts line 22-43) already does multi-device broadcasting — it sends a single `location-set` event with a `results` array after all devices complete. But if Collections naively broadcasts per-step per-device, it will overwhelm the client.
+
+The `WsProvider` in `use-ws.ts` dispatches every message through `listenersRef.current.get(key)` (line 65-69), iterating handlers synchronously. 160 rapid messages = 160 synchronous handler invocations = 160 potential `setState` calls = serious React rendering jank.
 
 **Why it happens:**
-- Modules share types (device model, message protocol) and it's tempting to import directly across module boundaries
-- Auto-discovery via filesystem scanning creates implicit coupling — module load order is alphabetical, not dependency-ordered
-- TypeScript project references and workspace dependencies interact in non-obvious ways
-- Developers add "just one quick import" across boundaries under time pressure
+- The WS broker was designed for one-at-a-time operations (set a location, take a screenshot), not batch operations
+- Each step logically wants to report its status, and it's natural to broadcast per-step
+- Developer tests with 1-2 devices and 2-3 steps; the problem only manifests at realistic scale
 
-**How to avoid:**
-- Enforce a strict dependency direction: `core` -> `shared-types` <- `modules`. Modules NEVER import from other modules. Period.
-- Put all shared types (Device, Message protocol, ModuleManifest) in a single `@simvyn/types` package. This is the only package every module may depend on.
-- Each module exports a manifest object conforming to a strict interface — the core loads modules through this interface, not via direct imports
-- Use a module registry pattern: modules register themselves, core orchestrates. No module-to-module communication except through core's event bus
-- Lint rule: `eslint-plugin-import` with `no-restricted-paths` to enforce module boundaries at CI time, not just convention
-- Consider `turborepo` or `nx` for build orchestration — they understand workspace dependency graphs and will error on circular refs
+**Consequences:**
+- Dashboard freezes during collection execution on multiple devices
+- Progress UI updates in a stuttery, unreadable burst instead of smooth progression
+- Other WS channels (device status, log streaming) get delayed behind collection status messages
+- Browser drops WS messages if they arrive faster than the client can process them (buffering → memory spike)
 
-**Warning signs:**
-- TypeScript build takes 30+ seconds on incremental rebuild
-- `Cannot access 'X' before initialization` errors at runtime
-- Module works in isolation but breaks when loaded alongside other modules
-- Developers avoiding putting code in the "right" package because imports are too painful
+**Prevention:**
+1. **Server-side batching**: Accumulate step results and broadcast at a fixed interval (every 200ms) or at logical boundaries (all steps for one device complete, or all devices complete one step). The location module's pattern of collecting results into an array and broadcasting once (ws-handler.ts line 22-42) is the right model.
 
-**Phase to address:**
-Phase 1 (Foundation) — the monorepo structure, package boundaries, shared types package, and lint rules must be established before any modules are built. This is architectural — retrofitting module boundaries onto tangled code is a rewrite.
+2. **Single collection-status channel with coalesced state**: Instead of individual `step-completed` events, broadcast the full collection execution state as a single message:
+```typescript
+{
+  channel: "collections",
+  type: "execution-progress",
+  payload: {
+    collectionId: "...",
+    executionId: "...",
+    devices: {
+      "device-1": { completedSteps: 5, totalSteps: 8, currentStep: "set-locale", status: "running" },
+      "device-2": { completedSteps: 3, totalSteps: 8, currentStep: "set-location", status: "running", skippedSteps: ["set-status-bar"] }
+    }
+  }
+}
+```
+This replaces N messages with 1 message containing the full state.
+
+3. **Client-side throttling**: Use `requestAnimationFrame` or a 100ms debounce on the collection progress handler to coalesce rapid state updates into single renders.
+
+**Detection:**
+- WS message count spikes during collection execution (add server-side logging)
+- Dashboard DevTools network tab shows >10 WS messages/second during collection run
+- React Profiler shows cascading re-renders during collection execution
+- Other modules becoming unresponsive while a collection runs
+
+**Phase to address:** First phase — the WS protocol for collection execution must be designed with batching from the start. Adding batching to an event-per-step protocol later requires changing both server and client.
 
 ---
 
-### Pitfall 4: The "One WebSocket For Everything" Bottleneck
+### Pitfall 4: Collection Schema Becomes Unversioned and Unmigratable
 
 **What goes wrong:**
-Routing all real-time communication through a single WebSocket connection with a discriminated union message type (`{ type: 'log', ... } | { type: 'device-status', ... } | { type: 'screenshot', ... }`) seems elegant but creates a critical bottleneck. Log streaming from `adb logcat` can produce thousands of messages per second. Mixed onto the same connection as device status polls and UI state updates, it saturates the WebSocket, causes backpressure, drops messages, and makes the entire dashboard sluggish. Binary data (screenshots, screen recordings) makes it worse — a 2MB screenshot blocks text messages behind it.
+Collections are persisted as JSON files via `createModuleStorage("collections")`. A collection step references a module and action by name with specific parameters. When the schema evolves (new step types, renamed parameters, changed action signatures), saved collections become invalid. Users who created collections before the schema change see:
+- Steps that silently do nothing (parameter name changed, old value is ignored)
+- Entire collections that fail to deserialize (new required field missing)
+- Steps referencing actions that were renamed or removed
+
+The existing storage pattern (`location/storage.ts`, `push/routes.ts`, `deep-links/routes.ts`) stores data as plain JSON arrays with no schema version. `SavedLocation`, `SavedPayload`, and `Favorite` interfaces have simple flat structures. But collection schemas will be complex (nested steps with typed params per module) and will evolve as new step types are added.
 
 **Why it happens:**
-- sim-location's single WebSocket works because it only has one data stream (location updates). Developers assume the pattern scales.
-- "We'll optimize later" — but WebSocket architecture is very hard to change after 16 modules are built on top of it
-- Mixing binary (screenshots, recordings) and text (JSON messages) on one connection requires framing overhead
+- The `createModuleStorage` API is a raw key-value JSON store with no versioning support
+- Simple saved data (a location with lat/lon) rarely changes shape. But collections reference other modules' action signatures, which change when those modules evolve
+- "We'll add versioning later" — but by then, users have saved collections that can't be migrated because there's no version field to detect old formats
 
-**How to avoid:**
-- Design for multiple WebSocket channels from the start: one per concern (`/ws/device-status`, `/ws/logs/{deviceId}`, `/ws/module/{moduleName}`)
-- Use the HTTP server for request-response patterns (screenshots, file downloads). Only use WebSocket for genuine streaming (logs, device status changes, playback updates)
-- Implement per-channel backpressure: if the log channel is overwhelmed, it shouldn't affect device status updates
-- For log streaming: implement server-side throttling/buffering — batch log lines into chunks (e.g., every 100ms) rather than sending each line individually
-- Binary data (screenshots, recordings) should use HTTP endpoints with progress events, not WebSocket
+**Consequences:**
+- Silent data corruption — old collections look valid in storage but produce wrong behavior
+- Users lose saved collections on upgrade (nuclear option: wipe all data)
+- No automated migration path — manual intervention or support tickets
+- Increasingly complex ad-hoc migration code that checks for field existence instead of version numbers
 
-**Warning signs:**
-- Dashboard freezes when log streaming is active
-- Device status updates lag behind reality during heavy log output
-- Screenshot capture seems to pause everything for a moment
-- Client-side message parsing becomes a CPU bottleneck (parsing thousands of JSON messages per second)
+**Prevention:**
+Add a `schemaVersion` field from day one:
 
-**Phase to address:**
-Phase 1 (Foundation) — WebSocket architecture must be multi-channel from the start. Retrofitting channel separation onto a single-socket design requires every module to be updated.
+```typescript
+interface CollectionV1 {
+  schemaVersion: 1;
+  id: string;
+  name: string;
+  steps: CollectionStepV1[];
+  createdAt: number;
+  updatedAt: number;
+}
+```
+
+Include a migration function that runs on load:
+```typescript
+function migrateCollection(raw: unknown): Collection {
+  const data = raw as any;
+  if (!data.schemaVersion || data.schemaVersion < CURRENT_SCHEMA_VERSION) {
+    return runMigrations(data, data.schemaVersion ?? 0, CURRENT_SCHEMA_VERSION);
+  }
+  return data as Collection;
+}
+```
+
+Step parameter schemas should be validated at load time, not just at execution time. If a step references a module action that no longer exists, flag it immediately when the collection is opened, not when it's halfway through execution.
+
+**Detection:**
+- Collection interfaces without a `schemaVersion` field
+- `storage.read<Collection[]>("collections")` without validation or migration
+- Users reporting "my collections don't work after update" with no version info in the data to diagnose
+
+**Phase to address:** Storage design phase — the schema must include a version field from the first commit. Migration logic can be simple initially (just check version and throw a helpful error) but the version field must exist.
 
 ---
 
-### Pitfall 5: Cross-Platform "Graceful Degradation" That Never Gets Tested
+## Moderate Pitfalls
+
+Mistakes that cause significant rework but not full rewrites.
+
+### Pitfall 5: All-or-Nothing Execution Without Configurable Error Strategy
 
 **What goes wrong:**
-The project targets macOS (iOS+Android), Linux (Android-only), and Windows (Android-only). "Graceful degradation when simctl unavailable" is specified, but in practice, the entire codebase is developed and tested on macOS. The first time a Linux user runs `npx simvyn`, they get a crash because:
-- `xcrun` is called unconditionally during startup
-- File paths use macOS-specific locations (`~/Library/Developer/...`)
-- `adb` binary discovery assumes macOS SDK paths
-- Filesystem operations use case-sensitive paths that break on case-insensitive Windows NTFS
+A collection of 8 steps is running on a device. Step 3 (set locale) fails because the device just rebooted and isn't fully booted yet. The remaining 5 steps — which would have worked fine — never execute. The user has to fix the device state and re-run the entire collection. Worse, steps 1-2 already ran, so the device is in a partially-configured state.
 
-Appium's appium-adb had issue #44: "Simplify searching for Android SDK binary locations" — SDK binary discovery across platforms is a known hard problem. `ANDROID_HOME` vs `ANDROID_SDK_ROOT` (deprecated), vs platform-specific default paths.
+Alternatively: the implementation goes full "continue on error" and step 5 (launch app) runs before step 4 (install app) has been confirmed successful. The launch fails, but now the error log shows both "install failed" and "launch failed" — the user can't tell which was the root cause.
 
 **Why it happens:**
-- Developer works on macOS, the happy path works, they ship
-- CI runs on macOS/Linux but doesn't exercise the "simctl unavailable" code paths
-- `which xcrun` returns an error on Linux, but nobody tested that `catch` block
-- Android SDK location varies wildly: `ANDROID_HOME`, `ANDROID_SDK_ROOT`, `~/Library/Android/sdk`, `~/Android/Sdk`, `C:\Users\...\AppData\Local\Android\Sdk`
+- The natural implementation is a for-loop over steps with `try/catch`
+- Developers pick one error strategy (abort or continue) and hardcode it
+- The real need is user-configurable: some steps are critical (install app before launch), others are optional (set status bar for screenshots)
 
-**How to avoid:**
-- Build a `PlatformCapabilities` module that detects available tools at startup and exposes a capability map: `{ simctl: boolean, adb: boolean, xcrun: boolean }`
-- Guard every simctl call behind `if (capabilities.simctl)` — not just at the module level, but every CLI invocation
-- Abstract SDK binary discovery into a single module that checks: environment variables -> common paths -> `which`/`where` command -> user config
-- CI must include a Linux job that verifies the Android-only path works
-- For adb path discovery, check: `ANDROID_HOME/platform-tools/adb`, `ANDROID_SDK_ROOT/platform-tools/adb`, common default paths per OS, then `PATH`
-- Never hardcode `/` as path separator — use `path.join()` everywhere
+**Prevention:**
+Each step should have an `onFailure` strategy: `"abort"`, `"skip"`, or `"continue"`. The default should be `"continue"` for non-dependent steps and `"abort"` for steps with downstream dependencies. The executor should:
+1. Execute steps in order
+2. On step failure, check the step's `onFailure` strategy
+3. Emit a `step-failed` status with the error and what strategy was applied
+4. If `"abort"`, stop execution and mark remaining steps as `"cancelled"`
+5. If `"skip"`, mark step as `"skipped-on-error"` and continue
+6. If `"continue"`, mark step as `"failed"` and continue
 
-**Warning signs:**
-- No CI job runs on Linux or Windows
-- Tests mock `child_process.execFile` instead of actually testing platform detection
-- The "simctl not found" error message is the default Node.js `ENOENT` rather than a helpful guide
-- `process.platform` checks scattered throughout the codebase instead of centralized
+The UI should show all three outcomes clearly: succeeded, failed-but-continued, skipped-incompatible, and cancelled-due-to-abort.
 
-**Phase to address:**
-Phase 1 (Foundation) — platform detection and capability system must be built first. Phase 2 should add CI jobs for Linux. Windows support can be later but the abstractions must be there from day one.
+**Detection:**
+- Collection executor has a single `catch` block that handles all errors the same way
+- No per-step error configuration in the collection schema
+- Users saying "I had to re-run the whole collection because one step failed"
+
+**Phase to address:** Executor design phase — error handling must be part of the step schema, not bolted on later.
 
 ---
 
-### Pitfall 6: Publishing a Monorepo as a Single `npx` Executable
+### Pitfall 6: Step Ordering Dependencies Not Encoded in Schema
 
 **What goes wrong:**
-The project is a TypeScript monorepo with workspace packages, but end users run `npx simvyn`. The gap between "monorepo with 8+ packages during development" and "single installable package for users" is where most monorepo devtools projects fail. Common failures:
-- Workspace packages reference each other via `workspace:*` protocol, which doesn't resolve after `npm publish`
-- `package.json` `files` field doesn't include built output from workspace dependencies
-- `bin` field points to TypeScript source instead of compiled JavaScript
-- `npx simvyn` works from the repo (because workspace linking) but fails from npm (because dependencies aren't published)
-- Version mismatches between workspace packages after partial publish
+A user creates a collection: (1) Set dark mode, (2) Set locale, (3) Launch app, (4) Set location. They reorder the steps in the UI to: (1) Set location, (2) Launch app, (3) Set locale, (4) Set dark mode. This works fine. But another user creates: (1) Install app, (2) Launch app. They reorder to (1) Launch app, (2) Install app — and the collection always fails.
+
+The system treats all steps as independent and freely reorderable. But some steps have implicit dependencies: you can't launch an app that isn't installed, can't set permissions on an app that isn't running, can't clear app data for an app that doesn't exist.
 
 **Why it happens:**
-- npm workspaces are designed for developing multiple packages, not for bundling them into one distributable
-- Developers test by running from the repo root, never from a clean `npx` install
-- The "it works on my machine" gap is larger with monorepos because workspace symlinks mask missing dependencies
+- Most devtool steps (dark mode, location, locale) ARE truly independent
+- Only a few step combinations have ordering constraints
+- The UI makes drag-and-drop reordering feel safe and universal
+- There's no dependency metadata in the step schema
 
-**How to avoid:**
-- Decide early: are workspace packages published individually or bundled? For a devtool like this, **bundle** — users install one package, internal packages are implementation detail
-- Use `tsup` or `unbuild` to bundle the server + CLI into a single distributable, resolving workspace imports at build time
-- If keeping internal packages, use `"dependencies"` (not `"devDependencies"`) in the main package's `package.json` for workspace packages that must be included
-- Test the publish artifact: `npm pack && npm install ./simvyn-0.0.1.tgz && npx simvyn` in CI
-- Use `"files"` field in root package.json explicitly — don't rely on `.npmignore`
-- For the React dashboard: it must be pre-built and included as static assets in the server package, not served from a Vite dev server
+**Prevention:**
+Add optional `requires` field to step definitions that specifies prerequisite step types (not specific instances, but categories):
 
-**Warning signs:**
-- `npx simvyn` works from the repo but fails with "Cannot find module '@simvyn/core'" from npm
-- Dashboard shows blank page when installed via npm (Vite dev server not running)
-- `npm pack` produces a 500KB tarball (missing built assets) or a 200MB tarball (included node_modules)
+```typescript
+interface CollectionStep {
+  type: 'launch-app';
+  params: { bundleId: string };
+  requires?: string[];  // e.g., ['install-app'] — only if the same bundleId is referenced
+}
+```
 
-**Phase to address:**
-Phase 1 (Foundation) — the build and packaging strategy must be designed alongside the monorepo structure. Test `npm pack` from day one of CI, not after 16 modules are built.
+Validate ordering at save time, not execution time. If a step's `requires` aren't met earlier in the sequence, show a warning in the editor (not an error — the user might know the app is already installed). At execution time, if a prerequisite step failed, auto-skip dependent steps.
+
+**Detection:**
+- No `requires` or dependency field in step type definitions
+- Users creating collections with install-then-launch that break when reordered
+- Collection editor allows unrestricted drag reordering with no warnings
+
+**Phase to address:** Step schema design. Warning validation in the editor comes later, but the schema must support dependencies from the start.
 
 ---
 
-## Technical Debt Patterns
+### Pitfall 7: CLI Collection Execution Diverging from Dashboard Execution
 
-Shortcuts that seem reasonable but create long-term problems.
+**What goes wrong:**
+The CLI `simvyn collection run my-collection --device XYZ` uses a different code path than the dashboard's "Apply Collection" button. The CLI creates its own `DeviceManager` and adapters (like every existing CLI command in simvyn — see `device-settings/cli.ts` lines 15-17), while the dashboard goes through the server's HTTP/WS APIs. Behavior diverges:
+- CLI runs steps sequentially in-process; dashboard runs them through the WS broker with async feedback
+- CLI resolves device by ID prefix match (line 20: `d.id.startsWith(deviceId)`); dashboard uses exact device IDs from the device store
+- CLI adapter instances are fresh (new connection to adb server); server adapter instances are shared (same adb connection pool)
+- Error messages differ: CLI prints to stderr; dashboard shows toasts from HTTP response bodies
+- Platform compatibility checks might use different logic (CLI checks adapter methods; dashboard might check the capabilities endpoint)
 
-| Shortcut | Immediate Benefit | Long-term Cost | When Acceptable |
-|----------|-------------------|----------------|-----------------|
-| Polling devices every 2s instead of event-based detection | Simple to implement, no platform-specific listeners | CPU waste, stale data between polls, 16 modules all polling = 16x overhead | MVP only — Phase 2 should add `simctl list devices -j` diffing and `adb track-devices` for push-based updates |
-| Single `simctl`/`adb` call per action instead of batching | Simpler code, one command per button click | Each `xcrun simctl` invocation has ~200ms startup overhead. 5 device operations = 1 second of just CLI startup | Always batch where possible — `simctl list` once, not per-device |
-| Storing module state as individual JSON files | No database dependency, easy to debug | File system race conditions when multiple modules write concurrently; no atomic transactions; grows unwieldy with many modules | Acceptable permanently — but use file locking (`proper-lockfile`) and atomic writes (write to temp then rename) |
-| Inlining platform adapter logic in modules | Faster to write the first module | Every new module re-implements device selection, error handling, platform checks | Never — extract on first use, not later |
-| Using `child_process.exec` instead of `execFile` | Simpler API, string commands | Shell injection vulnerability — user-controlled device names or file paths could execute arbitrary commands | Never — always use `execFile` with argument arrays |
+Over time, bugs get fixed in one path but not the other. The CLI becomes a second-class citizen.
 
-## Integration Gotchas
+**Why it happens:**
+Every existing CLI command in simvyn (see `device-settings/cli.ts`, `location/manifest.ts` CLI section) independently creates adapters and a device manager. This is fine for one-shot commands, but Collections needs a complex executor with error handling, progress tracking, and state management. Duplicating this in CLI and server creates two implementations of the same complex logic.
 
-Common mistakes when connecting to `simctl` and `adb`.
+**Consequences:**
+- "Works in dashboard, fails in CLI" or vice versa
+- Bug fixes applied to one path, forgotten in the other
+- CLI collections missing features that dashboard has (progress tracking, error strategy)
+- Different behavior erodes trust — users don't know which interface to trust
 
-| Integration | Common Mistake | Correct Approach |
-|-------------|----------------|------------------|
-| `xcrun simctl` | Calling `simctl` directly instead of `xcrun simctl`. On systems with multiple Xcode installations, `simctl` may not be in PATH, but `xcrun` resolves the correct one via `xcode-select` | Always call via `xcrun simctl`. Detect Xcode path via `xcode-select -p` and validate it exists before first use |
-| `adb` server | Assuming adb server is running. First `adb devices` call starts the server, which takes 2-3 seconds and prints "daemon starting" to stderr, breaking output parsing | Run `adb start-server` explicitly during initialization. Parse `adb devices` output ignoring the first two lines (header). Check stderr separately from stdout |
-| `simctl push` (notifications) | Sending push payload without a running app or with wrong bundle ID gives exit code 164 with unhelpful error message | Validate that the target app is installed and running before attempting push. Map exit codes to human-readable errors (ControlRoom issue #168 — push notification text encoding issues) |
-| `adb logcat` | Running `adb logcat` without clearing first gives a flood of historical logs | Use `adb logcat -c` to clear, then `adb logcat -v threadtime` for parseable timestamps. Use `--pid` to filter to specific app when possible |
-| `simctl io` (screenshots) | Attempting screenshot on a shutdown simulator silently fails or returns a corrupt file | Check device state is "Booted" before any IO operation. Validate output file exists and has non-zero size after capture |
-| `adb` with multiple devices | Calling `adb shell` without `-s <serial>` when multiple devices are connected gives "error: more than one device/emulator" | Always pass `-s <device-serial>` for every adb command. Never rely on default device selection |
-| Android SDK path | Using `ANDROID_SDK_ROOT` (deprecated since CLI tools 7.0) or hardcoding `~/Library/Android/sdk` | Check in order: `ANDROID_HOME` -> `ANDROID_SDK_ROOT` -> platform-specific defaults. Validate that `platform-tools/adb` exists at the resolved path |
+**Prevention:**
+Build the collection executor as a standalone function in a shared package (e.g., in `@simvyn/core` or a new `@simvyn/collections` package) that accepts adapters, a device list, and a progress callback. Both CLI and server import the same executor:
 
-## Performance Traps
+```typescript
+// Shared executor
+async function executeCollection(
+  collection: Collection,
+  devices: Device[],
+  getAdapter: (platform: Platform) => PlatformAdapter | undefined,
+  onProgress: (event: ExecutionProgressEvent) => void,
+  options?: { errorStrategy?: 'abort' | 'continue' }
+): Promise<ExecutionResult> { ... }
 
-Patterns that work at small scale but fail as usage grows.
+// Server usage: onProgress broadcasts via WS
+// CLI usage: onProgress prints to stdout with progress bars
+```
 
-| Trap | Symptoms | Prevention | When It Breaks |
-|------|----------|------------|----------------|
-| Parsing full `adb logcat` output as individual lines over WebSocket | Dashboard freezes, browser tab uses 500MB+ RAM | Server-side buffering: batch lines into 100ms chunks, implement virtual scrolling on client, cap retained log buffer at 10K lines | >100 log lines/second (normal for a debug Android app) |
-| Re-running `simctl list devices -j` for every module that needs device info | 200ms per call × 16 modules = 3.2 seconds of blocking on each poll cycle | Centralized device manager that polls once and shares state via event emitter. Modules subscribe, never call simctl directly | >3 modules polling independently |
-| Storing screenshots/recordings in memory before writing to disk | Node.js process OOM crash on large recordings | Stream directly from child process stdout to filesystem using `pipe()`. Serve files from disk, never buffer in memory | Screen recording >30 seconds at full resolution |
-| Synchronous `fs.readFileSync` for config/state files | Server blocks on disk I/O, WebSocket messages queue up | Use `fs.promises` (async) for all file operations. The only acceptable sync operation is at startup before the server is listening | >5 concurrent module state reads |
-| Running `simctl list` and `adb devices` sequentially | Startup takes 3+ seconds (200ms simctl + 500ms first adb + server startup) | Run platform detection in parallel: `Promise.all([detectiOS(), detectAndroid()])` | Always — this is free performance |
+**Detection:**
+- Separate `executeCollection` implementations in CLI and server packages
+- CLI collection command that imports from `@simvyn/server` (wrong direction)
+- Bug reports that specify "this only happens in CLI" or "only in dashboard"
 
-## Security Mistakes
+**Phase to address:** Executor implementation phase — the shared executor must be written once in a platform-agnostic way before being wired into CLI or server.
 
-Domain-specific security issues for a local developer tool.
+---
 
-| Mistake | Risk | Prevention |
-|---------|------|------------|
-| Binding HTTP server to `0.0.0.0` instead of `127.0.0.1` | Any device on the network can control your simulators, read your app data, execute adb commands on your connected devices | Default to `127.0.0.1`. If user explicitly requests network access, require `--host 0.0.0.0` flag and print a warning |
-| Passing user input to shell commands via string interpolation | Shell injection: a device name containing `; rm -rf /` could be catastrophic. adb device serials and simctl UDIDs come from the system, but file paths and app bundle IDs may come from user input | Always use `execFile` with argument arrays, never `exec` with string concatenation. Validate all inputs against allowlist patterns |
-| Serving the React dashboard without CORS restrictions | If bound to non-localhost, other websites could make requests to the dashboard API via CSRF | Set `Access-Control-Allow-Origin: http://localhost:<port>` explicitly. Only accept WebSocket connections from expected origins |
-| File browser module allowing path traversal | User could navigate outside the app sandbox to read system files | Resolve and validate all file paths against the app container root. Reject paths containing `..` after resolution. Use `path.resolve()` and check it starts with the expected prefix |
-| No authentication even on localhost | Other local applications or malicious scripts could call the API | Low risk for localhost-only, but consider an optional auth token for `0.0.0.0` mode. At minimum, generate a random token and require it in the URL when network-bound |
+### Pitfall 8: Command Palette Collections Integration Creating a Tangled Third Interface
 
-## UX Pitfalls
+**What goes wrong:**
+The command palette already has `MultiStepAction` with its own step system (`DeviceSelectStep`, `ParameterStep`, `ConfirmStep`, etc. in `types.ts`). Collections has its own step system (set-appearance, set-location, launch-app with typed params). Integrating "Apply Collection" into the command palette requires translating between these two step models, creating a third layer of complexity.
 
-Common user experience mistakes in mobile devtool dashboards.
+A developer might try to make collection steps extend `MultiStepAction` steps, or wrap collection execution in a `MultiStepAction.execute()` callback. Either way, you end up with:
+- Collection steps that can't use the `device-select` step type (because devices are selected upfront, not per-step)
+- Awkward parameter mapping between command palette's `StepContext.params` and collection step params
+- The command palette's one-action-at-a-time model conflicting with collections' batch execution model
 
-| Pitfall | User Impact | Better Approach |
-|---------|-------------|-----------------|
-| Not handling "no devices found" gracefully | User sees blank screen, doesn't know if tool is broken or they need to boot a simulator | Show clear empty state: "No devices detected. Boot a simulator in Xcode or connect an Android device." Include a "Refresh" button and link to troubleshooting |
-| Requiring Xcode CLI tools without explaining how to install them | `xcrun: error: invalid active developer path` is confusing for users who installed Xcode but not CLI tools | Detect this specific error, show: "Run `xcode-select --install` to set up Xcode Command Line Tools" |
-| Module UI loading states that block the entire dashboard | User switches modules and stares at a spinner while one module fetches device data | Each module loads independently. Show module skeleton/placeholder immediately. Device data should come from the central device manager, not per-module fetches |
-| Log streaming without search/filter on first release | Users see thousands of lines, can't find what they need, conclude the tool is useless | Ship search + log level filtering in the same release as log streaming. These are not separate features — streaming without filtering is noise |
-| Dark mode only with no option to adjust | Some developers work in bright environments, or have visual impairments that make dark frosted glass unreadable | Ship with a dark default but include a contrast/theme toggle from the start. Accessibility is not a follow-up feature |
+**Why it happens:**
+The command palette was designed for individual actions with a simple flow: pick devices → set params → execute. Collections are a fundamentally different interaction: pick collection → pick devices → execute all steps. Trying to fit collections into the existing `MultiStepAction` framework is square-peg-round-hole.
 
-## "Looks Done But Isn't" Checklist
+**Prevention:**
+Don't make "Apply Collection" a `MultiStepAction`. Instead, add it as a **navigation action** (like `open-deep-link` and `install-app` in `actions.tsx` lines 384-404) that navigates to the collections panel with the selected collection pre-loaded. The command palette's role is discovery and launching — "show me my collections" — not executing multi-step batch operations.
 
-Things that appear complete but are missing critical pieces.
+For individual collection steps that overlap with command palette actions (e.g., "set dark mode" exists in both), keep them separate. The command palette version is for quick one-off actions; the collection version is for batch automation. Don't try to unify them.
 
-- [ ] **Device detection:** Often missing handling for "Shutdown" vs "Booted" vs "Creating" states — verify all simctl device states are handled, not just "Booted"
-- [ ] **Log streaming:** Often missing reconnection logic when device reboots or adb server restarts — verify logs resume after device restart without manual refresh
-- [ ] **Screenshot capture:** Often missing error handling for locked devices or devices still booting — verify screenshot fails gracefully with helpful message
-- [ ] **Push notifications:** Often missing payload validation — verify malformed JSON is caught before sending to simctl, not after a cryptic exit code
-- [ ] **File browser:** Often missing symlink handling — iOS simulator app containers have symlinks; verify they don't cause infinite recursion or path confusion
-- [ ] **Database inspector:** Often missing handling for locked/WAL-mode SQLite databases — verify tool works when app is actively writing to the database
-- [ ] **CLI subcommands:** Often missing stdin/stdout piping for scripting — verify `simvyn screenshot --device X` can be piped to `pbcopy` or used in shell scripts
-- [ ] **npm package:** Often missing pre-built dashboard assets — verify `npx simvyn` works without Vite/Node dev tooling installed globally
+**Detection:**
+- `MultiStepAction` definitions that reference collection schemas
+- Command palette trying to render collection execution progress inline
+- Collection execution logic inside `actions.tsx`
+- Growing complexity in `StepRenderer.tsx` to handle collection-specific step types
+
+**Phase to address:** Dashboard integration phase — decide the command palette's role (discovery/navigation) vs. the collections panel's role (editing/execution) before writing any UI code.
+
+---
+
+### Pitfall 9: Concurrent Collection Execution on Overlapping Device Sets
+
+**What goes wrong:**
+User starts "Dark Theme Setup" collection on devices A, B, C. Before it finishes, they start "Japanese Locale" collection on devices B, C, D. Devices B and C are now receiving commands from two concurrent collection executions. Dark mode and locale changes interleave in unpredictable order. The "set appearance: dark" from collection 1 might run after "launch app" from collection 2, producing a state neither collection intended.
+
+For location-setting steps, concurrent location changes on the same device are especially bad — the device oscillates between two coordinates.
+
+**Why it happens:**
+- Each collection execution is an independent async operation
+- There's no per-device lock or execution queue
+- The dashboard doesn't prevent starting a new collection while one is running
+- The server has no concept of "this device is currently being configured"
+
+**Prevention:**
+Implement a per-device execution lock. Before executing a collection on a device, acquire a lock. If the device is already locked by another execution, queue or reject. The lock should be lightweight — a `Map<string, ExecutionId>` on the server. The UI should show which devices are currently "busy" and prevent selecting them for new collections.
+
+Don't block at the HTTP/WS level — block at the executor level. If two collections target the same device, the second collection's steps for that device should wait until the first completes (or the user can cancel the first).
+
+**Detection:**
+- No device-level locking in the executor
+- Users reporting "my device ended up in a weird state after running two collections"
+- Race condition bugs that only reproduce when running collections quickly in succession
+
+**Phase to address:** Executor phase — device locking should be implemented alongside the core executor, not as an afterthought.
+
+---
+
+## Minor Pitfalls
+
+### Pitfall 10: Parameter Validation Happening at Execution Time Instead of Save Time
+
+**What goes wrong:**
+A user creates a collection with a "set location" step and types `lat: 999, lon: -500` (invalid coordinates). The collection saves successfully. A week later they apply it and get a cryptic error mid-execution. Or they type a locale code `en-US` (wrong format — simvyn uses `en_US` with underscore). The step silently fails because the adapter doesn't validate locale format.
+
+**Prevention:**
+Validate step parameters when the collection is saved, not just when it's executed. Each step type should define a validation function. Show errors inline in the collection editor. For coordinates: `lat ∈ [-90, 90], lon ∈ [-180, 180]`. For locales: validate against a known locale list. For bundle IDs: validate format (`com.example.app`), though existence can only be checked at execution time.
+
+**Detection:**
+- No validation functions in step type definitions
+- Validation errors only surfacing during `executeCollection()`
+- The collection editor accepting any string in parameter fields
+
+**Phase to address:** Step type definition phase, alongside the schema.
+
+---
+
+### Pitfall 11: Getting Started Documentation Assuming Fresh User Context
+
+**What goes wrong:**
+Getting Started docs written by the developer who built the tool assume:
+- User has Xcode already installed and configured
+- User has Android SDK with platform-tools in PATH
+- User understands what "simulator" vs "emulator" means
+- User knows how to boot a simulator from Xcode
+- User has at least one device available when they first run `npx simvyn`
+
+A significant percentage of users will hit the "No devices detected" empty state on first launch and not know what to do. They'll close the tool and never come back.
+
+**Prevention:**
+- Document prerequisites as a checklist with verification commands: `xcrun simctl list devices` → "you should see at least one device"
+- Include a "Quick Start from Zero" section for users who haven't created any simulators
+- The "no devices" empty state in the dashboard should link directly to the Getting Started docs' "create your first simulator" section
+- Include platform-specific setup sections (macOS with Xcode, macOS with Android Studio, Linux with Android Studio)
+- Add troubleshooting for the 5 most common first-run failures: Xcode CLI tools not installed, adb not in PATH, no booted devices, permission denied, port already in use
+
+**Detection:**
+- Getting Started docs that start with "Run `npx simvyn`" without prerequisites
+- No mention of Xcode CLI tools setup
+- No troubleshooting section
+- Issue tracker receiving "no devices found" reports from new users
+
+**Phase to address:** Documentation phase — Getting Started must be written from the perspective of someone who just installed Xcode for the first time, not from the perspective of the developer who's been using simctl for years.
+
+---
+
+### Pitfall 12: Documentation Showing CLI-Only or Dashboard-Only Examples
+
+**What goes wrong:**
+Getting Started docs show how to set dark mode via the dashboard with screenshots, but don't mention the CLI command. Or the CLI reference shows `simvyn settings dark-mode <device> on` but doesn't explain how to find the device ID. Collections docs show the dashboard editor but don't cover `simvyn collection run`. Users who prefer one interface don't realize the other exists, and can't switch when they need to.
+
+**Prevention:**
+Every Getting Started workflow should show both interfaces side by side: "From the Dashboard" and "From the CLI." The collection documentation specifically needs:
+- Dashboard: creating, editing, applying collections with screenshots
+- CLI: `simvyn collection list`, `simvyn collection run <name> --device <id>`, `simvyn collection create --from-file`
+- How to export a collection from dashboard to a shareable JSON file that CLI can import
+
+**Detection:**
+- Documentation pages that only mention one interface
+- No CLI examples for collection operations
+- Users asking "how do I do X from the CLI?" when it's already supported but not documented
+
+**Phase to address:** Documentation phase — write docs in parallel with implementation so both interfaces are documented from the start.
+
+---
+
+## Phase-Specific Warnings
+
+Pitfalls mapped to the likely implementation phases for the Collections milestone.
+
+| Phase Topic | Likely Pitfall | Severity | Mitigation |
+|-------------|---------------|----------|------------|
+| Collection step schema design | No schema versioning (#4) | CRITICAL | Add `schemaVersion: 1` from first commit |
+| Collection step schema design | Dual capability detection (#2) | CRITICAL | Use adapter method checks, not `capabilities()` array |
+| Collection step schema design | No ordering dependencies (#6) | MODERATE | Add optional `requires` field to step interface |
+| Cross-module action invocation | Calling HTTP routes instead of adapter methods (#1) | CRITICAL | Build action registry; routes and collections both call it |
+| Execution engine | No configurable error strategy (#5) | MODERATE | Per-step `onFailure: 'abort' | 'skip' | 'continue'` |
+| Execution engine | No concurrent execution protection (#9) | MODERATE | Per-device execution lock in executor |
+| Execution engine | CLI/dashboard divergence (#7) | MODERATE | Single shared executor in `@simvyn/core` |
+| WS feedback | Message flooding (#3) | CRITICAL | Coalesced state broadcasts, not per-step events |
+| Dashboard integration | Command palette tangling (#8) | MODERATE | Collections as navigation action, not `MultiStepAction` |
+| Dashboard integration | No save-time validation (#10) | MINOR | Validation functions per step type |
+| Getting Started docs | Assuming user context (#11) | MINOR | Prerequisites checklist with verification commands |
+| Getting Started docs | Single-interface examples (#12) | MINOR | Dashboard + CLI side by side for every workflow |
 
 ## Recovery Strategies
 
@@ -273,40 +480,60 @@ When pitfalls occur despite prevention, how to recover.
 
 | Pitfall | Recovery Cost | Recovery Steps |
 |---------|---------------|----------------|
-| CLI output parsing breaks on new Xcode | LOW | Add output fixture for new version, fix parser, release patch. Good architecture means this is a one-file change in the platform adapter |
-| Zombie processes accumulating | MEDIUM | Add process registry retroactively, audit all `spawn`/`exec` calls. May require adding `AbortController` throughout modules. Ship as breaking change if module API changes |
-| Circular dependency chains | HIGH | Requires extracting shared types package, rewriting import paths across all modules, potentially restructuring the monorepo. Can be a multi-day effort with 16 modules |
-| Single WebSocket bottleneck | HIGH | Requires new multi-channel WebSocket architecture, updating every module's message handling, and all client-side WebSocket code. Essentially a rewrite of the communication layer |
-| Cross-platform crashes on Linux | LOW-MEDIUM | Usually just missing platform guards. Fix the specific crash, but then do a full audit of all CLI invocations for platform guards. Add Linux CI job |
-| `npx` install broken | MEDIUM | Requires understanding what's missing (usually built assets or workspace deps). Fix build pipeline, test with `npm pack`. May need to restructure how packages are bundled |
+| HTTP route coupling (#1) | HIGH | Must extract action registry, refactor all module routes to be thin wrappers, update collection executor. Multi-day effort touching 16 modules |
+| Capability detection divergence (#2) | LOW | Replace capability checks in executor with adapter method checks. Localized to executor code |
+| WS message flooding (#3) | MEDIUM | Add server-side batching layer between executor and WS broker. Client needs debounced handler. Both sides need updates |
+| Unversioned schema (#4) | MEDIUM-HIGH | Add migration code that guesses schema version from field presence. Lose collections that can't be migrated. Users angry about lost data |
+| All-or-nothing execution (#5) | LOW | Add `onFailure` field with default value to existing step schema. Backward compatible |
+| No ordering dependencies (#6) | LOW | Add optional `requires` field. Existing collections without it still work |
+| CLI/dashboard divergence (#7) | HIGH | Must extract shared executor from wherever it was implemented (CLI or server). Rewrite the other to use shared code |
+| Command palette tangling (#8) | MEDIUM | Rip out collection execution logic from command palette, move to dedicated panel. Requires UI restructuring |
+| Concurrent execution (#9) | LOW | Add execution lock map to server. Client-side "busy" indicators. Non-breaking addition |
+| No save-time validation (#10) | LOW | Add validation functions to step types. Run on existing saved collections to flag issues |
+| Docs assuming context (#11) | LOW | Add prerequisites section. Can be done post-launch |
+| Single-interface docs (#12) | LOW | Add missing interface examples. Incremental improvement |
 
-## Pitfall-to-Phase Mapping
+## Simvyn-Specific Integration Risks
 
-How roadmap phases should address these pitfalls.
+Issues unique to simvyn's architecture that generic "batch execution" research wouldn't cover.
 
-| Pitfall | Prevention Phase | Verification |
-|---------|------------------|--------------|
-| CLI output parsing brittleness | Phase 1 (Foundation) | Parser tests pass against fixtures from 3+ Xcode/SDK versions |
-| Zombie child processes | Phase 1 (Foundation) | Process registry exists, all spawned processes tracked, cleanup tested on server shutdown |
-| Circular dependencies | Phase 1 (Foundation) | `eslint-plugin-import` `no-restricted-paths` rule enforced in CI; zero cross-module imports |
-| WebSocket bottleneck | Phase 1 (Foundation) | Multi-channel WebSocket architecture documented and implemented before first streaming module |
-| Cross-platform failures | Phase 1 (Foundation) + Phase 2 (CI) | `PlatformCapabilities` module exists; Linux CI job passes; `xcrun` never called without capability check |
-| npm packaging broken | Phase 1 (Foundation) | CI runs `npm pack && npx simvyn --version` on every PR; dashboard pre-built in tarball |
-| Shell injection | Phase 1 (Foundation) | Zero uses of `child_process.exec()` in codebase; lint rule enforces `execFile` only |
-| Log streaming without filtering | Phase with log module | Search + level filter ship in same PR as log streaming — not a follow-up |
-| Device detection edge cases | Phase with device module | Tests cover all `simctl` device states: Shutdown, Booted, Creating, Shutting Down, Erasing |
-| File path traversal in file browser | Phase with file browser module | Test that `../../etc/passwd` is rejected; path resolution validated against container root |
+### Risk: Module Registry Doesn't Track Action-Level Capabilities
+
+The `moduleRegistry` (Map in `module-loader.ts`) stores module-level metadata: `name`, `version`, `description`, `icon`, `capabilities`. It does NOT store what actions each module supports. Collections needs to know "device-settings supports set-appearance, set-locale, set-status-bar, set-content-size, etc." but the registry only knows "device-settings exists and claims these PlatformCapability strings."
+
+**Impact:** Collections can't programmatically discover what step types are available without hardcoding knowledge of every module's actions.
+
+**Mitigation:** Extend `SimvynModule` manifest to declare actions, or build the action registry (Pitfall #1 prevention) as the source of truth.
+
+### Risk: Storage Race Conditions on Collection Save/Update
+
+The `createModuleStorage` pattern (read entire JSON → modify in memory → write back) has no file locking. If two operations modify the same collection list concurrently (e.g., user saves a collection while auto-save triggers), one write can overwrite the other. This hasn't been a problem for existing modules because saves are user-initiated and infrequent. But if collection execution updates a "last run" timestamp on each execution, and the user edits the collection simultaneously, data can be lost.
+
+**Impact:** Rare but possible data loss of collection edits during concurrent operations.
+
+**Mitigation:** Either use atomic read-modify-write with `proper-lockfile`, or separate execution metadata (last run, run history) from collection definitions (stored in different keys).
+
+### Risk: Device State Changes During Multi-Step Execution
+
+A collection starts executing on a booted device. Between step 3 and step 4, the device reboots (locale change triggers reboot, or user manually shuts it down). Step 4 fails because the device is no longer booted. Every subsequent step also fails. The executor doesn't re-check device state between steps.
+
+**Impact:** Confusing cascade of failures that all stem from one device state change.
+
+**Mitigation:** Re-check `device.state === "booted"` before each step execution. If the device has rebooted, wait for it to come back (with timeout) or skip remaining steps for that device. The `deviceManager` already polls device state every 5 seconds — use it to detect state changes between steps.
+
+---
 
 ## Sources
 
-- **Flipper (facebook/flipper)** — Archived Sep 2025, 13.5k stars. Cautionary tale about plugin-based mobile devtool complexity. React Native removed it in 0.74 due to "longer compilation times, slew of gotchas, apps sometimes had trouble connecting." [github.com/facebook/flipper](https://github.com/facebook/flipper) — HIGH confidence
-- **ControlRoom (twostraws/ControlRoom)** — 6k stars simctl GUI wrapper. Issues #162, #170, #156 document Xcode version breakage and simctl API changes. [github.com/twostraws/ControlRoom](https://github.com/twostraws/ControlRoom) — HIGH confidence
-- **Appium node-simctl** — Node.js wrapper for simctl. Issue #145 (JSON parsing breakage), #138 (exit code handling), #5 (replaced child_process with teen-process). [github.com/appium/node-simctl](https://github.com/appium/node-simctl) — HIGH confidence
-- **Appium appium-adb** — Node.js wrapper for adb. Issue #150 (SDK version breakage), #44 (SDK binary path discovery), #147 (hardcoded timeouts), #175 (adb flag changes). [github.com/appium/appium-adb](https://github.com/appium/appium-adb) — HIGH confidence
-- **React Native 0.74 release notes** — Documents Flipper removal rationale. [reactnative.dev/blog/2024/04/22/release-0.74](https://reactnative.dev/blog/2024/04/22/release-0.74) — HIGH confidence
-- **"Why you don't need Flipper" (Jamon Holmgren, Infinite Red)** — Post-mortem on Flipper's UX issues. [shift.infinite.red](https://shift.infinite.red/why-you-dont-need-flipper-in-your-react-native-app-and-how-to-get-by-without-it-3af461955109) — MEDIUM confidence
-- **npm workspaces documentation** — Official docs on workspace publishing behavior. [docs.npmjs.com/cli/v10/using-npm/workspaces](https://docs.npmjs.com/cli/v10/using-npm/workspaces) — HIGH confidence
+- **simvyn codebase** — Direct analysis of module-loader.ts, ws-broker.ts, storage.ts, device-manager.ts, all module manifests and routes, command palette types and actions. HIGH confidence — this is the actual code, not documentation.
+- **Platform adapter types** — `packages/types/src/device.ts` PlatformAdapter interface (171 lines, 50+ optional methods, 22 PlatformCapability strings). HIGH confidence.
+- **iOS capabilities**: `["setLocation", "push", "screenshot", "screenRecord", "erase", "statusBar", "privacy", "ui", "clipboard", "addMedia", "logs", "deepLinks", "appManagement", "settings", "accessibility", "deviceLifecycle", "keychain", "bugReport"]` — 18 capabilities.
+- **Android capabilities**: `["setLocation", "screenshot", "screenRecord", "logs", "deepLinks", "appManagement", "addMedia", "clipboard", "settings", "accessibility", "fileSystem", "database", "portForward", "displayOverride", "batterySimulation", "inputInjection", "bugReport"]` — 17 capabilities.
+- **Existing pitfalls research** (`.planning/research/PITFALLS.md`, 2026-02-26) — Pitfalls #1-6 from initial project research remain relevant. This document focuses on Collections-specific additions. HIGH confidence.
+- **location/ws-handler.ts** multi-device broadcast pattern — The `set-location` handler's approach of collecting results into an array before broadcasting is the correct pattern for Collections to follow. HIGH confidence.
+- **Flipper deprecation** — Facebook's plugin-based mobile devtool's failure at scale (from initial pitfalls research) reinforces the risk of module-to-module coupling and over-complex plugin systems. MEDIUM confidence (indirect relevance).
 
 ---
-*Pitfalls research for: Simvyn — Universal Mobile Device Devtool*
-*Researched: 2026-02-26*
+*Pitfalls research for: Simvyn Collections Feature + Getting Started Documentation*
+*Researched: 2026-03-04*
+*Scope: Adding batch-action collection system to existing 16-module devtool architecture*

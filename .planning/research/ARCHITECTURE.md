@@ -1,577 +1,656 @@
-# Architecture Research
+# Architecture Patterns
 
-**Domain:** Local-first developer tool — Node.js server + React web dashboard + CLI with modular plugin system
-**Researched:** 2026-02-26
-**Confidence:** HIGH
+**Domain:** Collections feature (reusable device action sets with batch execution) for Simvyn mobile devtool dashboard
+**Researched:** 2026-03-04
+**Confidence:** HIGH — based on direct codebase analysis, not external sources
 
-## Standard Architecture
+## Existing Architecture Summary
 
-### System Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          CLI Layer (commander.js)                        │
-│  `simvyn` command → starts server OR runs headless module subcommands   │
-├─────────────────────────────────────────────────────────────────────────┤
-│                          Server Layer (Fastify)                          │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────────────────┐ │
-│  │ @fastify/     │  │ @fastify/     │  │ Module Registry                │ │
-│  │ static        │  │ websocket     │  │ (auto-discovers & registers    │ │
-│  │ (Vite build)  │  │ (ws@8)        │  │  all modules at startup)       │ │
-│  └──────────────┘  └──────────────┘  └────────────────────────────────┘ │
-│                                                                         │
-│  ┌─────────────────────────────────────────────────────────────────────┐ │
-│  │                    Per-Module Server Plugins                        │ │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ │ │
-│  │  │ Location │ │ DevMgmt  │ │ Logs     │ │ Files    │ │ Push     │ │ │
-│  │  │ routes   │ │ routes   │ │ routes   │ │ routes   │ │ routes   │ │ │
-│  │  │ ws hdlrs │ │ ws hdlrs │ │ ws hdlrs │ │ ws hdlrs │ │ ws hdlrs │ │ │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └──────────┘ │ │
-│  └─────────────────────────────────────────────────────────────────────┘ │
-├─────────────────────────────────────────────────────────────────────────┤
-│                      Platform Adapter Layer                              │
-│  ┌─────────────────────────────────┐  ┌──────────────────────────────┐  │
-│  │ iOS Adapter (xcrun simctl)      │  │ Android Adapter (adb)        │  │
-│  │ macOS only, graceful degrade    │  │ macOS / Linux / Windows      │  │
-│  └─────────────────────────────────┘  └──────────────────────────────┘  │
-├─────────────────────────────────────────────────────────────────────────┤
-│                      Shared Core Layer                                   │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌───────────────────────┐   │
-│  │ Types    │  │ Storage  │  │ Device   │  │ WebSocket Protocol    │   │
-│  │ package  │  │ (JSON    │  │ Manager  │  │ (discriminated unions │   │
-│  │          │  │  ~/.sim  │  │ (polling │  │  ClientMsg/ServerMsg) │   │
-│  │          │  │  vyn/)   │  │  + cache)│  │                       │   │
-│  └──────────┘  └──────────┘  └──────────┘  └───────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────┐
-│                     Web Dashboard (React + Vite + Tailwind)              │
-│  ┌────────────────────────────────────────────────────────────────────┐ │
-│  │ Shell: Top Bar (device selector) + Sidebar (module list)          │ │
-│  ├────────────────────────────────────────────────────────────────────┤ │
-│  │                    Per-Module UI Panels                            │ │
-│  │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐             │ │
-│  │  │ Location │ │ DevMgmt  │ │ Logs     │ │ Files    │  ...        │ │
-│  │  │ Panel    │ │ Panel    │ │ Panel    │ │ Panel    │             │ │
-│  │  └──────────┘ └──────────┘ └──────────┘ └──────────┘             │ │
-│  ├────────────────────────────────────────────────────────────────────┤ │
-│  │ Shared: Zustand stores, WS client, UI components (glass design)  │ │
-│  └────────────────────────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
-### Component Responsibilities
-
-| Component | Responsibility | Typical Implementation |
-|-----------|----------------|------------------------|
-| **CLI Entry** | Parse args, start server or dispatch to module subcommand | commander.js program with `.command()` per module |
-| **Fastify Server** | HTTP routing, WebSocket upgrade, static file serving, plugin lifecycle | Fastify v5 instance with `register()` per module |
-| **Module Registry** | Discover modules, validate manifests, register server + CLI + UI pieces | Glob `modules/*/index.ts`, call `register(fastify, opts)` |
-| **Per-Module Server Plugin** | Own HTTP routes + WS message handlers for one feature | Fastify plugin with prefix, e.g., `/api/location/*` |
-| **Platform Adapters** | Abstract `xcrun simctl` / `adb` behind unified interface | Factory functions returning `PlatformAdapter` objects |
-| **Device Manager** | Poll adapters, cache device list, broadcast status changes | Singleton service, interval-based polling, emits events |
-| **Storage** | Persist module state, user preferences, favorites | JSON files in `~/.simvyn/`, one file per module |
-| **WebSocket Protocol** | Typed message passing between server and dashboard | Discriminated union types, single WS connection multiplexed by module namespace |
-| **Web Dashboard Shell** | Layout, routing between modules, device selector, theme | React app with sidebar + topbar + content area |
-| **Per-Module UI Panel** | Feature-specific UI rendered in content area | React component + Zustand store, lazy-loaded |
-| **Shared Types** | TypeScript interfaces shared between server + client | Workspace package `@simvyn/types` |
-
-## Recommended Project Structure
+Before designing Collections, here's how the existing system works:
 
 ```
-simvyn/
-├── package.json                    # root workspace config
-├── tsconfig.base.json              # shared TS config
-├── packages/
-│   ├── types/                      # @simvyn/types — shared interfaces
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── device.ts           # Device, DeviceState, Platform
-│   │       ├── protocol.ts         # ClientMessage, ServerMessage unions
-│   │       └── module.ts           # ModuleManifest, ModuleServerPlugin types
-│   │
-│   ├── core/                       # @simvyn/core — shared server utilities
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── adapters/
-│   │       │   ├── types.ts        # PlatformAdapter interface
-│   │       │   ├── ios.ts          # createIosAdapter()
-│   │       │   └── android.ts      # createAndroidAdapter()
-│   │       ├── device-manager.ts   # polling, caching, event emission
-│   │       ├── storage.ts          # JSON file persistence
-│   │       └── process.ts          # child_process helpers for simctl/adb
-│   │
-│   ├── server/                     # @simvyn/server — Fastify app
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── app.ts              # createApp() — Fastify instance setup
-│   │       ├── module-loader.ts    # auto-discover + register module plugins
-│   │       ├── ws-broker.ts        # WebSocket message router (namespace → handler)
-│   │       └── plugins/
-│   │           ├── static.ts       # @fastify/static for Vite build
-│   │           └── websocket.ts    # @fastify/websocket setup
-│   │
-│   ├── cli/                        # @simvyn/cli — commander.js entry
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── index.ts            # CLI entry point, `simvyn` bin
-│   │       └── module-commands.ts  # auto-register subcommands from modules
-│   │
-│   ├── dashboard/                  # @simvyn/dashboard — React + Vite app
-│   │   ├── package.json
-│   │   ├── vite.config.ts
-│   │   └── src/
-│   │       ├── main.tsx
-│   │       ├── App.tsx             # shell layout
-│   │       ├── stores/
-│   │       │   ├── device-store.ts # global device state
-│   │       │   └── ws-store.ts     # WebSocket connection + message dispatch
-│   │       ├── components/
-│   │       │   ├── shell/          # TopBar, Sidebar, ModuleContainer
-│   │       │   └── ui/             # shared glass-design primitives
-│   │       └── modules/            # UI panels (lazy-loaded)
-│   │           ├── location/
-│   │           ├── device-mgmt/
-│   │           ├── logs/
-│   │           └── ...
-│   │
-│   └── modules/                    # feature modules (each is self-contained)
-│       ├── location/               # @simvyn/module-location
-│       │   ├── package.json
-│       │   └── src/
-│       │       ├── index.ts        # module manifest + exports
-│       │       ├── server.ts       # Fastify plugin (routes + WS handlers)
-│       │       ├── cli.ts          # commander subcommand definition
-│       │       └── types.ts        # module-specific message types
-│       ├── device-mgmt/
-│       ├── logs/
-│       ├── files/
-│       ├── push-notifications/
-│       ├── deep-links/
-│       ├── screenshots/
-│       ├── device-settings/
-│       ├── performance/
-│       ├── accessibility/
-│       ├── crash-reports/
-│       ├── app-mgmt/
-│       ├── user-defaults/
-│       ├── media/
-│       ├── clipboard/
-│       ├── network/
-│       └── database/
+┌─────────────────────────────────────────────────────────────────┐
+│  CLI (Commander)          Dashboard (React + Zustand)           │
+│  ├── simvyn start         ├── Sidebar (module icons)            │
+│  ├── simvyn device ...    ├── ModuleShell (panel container)     │
+│  └── simvyn location ...  ├── CommandPalette (cmdk actions)     │
+│                           └── WsProvider (envelope-based WS)    │
+├─────────────────────────────────────────────────────────────────┤
+│  Server (Fastify)                                               │
+│  ├── moduleLoaderPlugin → /api/modules/{name}/* routes          │
+│  ├── wsBrokerPlugin → /ws (channel-based multiplexing)          │
+│  ├── deviceManager → poll + cache + event-emit                  │
+│  └── processManager → spawn/exec with cleanup                  │
+├─────────────────────────────────────────────────────────────────┤
+│  Modules (packages/modules/*)                                   │
+│  ├── manifest.ts → { name, register, cli, capabilities }       │
+│  ├── routes.ts → Fastify route handlers                        │
+│  ├── ws-handler.ts → wsBroker.registerChannel()                │
+│  └── cli.ts → Commander subcommands                            │
+├─────────────────────────────────────────────────────────────────┤
+│  Core (packages/core)                                           │
+│  ├── PlatformAdapter (ios.ts, android.ts)                      │
+│  ├── DeviceManager (polling, event emission)                   │
+│  └── createModuleStorage() → ~/.simvyn/{module}/{key}.json     │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Structure Rationale
+### Key Patterns Observed
 
-- **`packages/types/`:** Shared TypeScript interfaces consumed by every other package. Zero runtime dependencies. Changes here ripple everywhere, so keep it minimal and stable.
-- **`packages/core/`:** Platform adapters and device management logic shared between server and CLI. The only package that spawns child processes (simctl/adb).
-- **`packages/server/`:** Fastify app construction and module plugin loading. Thin orchestration layer — the real logic lives in modules.
-- **`packages/cli/`:** Entry point only. Delegates to server for `simvyn` (start dashboard) and to module CLI exports for subcommands like `simvyn location set 37.78 -122.41`.
-- **`packages/dashboard/`:** React SPA. Module UI panels live inside `src/modules/` for co-location, but are lazy-loaded. The dashboard imports module manifests to build the sidebar dynamically.
-- **`packages/modules/*/`:** Each module is a self-contained package exporting a server plugin, CLI subcommand, and type definitions. The dashboard's corresponding UI panel lives in `packages/dashboard/src/modules/` (not in the module package) because the dashboard builds as a single Vite bundle — you don't want to import server-side code into the browser build.
+1. **Actions are HTTP-first**: Every module action is a `POST /api/modules/{module}/{action}` endpoint that takes `{ deviceId, ...params }` and returns `{ success: true }` or error. This is the universal invocation contract.
 
-## Architectural Patterns
+2. **No cross-module dependency**: Modules never import from each other. They all independently use `fastify.deviceManager.getAdapter(platform)` to call PlatformAdapter methods.
+
+3. **Command palette already does batch**: The `toggle-dark-mode` and `set-locale` actions in `actions.tsx` already loop over `ctx.selectedDeviceIds` and fire sequential HTTP requests per device. This is the exact pattern Collections will formalize.
+
+4. **WS is for streaming feedback**: WS channels are used for real-time data (location playback position, device list updates, log streaming), not for request/response. HTTP handles request/response.
+
+5. **Storage is simple JSON files**: `createModuleStorage("module-name")` → read/write/delete of `~/.simvyn/{module-name}/{key}.json`. No database, no indexing.
+
+---
+
+## Recommended Architecture for Collections
+
+### Core Design Decision: How Collections References Other Modules' Actions
+
+**Decision: Adapter-level action registry, not HTTP replays or code-level imports.**
+
+Collections doesn't import or call other modules' routes. It defines an action registry that maps abstract action IDs directly to PlatformAdapter method calls. Each entry declares parameter schemas, platform compatibility, and labels. The execution engine uses `deviceManager.getAdapter(platform)` — the same primitive every module already uses.
+
+**Why this works:**
+- Every existing action is ultimately just an adapter method call wrapped in validation
+- The PlatformAdapter interface IS the integration contract — it's typed, versioned, and platform-aware
+- No coupling between Collections and other modules whatsoever
+- New adapter methods automatically become composable by adding a registry entry
+- Platform compatibility checks use the existing `!!adapter.methodName` pattern
+
+**Why not internal HTTP calls (replaying routes):**
+- Extra serialization/deserialization overhead per step per device
+- Would need to parse HTTP error responses instead of direct try/catch
+- Routes are thin wrappers around adapter calls anyway — calling routes is just indirection
+
+**Why not auto-discovering routes:**
+- Not all routes are composable (GET queries, file downloads, etc.)
+- Route signatures don't carry param schemas or display labels
+- Fragile coupling to route naming conventions
+
+### Architecture: Action Registry + Execution Engine
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                        COLLECTIONS MODULE                            │
+│                                                                      │
+│  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────────┐ │
+│  │ Action        │  │ Collection       │  │ Execution              │ │
+│  │ Registry      │  │ Storage          │  │ Engine                 │ │
+│  │              │  │                  │  │                        │ │
+│  │ Defines what │  │ Persists saved   │  │ Runs steps across      │ │
+│  │ actions exist │  │ collections as   │  │ devices with WS        │ │
+│  │ with schemas  │  │ JSON in          │  │ progress feedback      │ │
+│  │ + platform   │  │ ~/.simvyn/       │  │                        │ │
+│  │ compat info  │  │ collections/     │  │ Server-side             │ │
+│  │              │  │                  │  │ orchestration           │ │
+│  └──────┬───────┘  └──────┬───────────┘  └───────┬────────────────┘ │
+│         │                 │                       │                  │
+│         ▼                 ▼                       ▼                  │
+│  GET /actions       CRUD /collections      POST /execute            │
+│  (available         GET/POST/PUT/DELETE     WS: collections channel │
+│   action catalog)   /collections/:id                                │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Component Boundaries
+
+### New Components (Server)
+
+| Component | Location | Responsibility | Communicates With |
+|-----------|----------|----------------|-------------------|
+| `action-registry.ts` | `packages/modules/collections/` | Declares all composable actions with schemas, platform compatibility, and parameter definitions. Maps action IDs to adapter method calls. | Routes, Execution Engine |
+| `routes.ts` | `packages/modules/collections/` | CRUD for collections + execute endpoint + list available actions | Storage, Action Registry, Execution Engine |
+| `execution-engine.ts` | `packages/modules/collections/` | Runs a collection's steps sequentially against target devices. Per-step parallel device execution. Reports progress via WS broadcasts. | wsBroker, deviceManager, PlatformAdapter |
+| `ws-handler.ts` | `packages/modules/collections/` | WS channel `collections` for cancel messages. (Progress broadcasts come from execution engine.) | wsBroker, Execution Engine |
+| `manifest.ts` | `packages/modules/collections/` | Standard SimvynModule manifest | Module loader |
+| `cli.ts` | `packages/modules/collections/` | `simvyn collections list`, `simvyn collections apply <name> <device...>` | Execution Engine, Storage |
+
+### New Components (Dashboard)
+
+| Component | Location | Responsibility | Communicates With |
+|-----------|----------|----------------|-------------------|
+| `CollectionsPanel.tsx` | `packages/dashboard/src/panels/` | Main panel with list view + detail/editor view | collections-store |
+| `stores/collections-store.ts` | `packages/dashboard/src/panels/collections/` | Zustand store for collections CRUD + execution state | REST API, WS |
+| `StepBuilder.tsx` | `packages/dashboard/src/panels/collections/` | Visual step builder — pick action, configure params, reorder | action-registry data |
+| `ExecutionView.tsx` | `packages/dashboard/src/panels/collections/` | Live execution progress display with per-step/per-device status | collections-store (WS) |
+| `ActionPicker.tsx` | `packages/dashboard/src/panels/collections/` | Modal/popover to browse and add actions from the registry | action-registry data |
+| `StepCard.tsx` | `packages/dashboard/src/panels/collections/` | Individual step display with platform badges, params, drag handle | StepBuilder |
+
+### Modified Components
+
+| Component | Change | Why |
+|-----------|--------|-----|
+| `packages/cli/src/all-modules.ts` | Add `collections` import + entry in `allModules` array | Register the new module |
+| `packages/dashboard/src/App.tsx` | Add `import "./panels/CollectionsPanel"` | Side-effect panel registration |
+| `packages/dashboard/src/stores/module-store.ts` | Add `"collections"` to `DOCK_ORDER` | Position in sidebar (before `device-settings`) |
+| `packages/dashboard/src/components/icons/module-icons.tsx` | Add collections icon mapping (lucide `Layers` icon) | Sidebar icon |
+| `packages/dashboard/src/components/command-palette/actions.tsx` | Add "Apply Collection" action | Quick-apply from palette |
+| `packages/dashboard/src/components/command-palette/types.ts` | Add `"collection-select"` to `StepType` union | New step type for palette |
+
+---
+
+## Data Model
+
+### Action Descriptor (what the registry provides to the UI)
+
+```typescript
+interface ActionDescriptor {
+  id: string;                          // e.g. "set-appearance"
+  label: string;                       // e.g. "Set Appearance"
+  description: string;                 // e.g. "Switch between light and dark mode"
+  module: string;                      // e.g. "device-settings" — for grouping in UI
+  capabilities: PlatformCapability[];  // e.g. ["settings"] — for platform badge display
+  params: ActionParam[];               // parameter schema for the action
+}
+
+interface ActionParam {
+  key: string;           // e.g. "mode"
+  label: string;         // e.g. "Mode"
+  type: "string" | "number" | "boolean" | "select";
+  required: boolean;
+  options?: { value: string; label: string }[];  // for type "select"
+  default?: unknown;
+  placeholder?: string;
+}
+```
+
+### Action Executor (server-side, not exposed to client)
+
+```typescript
+interface ActionExecutor extends ActionDescriptor {
+  execute: (
+    adapter: PlatformAdapter,
+    deviceId: string,
+    params: Record<string, unknown>
+  ) => Promise<void>;
+  isSupported: (adapter: PlatformAdapter) => boolean;
+}
+```
+
+### Collection (what gets persisted)
+
+```typescript
+interface Collection {
+  id: string;              // UUID
+  name: string;            // "Dark Mode + Tokyo Location"
+  description?: string;
+  steps: CollectionStep[];
+  createdAt: number;       // timestamp
+  updatedAt: number;
+}
+
+interface CollectionStep {
+  id: string;              // UUID per step
+  actionId: string;        // references ActionDescriptor.id
+  params: Record<string, unknown>;  // filled-in parameters
+  label?: string;          // optional override label
+}
+```
+
+**Storage location:** `~/.simvyn/collections/collections.json` (single file with array, consistent with push payloads and deep-links favorites patterns).
+
+### Execution State (transient, in-memory + WS broadcast)
+
+```typescript
+interface ExecutionRun {
+  runId: string;           // UUID per execution
+  collectionId: string;
+  collectionName: string;
+  deviceIds: string[];     // target devices
+  status: "running" | "completed" | "failed" | "cancelled";
+  startedAt: number;
+  currentStepIndex: number;
+  steps: StepExecution[];
+}
+
+interface StepExecution {
+  stepId: string;
+  actionId: string;
+  label: string;
+  devices: DeviceStepResult[];
+}
+
+interface DeviceStepResult {
+  deviceId: string;
+  deviceName: string;
+  status: "pending" | "running" | "success" | "failed" | "skipped";
+  error?: string;
+  startedAt?: number;
+  completedAt?: number;
+}
+```
+
+---
+
+## Data Flow: Collection Execution
+
+### Execution Model Decision: Server-Side Orchestration
+
+**Decision: Server-side sequential execution with WS progress streaming.**
+
+The client sends `POST /execute` with `{ collectionId, deviceIds }`, and the server orchestrates the entire execution, broadcasting progress per step per device via the `collections` WS channel.
+
+**Why server-side, not client-side:**
+
+1. **Resilience**: If the browser tab closes during a 10-device batch, server continues. Client-side fetch loops would abort.
+2. **Atomicity per step**: Server ensures one step completes on all devices before moving to the next, preventing inconsistent states.
+3. **CLI support**: `simvyn collections apply` needs the same execution logic. Server-side means both UI and CLI call the same endpoint.
+4. **Precedent**: The location playback engine uses this exact pattern — client sends `start-playback`, server runs the engine and broadcasts position updates via WS.
+
+### Execution Flow Diagram
+
+```
+Client (Dashboard or CLI)
+  │
+  ├── POST /api/modules/collections/execute
+  │   Body: { collectionId, deviceIds }
+  │   Response: { runId }
+  │
+  │   ┌─────────────── Server Execution Engine ──────────────────┐
+  │   │                                                          │
+  │   │  for each step in collection.steps:                      │
+  │   │    resolve ActionExecutor from registry                  │
+  │   │                                                          │
+  │   │    for each deviceId in deviceIds (parallel):            │
+  │   │      1. Lookup device from deviceManager                 │
+  │   │      2. Get adapter for device.platform                  │
+  │   │      3. Check isSupported(adapter)                       │
+  │   │         → if false: mark "skipped", broadcast, continue  │
+  │   │      4. Broadcast WS: step-started                       │
+  │   │      5. Execute adapter method with step.params          │
+  │   │      6. Broadcast WS: step-completed (success/failed)    │
+  │   │                                                          │
+  │   │    Wait for all devices to finish this step               │
+  │   │    (before starting next step)                           │
+  │   │                                                          │
+  │   │  On all complete: broadcast WS: run-completed            │
+  │   │  On cancel (WS message): stop after current step         │
+  │   └──────────────────────────────────────────────────────────┘
+  │
+  └── WS subscribe to "collections" channel
+      ├── step-started    { runId, stepId, deviceId }
+      ├── step-completed  { runId, stepId, deviceId, success, error? }
+      ├── step-skipped    { runId, stepId, deviceId, reason }
+      ├── run-completed   { runId, summary: StepExecution[] }
+      └── run-failed      { runId, error, completedSteps }
+```
+
+### Parallel Execution Within a Step
+
+For a single step running on multiple devices, execute **all devices in parallel** (Promise.all), then wait for all to complete before the next step. This matches the location WS handler which uses `Promise.all` for multi-device location setting.
+
+```
+Step 1: Set Dark Mode
+  ├── Device A (parallel) ──► success
+  ├── Device B (parallel) ──► success
+  └── Device C (parallel) ──► success
+  All done → proceed to Step 2
+
+Step 2: Set Location (Tokyo)
+  ├── Device A (parallel) ──► success
+  ├── Device B (parallel) ──► skipped (Android, no setLocation? — actually both support it)
+  └── Device C (parallel) ──► success
+  All done → run-completed
+```
+
+### Why Direct Adapter Calls (Not Internal HTTP)
+
+The execution engine calls PlatformAdapter methods directly via `deviceManager.getAdapter(platform)`:
+
+1. **Performance**: No HTTP serialization overhead per step per device
+2. **Error handling**: Direct try/catch, not HTTP status code parsing
+3. **Consistency**: Every existing route is a thin wrapper doing `find device → get adapter → call method`. The execution engine does exactly this with added progress tracking.
+4. **Precedent**: The location WS handler calls `adapter.setLocation()` directly — not `fetch("/api/modules/location/set")`.
+
+---
+
+## Patterns to Follow
 
 ### Pattern 1: Module Manifest Contract
 
-**What:** Every module exports a manifest object that describes its capabilities. The server, CLI, and dashboard all read this manifest to auto-register the module's contributions.
-**When to use:** Every module, always. This is the core extensibility contract.
-**Trade-offs:** Slightly more boilerplate per module, but enables auto-discovery and prevents the "register everything manually" problem at scale with 16+ modules.
+Collections follows the exact same manifest structure as every other module:
 
-**Example:**
 ```typescript
-// packages/modules/location/src/index.ts
-import type { ModuleManifest } from '@simvyn/types'
-import { serverPlugin } from './server.js'
-import { cliCommand } from './cli.js'
+// packages/modules/collections/manifest.ts
+const collectionsModule: SimvynModule = {
+  name: "collections",
+  version: "0.1.0",
+  description: "Reusable device action sets with batch execution",
+  icon: "layers",
 
-export const manifest: ModuleManifest = {
-  id: 'location',
-  name: 'Location',
-  icon: 'map-pin',           // lucide icon name
-  description: 'Mock GPS coordinates and simulate routes',
-  serverPlugin,              // Fastify plugin function
-  cliCommand,                // commander Command factory
-  wsNamespace: 'location',   // WS messages prefixed with this
-}
+  async register(fastify, _opts) {
+    await fastify.register(collectionsRoutes);
+    registerCollectionsWsHandler(fastify);
+  },
+
+  cli(program) {
+    registerCollectionsCli(program);
+  },
+
+  capabilities: [],  // Collections doesn't own platform capabilities
+};
 ```
 
-```typescript
-// packages/types/src/module.ts
-import type { FastifyPluginAsync } from 'fastify'
-import type { Command } from 'commander'
+### Pattern 2: Zustand Store with Dual Access
 
-export interface ModuleManifest {
-  id: string
-  name: string
-  icon: string
-  description: string
-  serverPlugin: FastifyPluginAsync
-  cliCommand?: (program: Command) => void
-  wsNamespace: string
-}
+Follow the existing pattern of hooks + `getState()` for imperative access:
+
+```typescript
+// Imperative access from WS listener callbacks
+useCollectionsStore.getState().setStepProgress(runId, stepId, deviceId, "success");
+
+// Hook access from components
+const collections = useCollectionsStore((s) => s.collections);
 ```
 
-### Pattern 2: Namespaced WebSocket Multiplexing
+### Pattern 3: Panel Registration Side-Effect
 
-**What:** A single WebSocket connection carries messages for all modules. Each message includes a `module` field that the WS broker uses to dispatch to the correct module handler. This avoids N WebSocket connections for N modules.
-**When to use:** Always. The dashboard opens one WS connection; all modules share it.
-**Trade-offs:** Slightly more complex message routing than per-module WS endpoints, but dramatically simpler client-side management and lower overhead.
-
-**Example:**
 ```typescript
-// Shared protocol (packages/types/src/protocol.ts)
-export interface WsEnvelope {
-  module: string      // e.g., 'location', 'logs', 'device-mgmt'
-  type: string        // module-specific message type
-  payload: unknown    // module-specific payload
-}
-
-// Module defines its own message types
-// packages/modules/location/src/types.ts
-export type LocationClientMsg =
-  | { type: 'set-location'; lat: number; lon: number; deviceIds?: string[] }
-  | { type: 'clear-location'; deviceIds?: string[] }
-  | { type: 'start-playback'; waypoints: [number, number][]; speedMs: number; loop: boolean }
-  | { type: 'stop-playback' }
-
-export type LocationServerMsg =
-  | { type: 'location-set'; lat: number; lon: number; results: DeviceResult[] }
-  | { type: 'location-cleared'; results: DeviceResult[] }
-  | { type: 'playback-position'; lat: number; lon: number; progress: number }
-  | { type: 'playback-stopped' }
+// Bottom of CollectionsPanel.tsx
+registerPanel("collections", CollectionsPanel);
 ```
 
+Then import as side-effect in `App.tsx`:
 ```typescript
-// Server-side WS broker (packages/server/src/ws-broker.ts)
-import type { WebSocket } from 'ws'
-import type { WsEnvelope } from '@simvyn/types'
+import "./panels/CollectionsPanel";
+```
 
-type WsHandler = (ws: WebSocket, msg: { type: string; payload: unknown }) => void
+### Pattern 4: WS Channel for Streaming Feedback
 
-export function createWsBroker() {
-  const handlers = new Map<string, WsHandler>()
+Following the location playback pattern:
 
-  return {
-    register(namespace: string, handler: WsHandler) {
-      handlers.set(namespace, handler)
-    },
-
-    dispatch(ws: WebSocket, raw: string) {
-      const envelope: WsEnvelope = JSON.parse(raw)
-      const handler = handlers.get(envelope.module)
-      if (handler) {
-        handler(ws, { type: envelope.type, payload: envelope.payload })
-      }
-    },
+```typescript
+// Server: ws-handler.ts
+wsBroker.registerChannel("collections", (type, payload, socket, requestId) => {
+  if (type === "cancel") {
+    const { runId } = payload as { runId: string };
+    cancelRun(runId);
+    wsBroker.send(socket, "collections", "run-cancelled", { runId }, requestId);
   }
-}
-```
+});
 
-### Pattern 3: Fastify Plugin Encapsulation Per Module
-
-**What:** Each module's server-side code is a Fastify plugin registered with a route prefix. Fastify's encapsulation ensures modules can't interfere with each other's decorators or hooks.
-**When to use:** Every module's server plugin.
-**Trade-offs:** Fastify's encapsulation is a strength here — it prevents module A from accidentally breaking module B. The only downside is that shared decorators (like device manager access) must be registered at the root level using `fastify-plugin` to bubble up.
-
-**Example:**
-```typescript
-// packages/modules/location/src/server.ts
-import type { FastifyPluginAsync } from 'fastify'
-
-export const serverPlugin: FastifyPluginAsync = async (fastify, opts) => {
-  // Routes are auto-prefixed: /api/location/...
-  fastify.get('/favorites', async (req, reply) => {
-    const storage = fastify.storage  // decorated at root level
-    return storage.read('location', 'favorites')
-  })
-
-  fastify.post('/favorites', async (req, reply) => {
-    const storage = fastify.storage
-    const body = req.body as { name: string; lat: number; lon: number }
-    return storage.write('location', 'favorites', body)
-  })
-}
-
-// Registration in module loader:
-// fastify.register(module.serverPlugin, { prefix: `/api/${module.id}` })
-```
-
-### Pattern 4: Lazy-Loaded Module UI Panels
-
-**What:** Each module's React panel is code-split via `React.lazy()` and only loaded when the user navigates to that module. This keeps initial bundle small despite 16+ modules.
-**When to use:** Every module UI panel in the dashboard.
-**Trade-offs:** Slight loading delay on first navigation to a module (mitigate with skeleton/spinner). Worth it — a monolithic bundle with 16+ feature panels would be enormous.
-
-**Example:**
-```typescript
-// packages/dashboard/src/modules/index.ts
-import { lazy } from 'react'
-
-export const moduleUIs: Record<string, React.LazyExoticComponent<any>> = {
-  location: lazy(() => import('./location/LocationPanel.js')),
-  'device-mgmt': lazy(() => import('./device-mgmt/DeviceMgmtPanel.js')),
-  logs: lazy(() => import('./logs/LogsPanel.js')),
-  // ...
-}
+// Execution engine broadcasts progress:
+wsBroker.broadcast("collections", "step-completed", {
+  runId, stepId, deviceId, success: true
+});
 ```
 
 ```typescript
-// packages/dashboard/src/components/shell/ModuleContainer.tsx
-import { Suspense } from 'react'
-import { moduleUIs } from '../../modules/index.js'
-import { useModuleStore } from '../../stores/module-store.js'
-import { ModuleSkeleton } from '../ui/ModuleSkeleton.js'
-
-export function ModuleContainer() {
-  const activeModule = useModuleStore(s => s.activeModule)
-  const Panel = moduleUIs[activeModule]
-
-  if (!Panel) return <div>Module not found</div>
-
-  return (
-    <Suspense fallback={<ModuleSkeleton />}>
-      <Panel />
-    </Suspense>
-  )
-}
+// Client: WS listeners in collections-store.ts or CollectionsPanel.tsx
+useWsListener("collections", "step-completed", useCallback((payload) => {
+  const data = payload as StepCompletedPayload;
+  useCollectionsStore.getState().updateStepResult(data);
+}, []));
 ```
 
-### Pattern 5: Device Manager as Shared Service
+### Pattern 5: Storage via createModuleStorage
 
-**What:** A singleton DeviceManager polls platform adapters at an interval, caches the device list, and emits events when devices appear/disappear/change state. Both the server (to broadcast device updates via WS) and modules (to target specific devices) consume it.
-**When to use:** Core infrastructure — built once, used everywhere.
-**Trade-offs:** Polling adds slight CPU overhead, but simctl/adb have no push-based notification mechanism, so polling is the only option. Keep interval reasonable (2-5s).
-
-**Example:**
 ```typescript
-// packages/core/src/device-manager.ts
-import { EventEmitter } from 'node:events'
-import type { Device, PlatformAdapter } from '@simvyn/types'
+const storage = createModuleStorage("collections");
+const collections = await storage.read<Collection[]>("collections") ?? [];
+await storage.write("collections", collections);
+```
 
-export function createDeviceManager(adapters: PlatformAdapter[], pollIntervalMs = 3000) {
-  const emitter = new EventEmitter()
-  let devices: Device[] = []
-  let timer: ReturnType<typeof setInterval> | null = null
+### Pattern 6: Action Registry Entry Structure
 
-  async function poll() {
-    const next: Device[] = []
-    for (const adapter of adapters) {
-      if (await adapter.isAvailable()) {
-        next.push(...await adapter.listDevices())
-      }
-    }
-    const changed = JSON.stringify(next) !== JSON.stringify(devices)
-    devices = next
-    if (changed) emitter.emit('devices', devices)
-  }
+Each composable action follows this template:
 
-  return {
-    start() {
-      poll() // immediate first poll
-      timer = setInterval(poll, pollIntervalMs)
+```typescript
+{
+  id: "set-appearance",
+  label: "Set Appearance",
+  description: "Switch between light and dark mode",
+  module: "device-settings",
+  capabilities: ["settings"],
+  params: [
+    {
+      key: "mode",
+      label: "Mode",
+      type: "select",
+      required: true,
+      options: [
+        { value: "light", label: "Light" },
+        { value: "dark", label: "Dark" },
+      ],
     },
-    stop() {
-      if (timer) clearInterval(timer)
-    },
-    getDevices(): Device[] { return devices },
-    on: emitter.on.bind(emitter),
-    off: emitter.off.bind(emitter),
-  }
+  ],
+  execute: async (adapter, deviceId, params) => {
+    await adapter.setAppearance!(deviceId, params.mode as "light" | "dark");
+  },
+  isSupported: (adapter) => !!adapter.setAppearance,
 }
 ```
 
-## Data Flow
+---
 
-### Request Flow (HTTP)
+## Anti-Patterns to Avoid
 
-```
-[Dashboard UI]
-    │ fetch('/api/location/favorites')
-    ↓
-[Fastify Router] → matches /api/location/* prefix
-    ↓
-[Location Module Plugin] → handler executes
-    ↓
-[Storage Service] → reads ~/.simvyn/location/favorites.json
-    ↓
-[JSON Response] ← returns to dashboard
-```
+### Anti-Pattern 1: Cross-Module Imports
 
-### WebSocket Message Flow
+**What:** Importing from `packages/modules/location/routes.ts` or any other module directly.
 
-```
-[Dashboard UI]
-    │ ws.send({ module: 'location', type: 'set-location', payload: { lat, lon } })
-    ↓
-[Single WebSocket Connection]
-    ↓
-[@fastify/websocket route handler at /ws]
-    ↓
-[WS Broker] → reads `module` field → dispatches to location handler
-    ↓
-[Location WS Handler]
-    │ → calls DeviceManager.getDevices()
-    │ → calls adapter.setLocation() for each targeted device
-    ↓
-[Broadcast to all connected clients]
-    │ ws.send({ module: 'location', type: 'location-set', payload: { results } })
-    ↓
-[Dashboard ws-store] → routes by `module` to location Zustand store
-    ↓
-[Location Zustand Store] → updates state → React re-renders
-```
+**Why bad:** Breaks the module isolation contract. Modules are loaded dynamically. Direct imports create build-time coupling and make modules non-removable.
 
-### Device Status Flow
+**Instead:** The action registry maps action IDs to adapter method calls. Collections has zero knowledge of other modules' internal structure.
 
-```
-[DeviceManager] (polls every 3s)
-    │ calls iosAdapter.listDevices() + androidAdapter.listDevices()
-    ↓
-[Device list changed?]
-    │ YES → emits 'devices' event
-    ↓
-[Server WS broadcast hook]
-    │ sends { module: 'system', type: 'device-list', payload: devices }
-    ↓
-[Dashboard device-store] → updates global device state
-    ↓
-[TopBar DeviceSelector] re-renders with new device list
-[All module panels] react to device changes via shared store
-```
+### Anti-Pattern 2: Client-Side Sequential Fetch Loops for Execution
 
-### State Management
+**What:** Having the dashboard fire individual `fetch()` calls per step per device (like the current command palette does for simple actions).
 
-```
-[Zustand Stores] (one per module + shared global stores)
-    │
-    ├── device-store (global — selected devices, device list)
-    ├── ws-store (global — WS connection, message dispatch)
-    ├── module-store (global — which module is active)
-    ├── theme-store (global — dark mode, accent color)
-    │
-    ├── location-store (module — current location, playback state)
-    ├── logs-store (module — log entries, filters, search)
-    ├── files-store (module — file tree, selected file)
-    └── ... (one per module)
+**Why bad:** Browser tab close = incomplete execution. No central state. CLI can't reuse. Race conditions with concurrent executions. The palette's existing loops work for 1-3 actions, but collections could have 10+ steps across 5+ devices.
 
-Access patterns:
-  React components → useStore(selector)      // reactive subscriptions
-  WS message handlers → store.getState()     // imperative reads
-  Module-to-module → import shared stores     // cross-module data
-```
+**Instead:** Single `POST /execute` → server orchestrates → WS progress.
 
-### Key Data Flows
+### Anti-Pattern 3: Auto-Discovering Actions from Route Definitions
 
-1. **Module discovery at startup:** CLI loads all `packages/modules/*/src/index.ts` → reads manifests → registers Fastify plugins with prefixes → registers CLI subcommands → server starts
-2. **Dashboard initialization:** Browser loads SPA → opens single WS connection → sends `{ module: 'system', type: 'init' }` → server responds with module list + device list → dashboard builds sidebar from manifests, pre-selects first module
-3. **Device command execution:** User clicks "Set Location" → location store dispatches WS message → broker routes to location handler → handler calls adapter → adapter spawns `simctl location set` → result broadcast back → UI updates
+**What:** Scanning Fastify route tables to automatically build the action registry.
 
-## Scaling Considerations
+**Why bad:** Not all routes are composable (GET endpoints, file downloads, etc.). Route signatures don't carry param schemas or labels. Fragile coupling to naming conventions.
 
-| Scale | Architecture Adjustments |
-|-------|--------------------------|
-| 1-5 modules (early) | Monolithic structure fine, can skip workspace packages initially. Single `src/` with module folders. |
-| 5-16 modules (target) | Full workspace structure needed. Module isolation prevents one module's changes from breaking others. Lazy-loading essential for dashboard performance. |
-| 16+ modules (future) | Consider extracting module packages to separate repos if independent teams contribute. The manifest contract makes this possible without changing the core. |
+**Instead:** Explicit, curated action registry with hand-written param schemas. More work upfront, but correct, maintainable, and provides good UX with labels/descriptions.
 
-### Scaling Priorities
+### Anti-Pattern 4: Storing Execution State in Persistent Storage
 
-1. **First bottleneck: Dashboard bundle size.** With 16+ modules each having rich UI panels, the JS bundle grows fast. Lazy-loading via `React.lazy()` is non-negotiable from day one.
-2. **Second bottleneck: WebSocket message volume.** Log streaming and performance monitoring can generate hundreds of messages/second. Use per-module subscription opt-in — only send messages for modules the user has opened. Don't broadcast log stream to all clients if nobody's viewing the Logs panel.
-3. **Third bottleneck: Device polling overhead.** 16 modules all calling `listDevices()` independently would hammer simctl/adb. The DeviceManager singleton with shared polling solves this — poll once, distribute to all consumers.
+**What:** Writing `ExecutionRun` state to `~/.simvyn/collections/` on every progress update.
 
-## Anti-Patterns
+**Why bad:** Execution is transient. Writing to disk on every step progress update is wasteful I/O. If the server crashes, the execution is lost regardless.
 
-### Anti-Pattern 1: Per-Module WebSocket Connections
+**Instead:** In-memory state on the server, streamed to clients via WS. Optionally persist a run summary after completion (execution history).
 
-**What people do:** Each module opens its own WebSocket endpoint (`/ws/location`, `/ws/logs`, etc.).
-**Why it's wrong:** With 16+ modules, the dashboard opens 16+ WS connections. Browsers cap concurrent connections per origin (typically 6 for HTTP/1.1, unlimited for WS but still wasteful). More importantly, the dashboard needs ONE place to manage connection lifecycle (reconnect, auth, heartbeat).
-**Do this instead:** Single WS connection with envelope-based multiplexing. One connection, one reconnect handler, messages routed by namespace.
+### Anti-Pattern 5: Singleton Execution State
 
-### Anti-Pattern 2: Module UI Inside Module Server Package
+**What:** Using a single `activeRun` variable that prevents concurrent executions.
 
-**What people do:** Co-locate React components inside the same package as the Fastify server plugin (`packages/modules/location/src/LocationPanel.tsx` next to `server.ts`).
-**Why it's wrong:** The dashboard builds as a single Vite bundle. If a module's UI imports from a package that also exports server code, Vite will try to bundle Node.js APIs (`child_process`, `fs`) into the browser bundle. You'll fight bundler errors constantly.
-**Do this instead:** Module UI panels live in `packages/dashboard/src/modules/`. Module packages export only server + CLI + types. The "link" is the module ID string matching in both places.
+**Why bad:** CLI and UI might trigger executions simultaneously. Two users (if dashboard is accessed by multiple people) would conflict.
 
-### Anti-Pattern 3: Direct Adapter Calls from Modules
+**Instead:** Track runs by `runId` in a Map. Route WS progress by `runId`. Allow concurrent runs.
 
-**What people do:** Each module directly imports and calls `createIosAdapter()` and `createAndroidAdapter()`.
-**Why it's wrong:** Every module creates its own adapter instances, each spawning their own child processes. No shared device cache, no coordinated polling, duplicate work.
-**Do this instead:** DeviceManager is a singleton created at startup and made available to modules via Fastify's `decorate` API. Modules call `fastify.deviceManager.getDevices()`, never instantiate adapters themselves.
+---
 
-### Anti-Pattern 4: Monolithic WebSocket Handler
+## Integration Points with Existing Modules
 
-**What people do:** One giant `switch` statement in the WS handler that grows with every module (like sim-location's current `ws.ts` — fine for one module, disastrous for 16+).
-**Why it's wrong:** A single file handling all 16+ modules' message types becomes unmaintainable. Every module change touches the same file. No encapsulation.
-**Do this instead:** WS broker with per-module handler registration. Each module registers its own handler for its namespace. The broker dispatches, modules handle.
+### How Collections References Other Modules' Capabilities
 
-### Anti-Pattern 5: God Store on the Frontend
+Collections references **PlatformAdapter methods** and **PlatformCapability constants** — not modules. The existing `PlatformCapability` type and adapter method signatures ARE the integration contract.
 
-**What people do:** One giant Zustand store with all application state for all modules.
-**Why it's wrong:** Every state update triggers subscriber checks across all modules. Module state shapes conflict. Impossible to code-split.
-**Do this instead:** Small, focused stores. Global stores for truly global state (devices, WS connection, active module). Per-module stores for module-specific state. Modules can import shared global stores but never each other's stores.
+| Action ID | Adapter Method | Capability | iOS | Android |
+|-----------|---------------|------------|-----|---------|
+| `set-appearance` | `setAppearance(id, mode)` | `settings` | ✓ | ✓ |
+| `set-location` | `setLocation(id, lat, lon)` | `setLocation` | ✓ | ✓ |
+| `clear-location` | `clearLocation(id)` | `setLocation` | ✓ | ✓ |
+| `set-clipboard` | `setClipboard(id, text)` | `clipboard` | ✓ | ✓ |
+| `set-locale` | `setLocale(id, locale)` | `settings` | ✓ | ✓ |
+| `set-status-bar` | `setStatusBar(id, overrides)` | `statusBar` | ✓ | ✗ |
+| `clear-status-bar` | `clearStatusBar(id)` | `statusBar` | ✓ | ✗ |
+| `grant-permission` | `grantPermission(id, bundleId, perm)` | `privacy` | ✓ | ✓ |
+| `open-deep-link` | `openUrl(id, url)` | `deepLinks` | ✓ | ✓ |
+| `add-media` | `addMedia(id, filePath)` | `addMedia` | ✓ | ✓ |
+| `launch-app` | `launchApp(id, bundleId)` | `appManagement` | ✓ | ✓ |
+| `terminate-app` | `terminateApp(id, bundleId)` | `appManagement` | ✓ | ✓ |
+| `set-content-size` | `setContentSize(id, size)` | `accessibility` | ✓ | ✓ |
+| `set-increase-contrast` | `setIncreaseContrast(id, enabled)` | `accessibility` | ✓ | ✓ |
 
-## Integration Points
+Platform compatibility is determined at runtime by `isSupported: (adapter) => !!adapter.methodName` — matching how every existing route checks capabilities. The UI gets this info from `GET /actions` which includes capabilities, allowing the StepBuilder to show platform badges.
 
-### External Services
+### Command Palette Integration
 
-| Service | Integration Pattern | Notes |
-|---------|---------------------|-------|
-| `xcrun simctl` | Child process via `execFile` in iOS adapter | macOS-only. Graceful degradation: adapter's `isAvailable()` returns false on non-macOS. JSON output parsing (`simctl list -j`). |
-| `adb` | Child process via `execFile` in Android adapter | Cross-platform. Must handle ADB server not running (`adb start-server`). Multiple device selection via `-s <serial>`. |
-| Vite dev server | In development: Vite middleware or proxy. In production: `@fastify/static` serves built files. | During dev, run Vite dev server separately on port 5173, Fastify proxies to it or dashboard connects directly. |
-| File system (`~/.simvyn/`) | Direct `fs` read/write through Storage service | One JSON file per module per data type. Atomic writes (write to temp file, rename). |
+Add a new "Apply Collection" action to `actions.tsx`:
 
-### Internal Boundaries
-
-| Boundary | Communication | Notes |
-|----------|---------------|-------|
-| CLI → Server | `start` subcommand creates Fastify app + binds to port | CLI owns process lifecycle (SIGINT, SIGTERM). Server is embedded, not a separate process. |
-| CLI → Module (headless) | CLI imports module's `cliCommand` directly | For `simvyn location set 37.78 -122.41`, CLI creates adapters and calls module logic directly, no server needed. |
-| Server → Module Plugins | `fastify.register(plugin, { prefix })` | Fastify plugin encapsulation. Module gets scoped Fastify instance. |
-| Server → DeviceManager | Fastify `decorate('deviceManager', dm)` | Modules access via `fastify.deviceManager`. Shared singleton. |
-| Server → WS Broker | WS route handler calls `broker.dispatch()` | Central dispatch. Modules register handlers at startup. |
-| Dashboard → Server (HTTP) | `fetch('/api/{moduleId}/...')` | Standard REST for CRUD operations. |
-| Dashboard → Server (WS) | Single WS at `/ws`, envelope protocol | Real-time: device updates, log streams, playback positions. |
-| Dashboard → Module UI | `React.lazy()` dynamic import | Code-split. Dashboard knows module IDs from manifest list (fetched at init or bundled). |
-
-## Build Order Dependencies
-
-The following order reflects actual dependency chains — each layer depends on the ones above it:
-
-```
-1. @simvyn/types          ← no dependencies, build first
-       ↓
-2. @simvyn/core           ← depends on types
-       ↓
-3. @simvyn/modules/*      ← depends on types + core
-       ↓
-4. @simvyn/server          ← depends on types + core + modules (loads them)
-       ↓
-5. @simvyn/cli             ← depends on server + modules
-       ↓
-6. @simvyn/dashboard       ← depends on types (for protocol), independent of server at build time
+```typescript
+{
+  id: "apply-collection",
+  label: "Apply Collection",
+  description: "Run a saved collection on devices",
+  icon: <Layers size={18} />,
+  steps: [
+    { id: "pick-collection", type: "collection-select", label: "Select Collection" },
+    { id: "pick-devices", type: "device-select", label: "Select Devices", multi: true },
+  ],
+  execute: async (ctx) => {
+    const collectionId = ctx.params.collectionId as string;
+    const res = await fetch("/api/modules/collections/execute", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ collectionId, deviceIds: ctx.selectedDeviceIds }),
+    });
+    if (res.ok) toast.success("Collection started");
+    else toast.error("Failed to start collection");
+  },
+}
 ```
 
-**Key implication for phased development:**
-- Phase 1 must deliver `types` + `core` + `server` (shell with no modules) + `dashboard` (shell with no module panels) + `cli` (start command only)
-- Phase 2 can then add the first module (location) by filling in `modules/location` + `dashboard/src/modules/location/`
-- Subsequent phases add more modules independently — each module is self-contained once the infrastructure exists
+This requires:
+- Adding `"collection-select"` to the `StepType` union in `types.ts`
+- Creating a `CollectionPicker.tsx` in `command-palette/` (matching the pattern of `LocalePicker`, `LocationPicker`)
+- Adding the picker rendering in `StepRenderer.tsx`
+
+---
+
+## Module File Structure
+
+```
+packages/modules/collections/
+├── manifest.ts           # SimvynModule definition
+├── action-registry.ts    # ActionExecutor[] — all composable actions with schemas
+├── routes.ts             # CRUD endpoints + execute + list actions
+├── execution-engine.ts   # Sequential step runner with parallel per-device execution
+├── ws-handler.ts         # WS channel registration for cancel messages
+└── cli.ts                # CLI: list, apply, create
+
+packages/dashboard/src/panels/
+├── CollectionsPanel.tsx   # Panel registration + main view (list ↔ editor toggle)
+└── collections/
+    ├── stores/
+    │   └── collections-store.ts   # Zustand store for CRUD + execution state
+    ├── StepBuilder.tsx            # Visual step editor with drag reorder
+    ├── ExecutionView.tsx          # Live run progress grid
+    ├── ActionPicker.tsx           # Action browser/selector
+    ├── StepCard.tsx               # Individual step card with params + platform badges
+    └── CollectionList.tsx         # Saved collections list
+```
+
+---
+
+## Suggested Build Order
+
+Based on dependency analysis:
+
+### Phase 1: Foundation (server-side, no UI)
+
+1. **Action Registry** (`action-registry.ts`) — Define types, implement 5-6 core actions
+2. **Collection Storage + CRUD routes** (`routes.ts`) — Standard CRUD with `createModuleStorage`
+3. **Module Manifest** (`manifest.ts`) — Wire up, add to `all-modules.ts`
+
+### Phase 2: Execution Engine (server-side)
+
+4. **Execution Engine** (`execution-engine.ts`) — Sequential steps, parallel devices, progress callbacks
+5. **WS Handler** (`ws-handler.ts`) — Register `collections` channel, wire engine callbacks to broadcasts
+6. **Execute Endpoint** (add to `routes.ts`) — `POST /execute` triggers engine, returns `runId`
+
+### Phase 3: Dashboard UI — Collections CRUD
+
+7. **Collections Store** (`collections-store.ts`) — REST CRUD + WS execution state
+8. **CollectionsPanel + CollectionList** — Panel registration, list view with create/delete
+9. **ActionPicker + StepBuilder + StepCard** — Build/edit step sequences with param configuration
+
+### Phase 4: Execution Visualization + Integration
+
+10. **ExecutionView** — WS-driven progress display with per-step per-device status
+11. **Command Palette Integration** — `collection-select` step type + "Apply Collection" action
+12. **CLI Support** (`cli.ts`) — `list`, `apply`, headless execution with progress output
+
+### Phase 5: Polish + Expansion
+
+13. **Remaining Actions** — Expand registry to cover all adapter methods
+14. **Execution History** — Persist completed run summaries
+15. **Collection Import/Export** — JSON sharing
+16. **Collection Templates** — Pre-built collections for common workflows
+
+### Dependency Graph
+
+```
+Action Registry (what's composable)
+     │
+     ├── Collection Storage (stores composed sequences)
+     │         │
+     │         ├── UI: List + Builder (create/edit collections)
+     │         │
+     │         └── Execution Engine (runs collections)
+     │                   │
+     │                   ├── WS Handler (streams progress)
+     │                   │        │
+     │                   │        └── UI: ExecutionView (visualizes progress)
+     │                   │
+     │                   ├── Execute Endpoint (triggers execution)
+     │                   │
+     │                   └── CLI: apply (headless execution)
+     │
+     └── Command Palette: "Apply Collection" action
+```
+
+The action registry is the root dependency. Storage comes next because both UI and execution need persisted collections. The execution engine must exist before any execution UI or CLI. WS enables live feedback. CLI and command palette are polish.
+
+---
+
+## Scalability Considerations
+
+| Concern | At 1-5 devices | At 20+ devices | Mitigation |
+|---------|---------------|-----------------|------------|
+| Execution time | Negligible (seconds) | Could be 30+ seconds for 10-step collection | Parallel-per-device within each step (Promise.all). Steps themselves are sequential. |
+| WS message volume | ~15 messages per run | ~600+ messages (10 steps × 20 devices × 3 events) | Batch WS: broadcast one `step-all-completed` message with all device results per step, rather than individual per-device messages. UI can still render per-device. |
+| Concurrent runs | Unlikely | Possible from CLI + UI simultaneously | Track runs by `runId` in a Map. Allow concurrent runs with clear WS routing. |
+| Collection file size | Trivial | Still trivial — collections are metadata | No concern. A collection with 20 steps is ~2KB of JSON. |
+
+---
 
 ## Sources
 
-- Fastify v5.7.x Plugin Documentation — https://fastify.dev/docs/latest/Reference/Plugins/ (HIGH confidence, official docs)
-- Fastify Encapsulation Reference — https://fastify.dev/docs/latest/Reference/Encapsulation/ (HIGH confidence, official docs)
-- Fastify Getting Started / Plugin Loading Order — https://fastify.dev/docs/latest/Guides/Getting-Started/ (HIGH confidence, official docs)
-- @fastify/websocket (v11.2.0) — https://github.com/fastify/fastify-websocket (HIGH confidence, official repo)
-- @fastify/static (v9.0.0) — https://github.com/fastify/fastify-static (HIGH confidence, official repo)
-- npm Workspaces documentation — https://docs.npmjs.com/cli/v10/using-npm/workspaces (HIGH confidence, official docs)
-- sim-location reference implementation — `/Users/pranshu/github/sim-location/` (HIGH confidence, existing codebase)
-- Discriminated union WS protocol pattern — from sim-location `ws.ts` (HIGH confidence, proven pattern)
-- Module manifest pattern — synthesized from Fastify plugin system + Flipper plugin architecture (MEDIUM confidence, architectural synthesis)
+All findings from direct codebase analysis — no external sources needed:
 
----
-*Architecture research for: Simvyn — modular local developer tool with web dashboard*
-*Researched: 2026-02-26*
+- `packages/types/src/device.ts` — PlatformAdapter interface (171 lines), PlatformCapability union
+- `packages/types/src/module.ts` — SimvynModule interface
+- `packages/types/src/ws.ts` — WsEnvelope protocol
+- `packages/types/src/storage.ts` — ModuleStorage interface
+- `packages/server/src/module-loader.ts` — Module loading, route prefix registration
+- `packages/server/src/ws-broker.ts` — Channel-based WS multiplexing
+- `packages/server/src/app.ts` — Server setup, deviceManager/processManager decorators
+- `packages/core/src/storage.ts` — `createModuleStorage()` implementation
+- `packages/core/src/device-manager.ts` — DeviceManager polling, event emission, adapter access
+- `packages/modules/device-settings/routes.ts` — Typical route pattern (find device → get adapter → call method → return)
+- `packages/modules/location/ws-handler.ts` — WS-based execution pattern (playback engine with progress broadcasts)
+- `packages/dashboard/src/components/command-palette/actions.tsx` — Multi-device action execution pattern, existing "batch" approach
+- `packages/dashboard/src/components/command-palette/types.ts` — MultiStepAction, AnyStep, StepType union
+- `packages/dashboard/src/hooks/use-ws.ts` — Client-side WS subscription and listener pattern
+- `packages/dashboard/src/stores/panel-registry.ts` — `registerPanel()` pattern
+- `packages/dashboard/src/stores/module-store.ts` — DOCK_ORDER, module info
+- `packages/dashboard/src/components/ModuleShell.tsx` — Panel rendering with `display:none/block`
+- `packages/cli/src/all-modules.ts` — Module registration array

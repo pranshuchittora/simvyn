@@ -1,270 +1,248 @@
-# Feature Research
+# Feature Landscape: Collections & Getting Started Documentation
 
-**Domain:** Universal mobile device devtools (iOS Simulator + Android Emulator/Device control)
-**Researched:** 2026-02-26
-**Confidence:** HIGH
+**Domain:** Reusable device action sets + comprehensive documentation for a mobile devtool
+**Researched:** 2026-03-04
+**Confidence:** HIGH (based on codebase analysis, reference system study, documentation best practices)
+**Milestone:** v1.6 — Collections & Documentation
 
-## Market Context
+## Context
 
-Flipper (facebook/flipper) was **archived on Sep 26, 2025** and React Native officially removed it in v0.74 (April 2024). There is no unified, SDK-free replacement. Developers currently cobble together `xcrun simctl`, `adb`, Android Studio, Xcode Instruments, and various standalone tools. This is the gap.
+Simvyn already has 16+ modules with full CLI subcommands, interactive command palette with multi-step flows, per-module persistence in `~/.simvyn/`, platform capability detection, and a Liquid Glass UI. This research focuses exclusively on the two NEW features: a Collections system (reusable device action batches) and comprehensive Getting Started documentation.
 
-**Key insight:** Flipper required SDK integration (native code in the app). Our zero-SDK approach is fundamentally different — we wrap `simctl` and `adb` from the host side, meaning it works with **any** app regardless of framework (React Native, Flutter, native, Kotlin Multiplatform, etc.).
+Reference systems studied: Apple Shortcuts (action-based sequential runner), Playwright test fixtures (composable environment setup), Android Studio device profiles (device configuration presets), Xcode test plans (parameterized test configs).
 
-## Feature Landscape
+---
 
-### Table Stakes (Users Expect These)
+## Table Stakes
 
-Features users assume exist. Missing these = product feels incomplete.
+Features users expect from a "Collections" / preset system. Missing = feature feels half-baked.
 
-| Feature | Why Expected | Complexity | Platform Support | Notes |
-|---------|--------------|------------|------------------|-------|
-| **Device Discovery & List** | Must see available devices/emulators | LOW | iOS: `simctl list` / Android: `adb devices` | Foundation for everything. Show booted status, device type, OS version |
-| **Boot / Shutdown / Erase** | Basic device lifecycle control | LOW | iOS: `simctl boot/shutdown/erase` / Android: `adb emu kill`, emulator CLI | Android emulator lifecycle is more limited via adb alone |
-| **App Install / Uninstall** | Core workflow for any mobile dev | LOW | iOS: `simctl install/uninstall` / Android: `adb install/uninstall` | Support drag-and-drop .app/.ipa/.apk in dashboard |
-| **App Launch / Terminate** | Need to start/stop apps quickly | LOW | iOS: `simctl launch/terminate` / Android: `adb shell am start/force-stop` | Show running apps, quick relaunch |
-| **Log Viewer** | #1 debugging tool, every dev needs this | MEDIUM | iOS: `simctl spawn log stream` / Android: `adb logcat` | Must support filtering, search, log level colors. Real-time streaming critical |
-| **Screenshots** | Universal need for docs, bug reports, PRs | LOW | iOS: `simctl io screenshot` / Android: `adb shell screencap` | Support PNG/JPEG, one-click save, copy to clipboard |
-| **Screen Recording** | Bug reproduction, demos, PRs | MEDIUM | iOS: `simctl io recordVideo` / Android: `adb shell screenrecord` | iOS supports h264/hevc. Android has 3-min limit. Both need clean start/stop |
-| **Deep Links / URL Handling** | Every app uses deep links | LOW | iOS: `simctl openurl` / Android: `adb shell am start -a VIEW -d <url>` | Support custom schemes and universal links |
-| **Push Notifications (iOS)** | iOS sim push is simctl's killer feature | LOW | iOS: `simctl push` with JSON payload / Android: N/A without SDK | Android push requires Firebase or app-side code — iOS is simctl-native |
-| **Location Simulation** | Maps, geofencing, ride-sharing apps | MEDIUM | iOS: `simctl location set/start/run` / Android: `adb emu geo fix` | Already proven via sim-location. Route simulation is the valuable part |
-| **File Management** | Browse app containers, push/pull files | MEDIUM | iOS: `simctl get_app_container` + filesystem / Android: `adb push/pull` | iOS: direct filesystem access to sim. Android: adb push/pull. Show app sandboxes |
+| Feature | Why Expected | Complexity | Dependencies | Notes |
+|---------|--------------|------------|--------------|-------|
+| **Create collection with name** | Users need to identify and find collections | LOW | `@simvyn/core` storage | Persist in `~/.simvyn/collections/`. UUID for each collection |
+| **Add steps from categorized action list** | Apple Shortcuts paradigm — browse available actions by category | MEDIUM | All existing modules (for action catalog) | Categories: Device Settings, Location, App Management, Deep Links, Push, Media, etc. One action per step |
+| **Configure parameters per step** | Each action needs its own params (lat/lon for location, app bundleId for launch, etc.) | MEDIUM | Command palette step types (reuse `StepType` patterns) | Reuse existing parameter picker UIs — LocalePicker, LocationPicker, etc. |
+| **Platform badge per step** | Users must know which steps are iOS-only or Android-only BEFORE applying | LOW | `PlatformCapability` type, adapter capability checking | Show Apple/Android logo badges. Critical for cross-platform awareness |
+| **Apply collection to selected device(s)** | The core use case — one click to configure a device | MEDIUM | Device store (multi-select), all module HTTP APIs | POST to each module's existing API endpoint sequentially. Already built: `/api/modules/device-settings/appearance`, `/api/modules/location/set`, etc. |
+| **Real-time per-step execution feedback** | Apple Shortcuts shows spinner → check/fail per step. Users need to see progress | MEDIUM | None (new UI component) | States per step per device: pending → running (spinner) → success (check) → failed (x) → skipped (skip badge) |
+| **Platform incompatibility skip with badge** | When an iOS-only step hits an Android device, skip it gracefully, don't fail the whole run | LOW | Platform capability detection (already exists) | Show "skipped — iOS only" badge. Don't interrupt execution of remaining steps |
+| **Edit existing collections** | Users iterate on collections over time | LOW | Storage layer | Same UI as creation, pre-populated with existing steps |
+| **Delete collections** | Cleanup | LOW | Storage layer | Confirm dialog before delete |
+| **Persist collections across sessions** | Collections are long-lived — survive server restarts | LOW | `createModuleStorage("collections")` | Already proven pattern: `~/.simvyn/collections/collections.json` |
 
-### Differentiators (Competitive Advantage)
+## Differentiators
 
-Features that set the product apart. Not required, but valuable.
+Features that set the Collections system apart from a basic batch runner. Not expected, but valued.
 
-| Feature | Value Proposition | Complexity | Platform Support | Notes |
-|---------|-------------------|------------|------------------|-------|
-| **Unified Cross-Platform Dashboard** | One tool instead of juggling simctl + adb + Android Studio + Xcode | HIGH | Both | The core product thesis. No other tool does this well. Flipper tried but required SDK |
-| **Zero SDK / No App Integration** | Works with any app instantly — Flutter, RN, native, anything | N/A (architecture) | Both | Biggest differentiator vs Flipper. Just point at a device, instant access |
-| **Status Bar Override (iOS)** | Set time, battery, network for pixel-perfect screenshots | LOW | iOS: `simctl status_bar override` / Android: `adb shell cmd statusbar` (limited) | iOS has rich support: time, network type, battery state/level, operator name |
-| **Privacy / Permission Control** | Grant/revoke/reset permissions without reinstalling | LOW | iOS: `simctl privacy grant/revoke/reset` / Android: `adb shell pm grant/revoke` | Huge DX improvement. Reset all permissions for testing first-run experience |
-| **Dark Mode / Appearance Toggle** | Quick toggle without navigating settings | LOW | iOS: `simctl ui appearance light/dark` / Android: `adb shell cmd uimode night yes/no` | One-click toggle in dashboard |
-| **Accessibility Settings** | Content size, increase contrast for a11y testing | LOW | iOS: `simctl ui content_size/increase_contrast` / Android: `adb shell settings` | Important for compliance testing. iOS has excellent simctl support |
-| **Database Inspector** | View SQLite databases without pulling files manually | HIGH | iOS: read from sim filesystem / Android: `adb pull` then parse | Need SQLite parser. Show tables, run queries. Flipper's DB inspector was popular |
-| **User Defaults / SharedPrefs Editor** | Read and edit app preferences without rebuilding | MEDIUM | iOS: read plist from sim container / Android: `adb shell run-as <pkg> cat shared_prefs/` | iOS plists are directly accessible. Android needs run-as (debug apps only) |
-| **Clipboard Bridge** | Copy text between host and device | LOW | iOS: `simctl pbcopy/pbpaste/pbsync` / Android: `adb shell input text` (limited) | iOS has rich pasteboard support. Android clipboard is write-only without SDK |
-| **Media Injection** | Add photos/videos/contacts to device | LOW | iOS: `simctl addmedia` / Android: `adb push` + `am broadcast` for media scan | iOS supports photos, live photos, videos, contacts (vCard) |
-| **Keychain Management (iOS)** | Add certs, reset keychain | LOW | iOS: `simctl keychain add-root-cert/add-cert/reset` / Android: N/A | Useful for testing SSL pinning, proxy setups |
-| **App Info / Container Inspector** | Show app metadata, container paths, entitlements | LOW | iOS: `simctl appinfo/get_app_container/listapps` / Android: `adb shell dumpsys package` | Quick access to bundle IDs, installed versions, paths |
-| **Batch / Scriptable Operations** | CI/CD integration, automated testing setup | MEDIUM | Both via CLI | CLI-first design means everything is scriptable. Dashboard is the GUI layer |
-| **Multi-Device View** | See and control multiple devices simultaneously | HIGH | Both | Run same command across devices. Compare iOS vs Android side by side |
-| **iCloud Sync Trigger (iOS)** | Force iCloud sync for testing | LOW | iOS: `simctl icloud_sync` / Android: N/A | Niche but valuable for iCloud-dependent apps |
-| **Network Condition Simulation** | Throttle bandwidth, add latency | HIGH | iOS: Network Link Conditioner (system) / Android: `adb shell cmd connectivity` (limited) | Hard to do without SDK. iOS has system-level NLC but it's not via simctl |
-| **Crash Log Viewer** | View crash reports from device | MEDIUM | iOS: `~/Library/Logs/DiagnosticReports/` / Android: `adb logcat *:E` + tombstones | iOS crash logs are on host filesystem. Android needs logcat filtering |
-| **Performance Monitoring** | CPU, memory, FPS at a glance | HIGH | iOS: Xcode Instruments (not simctl) / Android: `adb shell dumpsys meminfo/cpuinfo` | Android has decent shell access. iOS is very limited without Instruments |
+| Feature | Value Proposition | Complexity | Dependencies | Notes |
+|---------|-------------------|------------|--------------|-------|
+| **Step-by-step visual builder** | Drag-add UX similar to Apple Shortcuts — not just a config file but an interactive builder | MEDIUM | Categorized action registry | Categorized action list on left, step sequence on right. Each step shows its icon, name, platform badge, and configured params |
+| **Multi-device parallel apply** | Apply same collection to 3+ devices simultaneously — core devtool power move | HIGH | Device multi-select, concurrent execution | Show per-device × per-step progress matrix. Reference: Playwright parallel test execution feedback |
+| **Pre-apply compatibility summary** | Before running, show a summary: "3 of 5 steps will run on Android device X (2 iOS-only steps will be skipped)" | LOW | Platform capability check | Prevents surprises. Shows yellow warning badges for partially-compatible applies |
+| **Command palette integration** | "Apply Collection: Japanese Locale Setup" directly from Cmd+K | MEDIUM | Command palette actions system, collection store | Register collections as dynamic command palette actions. Each collection becomes a multi-step action with device picker |
+| **Reorder steps via drag-and-drop** | Step order matters (e.g., set locale THEN launch app) — users need to reorder | LOW | React DnD or CSS sortable | Framer Motion `Reorder` component fits the Liquid Glass aesthetic |
+| **Duplicate collection** | Quick way to create variants ("Japanese testing" → "Korean testing") | LOW | Storage layer | Clone then edit pattern |
+| **Collection CLI subcommand** | `simvyn collections apply <name> <device>` for CI/CD automation | MEDIUM | Collections storage, all module CLIs | Enables scripting: `simvyn collections apply "japan-setup" iPhone-16-Pro` |
+| **Built-in starter collections** | Ship with 2-3 example collections so users understand the concept immediately | LOW | Collection schema definition | Examples: "Dark Mode + Japanese Locale", "Screenshot Setup (status bar + dark mode)", "GPS Tokyo + Launch Maps" |
+| **Step execution timeout** | If a step hangs, don't block the whole collection forever | LOW | Timer per API call | 30s default timeout per step. Show timeout failure in UI |
+| **Execution history / last applied** | "When did I last apply this collection?" helps with debugging | LOW | Storage layer | Timestamp of last execution + device list. Not a full audit log — just last run |
 
-### Anti-Features (Commonly Requested, Often Problematic)
+## Anti-Features
 
-Features that seem good but create problems.
+Features to explicitly NOT build in this milestone.
 
-| Feature | Why Requested | Why Problematic | Alternative |
-|---------|---------------|-----------------|-------------|
-| **In-App SDK / Bridge** | Flipper had it, enables deep inspection | Violates core "zero SDK" principle. Creates framework-specific code, maintenance burden, build failures. This is what killed Flipper | Stay host-side only. Use platform tools (simctl, adb) exclusively. The constraint is the feature |
-| **Network Inspector (full)** | Flipper's most popular plugin | Requires MITM proxy or SDK to intercept traffic. Host-side only approach can't see encrypted traffic without proxy setup. Don't half-build this | Recommend/integrate with mitmproxy or Charles Proxy. Optionally add a "proxy setup" wizard that configures certs via `simctl keychain` |
-| **Layout Inspector / View Hierarchy** | Flipper had it, visually powerful | Requires either accessibility tree parsing (fragile) or SDK. Platform tools do this better (Xcode View Debugger, Android Layout Inspector) | Link to native tools. Don't compete with Xcode/Android Studio on inspection |
-| **React Native / Flutter Devtools** | Framework-specific debugging | Framework lock-in, massive maintenance burden, already done better by framework teams themselves (RN DevTools, Flutter DevTools) | Stay framework-agnostic. Link to framework-specific tools from dashboard |
-| **Screen Mirroring** | scrcpy has 136k stars | Requires native code (C/FFmpeg/SDL2), completely different tech stack from a web dashboard. scrcpy already does this perfectly | Integrate with scrcpy as optional companion. Don't rebuild it |
-| **Emulator Creation / Runtime Management** | "Manage everything in one place" | Extremely complex (Android AVD, iOS runtime downloads), already handled well by IDE tooling, and rarely a developer pain point | Support listing/booting existing devices. Don't manage creation |
-| **Remote Device Access** | Control devices from anywhere | Security nightmare, requires tunneling infrastructure, enterprise-level complexity | Keep it local. CLI + web dashboard on localhost |
+| Anti-Feature | Why Tempting | Why Avoid | What to Do Instead |
+|--------------|-------------|-----------|-------------------|
+| **Conditional logic / branching** | Apple Shortcuts has if/else, repeat | Massively increases complexity. Collections are "apply this config" not "run this program." Conditional logic turns it into a scripting engine | Keep it linear — ordered list of steps, execute sequentially. If users need conditionals, they use the CLI in a shell script |
+| **Variables / data passing between steps** | "Output of step 1 feeds step 2" | Turns collections into a workflow engine. Current steps are independent device config commands, not a data pipeline | Each step is self-contained. Parameters are set at creation time, not at runtime. If the bundleId from "install app" needs to feed "launch app", the user puts both in the step config |
+| **Step-level device targeting** | "Step 1 on iOS device, Step 2 on Android device" per step | Over-complicates the mental model. Collections are "apply this config set TO these devices" | Apply to device set. Steps that are incompatible with a device in the set get skipped. Simple |
+| **Collection sharing / import-export** | Share collections with teammates | Adds serialization format concerns, versioning, trust/security. Premature for v1.6 | Collections are local JSON in `~/.simvyn/`. Users can manually copy the JSON file if needed. Import/export is a v2+ feature |
+| **Scheduled / automatic execution** | "Apply this collection every time a device boots" | Event-driven execution requires a daemon/watcher architecture. Way out of scope | Manual apply only. CLI integration allows users to script their own automation |
+| **Undo / rollback after apply** | "Undo all changes from that collection" | Most device actions aren't cleanly reversible (what's the "undo" of set-locale-to-Japanese?). Creates false expectations | Don't offer undo. Users can create a "reset" collection that sets things back to defaults |
+| **Nested collections** | Collection A includes Collection B as a step | Recursive execution, circular dependency detection, debugging nightmares | Flat step list only. Users can duplicate steps across collections |
+| **Full documentation site (Docusaurus/Nextra)** | Dedicated docs website | Premature for project at this stage. README is the right place until there are 50+ pages of docs | Comprehensive README.md with per-feature sections. Add `docs/` site when README exceeds ~500 lines |
 
 ## Feature Dependencies
 
+### Collections Feature Chain
+
 ```
-[Device Discovery & List]
-    └──requires──> (nothing — this is the foundation)
-    
-[App Install/Uninstall]
-    └──requires──> [Device Discovery]
-    
-[App Launch/Terminate]
-    └──requires──> [Device Discovery]
-    
-[Log Viewer]
-    └──requires──> [Device Discovery]
-    
-[Screenshots / Screen Recording]
-    └──requires──> [Device Discovery]
-    
-[Deep Links]
-    └──requires──> [Device Discovery]
-    
-[Push Notifications]
-    └──requires──> [Device Discovery]
-    
-[Location Simulation]
-    └──requires──> [Device Discovery]
-    
-[File Management]
-    └──requires──> [Device Discovery]
-    └──enhances──> [Database Inspector]
-    └──enhances──> [User Defaults/SharedPrefs Editor]
-    
-[Database Inspector]
-    └──requires──> [File Management] (need to read files from container)
-    
-[User Defaults/SharedPrefs Editor]
-    └──requires──> [File Management] (need to read/write plist/xml)
-    
-[App Info / Container Inspector]
-    └──requires──> [Device Discovery]
-    └──enhances──> [File Management] (provides container paths)
-    
-[Crash Log Viewer]
-    └──requires──> [Device Discovery]
-    └──enhances──> [Log Viewer]
-    
-[Multi-Device View]
-    └──requires──> [Device Discovery]
-    └──enhances──> (all device-specific features)
-    
-[CLI Interface] ──parallel──> [Web Dashboard]
-    (both consume same core modules)
+[Collection Schema Definition]  ←  foundation type
+    └── [Collections Storage (server)]  ←  CRUD persistence
+        ├── [Collection Builder UI (dashboard)]  ←  create/edit UX
+        │   ├── [Action Catalog Registry]  ←  maps module capabilities → collection step types
+        │   ├── [Step Parameter Pickers]  ←  reuse LocalePicker, LocationPicker, etc.
+        │   └── [Platform Badge Component]  ←  shows iOS/Android compatibility
+        ├── [Collection Apply Engine (server)]  ←  sequential execution against module APIs
+        │   ├── [Per-Step Status Tracking]  ←  pending/running/success/fail/skip states
+        │   ├── [Platform Compatibility Check]  ←  pre-apply + runtime skip logic
+        │   └── [Multi-Device Orchestration]  ←  parallel per-device, sequential per-step
+        ├── [Apply Modal UI (dashboard)]  ←  device picker + real-time execution feedback
+        ├── [Command Palette Registration]  ←  dynamic actions from saved collections
+        └── [CLI Subcommand]  ←  `simvyn collections` commands
 ```
 
-### Dependency Notes
+### Documentation Feature Chain
 
-- **Database Inspector requires File Management:** Must be able to locate and read files from app containers to access SQLite databases
-- **User Defaults/SharedPrefs requires File Management:** Need filesystem access to read plist (iOS) and shared_prefs XML (Android) files
-- **App Info enhances File Management:** `simctl get_app_container` and `adb shell pm path` provide the paths that File Management navigates
-- **Multi-Device enhances everything:** Once any feature works for one device, multi-device is about parallel execution
-- **CLI and Dashboard are parallel:** Both wrap the same core module layer — CLI for scriptability/CI, dashboard for interactive use
+```
+[README Restructure]
+    ├── [Quick Start section]  ←  npx simvyn, what happens
+    ├── [Per-Feature sections with screenshots]
+    │   ├── [Device Management docs]
+    │   ├── [Location Simulation docs]
+    │   ├── [App Management docs]
+    │   ├── ... (each existing module)
+    │   └── [Collections docs]
+    ├── [CLI Reference section]
+    └── [Platform Support Matrix]
+```
 
-## MVP Definition
+### Cross-Feature Dependencies on Existing Modules
 
-### Launch With (v1)
+The Collections module is a **meta-module** — it doesn't have its own device adapter methods. Instead, it orchestrates calls to existing module APIs:
 
-Minimum viable product — what's needed to validate the concept of "unified mobile devtools."
+| Collection Step Type | Existing Module | API Endpoint | Platform |
+|---------------------|----------------|--------------|----------|
+| Set Appearance (dark/light) | device-settings | `POST /api/modules/device-settings/appearance` | Both |
+| Set Locale | device-settings | `POST /api/modules/device-settings/locale` | Both |
+| Set Location | location | `POST /api/modules/location/set` | Both |
+| Open Deep Link | deep-links | `POST /api/modules/deep-links/open` | Both |
+| Launch App | app-management | `POST /api/modules/app-management/launch` | Both |
+| Terminate App | app-management | `POST /api/modules/app-management/terminate` | Both |
+| Install App | app-management | `POST /api/modules/app-management/install` | Both |
+| Send Push | push | `POST /api/modules/push/send` | iOS only |
+| Set Clipboard | clipboard | `POST /api/modules/clipboard/set` | Both (limited Android) |
+| Add Media | media | `POST /api/modules/media/add` | Both |
+| Set Status Bar | device-settings | `POST /api/modules/device-settings/status-bar` | iOS only |
+| Grant Permission | device-settings | `POST /api/modules/device-settings/permission/grant` | Both |
+| Set Content Size | device-settings | `POST /api/modules/device-settings/content-size` | Both |
+| Toggle High Contrast | device-settings | `POST /api/modules/device-settings/increase-contrast` | Both |
+| Take Screenshot | screenshot | `POST /api/modules/screenshot/capture/:deviceId` | Both |
 
-- [x] **Device Discovery & List** — the foundation; without this, nothing works
-- [x] **Boot / Shutdown** — basic lifecycle control
-- [x] **App Install / Uninstall / Launch / Terminate** — core developer workflow
-- [x] **Log Viewer** — #1 debugging tool, real-time streaming with filtering
-- [x] **Screenshots** — universal utility, low complexity, high perceived value
-- [x] **Deep Links / URL Opening** — trivial to implement, used constantly
-- [x] **Push Notifications (iOS)** — simctl's killer feature, unique value prop
-- [x] **Location Simulation** — already proven via sim-location, extend to dashboard
-- [x] **CLI Interface** — `simvyn` command that wraps all above, scriptable
+**Key insight:** Collections doesn't need new adapter methods — it's purely an orchestration layer over existing HTTP APIs. This is architecturally clean and means any future module automatically becomes available as a collection step type by registering in the action catalog.
 
-### Add After Validation (v1.x)
+## Documentation Features (Getting Started)
 
-Features to add once core is working and validated with users.
+### Table Stakes for Devtool README
 
-- [ ] **Web Dashboard** — visual UI wrapping CLI capabilities, real-time device status
-- [ ] **Screen Recording** — natural extension of screenshots
-- [ ] **Status Bar Override** — low effort, high impact for iOS screenshot workflows
-- [ ] **Dark Mode Toggle** — one-click, devs toggle this constantly
-- [ ] **Privacy / Permission Control** — grant/revoke/reset without reinstall
-- [ ] **File Management** — browse containers, push/pull files
-- [ ] **Clipboard Bridge** — pbcopy/pbpaste bridge (iOS)
-- [ ] **Media Injection** — add photos/videos to simulator library
-- [ ] **App Info Inspector** — show installed apps, bundle IDs, container paths
+| Feature | Why Expected | Complexity | Notes |
+|---------|--------------|------------|-------|
+| **Hero banner / logo** | First impression, project identity | LOW | Already exists: `simvyn-icon-1024.png` and `banner.png` |
+| **One-liner description** | Visitors decide in 3 seconds whether to continue reading | LOW | Already exists, good |
+| **Quick start (< 3 steps)** | npm-installable tools must have `npx X` front and center | LOW | Already exists: `npx simvyn` |
+| **Feature list with brief descriptions** | Users scan for capabilities that match their needs | LOW | Already exists but brief. Expand with screenshot placeholders |
+| **CLI reference with examples** | CLI-first tool must document commands | MEDIUM | Exists partially. Needs per-module command coverage |
+| **Platform support matrix** | Cross-platform tool must be transparent about what works where | LOW | Already exists as table |
+| **Prerequisites / requirements** | Node.js version, macOS/Linux, Xcode/Android SDK | LOW | Exists. Ensure complete |
 
-### Future Consideration (v2+)
+### Differentiators for Devtool README
 
-Features to defer until product-market fit is established.
+| Feature | Value Proposition | Complexity | Notes |
+|---------|-------------------|------------|-------|
+| **Per-feature sections with screenshots** | Visual evidence of capabilities. Top READMEs use GIFs/screenshots for every major feature | MEDIUM | Screenshot placeholder format: `<!-- screenshot: feature-name -->`. Add real screenshots in a follow-up pass |
+| **GIF demo of key workflows** | Animated demo captures attention — awesome-readme research shows GIFs are the #1 README differentiator | MEDIUM | Priority GIFs: (1) Command palette Cmd+K flow (2) Location map interaction (3) Collections apply with real-time feedback |
+| **Collections getting started guide** | New feature needs dedicated onboarding section | LOW | "Create your first collection" walkthrough with screenshots |
+| **Architecture section** | Helps contributors understand the codebase | LOW | Brief explanation of monorepo structure, module system, zero-SDK philosophy |
+| **How It Works section** | Technical credibility — explain simctl/adb wrapping approach | LOW | Already exists, brief. Expand slightly |
 
-- [ ] **Database Inspector** — high complexity, requires SQLite parsing, but very valuable
-- [ ] **User Defaults / SharedPrefs Editor** — requires plist/XML parsing, read/write
-- [ ] **Crash Log Viewer** — moderate complexity, high value for debugging
-- [ ] **Multi-Device View** — compelling but complex UI challenge
-- [ ] **Keychain Management** — niche but useful (iOS only)
-- [ ] **Network Condition Simulation** — hard without SDK, investigate feasibility
-- [ ] **Performance Monitoring** — limited by what's available host-side
-- [ ] **Batch Operations / CI Mode** — scriptable profiles for test setup
+### Anti-Features for Documentation
 
-## Feature Prioritization Matrix
+| Anti-Feature | Why Avoid | What to Do Instead |
+|--------------|-----------|-------------------|
+| **Separate docs site** | Premature. Docusaurus adds build complexity and maintenance. README is discoverable on npm and GitHub | Keep everything in README.md. Add docs site when content exceeds ~500 lines |
+| **API reference for server endpoints** | Internal APIs are for the dashboard, not for users | Document CLI commands (user-facing). Server API is implementation detail |
+| **Contributing guide in README** | Clutters the user-facing README | Separate CONTRIBUTING.md file (defer to later) |
+| **Exhaustive CLI flag documentation** | `--help` exists for this | Show common examples, point to `simvyn <command> --help` for full options |
 
-| Feature | User Value | Implementation Cost | Priority |
-|---------|------------|---------------------|----------|
-| Device Discovery & List | HIGH | LOW | P1 |
-| Boot / Shutdown / Erase | HIGH | LOW | P1 |
-| App Install / Uninstall | HIGH | LOW | P1 |
-| App Launch / Terminate | HIGH | LOW | P1 |
-| Log Viewer (streaming) | HIGH | MEDIUM | P1 |
-| Screenshots | HIGH | LOW | P1 |
-| Deep Links / URL Open | HIGH | LOW | P1 |
-| Push Notifications (iOS) | HIGH | LOW | P1 |
-| Location Simulation | HIGH | MEDIUM | P1 |
-| Screen Recording | MEDIUM | MEDIUM | P2 |
-| Status Bar Override | MEDIUM | LOW | P2 |
-| Dark Mode Toggle | MEDIUM | LOW | P2 |
-| Permission Control | HIGH | LOW | P2 |
-| File Management | HIGH | MEDIUM | P2 |
-| Clipboard Bridge | MEDIUM | LOW | P2 |
-| Media Injection | MEDIUM | LOW | P2 |
-| App Info Inspector | MEDIUM | LOW | P2 |
-| Web Dashboard | HIGH | HIGH | P2 |
-| Database Inspector | HIGH | HIGH | P3 |
-| User Defaults/SharedPrefs | HIGH | MEDIUM | P3 |
-| Crash Log Viewer | MEDIUM | MEDIUM | P3 |
-| Multi-Device View | MEDIUM | HIGH | P3 |
-| Keychain Management | LOW | LOW | P3 |
-| Performance Monitoring | MEDIUM | HIGH | P3 |
+## Documentation Patterns from Successful Devtools
 
-**Priority key:**
-- P1: Must have for launch (CLI-first MVP)
-- P2: Should have, add post-validation (dashboard + expanded features)
-- P3: Nice to have, future consideration (advanced inspection + multi-device)
+Based on analysis of highly-starred devtool READMEs (gofiber/fiber, dbt-labs/dbt-core, thelounge/thelounge, refinedev/refine):
 
-## Platform Parity Analysis
+**Pattern 1: Visual-First**
+- Logo/banner at top → badge row → one-line description → GIF demo → feature list
+- Every feature section has a screenshot or GIF
+- HIGH confidence — consistent across all top READMEs
 
-Not all features are available on both platforms. This is a critical constraint.
+**Pattern 2: Scannable Structure**
+- Clear heading hierarchy (H2 for major sections, H3 for features)
+- Feature list uses bold name + em-dash + description format
+- Tables for structured comparisons (platform support, CLI commands)
+- HIGH confidence — universal pattern
 
-| Feature | iOS (simctl) | Android (adb) | Notes |
-|---------|-------------|---------------|-------|
-| Device List | ✅ Full | ✅ Full | Both excellent |
-| Boot/Shutdown | ✅ Full | ⚠️ Partial | Android emulator lifecycle via `adb emu` is limited |
-| App Install | ✅ Full | ✅ Full | Both straightforward |
-| App Launch | ✅ Full | ✅ `am start` | Android requires knowing activity name or using monkey |
-| Logs | ✅ `log stream` | ✅ `logcat` | Different formats, need unified view |
-| Screenshots | ✅ Full | ✅ `screencap` | Need to pull file from Android |
-| Screen Record | ✅ Full | ✅ `screenrecord` | Android 3-min limit, must pull file |
-| Deep Links | ✅ `openurl` | ✅ `am start -d` | Both good |
-| Push Notifications | ✅ `push` | ❌ None | No SDK-free Android push. Document as iOS-only |
-| Location | ✅ Full (set/route) | ⚠️ `emu geo fix` | Android: emulator console only, no routing |
-| Status Bar | ✅ Full | ⚠️ Partial | Android: limited demo mode via `cmd statusbar` |
-| Permissions | ✅ `privacy` | ✅ `pm grant/revoke` | Both have good support |
-| Dark Mode | ✅ `ui appearance` | ✅ `cmd uimode` | Both supported |
-| Content Size | ✅ `ui content_size` | ⚠️ `settings` | Android is less direct |
-| Clipboard | ✅ `pbcopy/pbpaste` | ⚠️ Write-only | Android can set but not read clipboard via adb |
-| File Access | ✅ Direct filesystem | ✅ `push/pull` | iOS sim files are directly on host! Android needs adb |
-| Media Add | ✅ `addmedia` | ⚠️ Push + broadcast | iOS is simpler, Android needs media scanner trigger |
-| Keychain | ✅ `keychain` | ❌ None | iOS only |
-| iCloud Sync | ✅ `icloud_sync` | ❌ N/A | iOS only |
+**Pattern 3: Quick Start First, Details Later**
+- First 20 lines must contain: install command, run command, one-sentence explanation
+- Detailed feature sections come after the fold
+- CLI examples section with copy-paste commands
+- HIGH confidence — npm ecosystem standard
 
-**Strategy:** Build each feature with the richer platform first (usually iOS), then add Android support where possible. Clearly mark iOS-only features in UI. Don't pretend features exist on Android when they don't.
+**Pattern 4: Progressive Disclosure**
+- Basic usage → features list → detailed sections → platform matrix → contributing
+- Don't front-load configuration. Show the simplest path first
+- HIGH confidence — matches Apple Shortcuts "Gallery" model (simple → advanced)
 
-## Competitor Feature Analysis
+**Recommended README Structure for v1.6:**
+```
+1. Logo + badges + one-liner
+2. GIF demo (dashboard overview)
+3. Quick Start (npx simvyn)
+4. Installation (global, npx, requirements)
+5. Features (bulleted list with bold names)
+6. Feature Showcase (per-feature sections with screenshots)
+   - Device Management
+   - Location Simulation
+   - App Management
+   - Log Viewer
+   - Screenshots & Recording
+   - Deep Links
+   - Push Notifications
+   - File Browser
+   - Database Inspector
+   - Device Settings
+   - Crash Logs
+   - Collections (NEW)
+7. CLI Reference (table of commands with examples)
+8. How It Works (simctl/adb wrapping)
+9. Platform Support (matrix table)
+10. License
+```
 
-| Feature | Flipper (archived) | Android Studio | Xcode Instruments | scrcpy | Our Approach |
-|---------|-------------------|----------------|-------------------|--------|--------------|
-| Zero SDK setup | ❌ Required SDK | ✅ (built-in) | ✅ (built-in) | ✅ | ✅ Core design principle |
-| Cross-platform | ✅ Both | ❌ Android only | ❌ iOS only | ❌ Android only | ✅ Both, unified UI |
-| Log Viewer | ✅ With SDK | ✅ Logcat | ✅ Console | ❌ | ✅ Unified cross-platform |
-| Network Inspector | ✅ With SDK | ✅ Profiler | ✅ Instruments | ❌ | ❌ Out of scope (recommend mitmproxy) |
-| Layout Inspector | ✅ With SDK | ✅ Built-in | ✅ View Debugger | ❌ | ❌ Out of scope (use native tools) |
-| Database Inspector | ✅ With SDK | ✅ App Inspection | ❌ | ❌ | ✅ v2+ (host-side file reading) |
-| Push Notifications | ❌ | ❌ | ❌ | ❌ | ✅ iOS simctl native |
-| Location Simulation | ❌ | ✅ Emulator UI | ✅ Simulator UI | ❌ | ✅ CLI + dashboard, route sim |
-| Screen Recording | ❌ | ✅ Built-in | ✅ QuickTime | ✅ Best | ✅ Unified cross-platform |
-| Permission Control | ❌ | ⚠️ Manual | ⚠️ Manual | ❌ | ✅ Automated grant/revoke/reset |
-| CLI Scriptable | ❌ GUI-only | ⚠️ adb only | ⚠️ simctl only | ✅ CLI | ✅ Full CLI + dashboard |
-| npm installable | ❌ | ❌ | ❌ | ❌ | ✅ `npm install -g simvyn` |
-| Plugin system | ✅ Extensible | ❌ | ❌ | ❌ | ❌ Not initially (v2+ maybe) |
-| Framework-agnostic | ❌ (RN-focused) | ✅ Native Android | ✅ Native iOS | ✅ | ✅ Works with anything |
+## MVP Recommendation
+
+### Collections — Prioritized Build Order
+
+1. **Collection schema + storage** — define the data model, persist to `~/.simvyn/collections/`
+2. **Action catalog registry** — map module capabilities to available step types with params schema
+3. **Collection builder UI** — step-by-step creation with categorized action list
+4. **Apply engine (server)** — sequential execution per device, skip on platform mismatch
+5. **Apply modal UI** — device picker + real-time per-step feedback
+6. **Command palette integration** — register saved collections as dynamic Cmd+K actions
+7. **CLI subcommand** — `simvyn collections list|apply|create`
+8. **Built-in starter collections** — 2-3 examples
+
+### Documentation — Prioritized Build Order
+
+1. **Restructure README** with new section hierarchy
+2. **Per-feature sections** with screenshot placeholder comments
+3. **Collections feature documentation** with usage walkthrough
+4. **Expanded CLI reference** table
+5. **Screenshot/GIF capture pass** (can be done separately)
+
+### Defer to Later
+
+- **Import/export collections** — v2+ once schema is stable
+- **Collection versioning** — unnecessary for local-only tool
+- **Conditional logic in steps** — never (keep it simple)
+- **Separate docs site** — when README exceeds 500 lines
+- **Video tutorials** — post-launch content
 
 ## Sources
 
-- **Flipper repository:** https://github.com/facebook/flipper — archived Sep 26, 2025 (HIGH confidence, verified directly)
-- **React Native 0.74 blog:** https://reactnative.dev/blog/2024/04/22/release-0.74 — Flipper removal confirmed (HIGH confidence, official blog)
-- **simctl help output:** Verified locally via `xcrun simctl help` on macOS (HIGH confidence, direct CLI output)
-- **adb help output:** Verified locally via `adb help` (HIGH confidence, direct CLI output)
-- **scrcpy repository:** https://github.com/Genymobile/scrcpy — 136k stars, v3.3.4, Android-only screen mirroring (HIGH confidence, verified directly)
-- **simctl subcommand details:** Verified locally for io, location, push, status_bar, privacy, ui, keychain, addmedia (HIGH confidence)
-- **adb shell commands:** Based on Android documentation and training data for am, pm, settings, dumpsys commands (MEDIUM confidence — no device available to verify shell commands)
+- **Apple Shortcuts User Guide:** https://support.apple.com/guide/shortcuts/welcome/ios — action-based sequential execution model, categorized action list, per-step configuration (HIGH confidence, official Apple docs, verified March 2026)
+- **Playwright Test Fixtures:** https://playwright.dev/docs/test-fixtures — composable, reusable environment setup, execution ordering, parallel execution model (HIGH confidence, official Playwright docs, verified March 2026)
+- **awesome-readme curated list:** https://github.com/matiassingers/awesome-readme — 20.5k stars, comprehensive collection of README best practices and examples (HIGH confidence, verified March 2026)
+- **Simvyn codebase analysis:** Direct examination of existing module system, command palette actions, storage patterns, platform adapters, device types (HIGH confidence, direct code reading)
+- **Existing FEATURES.md:** Previous research from 2026-02-26 covering the full product feature landscape (HIGH confidence, internal document)
 
 ---
-*Feature research for: Universal mobile device devtools (simvyn)*
-*Researched: 2026-02-26*
+*Feature research for: Simvyn v1.6 Collections & Getting Started Documentation*
+*Researched: 2026-03-04*
