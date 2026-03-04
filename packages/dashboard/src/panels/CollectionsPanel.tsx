@@ -121,11 +121,11 @@ function CollectionsPanel() {
 			)}
 
 			{!loading && collections.length > 0 && (
-				<div className="space-y-1.5">
+				<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 					{collections.map((collection) => (
 						<div
 							key={collection.id}
-							className="glass-panel px-4 py-3 cursor-pointer hover:bg-bg-surface/30 transition-colors group"
+							className="glass-panel p-4 flex flex-col gap-3 cursor-pointer hover:border-glass-border-hover transition-all duration-150 group"
 							onClick={() => setActiveCollectionId(collection.id)}
 							onKeyDown={(e) => {
 								if (e.key === "Enter") setActiveCollectionId(collection.id);
@@ -133,60 +133,65 @@ function CollectionsPanel() {
 							role="button"
 							tabIndex={0}
 						>
-							<div className="flex items-center justify-between">
+							<div className="flex items-start justify-between">
 								<div className="min-w-0 flex-1">
-									<div className="flex items-center gap-2">
-										<span className="text-sm font-medium text-text-primary truncate">
-											{collection.name}
-										</span>
-										<span className="shrink-0 text-[10px] text-text-muted">
-											{collection.steps.length} step{collection.steps.length !== 1 ? "s" : ""}
-										</span>
-									</div>
+									<div className="font-medium text-text-primary truncate">{collection.name}</div>
 									{collection.description && (
 										<p className="text-xs text-text-secondary truncate mt-0.5">
 											{collection.description}
 										</p>
 									)}
-									<p className="text-[10px] text-text-muted mt-0.5">
-										Updated {relativeTime(collection.updatedAt)}
-									</p>
 								</div>
-								<div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-									<button
-										type="button"
-										onClick={(e) => {
-											e.stopPropagation();
-											setApplyingCollection(collection);
-										}}
-										className="p-1.5 rounded text-text-muted hover:text-accent-blue transition-colors"
-										title="Apply"
-									>
-										<Play size={13} strokeWidth={1.8} />
-									</button>
-									<button
-										type="button"
-										onClick={(e) => {
-											e.stopPropagation();
-											duplicateCollection(collection.id);
-										}}
-										className="p-1.5 rounded text-text-muted hover:text-text-primary transition-colors"
-										title="Duplicate"
-									>
-										<Copy size={13} strokeWidth={1.8} />
-									</button>
-									<button
-										type="button"
-										onClick={(e) => {
-											e.stopPropagation();
-											deleteCollection(collection.id);
-										}}
-										className="p-1.5 rounded text-text-muted hover:text-red-400 transition-colors"
-										title="Delete"
-									>
-										<Trash2 size={13} strokeWidth={1.8} />
-									</button>
-								</div>
+								<span
+									className="glass-badge shrink-0"
+									style={{
+										color: "rgb(168, 162, 255)",
+										borderColor: "rgba(139, 92, 246, 0.3)",
+										background: "rgba(139, 92, 246, 0.2)",
+									}}
+								>
+									{collection.steps.length} step{collection.steps.length !== 1 ? "s" : ""}
+								</span>
+							</div>
+
+							<div className="text-[10px] text-text-muted">
+								Updated {relativeTime(collection.updatedAt)}
+							</div>
+
+							<div className="flex items-center gap-2 pt-1 border-t border-border flex-wrap">
+								<button
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										setApplyingCollection(collection);
+									}}
+									className="glass-button-primary flex items-center gap-1 text-xs"
+								>
+									<Play size={13} strokeWidth={1.8} />
+									Apply
+								</button>
+								<button
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										duplicateCollection(collection.id);
+									}}
+									className="glass-button flex items-center gap-1 text-xs"
+								>
+									<Copy size={13} strokeWidth={1.8} />
+									Duplicate
+								</button>
+								<button
+									type="button"
+									onClick={(e) => {
+										e.stopPropagation();
+										deleteCollection(collection.id);
+									}}
+									className="glass-button-destructive flex items-center gap-1 text-xs"
+								>
+									<Trash2 size={13} strokeWidth={1.8} />
+									Delete
+								</button>
 							</div>
 						</div>
 					))}

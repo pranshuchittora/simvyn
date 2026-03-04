@@ -1,7 +1,7 @@
 import type { Collection, DeviceStepStatus, ExecutionRun } from "@simvyn/types";
 import { AlertTriangle, Check, Loader2, Play, SkipForward, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useWsListener } from "../../hooks/use-ws";
+import { useWs, useWsListener } from "../../hooks/use-ws";
 import { useDeviceStore } from "../../stores/device-store";
 import type { SerializedAction } from "./stores/collections-store";
 
@@ -39,6 +39,7 @@ function StatusIcon({ status }: { status: DeviceStepStatus }) {
 export function ApplyModal({ collection, actions, open, onClose }: ApplyModalProps) {
 	const devices = useDeviceStore((s) => s.devices);
 	const bootedDevices = devices.filter((d) => d.state === "booted");
+	const { send } = useWs();
 
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [phase, setPhase] = useState<Phase>("select");
@@ -50,8 +51,14 @@ export function ApplyModal({ collection, actions, open, onClose }: ApplyModalPro
 			setPhase("select");
 			setRunId(null);
 			setExecutionRun(null);
+			send({ channel: "system", type: "subscribe", payload: { channel: "collections" } });
 		}
-	}, [open]);
+		return () => {
+			if (open) {
+				send({ channel: "system", type: "unsubscribe", payload: { channel: "collections" } });
+			}
+		};
+	}, [open, send]);
 
 	const toggleDevice = (id: string) => {
 		setSelectedIds((prev) => {
@@ -184,61 +191,73 @@ export function ApplyModal({ collection, actions, open, onClose }: ApplyModalPro
 
 				{phase === "select" && (
 					<div className="p-4 space-y-3">
+						<p className="text-xs text-text-secondary">Select target devices</p>
 						{bootedDevices.length === 0 ? (
 							<p className="text-xs text-text-muted text-center py-4">
 								No booted devices available
 							</p>
 						) : (
-							<div className="space-y-1">
+							<div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
 								{bootedDevices.map((device) => {
 									const checked = selectedIds.has(device.id);
-									return (
-										<label
-											key={device.id}
-											className="flex items-center gap-2.5 px-3 py-2 rounded-lg cursor-pointer hover:bg-bg-surface/30 transition-colors"
-										>
-											<input
-												type="checkbox"
-												checked={checked}
-												onChange={() => toggleDevice(device.id)}
-												className="accent-accent-blue"
-											/>
-											<span className="text-sm text-text-primary">{device.name}</span>
-											<span className="text-[10px] text-text-muted">
-												{device.platform === "ios" ? "iOS" : "Android"}
-											</span>
-										</label>
-									);
-								})}
-							</div>
-						)}
-
-						{selectedDevices.length > 0 && (
-							<div className="space-y-1 pt-1 border-t border-glass-border">
-								{selectedDevices.map((device) => {
 									const skipCount = getSkipCount(device.id);
 									const totalSteps = collection.steps.length;
 									const runCount = totalSteps - skipCount;
 									return (
-										<div
+										<button
 											key={device.id}
-											className="flex items-center gap-1.5 text-xs text-text-muted px-1"
+											type="button"
+											onClick={() => toggleDevice(device.id)}
+											className={`glass-panel p-3 flex flex-col gap-2 text-left transition-all duration-150 ${
+												checked
+													? "border-accent-blue/60 bg-accent-blue/10"
+													: "hover:border-glass-border-hover"
+											}`}
 										>
-											{skipCount > 0 && (
-												<AlertTriangle size={12} className="text-yellow-400 shrink-0" />
+											<div className="flex items-start justify-between">
+												<div className="min-w-0 flex-1">
+													<div className="text-sm font-medium text-text-primary truncate">
+														{device.name}
+													</div>
+													<div className="text-[10px] text-text-muted mt-0.5">
+														{device.platform === "ios" ? "iOS" : "Android"} {device.osVersion}
+													</div>
+												</div>
+												<span
+													className={`flex items-center justify-center w-5 h-5 rounded-md border-2 shrink-0 transition-colors ${
+														checked
+															? "bg-accent-blue border-accent-blue"
+															: "border-glass-border-hover"
+													}`}
+												>
+													{checked && <Check size={12} className="text-white" />}
+												</span>
+											</div>
+											{checked && skipCount > 0 && (
+												<div className="flex items-center gap-1 text-[10px] text-yellow-400">
+													<AlertTriangle size={10} className="shrink-0" />
+													<span>
+														{runCount}/{totalSteps} steps will run ({skipCount} skipped)
+													</span>
+												</div>
 											)}
-											<span>
-												{device.name}: {runCount} of {totalSteps} step{totalSteps !== 1 ? "s" : ""}{" "}
-												will run
-												{skipCount > 0 && ` (${skipCount} skipped)`}
-											</span>
-										</div>
+											{checked && skipCount === 0 && (
+												<div className="text-[10px] text-green-400">
+													All {totalSteps} steps will run
+												</div>
+											)}
+										</button>
 									);
 								})}
 							</div>
 						)}
 
-						<div className="flex justify-end pt-2">
+						<div className="flex items-center justify-between pt-2 border-t border-glass-border">
+							<span className="text-[10px] text-text-muted">
+								{selectedIds.size > 0
+									? `${selectedIds.size} device${selectedIds.size !== 1 ? "s" : ""} selected`
+									: "No devices selected"}
+							</span>
 							<button
 								type="button"
 								onClick={handleApply}

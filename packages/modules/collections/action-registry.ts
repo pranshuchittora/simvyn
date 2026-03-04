@@ -257,6 +257,39 @@ export const actionRegistry: ActionDescriptor[] = [
 		},
 		isSupported: (adapter) => !!adapter.setIncreaseContrast,
 	},
+	{
+		id: "boot-device",
+		label: "Boot Device",
+		description: "Start a shutdown device",
+		module: "device-management",
+		params: [],
+		async execute(adapter, deviceId) {
+			await adapter.boot(deviceId);
+		},
+		isSupported: () => true,
+	},
+	{
+		id: "shutdown-device",
+		label: "Shutdown Device",
+		description: "Shut down a running device",
+		module: "device-management",
+		params: [],
+		async execute(adapter, deviceId) {
+			await adapter.shutdown(deviceId);
+		},
+		isSupported: () => true,
+	},
+	{
+		id: "erase-device",
+		label: "Erase Device",
+		description: "Erase all content and settings on the device",
+		module: "device-management",
+		params: [],
+		async execute(adapter, deviceId) {
+			await adapter.erase!(deviceId);
+		},
+		isSupported: (adapter) => !!adapter.erase,
+	},
 ];
 
 export function getActionDescriptors(): ActionDescriptor[] {

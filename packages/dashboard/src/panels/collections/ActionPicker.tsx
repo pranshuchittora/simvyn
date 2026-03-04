@@ -4,6 +4,7 @@ import type { SerializedAction } from "./stores/collections-store";
 
 const MODULE_LABELS: Record<string, string> = {
 	"device-settings": "Device Settings",
+	"device-management": "Device Lifecycle",
 	location: "Location",
 	clipboard: "Clipboard",
 	"deep-links": "Deep Links",
@@ -49,7 +50,10 @@ export function ActionPicker({ actions, onAdd, onClose, open }: ActionPickerProp
 				onKeyDown={() => {}}
 				role="presentation"
 			/>
-			<div className="absolute left-0 right-0 z-50 mt-1 glass-panel p-3 max-h-[400px] overflow-y-auto">
+			<div
+				className="absolute left-0 right-0 z-50 mt-1 glass-panel p-3 max-h-[400px] overflow-y-auto"
+				style={{ background: "rgba(22, 22, 32, 0.95)", backdropFilter: "blur(24px) saturate(1.3)" }}
+			>
 				<div className="relative mb-2">
 					<Search
 						size={13}
