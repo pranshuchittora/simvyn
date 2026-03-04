@@ -1,5 +1,6 @@
 import type { SimvynModule } from "@simvyn/types";
 import { collectionsRoutes } from "./routes.js";
+import { registerCollectionsWsHandler } from "./ws-handler.js";
 
 const collectionsModule: SimvynModule = {
 	name: "collections",
@@ -9,6 +10,7 @@ const collectionsModule: SimvynModule = {
 
 	async register(fastify, _opts) {
 		await fastify.register(collectionsRoutes);
+		registerCollectionsWsHandler(fastify);
 	},
 
 	cli(program) {

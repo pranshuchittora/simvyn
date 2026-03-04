@@ -1,8 +1,11 @@
 import type {} from "@simvyn/server";
-import type { Collection, CollectionStep } from "@simvyn/types";
+import type { Collection, CollectionStep, ExecutionRun } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
 import { createModuleStorage } from "@simvyn/core";
 import { getActionDescriptors } from "./action-registry.js";
+import { runCollection } from "./execution-engine.js";
+
+const activeRuns = new Map<string, ExecutionRun>();
 
 export async function collectionsRoutes(fastify: FastifyInstance) {
 	const storage = createModuleStorage("collections");
@@ -121,5 +124,57 @@ export async function collectionsRoutes(fastify: FastifyInstance) {
 		await writeCollections(collections);
 
 		return { success: true };
+	});
+
+	fastify.post<{ Params: { id: string }; Body: { deviceIds: string[] } }>(
+		"/:id/execute",
+		async (req, reply) => {
+			const collections = await readCollections();
+			const collection = collections.find((c) => c.id === req.params.id);
+			if (!collection) return reply.status(404).send({ error: "Collection not found" });
+
+			const { deviceIds } = req.body;
+			if (!Array.isArray(deviceIds) || deviceIds.length === 0) {
+				return reply.status(400).send({ error: "deviceIds must be a non-empty array" });
+			}
+
+			const resolvedDevices: Array<{ id: string; name: string; platform: string }> = [];
+			for (const did of deviceIds) {
+				const device = fastify.deviceManager.devices.find(
+					(d) => d.id === did || d.id.startsWith(did),
+				);
+				if (!device) {
+					return reply.status(404).send({ error: `Device not found: ${did}` });
+				}
+				if (device.state !== "booted") {
+					return reply.status(400).send({ error: `Device ${device.name} is not booted` });
+				}
+				resolvedDevices.push({ id: device.id, name: device.name, platform: device.platform });
+			}
+
+			const run = runCollection({
+				collection,
+				devices: resolvedDevices,
+				getAdapter: (platform) => fastify.deviceManager.getAdapter(platform),
+				onStepProgress: (r) => fastify.wsBroker.broadcast("collections", "step-progress", r),
+				onComplete: (r) => {
+					activeRuns.delete(r.runId);
+					fastify.wsBroker.broadcast("collections", "run-completed", r);
+				},
+				onError: (r, err) => {
+					activeRuns.delete(r.runId);
+					fastify.wsBroker.broadcast("collections", "run-failed", { ...r, error: err.message });
+				},
+			});
+
+			activeRuns.set(run.runId, run);
+			return reply.status(202).send({ runId: run.runId });
+		},
+	);
+
+	fastify.get<{ Params: { runId: string } }>("/runs/:runId", async (req, reply) => {
+		const run = activeRuns.get(req.params.runId);
+		if (!run) return reply.status(404).send({ error: "Run not found" });
+		return run;
 	});
 }
