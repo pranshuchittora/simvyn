@@ -1,3 +1,4 @@
+import { isPhysicalDevice } from "@simvyn/core";
 import type {} from "@simvyn/server";
 import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
@@ -233,20 +234,25 @@ export async function settingsRoutes(fastify: FastifyInstance) {
 		if (!device) return reply.status(404).send({ error: "Device not found" });
 
 		const adapter = fastify.deviceManager.getAdapter(device.platform);
+		const isPhysical = device.deviceType === "Physical" || isPhysicalDevice(deviceId);
+		const isIosPhysical = isPhysical && device.platform === "ios";
+
 		return {
-			appearance: !!adapter?.setAppearance,
-			statusBar: !!adapter?.setStatusBar,
-			permissions: !!adapter?.grantPermission,
-			resetPermissions: !!adapter?.resetPermissions,
-			locale: !!adapter?.setLocale,
-			contentSize: !!adapter?.setContentSize,
-			increaseContrast: !!adapter?.setIncreaseContrast,
+			appearance: !!adapter?.setAppearance && !isIosPhysical,
+			statusBar: !!adapter?.setStatusBar && !isPhysical,
+			permissions: !!adapter?.grantPermission && !isIosPhysical,
+			resetPermissions: !!adapter?.resetPermissions && !isIosPhysical,
+			locale: !!adapter?.setLocale && !isPhysical,
+			contentSize: !!adapter?.setContentSize && !isIosPhysical,
+			increaseContrast: !!adapter?.setIncreaseContrast && !isIosPhysical,
 			talkBack: !!adapter?.setTalkBack,
 			portForward: !!adapter?.addForward,
 			displayOverride: !!adapter?.setDisplaySize,
 			batterySimulation: !!adapter?.setBattery,
 			inputInjection: !!adapter?.inputTap,
 			bugReport: !!adapter?.collectBugReport,
+			fileSystem: !isIosPhysical,
+			database: !isIosPhysical,
 		};
 	});
 }
