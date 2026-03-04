@@ -4,6 +4,7 @@ import type { FastifyInstance } from "fastify";
 import { createModuleStorage } from "@simvyn/core";
 import { getActionDescriptors } from "./action-registry.js";
 import { runCollection } from "./execution-engine.js";
+import { getStarterCollections } from "./starter-collections.js";
 
 const activeRuns = new Map<string, ExecutionRun>();
 
@@ -11,7 +12,12 @@ export async function collectionsRoutes(fastify: FastifyInstance) {
 	const storage = createModuleStorage("collections");
 
 	async function readCollections(): Promise<Collection[]> {
-		return (await storage.read<Collection[]>("collections")) ?? [];
+		const stored = await storage.read<Collection[]>("collections");
+		if (stored && stored.length > 0) return stored;
+
+		const starters = getStarterCollections();
+		await writeCollections(starters);
+		return starters;
 	}
 
 	async function writeCollections(collections: Collection[]): Promise<void> {
