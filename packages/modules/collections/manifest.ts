@@ -173,6 +173,111 @@ const collectionsModule: SimvynModule = {
 				await storage.write("collections", collections);
 				console.log(`Duplicated collection: ${duplicate.id}`);
 			});
+
+		cmd
+			.command("apply <name-or-id>")
+			.description("Execute a collection on one or more devices")
+			.argument("<devices...>", "Device IDs to execute on")
+			.action(async (nameOrId: string, devices: string[]) => {
+				const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
+				const { createModuleStorage } = await import("@simvyn/core");
+				const { runCollection } = await import("./execution-engine.js");
+				const storage = createModuleStorage("collections");
+
+				const adapters = await createAvailableAdapters();
+				const dm = createDeviceManager(adapters);
+
+				try {
+					await dm.refresh();
+
+					const collections =
+						(await storage.read<
+							{
+								id: string;
+								name: string;
+								description?: string;
+								steps: {
+									id: string;
+									actionId: string;
+									params: Record<string, unknown>;
+									label?: string;
+								}[];
+								schemaVersion: 1;
+								createdAt: string;
+								updatedAt: string;
+							}[]
+						>("collections")) ?? [];
+
+					const collection = collections.find(
+						(c) => c.id.startsWith(nameOrId) || c.name.toLowerCase() === nameOrId.toLowerCase(),
+					);
+					if (!collection) {
+						console.error(`Collection not found: ${nameOrId}`);
+						process.exit(1);
+					}
+
+					const resolvedDevices: Array<{ id: string; name: string; platform: string }> = [];
+					for (const did of devices) {
+						const device = dm.devices.find((d) => d.id === did || d.id.startsWith(did));
+						if (!device) {
+							console.error(`Device not found: ${did}`);
+							process.exit(1);
+						}
+						if (device.state !== "booted") {
+							console.error(`Device ${device.name} is not booted`);
+							process.exit(1);
+						}
+						resolvedDevices.push({ id: device.id, name: device.name, platform: device.platform });
+					}
+
+					const GREEN = "\x1b[32m";
+					const RED = "\x1b[31m";
+					const YELLOW = "\x1b[33m";
+					const RESET = "\x1b[0m";
+
+					await new Promise<void>((resolve, reject) => {
+						runCollection({
+							collection,
+							devices: resolvedDevices,
+							getAdapter: (platform) => dm.getAdapter(platform as "ios" | "android"),
+							onStepProgress: (run) => {
+								const step = run.steps[run.currentStepIndex];
+								console.log(`Step ${run.currentStepIndex + 1}/${run.steps.length}: ${step.label}`);
+								for (const dr of step.devices) {
+									const color =
+										dr.status === "success" ? GREEN : dr.status === "failed" ? RED : YELLOW;
+									console.log(
+										`  ${dr.deviceName}: ${color}${dr.status}${RESET}${dr.error ? ` (${dr.error})` : ""}`,
+									);
+								}
+							},
+							onComplete: (run) => {
+								const counts = { success: 0, skipped: 0, failed: 0 };
+								for (const step of run.steps) {
+									for (const dr of step.devices) {
+										if (dr.status === "success") counts.success++;
+										else if (dr.status === "skipped") counts.skipped++;
+										else if (dr.status === "failed") counts.failed++;
+									}
+								}
+								console.log(
+									`\nCollection "${run.collectionName}" completed: ${GREEN}${counts.success} success${RESET}, ${YELLOW}${counts.skipped} skipped${RESET}, ${RED}${counts.failed} failed${RESET}`,
+								);
+								dm.stop();
+								resolve();
+							},
+							onError: (_run, err) => {
+								console.error(`\n${RED}Error: ${err.message}${RESET}`);
+								dm.stop();
+								reject(err);
+							},
+						});
+					});
+				} catch (err) {
+					dm.stop();
+					process.exit(1);
+				}
+			});
 	},
 
 	capabilities: [],
