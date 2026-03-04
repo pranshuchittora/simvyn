@@ -8,9 +8,9 @@
 
 ## Current Position
 
-**Phase:** Not started (defining requirements)
-**Plan:** —
-**Status:** Defining requirements
+**Phase:** 23 — Collections Foundation
+**Plan:** Not yet planned
+**Status:** Roadmap created, ready for planning
 **Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
@@ -50,6 +50,12 @@
 | 22.1 Code Audit | ⏳ Not Planned |
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
 | 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
+| **v1.6 — Collections & Documentation** | |
+| 23. Collections Foundation | ⏳ Not Planned |
+| 24. Execution Engine | ⏳ Not Planned |
+| 25. Collection Builder UI | ⏳ Not Planned |
+| 26. Apply Modal & Integration | ⏳ Not Planned |
+| 27. Documentation | ⏳ Not Planned |
 
 ## Performance Metrics
 
@@ -322,9 +328,9 @@
 ## Session Continuity
 
 **Last session:** 2026-03-04
-**Stopped at:** Starting milestone v1.6 — Collections & Documentation
-**Context for next session:** Milestone v1.6 started. Defining requirements for Collections feature (reusable device action sets) and Getting Started documentation.
+**Stopped at:** v1.6 roadmap created (Phases 23-27)
+**Context for next session:** Roadmap for v1.6 is complete. 5 phases derived from 22 requirements. Phase 23 (Collections Foundation) is next — needs planning via `/gsd-plan-phase 23`. Key architecture decision: action registry is the root dependency for everything else. Research recommends direct adapter-level calls (not HTTP route coupling) and schemaVersion from day one.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-04 — Milestone v1.6 started*
+*Last updated: 2026-03-04 — v1.6 roadmap created (Phases 23-27)*

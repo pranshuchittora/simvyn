@@ -607,34 +607,34 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COLL-01 | — | Pending |
-| COLL-02 | — | Pending |
-| COLL-03 | — | Pending |
-| COLL-04 | — | Pending |
-| COLL-05 | — | Pending |
-| CBLD-01 | — | Pending |
-| CBLD-02 | — | Pending |
-| CBLD-03 | — | Pending |
-| CBLD-04 | — | Pending |
-| CEXE-01 | — | Pending |
-| CEXE-02 | — | Pending |
-| CEXE-03 | — | Pending |
-| CEXE-04 | — | Pending |
-| CEXE-05 | — | Pending |
-| CEXE-06 | — | Pending |
-| CINT-01 | — | Pending |
-| CINT-02 | — | Pending |
-| CINT-03 | — | Pending |
-| DOC-01 | — | Pending |
-| DOC-02 | — | Pending |
-| DOC-03 | — | Pending |
-| DOC-04 | — | Pending |
+| COLL-01 | Phase 23 | Pending |
+| COLL-02 | Phase 23 | Pending |
+| COLL-03 | Phase 23 | Pending |
+| COLL-04 | Phase 23 | Pending |
+| COLL-05 | Phase 23 | Pending |
+| CBLD-01 | Phase 25 | Pending |
+| CBLD-02 | Phase 25 | Pending |
+| CBLD-03 | Phase 25 | Pending |
+| CBLD-04 | Phase 25 | Pending |
+| CEXE-01 | Phase 24 | Pending |
+| CEXE-02 | Phase 24 | Pending |
+| CEXE-03 | Phase 24 | Pending |
+| CEXE-04 | Phase 24 | Pending |
+| CEXE-05 | Phase 24 | Pending |
+| CEXE-06 | Phase 24 | Pending |
+| CINT-01 | Phase 26 | Pending |
+| CINT-02 | Phase 26 | Pending |
+| CINT-03 | Phase 26 | Pending |
+| DOC-01 | Phase 27 | Pending |
+| DOC-02 | Phase 27 | Pending |
+| DOC-03 | Phase 27 | Pending |
+| DOC-04 | Phase 27 | Pending |
 
 **Coverage:**
 - v1.6 requirements: 22 total (5 core + 4 builder + 6 execution + 3 integration + 4 documentation)
-- Mapped to phases: 0
-- Unmapped: 22
+- Mapped to phases: 22
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-03-04 after v1.6 Collections & Documentation requirements*
+*Last updated: 2026-03-04 — v1.6 traceability updated with phase assignments (Phases 23-27)*

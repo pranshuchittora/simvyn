@@ -2,8 +2,8 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 25 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4 + 3 v1.5)
-**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4 requirements mapped
+**Phases:** 30 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4 + 3 v1.5 + 5 v1.6)
+**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4, 10/10 v1.5, 22/22 v1.6 requirements mapped
 
 ## Phases
 
@@ -47,6 +47,14 @@
 - [x] **Phase 22.1: Code Audit** — Security audit commit-by-commit for credentials, secrets, and sensitive data (INSERTED) (completed 2026-02-27)
 - [x] **Phase 22.2: Test Suite** — Extensive tests for adapter commands verifying correct adb/xcrun invocations (INSERTED) (completed 2026-02-27)
 - [x] **Phase 22.3: NPM Package & README** — README with logo and tagline, npx simvyn support, npm publish CI, make package public (INSERTED) (completed 2026-02-27)
+
+### Milestone v1.6 — Collections & Documentation
+
+- [ ] **Phase 23: Collections Foundation** — Action registry, collection schema with versioning, storage, CRUD endpoints
+- [ ] **Phase 24: Execution Engine** — Server-side sequential step runner with parallel per-device execution, WS progress streaming, shared executor for CLI/dashboard parity
+- [ ] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration
+- [ ] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections
+- [ ] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference
 
 ## Phase Details
 
@@ -314,6 +322,12 @@ Plans:
 | 22.1 Code Audit | 1/1 | Complete    | 2026-02-27 |
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
 | 22.3 NPM Package & README | 3/3 | Complete    | 2026-02-27 |
+| **v1.6 — Collections & Documentation** | | | |
+| 23. Collections Foundation | 0/? | Not started | - |
+| 24. Execution Engine | 0/? | Not started | - |
+| 25. Collection Builder UI | 0/? | Not started | - |
+| 26. Apply Modal & Integration | 0/? | Not started | - |
+| 27. Documentation | 0/? | Not started | - |
 
 ## Coverage Map
 
@@ -589,7 +603,7 @@ Plans:
 
 ---
 *Roadmap created: 2026-02-26*
-*Last updated: 2026-02-27 — Phase 22 complete (1/1 plans)*
+*Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
 
 ### Phase 22.1: Code Audit (INSERTED)
 
@@ -639,3 +653,79 @@ Plans:
 - [ ] 22.3-01-PLAN.md — Package configuration (private flags, CLI metadata, files whitelist, repository URL)
 - [ ] 22.3-02-PLAN.md — README creation (logo, tagline, features, installation, CLI examples)
 - [ ] 22.3-03-PLAN.md — GitHub Actions release workflow (tag-triggered npm publish with provenance)
+
+### Phase 23: Collections Foundation
+**Goal:** Users can create, edit, duplicate, and delete named collections of device actions, persisted across sessions with a future-proof schema
+**Depends on:** Phase 1 (module system, storage, adapters)
+**Requirements:** COLL-01, COLL-02, COLL-03, COLL-04, COLL-05
+**Success Criteria** (what must be TRUE):
+  1. User can create a named collection with optional description via REST API, and it persists in `~/.simvyn/collections/` across server restarts
+  2. User can list all saved collections, edit a collection's name/description/steps, and the changes persist immediately
+  3. User can duplicate an existing collection (creating a copy with a new name) and delete a collection with no orphaned data
+  4. The action registry returns a typed catalog of all available device actions (dark mode, location, app launch, etc.) with parameter schemas and platform compatibility metadata
+  5. Collection storage schema includes `schemaVersion: 1` field on every saved collection document
+**Plans:** TBD
+
+### Phase 24: Execution Engine
+**Goal:** Users can apply a collection to one or more devices with real-time per-step feedback, graceful skip/fail handling, and execution timeouts
+**Depends on:** Phase 23 (action registry, collection storage)
+**Requirements:** CEXE-01, CEXE-02, CEXE-03, CEXE-04, CEXE-05, CEXE-06
+**Success Criteria** (what must be TRUE):
+  1. User can trigger collection execution targeting one or more devices, and each step runs sequentially against all target devices in parallel
+  2. WebSocket broadcasts coalesced execution state per step completion — dashboard receives real-time progress (running/success/failed/skipped per step per device)
+  3. Steps targeting an incompatible platform (e.g., iOS-only step on Android device) are automatically skipped with a skip badge — remaining steps continue normally
+  4. A step that fails on a device shows a failure badge but does not abort the collection — execution continues to the next step
+  5. Steps that exceed the 30-second timeout are terminated and marked as failed, allowing the collection to proceed
+**Plans:** TBD
+
+### Phase 25: Collection Builder UI
+**Goal:** Users can visually assemble collections by browsing categorized actions, configuring step parameters, and reordering steps via drag-and-drop
+**Depends on:** Phase 23 (action registry serving action catalog), Phase 24 (execution engine for apply)
+**Requirements:** CBLD-01, CBLD-02, CBLD-03, CBLD-04
+**Success Criteria** (what must be TRUE):
+  1. User can open the collections panel, see a list of saved collections, and click "New Collection" to enter the step builder
+  2. User can browse a categorized action catalog (Device Settings, Location, App Management, etc.) and add actions as steps to the collection
+  3. Each step card displays platform badges (Apple/Android logo) indicating which platforms support that action
+  4. User can drag steps to reorder them within the collection and configure per-step parameters (locale picker, location picker, URL input, etc.) inline
+**Plans:** TBD
+
+### Phase 26: Apply Modal & Integration
+**Goal:** Users can apply collections from the dashboard modal or command palette with live execution feedback, and automate via CLI
+**Depends on:** Phase 24 (execution engine), Phase 25 (builder UI + collections store)
+**Requirements:** CINT-01, CINT-02, CINT-03
+**Success Criteria** (what must be TRUE):
+  1. User can open an apply modal from any collection, pick target device(s), see a pre-apply compatibility summary (skipped step count per device), and execute with Cmd+Enter
+  2. During execution the modal shows live per-step per-device status matrix (spinner → check/fail/skip) driven by WebSocket events
+  3. Saved collections appear as actions in the command palette (Cmd+K) — selecting one opens the device picker flow and triggers execution
+  4. User can run `simvyn collections list` to see saved collections and `simvyn collections apply <name> <device>` to execute headlessly from the CLI
+  5. 2-3 built-in starter collections ship with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup") and appear on first launch
+**Plans:** TBD
+
+### Phase 27: Documentation
+**Goal:** New users can understand what simvyn does, install it, and use every feature from a comprehensive, visual-first README
+**Depends on:** Phase 26 (all features complete for accurate docs)
+**Requirements:** DOC-01, DOC-02, DOC-03, DOC-04
+**Success Criteria** (what must be TRUE):
+  1. README opens with logo, tagline, quick-start instructions, and a visual feature overview — a new visitor understands the tool's purpose within 30 seconds
+  2. Each module has a dedicated showcase section with description and screenshot placeholder showing the dashboard panel
+  3. Collections feature has a getting-started walkthrough explaining how to create, configure, and apply a collection
+  4. CLI reference table lists every command with usage examples, covering all modules including collections
+**Plans:** TBD
+
+### v1.6 Coverage
+
+```
+COLL-01 → Phase 23    CEXE-01 → Phase 24    CBLD-01 → Phase 25
+COLL-02 → Phase 23    CEXE-02 → Phase 24    CBLD-02 → Phase 25
+COLL-03 → Phase 23    CEXE-03 → Phase 24    CBLD-03 → Phase 25
+COLL-04 → Phase 23    CEXE-04 → Phase 24    CBLD-04 → Phase 25
+COLL-05 → Phase 23    CEXE-05 → Phase 24
+                       CEXE-06 → Phase 24    CINT-01 → Phase 26
+                                              CINT-02 → Phase 26
+DOC-01 → Phase 27                            CINT-03 → Phase 26
+DOC-02 → Phase 27
+DOC-03 → Phase 27
+DOC-04 → Phase 27
+```
+
+**v1.6 Mapped: 22/22 — No orphaned requirements**
