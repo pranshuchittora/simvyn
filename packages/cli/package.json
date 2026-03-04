@@ -2,7 +2,7 @@
 	"name": "simvyn",
 	"version": "1.0.7",
 	"type": "module",
-	"description": "Universal mobile device devtool — control iOS Simulators and Android Emulators from a single dashboard and CLI",
+	"description": "Universal mobile device devtool — control iOS Simulators, Android Emulators, and real devices from a single dashboard and CLI",
 	"main": "./dist/index.js",
 	"bin": {
 		"simvyn": "./dist/index.js"
@@ -30,8 +30,11 @@
 		"android",
 		"devtools",
 		"simctl",
+		"devicectl",
 		"adb",
-		"mobile"
+		"mobile",
+		"real-device",
+		"usb"
 	],
 	"license": "MIT",
 	"author": "Pranshu Chittora",
