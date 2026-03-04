@@ -3,8 +3,12 @@ export {
 	createAndroidAdapter,
 	createAvailableAdapters,
 	createIosAdapter,
+	getDevicectlStatus,
 	isAndroidPhysical,
+	isPhysicalDevice,
+	stripPhysicalPrefix,
 } from "./adapters/index.js";
+export type { DevicectlStatus } from "./adapters/index.js";
 export type { DeviceManager } from "./device-manager.js";
 export { createDeviceManager } from "./device-manager.js";
 // platform utils
