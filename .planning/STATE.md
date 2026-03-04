@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 28 — Real Device Support
-**Plan:** 28-04
-**Status:** In Progress
-**Progress:** [█████████░] 93%
+**Plan:** 28-04 (complete)
+**Status:** Phase Complete
+**Progress:** [██████████] 100%
 
 ## Phase Overview
 
@@ -57,7 +57,7 @@
 | 26. Apply Modal & Integration | ✅ Complete (2/2 plans) |
 | 27. Documentation | ✅ Complete (1/1 plans) |
 | **v1.7 — Real Device Support** | |
-| 28. Real Device Support | 🔄 Executing (3/4 plans) |
+| 28. Real Device Support | ✅ Complete (4/4 plans) |
 
 ## Performance Metrics
 
@@ -151,6 +151,7 @@
 | Phase 28 P02 | 2min | 1 tasks | 3 files |
 | Phase 28 P01 | 7min | 3 tasks | 3 files |
 | Phase 28 P03 | 3min | 3 tasks | 5 files |
+| Phase 28 P04 | 4min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -349,6 +350,9 @@
 - Capabilities endpoint uses isPhysical + isIosPhysical booleans for device-type-aware flags — statusBar/locale false for all physical devices, iOS-specific features false for iOS physical only
 - Static PHYSICAL_UNSUPPORTED_IOS/ANDROID action-ID sets for collection step skipping — avoids changing ActionDescriptor type signature
 - File-system/database route guards at resolveContainer/getContainerPath level — single guard per module catches all routes
+- DeviceSelector groups by device type (Physical/Simulator/Emulator) not platform — fixed order Physical → Simulators → Emulators
+- Disabled feature placeholders with opacity-50 + cursor-not-allowed + title tooltip for physical device capability gaps
+- Diagnostics endpoint dynamically imports getDevicectlStatus via `await import("@simvyn/core")` to match existing lazy pattern
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -363,9 +367,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04T22:05:21.579Z
-**Stopped at:** Completed 28-03-PLAN.md
-**Context for next session:** Phase 28 plans 01-03 complete. Plan 04 next (device selector grouping + dashboard UI).
+**Last session:** 2026-03-05
+**Stopped at:** Completed 28-04-PLAN.md
+**Context for next session:** Phase 28 complete (4/4 plans). All real device support features implemented. Ready for milestone transition.
 
 ---
 *State initialized: 2026-02-26*

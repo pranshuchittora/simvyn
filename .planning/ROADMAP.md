@@ -58,7 +58,7 @@
 
 ### Milestone v1.7 — Real Device Support
 
-- [ ] **Phase 28: Real Device Support** — iOS physical devices via devicectl, Android adapter refinement, device-aware capabilities, grouped selector
+- [x] **Phase 28: Real Device Support** — iOS physical devices via devicectl, Android adapter refinement, device-aware capabilities, grouped selector (completed 2026-03-04)
 
 ## Phase Details
 
@@ -333,7 +333,7 @@ Plans:
 | 26. Apply Modal & Integration | 2/2 | Complete   | 2026-03-04 |
 | 27. Documentation | 1/1 | Complete   | 2026-03-04 |
 | **v1.7 — Real Device Support** | | | |
-| 28. Real Device Support | 3/4 | In Progress|  |
+| 28. Real Device Support | 4/4 | Complete   | 2026-03-04 |
 
 ## Coverage Map
 
@@ -619,7 +619,7 @@ Plans:
   4. Capabilities endpoint returns device-type-specific flags — physical devices get reduced capabilities
   5. Collections auto-skip steps unsupported on physical devices
   6. Tool settings page shows devicectl availability and Xcode version for diagnostics
-**Plans:** 3/4 plans executed
+**Plans:** 4/4 plans complete
 
 Plans:
 - [ ] 28-01-PLAN.md — iOS adapter devicectl integration (discovery, app mgmt, deep links, file ops, graceful degradation)
