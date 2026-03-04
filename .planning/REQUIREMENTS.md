@@ -555,10 +555,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Collections - Core
 
-- [ ] **COLL-01**: User can create a collection with a name and optional description, persisted in `~/.simvyn/collections/`
-- [ ] **COLL-02**: User can edit an existing collection (re-opens builder with pre-populated steps)
-- [ ] **COLL-03**: User can delete a collection with confirmation dialog
-- [ ] **COLL-04**: User can duplicate an existing collection to create a variant
+- [x] **COLL-01**: User can create a collection with a name and optional description, persisted in `~/.simvyn/collections/`
+- [x] **COLL-02**: User can edit an existing collection (re-opens builder with pre-populated steps)
+- [x] **COLL-03**: User can delete a collection with confirmation dialog
+- [x] **COLL-04**: User can duplicate an existing collection to create a variant
 - [x] **COLL-05**: Collection storage schema includes `schemaVersion` field for future migration
 
 ### Collections - Builder
@@ -607,10 +607,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COLL-01 | Phase 23 | Pending |
-| COLL-02 | Phase 23 | Pending |
-| COLL-03 | Phase 23 | Pending |
-| COLL-04 | Phase 23 | Pending |
+| COLL-01 | Phase 23 | Complete |
+| COLL-02 | Phase 23 | Complete |
+| COLL-03 | Phase 23 | Complete |
+| COLL-04 | Phase 23 | Complete |
 | COLL-05 | Phase 23 | Complete |
 | CBLD-01 | Phase 25 | Pending |
 | CBLD-02 | Phase 25 | Pending |
