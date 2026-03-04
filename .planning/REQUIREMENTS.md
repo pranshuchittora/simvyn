@@ -559,7 +559,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 - [ ] **COLL-02**: User can edit an existing collection (re-opens builder with pre-populated steps)
 - [ ] **COLL-03**: User can delete a collection with confirmation dialog
 - [ ] **COLL-04**: User can duplicate an existing collection to create a variant
-- [ ] **COLL-05**: Collection storage schema includes `schemaVersion` field for future migration
+- [x] **COLL-05**: Collection storage schema includes `schemaVersion` field for future migration
 
 ### Collections - Builder
 
@@ -611,7 +611,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | COLL-02 | Phase 23 | Pending |
 | COLL-03 | Phase 23 | Pending |
 | COLL-04 | Phase 23 | Pending |
-| COLL-05 | Phase 23 | Pending |
+| COLL-05 | Phase 23 | Complete |
 | CBLD-01 | Phase 25 | Pending |
 | CBLD-02 | Phase 25 | Pending |
 | CBLD-03 | Phase 25 | Pending |

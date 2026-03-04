@@ -323,7 +323,7 @@ Plans:
 | 22.2 Test Suite | 3/3 | Complete    | 2026-02-27 |
 | 22.3 NPM Package & README | 3/3 | Complete    | 2026-02-27 |
 | **v1.6 — Collections & Documentation** | | | |
-| 23. Collections Foundation | 0/2 | Not started | - |
+| 23. Collections Foundation | 1/2 | In Progress|  |
 | 24. Execution Engine | 0/? | Not started | - |
 | 25. Collection Builder UI | 0/? | Not started | - |
 | 26. Apply Modal & Integration | 0/? | Not started | - |
@@ -664,7 +664,7 @@ Plans:
   3. User can duplicate an existing collection (creating a copy with a new name) and delete a collection with no orphaned data
   4. The action registry returns a typed catalog of all available device actions (dark mode, location, app launch, etc.) with parameter schemas and platform compatibility metadata
   5. Collection storage schema includes `schemaVersion: 1` field on every saved collection document
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 23-01-PLAN.md — Collection types, action registry (14 actions), module scaffold

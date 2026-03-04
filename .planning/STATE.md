@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 23 — Collections Foundation
-**Plan:** Not yet planned
-**Status:** Roadmap created, ready for planning
-**Progress:** [░░░░░░░░░░] 0%
+**Plan:** Plan 2 of 3
+**Status:** Executing
+**Progress:** [█████████░] 92%
 
 ## Phase Overview
 
@@ -51,7 +51,7 @@
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
 | 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
 | **v1.6 — Collections & Documentation** | |
-| 23. Collections Foundation | ⏳ Not Planned |
+| 23. Collections Foundation | 🔄 Executing (1/3 plans) |
 | 24. Execution Engine | ⏳ Not Planned |
 | 25. Collection Builder UI | ⏳ Not Planned |
 | 26. Apply Modal & Integration | ⏳ Not Planned |
@@ -137,6 +137,7 @@
 | Phase 22.3 P02 | 1min | 1 tasks | 1 files |
 | Phase 22.3 P01 | 1min | 1 tasks | 18 files |
 | Phase 22.3 P03 | 1min | 1 tasks | 1 files |
+| Phase 23 P01 | 2min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -289,6 +290,9 @@
 - ParameterStep type for generic text input steps in command palette — reusable for clone/rename names and future inputs
 - CreateSimulatorPicker manages own 3-phase internal state (name → deviceType → runtime) with per-phase search
 - Backend modules also merged for settings consolidation — single device-settings module replaces settings + dev-utils, eliminating need for dashboard-side merge logic
+- Action descriptors call PlatformAdapter methods directly (not HTTP routes) for execution — avoids coupling to server, enables both CLI and API paths
+- isSupported checks adapter method presence with !! — consistent with capabilities endpoint pattern
+- set-status-bar overrides param is JSON string parsed at execution time — matches adapter's Record<string, string> signature
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -327,8 +331,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04
-**Stopped at:** v1.6 roadmap created (Phases 23-27)
+**Last session:** 2026-03-04T11:16:36.231Z
+**Stopped at:** Completed 23-01-PLAN.md (Types & Action Registry)
 **Context for next session:** Roadmap for v1.6 is complete. 5 phases derived from 22 requirements. Phase 23 (Collections Foundation) is next — needs planning via `/gsd-plan-phase 23`. Key architecture decision: action registry is the root dependency for everything else. Research recommends direct adapter-level calls (not HTTP route coupling) and schemaVersion from day one.
 
 ---
