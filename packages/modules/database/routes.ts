@@ -3,6 +3,7 @@ import { copyFile, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
+import { isPhysicalDevice } from "@simvyn/core";
 import type {} from "@simvyn/server";
 import type { Device } from "@simvyn/types";
 import Database from "better-sqlite3";
@@ -26,6 +27,14 @@ function resolveDevice(fastify: FastifyInstance, deviceId: string) {
 }
 
 async function getContainerPath(fastify: FastifyInstance, deviceId: string, bundleId: string) {
+	if (isPhysicalDevice(deviceId))
+		return {
+			error:
+				"Database browsing is not available on physical iOS devices (no filesystem access without jailbreak)" as const,
+			device: null,
+			platform: null,
+		};
+
 	const device = resolveDevice(fastify, deviceId);
 	if (!device) return { error: "Device not found" as const, device: null, platform: null };
 	if (device.state !== "booted")

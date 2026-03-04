@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { basename, extname, join } from "node:path";
 import { pipeline } from "node:stream/promises";
 import multipart from "@fastify/multipart";
+import { isPhysicalDevice } from "@simvyn/core";
 import type {} from "@simvyn/server";
 import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
@@ -44,6 +45,14 @@ async function resolveContainer(
 	platform: "ios" | "android";
 	device: Device;
 }> {
+	if (isPhysicalDevice(deviceId))
+		throw Object.assign(
+			new Error(
+				"File system browsing is not available on physical iOS devices (no filesystem access without jailbreak)",
+			),
+			{ statusCode: 400 },
+		);
+
 	const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
 	if (!device) throw Object.assign(new Error("Device not found"), { statusCode: 404 });
 	if (device.state !== "booted")
