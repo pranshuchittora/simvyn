@@ -56,29 +56,23 @@ async function getContainerPath(fastify: FastifyInstance, deviceId: string, bund
 async function withLocalDb<T>(
 	deviceId: string,
 	packageName: string,
-	dbRelativePath: string,
+	dbPath: string,
 	readonly: boolean,
 	fn: (localDbPath: string) => T | Promise<T>,
 ): Promise<T> {
 	const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-adb-db-"));
 	const localPath = join(tmpDir, "db.sqlite");
-	const remotePath = `/data/data/${packageName}/${dbRelativePath}`;
+	const remotePath = dbPath.startsWith("/") ? dbPath : `/data/data/${packageName}/${dbPath}`;
 
 	try {
-		// Pull db from device
-		await execFileAsync(
+		// Pull db from device using exec-out (binary-safe, no line-ending conversion)
+		const { stdout } = await execFileAsync(
 			"adb",
 			["-s", deviceId, "exec-out", "run-as", packageName, "cat", remotePath],
 			{
 				encoding: "buffer" as any,
 				maxBuffer: 100 * 1024 * 1024,
 			},
-		);
-		// Actually use shell + base64 for binary safety
-		const { stdout } = await execFileAsync(
-			"adb",
-			["-s", deviceId, "shell", "run-as", packageName, "cat", remotePath],
-			{ encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 },
 		);
 		const { writeFile } = await import("node:fs/promises");
 		await writeFile(localPath, stdout as unknown as Buffer);
@@ -88,7 +82,7 @@ async function withLocalDb<T>(
 			try {
 				const { stdout: walData } = await execFileAsync(
 					"adb",
-					["-s", deviceId, "shell", "run-as", packageName, "cat", `${remotePath}${suffix}`],
+					["-s", deviceId, "exec-out", "run-as", packageName, "cat", `${remotePath}${suffix}`],
 					{ encoding: "buffer" as any, maxBuffer: 100 * 1024 * 1024 },
 				);
 				await writeFile(localPath + suffix, walData as unknown as Buffer);
@@ -377,7 +371,8 @@ export async function dbRoutes(fastify: FastifyInstance) {
 					return { platform: "ios", prefs };
 				}
 
-				const prefs = await readSharedPreferences(deviceId, bundleId);
+				const prefsMap = await readSharedPreferences(deviceId, bundleId);
+				const prefs = Object.entries(prefsMap).map(([file, entries]) => ({ file, entries }));
 				return { platform: "android", prefs };
 			} catch (err) {
 				return reply.status(500).send({ error: (err as Error).message });
