@@ -128,12 +128,12 @@ const databaseModule: SimvynModule = {
 
 						const { join } = await import("node:path");
 						const fullPath = dbPath.startsWith("/") ? dbPath : join(info.dataContainer, dbPath);
-						const db = openReadonly(fullPath);
+						const handle = openReadonly(fullPath);
 						try {
-							const result = runQuery(db, sql);
+							const result = runQuery(handle, sql);
 							printQueryResult(result);
 						} finally {
-							db.close();
+							handle.close();
 						}
 					} else {
 						if (target.id.startsWith("avd:")) {
@@ -157,12 +157,12 @@ const databaseModule: SimvynModule = {
 							);
 							await writeFile(localPath, stdout as unknown as Buffer);
 
-							const db = openReadonly(localPath);
+							const handle = openReadonly(localPath);
 							try {
-								const result = runQuery(db, sql);
+								const result = runQuery(handle, sql);
 								printQueryResult(result);
 							} finally {
-								db.close();
+								handle.close();
 							}
 						} finally {
 							await rm(tmpDir, { recursive: true, force: true }).catch(() => {});

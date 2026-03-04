@@ -684,7 +684,7 @@ export function createIosAdapter(): PlatformAdapter {
 			} catch (err) {
 				const msg = (err as Error).message ?? "";
 				if (msg.includes("Invalid device state")) {
-					throw new Error("Device must be shut down before deleting");
+					throw new Error("Device must be shut down before deleting", { cause: err });
 				}
 				throw err;
 			}

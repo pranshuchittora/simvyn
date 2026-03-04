@@ -48,12 +48,12 @@ describe("storage", () => {
 	after(async () => {
 		const { rm } = await import("node:fs/promises");
 		const { homedir } = await import("node:os");
-		const { join } = await import("node:path");
-		const simvynDir = join(homedir(), ".simvyn");
+		const { join: joinPath } = await import("node:path");
+		const simvynDir = joinPath(homedir(), ".simvyn");
 		const entries = await readdir(simvynDir).catch(() => []);
 		for (const entry of entries) {
 			if (entry.startsWith("__test_module_")) {
-				await rm(join(simvynDir, entry), { recursive: true, force: true });
+				await rm(joinPath(simvynDir, entry), { recursive: true, force: true });
 			}
 		}
 	});
@@ -76,8 +76,8 @@ describe("storage", () => {
 		await s.write("key", { val: true });
 
 		const { homedir } = await import("node:os");
-		const { join } = await import("node:path");
-		const moduleDir = join(homedir(), ".simvyn", moduleName);
+		const { join: joinPath } = await import("node:path");
+		const moduleDir = joinPath(homedir(), ".simvyn", moduleName);
 		const st = await stat(moduleDir);
 		assert.ok(st.isDirectory());
 
@@ -106,8 +106,8 @@ describe("storage", () => {
 		assert.deepStrictEqual(before, { temp: true });
 
 		await storage.delete("to-delete");
-		const after = await storage.read("to-delete");
-		assert.equal(after, null);
+		const afterDelete = await storage.read("to-delete");
+		assert.equal(afterDelete, null);
 	});
 
 	it("delete — missing key does not throw", async () => {

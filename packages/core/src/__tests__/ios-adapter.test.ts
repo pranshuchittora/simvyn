@@ -22,6 +22,7 @@ function createMockProcess(stdoutData?: string) {
 	proc.stdout = new EventEmitter();
 	proc.stderr = new EventEmitter();
 	proc.kill = (_signal?: any) => true;
+	proc.exitCode = null;
 
 	if (stdoutData !== undefined) {
 		process.nextTick(() => {

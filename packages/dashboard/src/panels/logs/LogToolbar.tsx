@@ -95,17 +95,17 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 
 	const handleExport = useCallback((format: "json" | "text") => {
 		const s = useLogStore.getState();
-		const entries = filterEntries(s.entries, s.enabledLevels, s.processFilter, s.searchPattern);
+		const filtered = filterEntries(s.entries, s.enabledLevels, s.processFilter, s.searchPattern);
 		let content: string;
 		let mime: string;
 		let ext: string;
 
 		if (format === "json") {
-			content = JSON.stringify(entries, null, 2);
+			content = JSON.stringify(filtered, null, 2);
 			mime = "application/json";
 			ext = "json";
 		} else {
-			content = entries
+			content = filtered
 				.map(
 					(e) =>
 						`[${e.timestamp}] [${e.level.toUpperCase().padEnd(7)}] ${e.processName}: ${e.message}`,

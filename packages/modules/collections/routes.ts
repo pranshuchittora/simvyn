@@ -106,10 +106,7 @@ export async function collectionsRoutes(fastify: FastifyInstance) {
 			id: crypto.randomUUID(),
 			name: `${original.name} (Copy)`,
 			description: original.description,
-			steps: original.steps.map((step) => ({
-				...step,
-				id: crypto.randomUUID(),
-			})),
+			steps: original.steps.map((step) => Object.assign({}, step, { id: crypto.randomUUID() })),
 			schemaVersion: 1,
 			createdAt: new Date().toISOString(),
 			updatedAt: new Date().toISOString(),

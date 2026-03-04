@@ -16,10 +16,6 @@ export function isAndroidPhysical(deviceId: string): boolean {
 	return !deviceId.startsWith("emulator-") && !deviceId.startsWith("avd:");
 }
 
-function isEmulatorRunning(deviceId: string): boolean {
-	return deviceId.startsWith("emulator-");
-}
-
 async function getAvdList(): Promise<string[]> {
 	try {
 		const { stdout } = await verboseExec("emulator", ["-list-avds"]);

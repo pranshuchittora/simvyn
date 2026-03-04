@@ -69,6 +69,7 @@ export async function readSharedPreferences(
 		if (msg.includes("not debuggable") || msg.includes("is not debuggable")) {
 			throw new Error(
 				`Package ${packageName} is not debuggable — SharedPreferences access requires a debug build`,
+				{ cause: err },
 			);
 		}
 		return {};

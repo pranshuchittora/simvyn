@@ -160,10 +160,7 @@ const collectionsModule: SimvynModule = {
 					id: crypto.randomUUID(),
 					name: opts.name ?? `${original.name} (Copy)`,
 					description: original.description,
-					steps: original.steps.map((s) => ({
-						...s,
-						id: crypto.randomUUID(),
-					})),
+					steps: original.steps.map((s) => Object.assign({}, s, { id: crypto.randomUUID() })),
 					schemaVersion: 1 as const,
 					createdAt: new Date().toISOString(),
 					updatedAt: new Date().toISOString(),
@@ -273,7 +270,7 @@ const collectionsModule: SimvynModule = {
 							},
 						});
 					});
-				} catch (err) {
+				} catch {
 					dm.stop();
 					process.exit(1);
 				}
