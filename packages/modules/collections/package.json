@@ -1,0 +1,12 @@
+{
+	"name": "@simvyn/module-collections",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"main": "./manifest.ts",
+	"dependencies": {
+		"@simvyn/core": "*",
+		"@simvyn/server": "*",
+		"@simvyn/types": "*"
+	}
+}
