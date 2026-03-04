@@ -695,11 +695,11 @@ Plans:
   2. User can browse a categorized action catalog (Device Settings, Location, App Management, etc.) and add actions as steps to the collection
   3. Each step card displays platform badges (Apple/Android logo) indicating which platforms support that action
   4. User can drag steps to reorder them within the collection and configure per-step parameters (locale picker, location picker, URL input, etc.) inline
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 25-01-PLAN.md — Collections store, module registration (icon, dock, panel), list view
-- [ ] 25-02-PLAN.md — Step builder with ActionPicker, drag-and-drop reorder, platform badges, param editors
+- [x] 25-02-PLAN.md — Step builder with ActionPicker, drag-and-drop reorder, platform badges, param editors
 
 ### Phase 26: Apply Modal & Integration
 **Goal:** Users can apply collections from the dashboard modal or command palette with live execution feedback, and automate via CLI
@@ -711,7 +711,11 @@ Plans:
   3. Saved collections appear as actions in the command palette (Cmd+K) — selecting one opens the device picker flow and triggers execution
   4. User can run `simvyn collections list` to see saved collections and `simvyn collections apply <name> <device>` to execute headlessly from the CLI
   5. 2-3 built-in starter collections ship with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup") and appear on first launch
-**Plans:** TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 26-01-PLAN.md — Apply modal (device picker, compatibility summary, WS execution matrix) + command palette integration
+- [ ] 26-02-PLAN.md — Built-in starter collections (3 presets seeded on first launch)
 
 ### Phase 27: Documentation
 **Goal:** New users can understand what simvyn does, install it, and use every feature from a comprehensive, visual-first README
