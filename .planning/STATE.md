@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 24 — Execution Engine
-**Plan:** 1 of 2
-**Status:** Executing
-**Progress:** [█████████░] 92%
+**Plan:** 2 of 2
+**Status:** Complete
+**Progress:** [██████████] 93%
 
 ## Phase Overview
 
@@ -52,7 +52,7 @@
 | 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
 | **v1.6 — Collections & Documentation** | |
 | 23. Collections Foundation | ✅ Complete (2/2 plans) |
-| 24. Execution Engine | 🔄 Executing (1/2 plans) |
+| 24. Execution Engine | ✅ Complete (2/2 plans) |
 | 25. Collection Builder UI | ⏳ Not Planned |
 | 26. Apply Modal & Integration | ⏳ Not Planned |
 | 27. Documentation | ⏳ Not Planned |
@@ -140,6 +140,7 @@
 | Phase 23 P01 | 2min | 2 tasks | 6 files |
 | Phase 23 P02 | 1min | 2 tasks | 3 files |
 | Phase 24 P01 | 1min | 2 tasks | 3 files |
+| Phase 24 P02 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -299,6 +300,8 @@
 - Collection schema includes schemaVersion: 1 literal type for future migration support
 - Collections is a meta-module — no platform capabilities, orchestrates existing adapter methods via action registry
 - GET /actions strips execute/isSupported functions from descriptors — returns serializable catalog for UI consumption
+- Three-interface pattern for collections execution: HTTP endpoint, WS handler, and CLI command all call the same transport-agnostic runCollection() engine
+- Module-level activeRuns Map for concurrent execution tracking — auto-cleaned on complete/error callbacks
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -337,10 +340,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04T11:46:24.290Z
-**Stopped at:** Completed 24-01-PLAN.md — execution engine core
-**Context for next session:** Phase 24 Plan 01 complete — ExecutionRun/StepExecution/DeviceStepResult types added to @simvyn/types, runCollection() engine created (sequential steps, parallel devices, skip/fail/timeout). Plan 02 (transport wiring) is next — will connect execution engine to HTTP routes, WebSocket, and CLI.
+**Last session:** 2026-03-04T11:50:35Z
+**Stopped at:** Completed 24-02-PLAN.md — transport wiring (HTTP, WS, CLI)
+**Context for next session:** Phase 24 complete — execution engine core (Plan 01) + transport wiring (Plan 02). POST /execute, WS collections channel, CLI apply command all wired to runCollection(). Ready for Phase 25 (Collection Builder UI).
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-04 — Phase 24 Plan 01 complete, ready for Plan 02*
+*Last updated: 2026-03-04 — Phase 24 complete (2/2 plans)*
