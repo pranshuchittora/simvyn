@@ -240,14 +240,23 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async erase(id: string): Promise<void> {
+			if (isPhysicalDevice(id)) throw new Error("Erase is only available for simulators");
 			await verboseExec("xcrun", ["simctl", "erase", id]);
 		},
 
 		async setLocation(deviceId: string, lat: number, lon: number): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error(
+					"Location simulation is not available on physical devices (hardware GPS cannot be overridden)",
+				);
 			await verboseExec("xcrun", ["simctl", "location", deviceId, "set", `${lat},${lon}`]);
 		},
 
 		async clearLocation(deviceId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error(
+					"Location simulation is not available on physical devices (hardware GPS cannot be overridden)",
+				);
 			await verboseExec("xcrun", ["simctl", "location", deviceId, "clear"]);
 		},
 
@@ -468,10 +477,14 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async screenshot(deviceId: string, outputPath: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Screenshot is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "io", deviceId, "screenshot", outputPath]);
 		},
 
 		startRecording(deviceId: string, outputPath: string) {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Screen recording is not available on physical iOS devices");
 			const child = verboseSpawn("xcrun", ["simctl", "io", deviceId, "recordVideo", outputPath]);
 			return Promise.resolve(child);
 		},
@@ -489,11 +502,15 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async getClipboard(deviceId: string): Promise<string> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Clipboard access is not available on physical iOS devices");
 			const { stdout } = await verboseExec("xcrun", ["simctl", "pbpaste", deviceId]);
 			return stdout;
 		},
 
 		async setClipboard(deviceId: string, text: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Clipboard access is not available on physical iOS devices");
 			await new Promise<void>((resolve, reject) => {
 				const proc = verboseSpawn("xcrun", ["simctl", "pbcopy", deviceId]);
 				proc.on("close", (code: number | null) =>
@@ -506,14 +523,20 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async addMedia(deviceId: string, filePath: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Media injection is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "addmedia", deviceId, filePath]);
 		},
 
 		async setAppearance(deviceId: string, mode: "light" | "dark"): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Appearance control is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "ui", deviceId, "appearance", mode]);
 		},
 
 		async setStatusBar(deviceId: string, overrides: Record<string, string>): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Status bar overrides are not available on physical devices");
 			const flagMap: Record<string, string> = {
 				time: "--time",
 				batteryLevel: "--batteryLevel",
@@ -532,22 +555,32 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async clearStatusBar(deviceId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Status bar overrides are not available on physical devices");
 			await verboseExec("xcrun", ["simctl", "status_bar", deviceId, "clear"]);
 		},
 
 		async grantPermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Permission management is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "grant", permission, bundleId]);
 		},
 
 		async revokePermission(deviceId: string, bundleId: string, permission: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Permission management is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "revoke", permission, bundleId]);
 		},
 
 		async resetPermissions(deviceId: string, bundleId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Permission management is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "privacy", deviceId, "reset", "all", bundleId]);
 		},
 
 		async setLocale(deviceId: string, locale: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Locale control is not available on physical iOS devices");
 			await verboseExec("xcrun", [
 				"simctl",
 				"spawn",
@@ -575,10 +608,14 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async setContentSize(deviceId: string, size: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Accessibility settings are not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "ui", deviceId, "content_size", size]);
 		},
 
 		async setIncreaseContrast(deviceId: string, enabled: boolean): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Accessibility settings are not available on physical iOS devices");
 			await verboseExec("xcrun", [
 				"simctl",
 				"ui",
@@ -627,15 +664,21 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async cloneDevice(deviceId: string, newName: string): Promise<string> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Simulator lifecycle operations are not available on physical devices");
 			const { stdout } = await verboseExec("xcrun", ["simctl", "clone", deviceId, newName]);
 			return stdout.trim();
 		},
 
 		async renameDevice(deviceId: string, newName: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Simulator lifecycle operations are not available on physical devices");
 			await verboseExec("xcrun", ["simctl", "rename", deviceId, newName]);
 		},
 
 		async deleteDevice(deviceId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Simulator lifecycle operations are not available on physical devices");
 			try {
 				await verboseExec("xcrun", ["simctl", "delete", deviceId]);
 			} catch (err) {
@@ -648,6 +691,8 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async addKeychainCert(deviceId: string, certData: Buffer, isRoot: boolean): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Keychain management is not available on physical iOS devices");
 			const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-cert-"));
 			const certPath = join(tmpDir, "cert.pem");
 			try {
@@ -660,6 +705,8 @@ export function createIosAdapter(): PlatformAdapter {
 		},
 
 		async resetKeychain(deviceId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Keychain management is not available on physical iOS devices");
 			await verboseExec("xcrun", ["simctl", "keychain", deviceId, "reset"]);
 		},
 
