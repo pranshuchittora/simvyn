@@ -551,6 +551,90 @@ Which phases cover which requirements. Updated during roadmap creation.
 - Mapped to phases: 10
 - Unmapped: 0
 
+## v1.6 Requirements — Collections & Documentation
+
+### Collections - Core
+
+- [ ] **COLL-01**: User can create a collection with a name and optional description, persisted in `~/.simvyn/collections/`
+- [ ] **COLL-02**: User can edit an existing collection (re-opens builder with pre-populated steps)
+- [ ] **COLL-03**: User can delete a collection with confirmation dialog
+- [ ] **COLL-04**: User can duplicate an existing collection to create a variant
+- [ ] **COLL-05**: Collection storage schema includes `schemaVersion` field for future migration
+
+### Collections - Builder
+
+- [ ] **CBLD-01**: User can add steps from a categorized action catalog (Device Settings, Location, App Management, Deep Links, Push, Media, Clipboard, Screenshot)
+- [ ] **CBLD-02**: Each step displays platform badges (Apple/Android logo) indicating which platforms support it
+- [ ] **CBLD-03**: User can reorder steps via drag-and-drop
+- [ ] **CBLD-04**: Each step has a parameter picker appropriate to its action type (locale picker, location picker, app picker, URL input, etc.)
+
+### Collections - Execution
+
+- [ ] **CEXE-01**: User can apply a collection to one or more devices via modal device picker with Cmd+Enter to execute
+- [ ] **CEXE-02**: Apply modal shows real-time per-step per-device feedback (spinner for running, check for success, X for failed, skip icon for incompatible)
+- [ ] **CEXE-03**: Pre-apply compatibility summary shows how many steps will be skipped per device due to platform incompatibility
+- [ ] **CEXE-04**: Platform-incompatible steps are skipped during execution with skip badge, remaining steps continue
+- [ ] **CEXE-05**: Failed steps show failure badge but execution continues to next step (continue on error)
+- [ ] **CEXE-06**: Per-step execution timeout (30s default) prevents hung commands from blocking the entire collection
+
+### Collections - Integration
+
+- [ ] **CINT-01**: Saved collections appear as command palette actions with device picker flow
+- [ ] **CINT-02**: CLI subcommands: `simvyn collections list`, `simvyn collections apply <name> <device>`
+- [ ] **CINT-03**: 2-3 built-in starter collections shipped with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup")
+
+### Documentation
+
+- [ ] **DOC-01**: README restructured with visual-first layout (logo, quick start, features, per-feature showcase, CLI reference, platform matrix)
+- [ ] **DOC-02**: Per-feature showcase sections with description and screenshot placeholders for each module
+- [ ] **DOC-03**: Collections feature documentation with getting started walkthrough
+- [ ] **DOC-04**: Expanded CLI reference table with all commands and usage examples
+
+## v1.6 Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Conditional logic / branching in collections | Turns collections into a scripting engine. Keep it linear — users use shell scripts for complex logic |
+| Variables / data passing between steps | Each step is self-contained with parameters set at creation time |
+| Per-step device targeting | Collections are "apply this set TO these devices" — steps skip on incompatible platforms |
+| Collection import/export | Premature. Local JSON in ~/.simvyn/ is sufficient. Users can copy files manually |
+| Scheduled / automatic execution | Requires daemon/watcher architecture — way out of scope |
+| Undo / rollback after apply | Most device actions aren't cleanly reversible. Users can create a "reset" collection |
+| Nested collections | Recursive execution and circular dependency detection are nightmares. Flat step list only |
+| Separate documentation site | Premature. README is the right place until content exceeds ~500 lines |
+
+## v1.6 Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| COLL-01 | — | Pending |
+| COLL-02 | — | Pending |
+| COLL-03 | — | Pending |
+| COLL-04 | — | Pending |
+| COLL-05 | — | Pending |
+| CBLD-01 | — | Pending |
+| CBLD-02 | — | Pending |
+| CBLD-03 | — | Pending |
+| CBLD-04 | — | Pending |
+| CEXE-01 | — | Pending |
+| CEXE-02 | — | Pending |
+| CEXE-03 | — | Pending |
+| CEXE-04 | — | Pending |
+| CEXE-05 | — | Pending |
+| CEXE-06 | — | Pending |
+| CINT-01 | — | Pending |
+| CINT-02 | — | Pending |
+| CINT-03 | — | Pending |
+| DOC-01 | — | Pending |
+| DOC-02 | — | Pending |
+| DOC-03 | — | Pending |
+| DOC-04 | — | Pending |
+
+**Coverage:**
+- v1.6 requirements: 22 total (5 core + 4 builder + 6 execution + 3 integration + 4 documentation)
+- Mapped to phases: 0
+- Unmapped: 22
+
 ---
 *Requirements defined: 2026-02-26*
-*Last updated: 2026-02-27 after v1.5 npm package requirements*
+*Last updated: 2026-03-04 after v1.6 Collections & Documentation requirements*
