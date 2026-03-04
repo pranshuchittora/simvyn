@@ -53,7 +53,7 @@
 - [x] **Phase 23: Collections Foundation** — Action registry, collection schema with versioning, storage, CRUD endpoints, CLI subcommands (completed 2026-03-04)
 - [x] **Phase 24: Execution Engine** — Server-side sequential step runner with parallel per-device execution, WS progress streaming, shared executor for CLI/dashboard parity (completed 2026-03-04)
 - [x] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration (completed 2026-03-04)
-- [ ] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections
+- [x] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections (completed 2026-03-04)
 - [ ] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference
 
 ## Phase Details
@@ -326,7 +326,7 @@ Plans:
 | 23. Collections Foundation | 2/2 | Complete    | 2026-03-04 |
 | 24. Execution Engine | 2/2 | Complete    | 2026-03-04 |
 | 25. Collection Builder UI | 2/2 | Complete    | 2026-03-04 |
-| 26. Apply Modal & Integration | 1/2 | In Progress|  |
+| 26. Apply Modal & Integration | 2/2 | Complete   | 2026-03-04 |
 | 27. Documentation | 0/? | Not started | - |
 
 ## Coverage Map
@@ -711,7 +711,7 @@ Plans:
   3. Saved collections appear as actions in the command palette (Cmd+K) — selecting one opens the device picker flow and triggers execution
   4. User can run `simvyn collections list` to see saved collections and `simvyn collections apply <name> <device>` to execute headlessly from the CLI
   5. 2-3 built-in starter collections ship with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup") and appear on first launch
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [ ] 26-01-PLAN.md — Apply modal (device picker, compatibility summary, WS execution matrix) + command palette integration

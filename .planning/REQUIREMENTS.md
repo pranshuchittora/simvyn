@@ -579,7 +579,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Collections - Integration
 
-- [ ] **CINT-01**: Saved collections appear as command palette actions with device picker flow
+- [x] **CINT-01**: Saved collections appear as command palette actions with device picker flow
 - [x] **CINT-02**: CLI subcommands: `simvyn collections list`, `simvyn collections apply <name> <device>`
 - [x] **CINT-03**: 2-3 built-in starter collections shipped with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup")
 
@@ -622,7 +622,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CEXE-04 | Phase 24 | Complete |
 | CEXE-05 | Phase 24 | Complete |
 | CEXE-06 | Phase 24 | Complete |
-| CINT-01 | Phase 26 | Pending |
+| CINT-01 | Phase 26 | Complete |
 | CINT-02 | Phase 26 | Complete |
 | CINT-03 | Phase 26 | Complete |
 | DOC-01 | Phase 27 | Pending |
