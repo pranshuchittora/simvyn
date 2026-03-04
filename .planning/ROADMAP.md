@@ -698,7 +698,7 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 25-01-PLAN.md — Collections store, module registration (icon, dock, panel), list view
+- [x] 25-01-PLAN.md — Collections store, module registration (icon, dock, panel), list view
 - [ ] 25-02-PLAN.md — Step builder with ActionPicker, drag-and-drop reorder, platform badges, param editors
 
 ### Phase 26: Apply Modal & Integration

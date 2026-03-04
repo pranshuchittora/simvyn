@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 25 — Collection Builder UI
-**Plan:** Not yet planned
-**Status:** Ready to plan
-**Progress:** [██████████] 95%
+**Plan:** 25-02 (Wave 2 of 2)
+**Status:** Executing
+**Progress:** [██████████] 96%
 
 ## Phase Overview
 
@@ -53,7 +53,7 @@
 | **v1.6 — Collections & Documentation** | |
 | 23. Collections Foundation | ✅ Complete (2/2 plans) |
 | 24. Execution Engine | ✅ Complete (2/2 plans) |
-| 25. Collection Builder UI | ⏳ Not Planned |
+| 25. Collection Builder UI | 🔄 Executing (1/2 plans) |
 | 26. Apply Modal & Integration | ⏳ Not Planned |
 | 27. Documentation | ⏳ Not Planned |
 
@@ -141,6 +141,7 @@
 | Phase 23 P02 | 1min | 2 tasks | 3 files |
 | Phase 24 P01 | 1min | 2 tasks | 3 files |
 | Phase 24 P02 | 2min | 2 tasks | 3 files |
+| Phase 25 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -302,6 +303,8 @@
 - GET /actions strips execute/isSupported functions from descriptors — returns serializable catalog for UI consumption
 - Three-interface pattern for collections execution: HTTP endpoint, WS handler, and CLI command all call the same transport-agnostic runCollection() engine
 - Module-level activeRuns Map for concurrent execution tracking — auto-cleaned on complete/error callbacks
+- SerializedAction interface defined locally in dashboard store — mirrors server's stripped ActionDescriptor (no execute/isSupported)
+- Inline form for collection creation (not window.prompt) — consistent with DeepLinksPanel add-favorite pattern
 
 ### Architecture Notes
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
@@ -341,8 +344,8 @@
 ## Session Continuity
 
 **Last session:** 2026-03-04
-**Stopped at:** Phase 24 complete, verified, ready to plan Phase 25
-**Context for next session:** Phases 23-24 complete. Collections module has: types, action registry (14 actions), CRUD routes (7 endpoints), execution engine (runCollection), POST /execute endpoint, WS "collections" channel (step-progress + run-completed), CLI apply command. Phase 25 (Collection Builder UI) is next — the first dashboard UI phase for collections.
+**Stopped at:** Completed 25-01-PLAN.md
+**Context for next session:** Plan 25-01 complete — collections module registered in sidebar with Zustand store + list view panel. CRUD operations connected to REST API. Ready for Plan 25-02: step builder with action picker, drag-drop reorder, platform badges, parameter editors.
 
 ---
 *State initialized: 2026-02-26*
