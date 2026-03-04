@@ -326,7 +326,7 @@ Plans:
 | 23. Collections Foundation | 2/2 | Complete    | 2026-03-04 |
 | 24. Execution Engine | 2/2 | Complete    | 2026-03-04 |
 | 25. Collection Builder UI | 2/2 | Complete    | 2026-03-04 |
-| 26. Apply Modal & Integration | 0/? | Not started | - |
+| 26. Apply Modal & Integration | 1/2 | In Progress|  |
 | 27. Documentation | 0/? | Not started | - |
 
 ## Coverage Map
@@ -711,7 +711,7 @@ Plans:
   3. Saved collections appear as actions in the command palette (Cmd+K) — selecting one opens the device picker flow and triggers execution
   4. User can run `simvyn collections list` to see saved collections and `simvyn collections apply <name> <device>` to execute headlessly from the CLI
   5. 2-3 built-in starter collections ship with the tool (e.g., "Dark Mode + Japanese Locale", "Screenshot Setup") and appear on first launch
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 - [ ] 26-01-PLAN.md — Apply modal (device picker, compatibility summary, WS execution matrix) + command palette integration
