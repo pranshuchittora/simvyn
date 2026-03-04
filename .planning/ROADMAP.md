@@ -324,7 +324,7 @@ Plans:
 | 22.3 NPM Package & README | 3/3 | Complete    | 2026-02-27 |
 | **v1.6 — Collections & Documentation** | | | |
 | 23. Collections Foundation | 2/2 | Complete    | 2026-03-04 |
-| 24. Execution Engine | 0/2 | Not started | - |
+| 24. Execution Engine | 0/2 | Planned    |  |
 | 25. Collection Builder UI | 0/? | Not started | - |
 | 26. Apply Modal & Integration | 0/? | Not started | - |
 | 27. Documentation | 0/? | Not started | - |
@@ -680,7 +680,7 @@ Plans:
   3. Steps targeting an incompatible platform (e.g., iOS-only step on Android device) are automatically skipped with a skip badge — remaining steps continue normally
   4. A step that fails on a device shows a failure badge but does not abort the collection — execution continues to the next step
   5. Steps that exceed the 30-second timeout are terminated and marked as failed, allowing the collection to proceed
-**Plans:** 2 plans
+**Plans:** 0/2 plans executed
 
 Plans:
 - [ ] 24-01-PLAN.md — Execution state types + core execution engine (sequential steps, parallel devices, skip/fail/timeout)
