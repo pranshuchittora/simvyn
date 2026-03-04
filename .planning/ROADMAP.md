@@ -54,7 +54,7 @@
 - [x] **Phase 24: Execution Engine** — Server-side sequential step runner with parallel per-device execution, WS progress streaming, shared executor for CLI/dashboard parity (completed 2026-03-04)
 - [x] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration (completed 2026-03-04)
 - [x] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections (completed 2026-03-04)
-- [ ] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference
+- [x] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference (completed 2026-03-04)
 
 ## Phase Details
 
@@ -327,7 +327,7 @@ Plans:
 | 24. Execution Engine | 2/2 | Complete    | 2026-03-04 |
 | 25. Collection Builder UI | 2/2 | Complete    | 2026-03-04 |
 | 26. Apply Modal & Integration | 2/2 | Complete   | 2026-03-04 |
-| 27. Documentation | 0/? | Not started | - |
+| 27. Documentation | 1/1 | Complete   | 2026-03-04 |
 
 ## Coverage Map
 
@@ -726,7 +726,7 @@ Plans:
   2. Each module has a dedicated showcase section with description and screenshot placeholder showing the dashboard panel
   3. Collections feature has a getting-started walkthrough explaining how to create, configure, and apply a collection
   4. CLI reference table lists every command with usage examples, covering all modules including collections
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 27-01-PLAN.md — README restructure with module showcases, collections guide, and CLI reference

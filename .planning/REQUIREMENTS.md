@@ -585,10 +585,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ### Documentation
 
-- [ ] **DOC-01**: README restructured with visual-first layout (logo, quick start, features, per-feature showcase, CLI reference, platform matrix)
-- [ ] **DOC-02**: Per-feature showcase sections with description and screenshot placeholders for each module
-- [ ] **DOC-03**: Collections feature documentation with getting started walkthrough
-- [ ] **DOC-04**: Expanded CLI reference table with all commands and usage examples
+- [x] **DOC-01**: README restructured with visual-first layout (logo, quick start, features, per-feature showcase, CLI reference, platform matrix)
+- [x] **DOC-02**: Per-feature showcase sections with description and screenshot placeholders for each module
+- [x] **DOC-03**: Collections feature documentation with getting started walkthrough
+- [x] **DOC-04**: Expanded CLI reference table with all commands and usage examples
 
 ## v1.6 Out of Scope
 
@@ -625,10 +625,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CINT-01 | Phase 26 | Complete |
 | CINT-02 | Phase 26 | Complete |
 | CINT-03 | Phase 26 | Complete |
-| DOC-01 | Phase 27 | Pending |
-| DOC-02 | Phase 27 | Pending |
-| DOC-03 | Phase 27 | Pending |
-| DOC-04 | Phase 27 | Pending |
+| DOC-01 | Phase 27 | Complete |
+| DOC-02 | Phase 27 | Complete |
+| DOC-03 | Phase 27 | Complete |
+| DOC-04 | Phase 27 | Complete |
 
 **Coverage:**
 - v1.6 requirements: 22 total (5 core + 4 builder + 6 execution + 3 integration + 4 documentation)
