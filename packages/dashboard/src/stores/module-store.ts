@@ -20,6 +20,7 @@ const DOCK_ORDER: string[] = [
 	"fs",
 	"database",
 	"crash-logs",
+	"collections",
 	"device-settings",
 	"tool-settings",
 ];

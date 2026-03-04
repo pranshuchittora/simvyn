@@ -608,6 +608,71 @@ function ClipboardIcon({ size = 24, className }: IconProps) {
 	);
 }
 
+function CollectionsIcon({ size = 24, className }: IconProps) {
+	return (
+		<svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
+			<defs>
+				<linearGradient id="colGrad" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0%" stopColor="#E879F9" stopOpacity="0.4" />
+					<stop offset="100%" stopColor="#E879F9" stopOpacity="0.12" />
+				</linearGradient>
+				<linearGradient id="colHi" x1="0" y1="0" x2="0" y2="1">
+					<stop offset="0%" stopColor="#ffffff" stopOpacity="0.25" />
+					<stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+				</linearGradient>
+			</defs>
+			<rect
+				x="4"
+				y="2"
+				width="16"
+				height="12"
+				rx="2.5"
+				fill="url(#colGrad)"
+				stroke="#E879F9"
+				strokeWidth="1"
+				strokeOpacity="0.6"
+			/>
+			<rect x="4.5" y="2.5" width="15" height="5.5" rx="2" fill="url(#colHi)" />
+			<rect
+				x="6"
+				y="6"
+				width="16"
+				height="12"
+				rx="2.5"
+				fill="url(#colGrad)"
+				stroke="#E879F9"
+				strokeWidth="1"
+				strokeOpacity="0.45"
+			/>
+			<rect
+				x="3"
+				y="10"
+				width="16"
+				height="12"
+				rx="2.5"
+				fill="url(#colGrad)"
+				stroke="#E879F9"
+				strokeWidth="1"
+				strokeOpacity="0.35"
+			/>
+			<path
+				d="M7 16h8"
+				stroke="#E879F9"
+				strokeWidth="1"
+				strokeLinecap="round"
+				strokeOpacity="0.5"
+			/>
+			<path
+				d="M7 19h5"
+				stroke="#E879F9"
+				strokeWidth="1"
+				strokeLinecap="round"
+				strokeOpacity="0.3"
+			/>
+		</svg>
+	);
+}
+
 function ToolSettingsIcon({ size = 24, className }: IconProps) {
 	return (
 		<svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
@@ -656,6 +721,7 @@ export const moduleIconMap: Record<string, ComponentType<IconProps>> = {
 	database: DatabaseIcon,
 	"device-settings": DeviceSettingsIcon,
 	"crash-logs": CrashLogsIcon,
+	collections: CollectionsIcon,
 	media: MediaIcon,
 	clipboard: ClipboardIcon,
 	"tool-settings": ToolSettingsIcon,
@@ -673,6 +739,7 @@ export const moduleLabelMap: Record<string, string> = {
 	database: "Database",
 	"device-settings": "Device Settings",
 	"crash-logs": "Crashes",
+	collections: "Collections",
 	media: "Media",
 	clipboard: "Clipboard",
 	"tool-settings": "Tool Settings",
