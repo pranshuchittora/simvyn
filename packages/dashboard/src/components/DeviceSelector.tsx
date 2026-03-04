@@ -1,17 +1,30 @@
 import type { Device } from "@simvyn/types";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+import { useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
 import { useModuleStore } from "../stores/module-store";
 
 const MULTI_SELECT_MODULES = new Set(["location"]);
 
-function groupByPlatform(devices: Device[]) {
+function groupDevices(devices: Device[]) {
 	const groups: Record<string, Device[]> = {};
 	for (const d of devices) {
-		const key = d.platform === "ios" ? "iOS" : "Android";
-		(groups[key] ??= []).push(d);
+		let section: string;
+		if (d.deviceType === "Physical" || d.id.startsWith("physical:")) {
+			section = "Physical Devices";
+		} else if (d.platform === "android") {
+			section = "Emulators";
+		} else {
+			section = "Simulators";
+		}
+		(groups[section] ??= []).push(d);
 	}
-	return groups;
+	const ordered: Record<string, Device[]> = {};
+	for (const key of ["Physical Devices", "Simulators", "Emulators"]) {
+		if (groups[key]?.length) ordered[key] = groups[key];
+	}
+	return ordered;
 }
 
 function StateIndicator({ state }: { state: Device["state"] }) {
@@ -37,7 +50,13 @@ export default function DeviceSelector() {
 	const activeModule = useModuleStore((s) => s.activeModule);
 	const isMultiSelect = MULTI_SELECT_MODULES.has(activeModule ?? "");
 
-	const groups = groupByPlatform(devices);
+	const handleDeviceDisconnected = useCallback((payload: unknown) => {
+		const { name } = payload as { id: string; name: string };
+		toast(`${name} disconnected`, { description: "Physical device removed" });
+	}, []);
+	useWsListener("devices", "device-disconnected", handleDeviceDisconnected);
+
+	const groups = groupDevices(devices);
 
 	useEffect(() => {
 		if (!isMultiSelect && selectedDeviceIds.length > 1) {
@@ -127,7 +146,15 @@ export default function DeviceSelector() {
 											<StateIndicator state={d.state} />
 										)}
 										<span className="flex-1 truncate">{d.name}</span>
-										<span className="text-xs text-text-muted">{d.osVersion}</span>
+										<span className="text-xs text-text-muted">
+											{d.osVersion}
+											{d.deviceType !== "Physical" &&
+											d.deviceType !== "Emulator" &&
+											d.deviceType !== "Unknown" &&
+											(d.id.startsWith("physical:") || d.deviceType !== d.name)
+												? ` · ${d.deviceType}`
+												: ""}
+										</span>
 										{!isMultiSelect && isSelected && (
 											<svg
 												className="h-4 w-4 text-accent-blue"

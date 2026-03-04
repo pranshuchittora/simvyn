@@ -33,7 +33,9 @@ export interface DeviceManager {
 	refresh(): Promise<Device[]>;
 	setPollInterval(ms: number): void;
 	on(event: "devices-changed", cb: (devices: Device[]) => void): void;
+	on(event: "devices-disconnected", cb: (devices: Device[]) => void): void;
 	off(event: "devices-changed", cb: (devices: Device[]) => void): void;
+	off(event: "devices-disconnected", cb: (devices: Device[]) => void): void;
 	getAdapter(platform: string): PlatformAdapter | undefined;
 }
 
@@ -235,6 +237,50 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 		await rm(getSimvynDir(), { recursive: true, force: true });
 		await mkdir(getSimvynDir(), { recursive: true });
 		return { wiped: true };
+	});
+
+	// Diagnostics endpoint for tool settings
+	fastify.get("/api/tool-settings/diagnostics", async () => {
+		const result: {
+			devicectl: { available: boolean; version?: string; error?: string };
+			xcodeVersion?: string;
+			adbVersion?: string;
+			platform: string;
+		} = {
+			devicectl: { available: false },
+			platform: process.platform,
+		};
+
+		try {
+			const core = await import("@simvyn/core");
+			if (typeof (core as any).getDevicectlStatus === "function") {
+				result.devicectl = await (core as any).getDevicectlStatus();
+			}
+		} catch {}
+
+		try {
+			const { stdout } = await execFileAsync("xcodebuild", ["-version"]);
+			const firstLine = stdout.split("\n")[0];
+			if (firstLine) result.xcodeVersion = firstLine;
+		} catch {}
+
+		try {
+			const { stdout } = await execFileAsync("adb", ["version"]);
+			const firstLine = stdout.split("\n")[0];
+			if (firstLine) result.adbVersion = firstLine.replace("Android Debug Bridge version ", "");
+		} catch {}
+
+		return result;
+	});
+
+	// Bridge device disconnects to WS for toast notifications
+	deviceManager.on("devices-disconnected", (disconnected: Device[]) => {
+		for (const device of disconnected) {
+			fastify.wsBroker.broadcast("devices", "device-disconnected", {
+				id: device.id,
+				name: device.name,
+			});
+		}
 	});
 
 	return fastify;
