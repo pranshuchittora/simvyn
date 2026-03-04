@@ -571,11 +571,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 ### Collections - Execution
 
 - [ ] **CEXE-01**: User can apply a collection to one or more devices via modal device picker with Cmd+Enter to execute
-- [ ] **CEXE-02**: Apply modal shows real-time per-step per-device feedback (spinner for running, check for success, X for failed, skip icon for incompatible)
-- [ ] **CEXE-03**: Pre-apply compatibility summary shows how many steps will be skipped per device due to platform incompatibility
-- [ ] **CEXE-04**: Platform-incompatible steps are skipped during execution with skip badge, remaining steps continue
-- [ ] **CEXE-05**: Failed steps show failure badge but execution continues to next step (continue on error)
-- [ ] **CEXE-06**: Per-step execution timeout (30s default) prevents hung commands from blocking the entire collection
+- [x] **CEXE-02**: Apply modal shows real-time per-step per-device feedback (spinner for running, check for success, X for failed, skip icon for incompatible)
+- [x] **CEXE-03**: Pre-apply compatibility summary shows how many steps will be skipped per device due to platform incompatibility
+- [x] **CEXE-04**: Platform-incompatible steps are skipped during execution with skip badge, remaining steps continue
+- [x] **CEXE-05**: Failed steps show failure badge but execution continues to next step (continue on error)
+- [x] **CEXE-06**: Per-step execution timeout (30s default) prevents hung commands from blocking the entire collection
 
 ### Collections - Integration
 
@@ -617,11 +617,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CBLD-03 | Phase 25 | Pending |
 | CBLD-04 | Phase 25 | Pending |
 | CEXE-01 | Phase 24 | Pending |
-| CEXE-02 | Phase 24 | Pending |
-| CEXE-03 | Phase 24 | Pending |
-| CEXE-04 | Phase 24 | Pending |
-| CEXE-05 | Phase 24 | Pending |
-| CEXE-06 | Phase 24 | Pending |
+| CEXE-02 | Phase 24 | Complete |
+| CEXE-03 | Phase 24 | Complete |
+| CEXE-04 | Phase 24 | Complete |
+| CEXE-05 | Phase 24 | Complete |
+| CEXE-06 | Phase 24 | Complete |
 | CINT-01 | Phase 26 | Pending |
 | CINT-02 | Phase 26 | Pending |
 | CINT-03 | Phase 26 | Pending |
