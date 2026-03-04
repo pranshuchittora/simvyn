@@ -729,7 +729,7 @@ Plans:
 **Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 27-01-PLAN.md — README restructure with module showcases, collections guide, and CLI reference
+- [x] 27-01-PLAN.md — README restructure with module showcases, collections guide, and CLI reference
 
 ### v1.6 Coverage
 
