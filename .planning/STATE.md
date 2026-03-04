@@ -4,14 +4,14 @@
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Milestone v1.6 — Collections & Documentation
+**Current Focus:** Milestone v1.7 — Real Device Support
 
 ## Current Position
 
-**Phase:** 27 — Documentation
-**Plan:** 27-01
-**Status:** Complete
-**Progress:** [██████████] 100%
+**Phase:** 28 — Real Device Support
+**Plan:** 28-03
+**Status:** In Progress
+**Progress:** [█████████░] 91%
 
 ## Phase Overview
 
@@ -56,6 +56,8 @@
 | 25. Collection Builder UI | ✅ Complete (2/2 plans) |
 | 26. Apply Modal & Integration | ✅ Complete (2/2 plans) |
 | 27. Documentation | ✅ Complete (1/1 plans) |
+| **v1.7 — Real Device Support** | |
+| 28. Real Device Support | 🔄 Executing (2/4 plans) |
 
 ## Performance Metrics
 
@@ -146,6 +148,7 @@
 | Phase 26 P02 | 1min | 1 tasks | 2 files |
 | Phase 26 P01 | 2min | 2 tasks | 5 files |
 | Phase 27 P01 | 1min | 1 tasks | 1 files |
+| Phase 28 P02 | 2min | 1 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -337,6 +340,7 @@
 - Phase 22.2 inserted after Phase 22: Test Suite (URGENT) — extensive adapter command tests verifying correct adb/xcrun invocations
 - Phase 22.3 inserted after Phase 22: NPM Package & README (URGENT) — README with logo, npx support, npm publish CI, make package public
 - Phase 28 added: Real Device Support — explore and implement extending all functionality for real Android & iOS devices
+- isAndroidPhysical() uses negative prefix check (!emulator- && !avd:) — physical serials are varied, emulator/AVD prefixes are fixed
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -351,9 +355,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-04T21:09:04.425Z
-**Stopped at:** Phase 28 context gathered
-**Context for next session:** Phase 25 complete — step builder with categorized action picker, Framer Motion drag-and-drop reorder, Apple/Android platform badges, and inline parameter editors (select, string, number, boolean). Ready for Phase 26 (Apply Modal & Integration).
+**Last session:** 2026-03-05
+**Stopped at:** Completed 28-02-PLAN.md
+**Context for next session:** Phase 28 plan 02 complete (Android physical device guards). Plan 03 next (iOS real device adapter integration via devicectl).
 
 ---
 *State initialized: 2026-02-26*
