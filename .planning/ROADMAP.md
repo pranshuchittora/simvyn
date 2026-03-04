@@ -2,8 +2,8 @@
 
 **Created:** 2026-02-26
 **Depth:** Comprehensive
-**Phases:** 30 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4 + 3 v1.5 + 5 v1.6)
-**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4, 10/10 v1.5, 22/22 v1.6 requirements mapped
+**Phases:** 31 (13 v1.0 + 5 v1.1 + 1 v1.2 + 2 v1.3 + 2 v1.4 + 3 v1.5 + 5 v1.6 + 1 v1.7)
+**Coverage:** 108/108 v1.0, 20/20 v1.1, 8/8 v1.2, 14/14 v1.3, 9/9 v1.4, 10/10 v1.5, 22/22 v1.6, 12/12 v1.7 requirements mapped
 
 ## Phases
 
@@ -55,6 +55,10 @@
 - [x] **Phase 25: Collection Builder UI** — Visual step builder with categorized action picker, drag-to-reorder, platform badges, per-step parameter configuration (completed 2026-03-04)
 - [x] **Phase 26: Apply Modal & Integration** — Execution visualization with per-step per-device feedback, command palette collections, CLI subcommands, starter collections (completed 2026-03-04)
 - [x] **Phase 27: Documentation** — README restructure with visual-first layout, per-feature showcase sections, collections walkthrough, expanded CLI reference (completed 2026-03-04)
+
+### Milestone v1.7 — Real Device Support
+
+- [ ] **Phase 28: Real Device Support** — iOS physical devices via devicectl, Android adapter refinement, device-aware capabilities, grouped selector
 
 ## Phase Details
 
@@ -328,6 +332,8 @@ Plans:
 | 25. Collection Builder UI | 2/2 | Complete    | 2026-03-04 |
 | 26. Apply Modal & Integration | 2/2 | Complete   | 2026-03-04 |
 | 27. Documentation | 1/1 | Complete   | 2026-03-04 |
+| **v1.7 — Real Device Support** | | | |
+| 28. Real Device Support | 0/4 | Planned    | - |
 
 ## Coverage Map
 
@@ -768,3 +774,14 @@ DOC-04 → Phase 27
 ```
 
 **v1.6 Mapped: 22/22 — No orphaned requirements**
+
+### v1.7 Coverage
+
+```
+RDEV-01 → Phase 28    RDEV-05 → Phase 28    RDEV-09 → Phase 28
+RDEV-02 → Phase 28    RDEV-06 → Phase 28    RDEV-10 → Phase 28
+RDEV-03 → Phase 28    RDEV-07 → Phase 28    RDEV-11 → Phase 28
+RDEV-04 → Phase 28    RDEV-08 → Phase 28    RDEV-12 → Phase 28
+```
+
+**v1.7 Mapped: 12/12 — No orphaned requirements**
