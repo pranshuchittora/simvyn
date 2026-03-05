@@ -1,3 +1,4 @@
+import { addFavourite, getFavourites, removeFavourite } from "@simvyn/core";
 import type {} from "@simvyn/server";
 import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
@@ -237,6 +238,21 @@ export async function deviceRoutes(fastify: FastifyInstance) {
 		} catch (err) {
 			return reply.status(500).send({ error: (err as Error).message });
 		}
+	});
+
+	// Favourites
+	fastify.get("/favourites", async () => {
+		return { favourites: await getFavourites() };
+	});
+
+	fastify.post<{ Body: { deviceId: string } }>("/favourites", async (req) => {
+		await addFavourite(req.body.deviceId);
+		return { success: true };
+	});
+
+	fastify.delete<{ Body: { deviceId: string } }>("/favourites", async (req) => {
+		await removeFavourite(req.body.deviceId);
+		return { success: true };
 	});
 
 	fastify.post("/refresh", async () => {

@@ -1,4 +1,11 @@
-import { createAvailableAdapters, createDeviceManager, createIosAdapter } from "@simvyn/core";
+import {
+	addFavourite,
+	createAvailableAdapters,
+	createDeviceManager,
+	createIosAdapter,
+	getFavourites,
+	removeFavourite,
+} from "@simvyn/core";
 import type { Device, Platform, PlatformAdapter } from "@simvyn/types";
 import type { Command } from "commander";
 
@@ -268,6 +275,62 @@ export function registerDeviceCommand(program: Command): void {
 				console.log(`\u2713 Deleted: ${dev.name} (${dev.id})`);
 			} catch (err) {
 				console.error(`Failed to delete device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device favourite <id>
+	device
+		.command("favourite <id>")
+		.description("Add a device to favourites")
+		.action(async (id: string) => {
+			try {
+				const { device: dev } = await findDevice(id);
+				await addFavourite(dev.id);
+				console.log(`\u2713 Added ${dev.name} to favourites`);
+			} catch (err) {
+				console.error(`Failed to favourite device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device unfavourite <id>
+	device
+		.command("unfavourite <id>")
+		.description("Remove a device from favourites")
+		.action(async (id: string) => {
+			try {
+				const { device: dev } = await findDevice(id);
+				await removeFavourite(dev.id);
+				console.log(`\u2713 Removed ${dev.name} from favourites`);
+			} catch (err) {
+				console.error(`Failed to unfavourite device: ${(err as Error).message}`);
+				process.exit(1);
+			}
+		});
+
+	// simvyn device favourites
+	device
+		.command("favourites")
+		.description("List favourite devices")
+		.action(async () => {
+			try {
+				const favIds = await getFavourites();
+				if (favIds.length === 0) {
+					console.log("No favourite devices.");
+					return;
+				}
+				const { devices } = await getAllDevices();
+				const favDevices = favIds
+					.map((id) => devices.find((d) => d.id === id))
+					.filter((d): d is Device => d !== undefined);
+				if (favDevices.length === 0) {
+					console.log("No favourite devices.");
+					return;
+				}
+				printTable(favDevices);
+			} catch (err) {
+				console.error(`Failed to list favourites: ${(err as Error).message}`);
 				process.exit(1);
 			}
 		});
