@@ -156,6 +156,12 @@ body {
 	scrollbar-color: oklch(0.45 0.015 260 / 0.35) transparent;
 }
 
+/* Dock sidebar — hover zone wraps the pill so the left margin is part of the target */
+.dock-sidebar-hitarea {
+	padding: 12px 0 12px 12px;
+	align-self: center;
+}
+
 /* Dock sidebar — floating pill (macOS Liquid Glass dock) */
 .dock-sidebar {
 	position: relative;
@@ -166,7 +172,6 @@ body {
 	padding: 8px 6px;
 	gap: 2px;
 	/* width driven by framer-motion */
-	margin: 12px 0 12px 12px;
 	border-radius: 16px;
 	backdrop-filter: blur(24px) saturate(1.5);
 	-webkit-backdrop-filter: blur(24px) saturate(1.5);
