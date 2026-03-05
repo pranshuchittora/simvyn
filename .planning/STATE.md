@@ -9,9 +9,9 @@
 ## Current Position
 
 **Phase:** 28.1 — Favourite Devices
-**Plan:** 28.1-01 (complete)
-**Status:** Executing phase
-**Progress:** [█████░░░░░] 50%
+**Plan:** 28.1-02 (complete)
+**Status:** Phase complete
+**Progress:** [█████████░] 94%
 
 ## Phase Overview
 
@@ -58,7 +58,7 @@
 | 27. Documentation | ✅ Complete (1/1 plans) |
 | **v1.7 — Real Device Support** | |
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
-| 28.1 Favourite Devices | 🔄 Executing (1/2 plans) |
+| 28.1 Favourite Devices | ✅ Complete (2/2 plans) |
 
 ## Performance Metrics
 
@@ -154,6 +154,7 @@
 | Phase 28 P03 | 3min | 3 tasks | 5 files |
 | Phase 28 P04 | 4min | 2 tasks | 4 files |
 | Phase 28.1 P01 | 1min | 2 tasks | 4 files |
+| Phase 28.1 P02 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -356,6 +357,9 @@
 - DeviceSelector groups by device type (Physical/Simulator/Emulator) not platform — fixed order Physical → Simulators → Emulators
 - Disabled feature placeholders with opacity-50 + cursor-not-allowed + title tooltip for physical device capability gaps
 - Diagnostics endpoint dynamically imports getDevicectlStatus via `await import("@simvyn/core")` to match existing lazy pattern
+- Set<string> for favouriteIds in dashboard store — O(1) lookup, convert to/from array for API serialization
+- Optimistic favourite toggle with revert on fetch failure — instant UI response
+- Favourites section always visible in DeviceSelector with empty hint text — aids discoverability
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -370,9 +374,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-05T09:42:22Z
-**Stopped at:** Completed 28.1-01-PLAN.md
-**Context for next session:** Phase 28.1 Plan 01 complete — core favourites storage, API routes, CLI commands. Plan 02 next: DeviceSelector UI with star icons, context menu, Favourites group.
+**Last session:** 2026-03-05T09:48:33.419Z
+**Stopped at:** Completed 28.1-02-PLAN.md
+**Context for next session:** Phase 28.1 complete — favourite devices backend + UI fully integrated. Star icons, context menu, Favourites group in DeviceSelector.
 
 ---
 *State initialized: 2026-02-26*
