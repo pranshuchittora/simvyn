@@ -335,7 +335,7 @@ Plans:
 | 27. Documentation | 1/1 | Complete   | 2026-03-04 |
 | **v1.7 — Real Device Support** | | | |
 | 28. Real Device Support | 4/4 | Complete    | 2026-03-04 |
-| 28.1 Favourite Devices | 0/2 | Planned | - |
+| 28.1 Favourite Devices | 1/2 | In Progress | - |
 
 ## Coverage Map
 

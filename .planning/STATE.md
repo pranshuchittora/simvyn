@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 28 — Real Device Support
-**Plan:** 28-04 (complete)
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
+**Phase:** 28.1 — Favourite Devices
+**Plan:** 28.1-01 (complete)
+**Status:** Executing phase
+**Progress:** [█████░░░░░] 50%
 
 ## Phase Overview
 
@@ -58,7 +58,7 @@
 | 27. Documentation | ✅ Complete (1/1 plans) |
 | **v1.7 — Real Device Support** | |
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
-| 28.1 Favourite Devices | 📋 Planned (0/2 plans) |
+| 28.1 Favourite Devices | 🔄 Executing (1/2 plans) |
 
 ## Performance Metrics
 
@@ -153,6 +153,7 @@
 | Phase 28 P01 | 7min | 3 tasks | 3 files |
 | Phase 28 P03 | 3min | 3 tasks | 5 files |
 | Phase 28 P04 | 4min | 2 tasks | 4 files |
+| Phase 28.1 P01 | 1min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -369,9 +370,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-05T10:00:00.000Z
-**Stopped at:** Phase 28.1 planned (2 plans)
-**Context for next session:** Phase 28.1 planned — 2 plans in 2 waves. Plan 01 (wave 1): core favourites storage, API routes, CLI commands. Plan 02 (wave 2): DeviceSelector UI with star icons, context menu, Favourites group. Ready for execution.
+**Last session:** 2026-03-05T09:42:22Z
+**Stopped at:** Completed 28.1-01-PLAN.md
+**Context for next session:** Phase 28.1 Plan 01 complete — core favourites storage, API routes, CLI commands. Plan 02 next: DeviceSelector UI with star icons, context menu, Favourites group.
 
 ---
 *State initialized: 2026-02-26*
