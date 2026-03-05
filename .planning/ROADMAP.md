@@ -59,6 +59,7 @@
 ### Milestone v1.7 — Real Device Support
 
 - [x] **Phase 28: Real Device Support** — iOS physical devices via devicectl, Android adapter refinement, device-aware capabilities, grouped selector (completed 2026-03-04)
+- [ ] **Phase 28.1: Favourite Devices** — Persist favourite devices so they appear at the top of the device selector (INSERTED)
 
 ## Phase Details
 
@@ -334,6 +335,7 @@ Plans:
 | 27. Documentation | 1/1 | Complete   | 2026-03-04 |
 | **v1.7 — Real Device Support** | | | |
 | 28. Real Device Support | 4/4 | Complete    | 2026-03-04 |
+| 28.1 Favourite Devices | 0/2 | Planned | - |
 
 ## Coverage Map
 
@@ -630,6 +632,25 @@ Plans:
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
+
+### Phase 28.1: Favourite Devices (INSERTED)
+
+**Goal:** Users can star devices as favourites so they appear at the top of the DeviceSelector dropdown, persisted across sessions, manageable from dashboard and CLI
+**Depends on:** Phase 28
+**Requirements:** FAV-01, FAV-02, FAV-03, FAV-04, FAV-05, FAV-06, FAV-07
+**Success Criteria** (what must be TRUE):
+  1. User can click a star icon on any device row to toggle it as a favourite — filled star for favourites, outline for non-favourites
+  2. Favourite devices appear in a dedicated "Favourites" section at the top of the DeviceSelector dropdown, grouped by iOS/Android sub-headers
+  3. Favourite devices are removed from their original group (no duplicates) and the Favourites section is always visible (hint text when empty)
+  4. Right-click context menu on any device row offers "Add to Favourites" or "Remove from Favourites"
+  5. CLI supports `simvyn device favourite <id>`, `simvyn device unfavourite <id>`, and `simvyn device favourites`
+  6. Favourite device IDs persist in `~/.simvyn/favourites/favourites.json` across server restarts
+  7. Stale favourite IDs (devices no longer existing after multiple polls) are silently cleaned up
+**Plans:** 2 plans
+
+Plans:
+- [ ] 28.1-01-PLAN.md — Core favourites storage, API routes, CLI commands
+- [ ] 28.1-02-PLAN.md — DeviceSelector UI with star icons, context menu, Favourites group
 
 ### Phase 22.1: Code Audit (INSERTED)
 

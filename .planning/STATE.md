@@ -58,7 +58,7 @@
 | 27. Documentation | ✅ Complete (1/1 plans) |
 | **v1.7 — Real Device Support** | |
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
-| 28.1 Favourite Devices | ⏳ Not Planned |
+| 28.1 Favourite Devices | 📋 Planned (0/2 plans) |
 
 ## Performance Metrics
 
@@ -369,9 +369,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-05T09:03:39.245Z
-**Stopped at:** Phase 28.1 context gathered
-**Context for next session:** Phase 28 complete (4/4 plans). All real device support features implemented. Ready for milestone transition.
+**Last session:** 2026-03-05T10:00:00.000Z
+**Stopped at:** Phase 28.1 planned (2 plans)
+**Context for next session:** Phase 28.1 planned — 2 plans in 2 waves. Plan 01 (wave 1): core favourites storage, API routes, CLI commands. Plan 02 (wave 2): DeviceSelector UI with star icons, context menu, Favourites group. Ready for execution.
 
 ---
 *State initialized: 2026-02-26*
