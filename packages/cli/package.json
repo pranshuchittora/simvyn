@@ -1,6 +1,6 @@
 {
 	"name": "simvyn",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"type": "module",
 	"description": "Universal mobile device devtool — control iOS Simulators, Android Emulators, and real devices from a single dashboard and CLI",
 	"main": "./dist/index.js",
