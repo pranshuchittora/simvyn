@@ -17,5 +17,12 @@ export type { ProcessManager } from "./process-manager.js";
 // services
 export { createProcessManager } from "./process-manager.js";
 export { createModuleStorage, getSimvynDir } from "./storage.js";
+// favourites
+export {
+	addFavourite,
+	cleanupStaleFavourites,
+	getFavourites,
+	removeFavourite,
+} from "./favourites.js";
 // verbose exec
 export { setVerbose, verboseExec, verboseSpawn } from "./verbose-exec.js";
