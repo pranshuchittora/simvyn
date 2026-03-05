@@ -202,7 +202,9 @@ export default function DeviceSelector() {
 										) : (
 											<StateIndicator state={d.state} />
 										)}
-										<span className="flex-1 truncate">{d.name}</span>
+										<span className="flex-1 truncate" title={d.name}>
+											{d.name}
+										</span>
 										<span className="shrink-0 text-xs text-text-muted">{d.osVersion}</span>
 										<StarIcon
 											filled={isFavourite(d.id)}
