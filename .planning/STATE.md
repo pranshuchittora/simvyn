@@ -58,6 +58,7 @@
 | 27. Documentation | ✅ Complete (1/1 plans) |
 | **v1.7 — Real Device Support** | |
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
+| 28.1 Favourite Devices | ⏳ Not Planned |
 
 ## Performance Metrics
 
@@ -343,6 +344,7 @@
 - Phase 22.2 inserted after Phase 22: Test Suite (URGENT) — extensive adapter command tests verifying correct adb/xcrun invocations
 - Phase 22.3 inserted after Phase 22: NPM Package & README (URGENT) — README with logo, npx support, npm publish CI, make package public
 - Phase 28 added: Real Device Support — explore and implement extending all functionality for real Android & iOS devices
+- Phase 28.1 inserted after Phase 28: Favourite Devices (URGENT) — persist favourite devices so they appear at the top of the device selector
 - isAndroidPhysical() uses negative prefix check (!emulator- && !avd:) — physical serials are varied, emulator/AVD prefixes are fixed
 - iOS physical devices use `physical:` prefix on CoreDevice UUIDs — unambiguous branching via `isPhysicalDevice(id)`
 - devicectlJson helper uses temp-file JSON output per Apple's mandated pattern — no stdout parsing
@@ -367,8 +369,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-05
-**Stopped at:** Completed 28-04-PLAN.md
+**Last session:** 2026-03-05T09:03:39.245Z
+**Stopped at:** Phase 28.1 context gathered
 **Context for next session:** Phase 28 complete (4/4 plans). All real device support features implemented. Ready for milestone transition.
 
 ---
