@@ -203,15 +203,7 @@ export default function DeviceSelector() {
 											<StateIndicator state={d.state} />
 										)}
 										<span className="flex-1 truncate">{d.name}</span>
-										<span className="shrink-0 text-xs text-text-muted">
-											{d.osVersion}
-											{d.deviceType !== "Physical" &&
-											d.deviceType !== "Emulator" &&
-											d.deviceType !== "Unknown" &&
-											(d.id.startsWith("physical:") || d.deviceType !== d.name)
-												? ` · ${d.deviceType}`
-												: ""}
-										</span>
+										<span className="shrink-0 text-xs text-text-muted">{d.osVersion}</span>
 										<StarIcon
 											filled={isFavourite(d.id)}
 											onClick={(e) => {

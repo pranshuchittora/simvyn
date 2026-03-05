@@ -641,16 +641,33 @@ function DeviceCard({
 	onDelete?: () => void;
 	showLifecycleActions?: boolean;
 }) {
+	const isFav = useFavouriteStore((s) => s.isFavourite)(device.id);
+	const toggleFavourite = useFavouriteStore((s) => s.toggle);
+
 	const truncatedId =
 		device.id.length > 16 ? `${device.id.slice(0, 8)}…${device.id.slice(-6)}` : device.id;
 
 	return (
 		<div className="glass-panel p-4 flex flex-col gap-3 hover:border-glass-border-hover transition-all duration-150">
-			<div className="flex items-start justify-between">
+			<div className="flex items-start justify-between gap-2">
 				<div className="min-w-0 flex-1">
 					<div className="font-medium text-text-primary truncate">{device.name}</div>
 					<div className="text-xs text-text-muted mt-0.5 font-mono">{truncatedId}</div>
 				</div>
+				<button
+					type="button"
+					onClick={() => toggleFavourite(device.id)}
+					className="shrink-0 mt-0.5"
+					title={isFav ? "Remove from Favourites" : "Add to Favourites"}
+				>
+					<Star
+						size={16}
+						className={`transition-colors cursor-pointer ${
+							isFav ? "text-amber-400 fill-amber-400" : "text-text-muted/40 hover:text-amber-400/60"
+						}`}
+						fill={isFav ? "currentColor" : "none"}
+					/>
+				</button>
 				<StateBadge state={device.state} />
 			</div>
 
