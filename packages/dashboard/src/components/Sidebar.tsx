@@ -1,24 +1,29 @@
-import { useCallback, useState } from "react";
-import { createPortal } from "react-dom";
+import { useState } from "react";
 import { useNavigate } from "react-router";
+import { motion, AnimatePresence } from "framer-motion";
 import { useModuleStore } from "../stores/module-store";
 import { moduleIconMap, moduleLabelMap } from "./icons/module-icons";
+
+const COLLAPSED_WIDTH = 52;
+const EXPANDED_WIDTH = 172;
+
+const sidebarTransition = { type: "spring" as const, stiffness: 400, damping: 30, mass: 0.8 };
+const labelTransition = { duration: 0.15, ease: "easeOut" as const };
 
 export default function Sidebar() {
 	const modules = useModuleStore((s) => s.modules);
 	const activeModule = useModuleStore((s) => s.activeModule);
 	const navigate = useNavigate();
-	const [tooltip, setTooltip] = useState<{ label: string; top: number; left: number } | null>(null);
-
-	const showTooltip = useCallback((e: React.MouseEvent, label: string) => {
-		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-		setTooltip({ label, top: rect.top + rect.height / 2, left: rect.right + 8 });
-	}, []);
-
-	const hideTooltip = useCallback(() => setTooltip(null), []);
+	const [isHovered, setIsHovered] = useState(false);
 
 	return (
-		<aside className="dock-sidebar">
+		<motion.aside
+			className="dock-sidebar"
+			onMouseEnter={() => setIsHovered(true)}
+			onMouseLeave={() => setIsHovered(false)}
+			animate={{ width: isHovered ? EXPANDED_WIDTH : COLLAPSED_WIDTH }}
+			transition={sidebarTransition}
+		>
 			{modules.map((mod) => {
 				const isActive = activeModule === mod.name;
 				const Icon = moduleIconMap[mod.name];
@@ -30,14 +35,28 @@ export default function Sidebar() {
 						type="button"
 						onClick={() => navigate(`/${mod.name}`)}
 						className={`dock-icon ${isActive ? "active" : ""}`}
-						onMouseEnter={(e) => showTooltip(e, label)}
-						onMouseLeave={hideTooltip}
 					>
-						{Icon ? (
-							<Icon size={24} />
-						) : (
-							<span className="text-sm">{mod.name[0]?.toUpperCase()}</span>
-						)}
+						<span className="dock-icon-svg">
+							{Icon ? (
+								<Icon size={24} />
+							) : (
+								<span className="text-sm">{mod.name[0]?.toUpperCase()}</span>
+							)}
+						</span>
+
+						<AnimatePresence>
+							{isHovered && (
+								<motion.span
+									className="dock-label"
+									initial={{ opacity: 0, width: 0 }}
+									animate={{ opacity: 1, width: "auto" }}
+									exit={{ opacity: 0, width: 0 }}
+									transition={labelTransition}
+								>
+									{label}
+								</motion.span>
+							)}
+						</AnimatePresence>
 					</button>
 				);
 			})}
@@ -45,14 +64,6 @@ export default function Sidebar() {
 			{modules.length === 0 && (
 				<div className="text-text-muted text-[10px] text-center px-1 py-4">No modules</div>
 			)}
-
-			{tooltip &&
-				createPortal(
-					<span className="dock-tooltip-fixed" style={{ top: tooltip.top, left: tooltip.left }}>
-						{tooltip.label}
-					</span>,
-					document.body,
-				)}
-		</aside>
+		</motion.aside>
 	);
 }

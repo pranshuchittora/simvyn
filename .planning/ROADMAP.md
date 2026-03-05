@@ -629,6 +629,15 @@ Plans:
 - [ ] 28-03-PLAN.md — Device-aware capabilities, disconnect detection, collections skip
 - [ ] 28-04-PLAN.md — Dashboard UI (grouped selector, disconnect toast, disabled tooltips, diagnostics)
 
+### Phase 29: Sidebar Expand-on-Hover
+
+**Goal:** [To be planned]
+**Depends on:** Phase 28
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 29 to break down)
+
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*

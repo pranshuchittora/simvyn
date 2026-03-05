@@ -360,6 +360,7 @@
 - Set<string> for favouriteIds in dashboard store — O(1) lookup, convert to/from array for API serialization
 - Optimistic favourite toggle with revert on fetch failure — instant UI response
 - Favourites section always visible in DeviceSelector with empty hint text — aids discoverability
+- Phase 29 added: Sidebar Expand-on-Hover — animated dock expansion with labels on hover, remove tooltip popovers
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
