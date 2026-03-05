@@ -1,9 +1,10 @@
 import type { Device } from "@simvyn/types";
-import { Copy, Pencil, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
+import { Copy, Pencil, Plus, ShieldCheck, Star, Trash2, Upload, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useWsListener } from "../hooks/use-ws";
 import { useDeviceStore } from "../stores/device-store";
+import { useFavouriteStore } from "../stores/favourite-store";
 import { registerPanel } from "../stores/panel-registry";
 
 type ActionState = { deviceId: string; action: string } | null;
@@ -130,6 +131,9 @@ function DevicePanel() {
 		} catch {}
 	}
 
+	const favouriteIds = useFavouriteStore((s) => s.favouriteIds);
+	const favouriteDevices = devices.filter((d) => favouriteIds.has(d.id));
+
 	const iosDevices = devices.filter((d) => d.platform === "ios");
 	const androidDevices = devices.filter((d) => d.platform === "android");
 
@@ -162,6 +166,17 @@ function DevicePanel() {
 						Make sure Xcode Simulator or Android Emulator tools are installed.
 					</p>
 				</div>
+			)}
+
+			{favouriteDevices.length > 0 && (
+				<FavouritesSection
+					devices={favouriteDevices}
+					actionInFlight={actionInFlight}
+					onAction={doAction}
+					onClone={handleClone}
+					onRename={handleRename}
+					onDelete={handleDelete}
+				/>
 			)}
 
 			{iosDevices.length > 0 && (
@@ -293,6 +308,50 @@ function CreateSimulatorForm({ onCreated }: { onCreated: () => void }) {
 				<button type="button" className="glass-button" onClick={onCreated}>
 					Cancel
 				</button>
+			</div>
+		</div>
+	);
+}
+
+// --- Favourites Section ---
+
+function FavouritesSection({
+	devices,
+	actionInFlight,
+	onAction,
+	onClone,
+	onRename,
+	onDelete,
+}: {
+	devices: Device[];
+	actionInFlight: ActionState;
+	onAction: (deviceId: string, action: string) => void;
+	onClone: (device: Device) => void;
+	onRename: (device: Device) => void;
+	onDelete: (device: Device) => void;
+}) {
+	return (
+		<div>
+			<div className="flex items-center gap-2 mb-3">
+				<Star size={14} className="text-amber-400" fill="currentColor" />
+				<h2 className="text-sm font-medium text-text-muted uppercase tracking-wider">Favourites</h2>
+			</div>
+			<div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+				{devices.map((device) => (
+					<DeviceCard
+						key={device.id}
+						device={device}
+						isLoading={actionInFlight?.deviceId === device.id}
+						loadingAction={
+							actionInFlight?.deviceId === device.id ? actionInFlight.action : undefined
+						}
+						onAction={onAction}
+						onClone={device.platform === "ios" ? () => onClone(device) : undefined}
+						onRename={device.platform === "ios" ? () => onRename(device) : undefined}
+						onDelete={device.platform === "ios" ? () => onDelete(device) : undefined}
+						showLifecycleActions={device.platform === "ios"}
+					/>
+				))}
 			</div>
 		</div>
 	);
