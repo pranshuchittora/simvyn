@@ -638,6 +638,23 @@ Plans:
 Plans:
 - [ ] TBD (run /gsd:plan-phase 29 to break down)
 
+### Phase 30: Log Controls, Release Automation & Update Notifications
+
+**Goal:** Users can pause/resume log streaming, releases are automated via GitHub Actions workflow dispatch with commit-based changelogs, and the dashboard shows update notifications when newer versions are published
+**Depends on:** Phase 29
+**Requirements:** LOGCTL-01, LOGCTL-02, REL-01, REL-02, REL-03, UPD-01, UPD-02
+**Success Criteria** (what must be TRUE):
+  1. User can click a pause button in the log toolbar to stop incoming logs, and a play button to resume with fresh history loaded
+  2. Running the release-dispatch workflow from GitHub Actions UI with a version number bumps package.json, commits, tags, and pushes — triggering npm publish
+  3. GitHub Releases page shows a commit-based changelog listing all commits since the previous release
+  4. Dashboard shows a dismissible glass-panel banner when a newer version of simvyn is available on npm, linking to GitHub releases
+**Plans:** 3 plans
+
+Plans:
+- [ ] 30-01-PLAN.md — Log pause/resume toggle (store, toolbar button, LogPanel WS wiring)
+- [ ] 30-02-PLAN.md — Release dispatch GHA workflow + commit-based changelog in releases
+- [ ] 30-03-PLAN.md — Dashboard update banner (server endpoint + dismissible component)
+
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*

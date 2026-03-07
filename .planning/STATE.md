@@ -361,6 +361,7 @@
 - Optimistic favourite toggle with revert on fetch failure — instant UI response
 - Favourites section always visible in DeviceSelector with empty hint text — aids discoverability
 - Phase 29 added: Sidebar Expand-on-Hover — animated dock expansion with labels on hover, remove tooltip popovers
+- Phase 30 added: Log Controls, Release Automation & Update Notifications — log pause/resume with server-side search, GHA workflow dispatch for releases, commit-based release notes, dashboard + CLI update banner
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
