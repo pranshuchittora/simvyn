@@ -3,10 +3,14 @@ name: Release Dispatch
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version to release (e.g. 2.5.0, without v prefix)"
+      bump:
+        description: "Version bump type"
         required: true
-        type: string
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
@@ -29,29 +33,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Validate version format
-        run: |
-          if [[ ! "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Invalid version format: ${{ inputs.version }}"
-            echo "Expected format: X.Y.Z (e.g. 2.5.0)"
-            exit 1
-          fi
-
       - name: Bump version
-        run: npm version ${{ inputs.version }} --no-git-tag-version --workspace=packages/cli
+        id: bump
+        run: |
+          cd packages/cli
+          npm version ${{ inputs.bump }} --no-git-tag-version
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Commit and tag
         run: |
           git add packages/cli/package.json
-          git commit -m "bump to v${{ inputs.version }}"
-          git tag "v${{ inputs.version }}"
+          git commit -m "bump to v${{ steps.bump.outputs.version }}"
+          git tag "v${{ steps.bump.outputs.version }}"
 
       - name: Push
         run: |
           git push origin main
-          git push origin "v${{ inputs.version }}"
+          git push origin "v${{ steps.bump.outputs.version }}"
 
       - name: Trigger release workflow
-        run: gh workflow run release.yml -f tag="v${{ inputs.version }}"
+        run: gh workflow run release.yml -f tag="v${{ steps.bump.outputs.version }}"
         env:
           GH_TOKEN: ${{ github.token }}
