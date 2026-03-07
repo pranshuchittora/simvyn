@@ -57,7 +57,7 @@ program
 
 		console.log(`Upgrading ${dim}${pkg.version}${reset} → ${green}${result.latest}${reset}\n`);
 		try {
-			execSync(`npm install -g simvyn@${result.latest}`, { stdio: "inherit" });
+			execSync("npm install -g simvyn@latest", { stdio: "inherit" });
 			console.log(`\n${green}Successfully upgraded to ${result.latest}${reset}`);
 		} catch {
 			console.error(

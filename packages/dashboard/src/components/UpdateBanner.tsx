@@ -41,6 +41,9 @@ export default function UpdateBanner() {
 				<span className="text-green-400">{info.latest}</span>
 			</span>
 			<div className="flex items-center gap-3">
+				<code className="text-text-muted text-xs bg-white/5 px-1.5 py-0.5 rounded">
+					simvyn upgrade
+				</code>
 				<a
 					href={`https://github.com/pranshuchittora/simvyn/releases/tag/v${info.latest}`}
 					target="_blank"
