@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   release:
@@ -49,3 +50,8 @@ jobs:
         run: |
           git push origin main
           git push origin "v${{ inputs.version }}"
+
+      - name: Trigger release workflow
+        run: gh workflow run release.yml -f tag="v${{ inputs.version }}"
+        env:
+          GH_TOKEN: ${{ github.token }}

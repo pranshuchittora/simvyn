@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v2.5.0)"
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -15,6 +21,8 @@ jobs:
     environment: npm
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -56,16 +64,17 @@ jobs:
 
       - name: Generate changelog
         run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
           PREV_TAG=$(git tag --sort=-version:refname | grep '^v' | sed -n '2p')
-          CURRENT_TAG="${GITHUB_REF_NAME}"
           if [ -z "$PREV_TAG" ]; then
-            CHANGES=$(git log --oneline --pretty=format:"- %s" "$CURRENT_TAG")
+            CHANGES=$(git log --oneline --pretty=format:"- %s" "$TAG")
           else
-            CHANGES=$(git log --oneline --pretty=format:"- %s" "${PREV_TAG}..${CURRENT_TAG}")
+            CHANGES=$(git log --oneline --pretty=format:"- %s" "${PREV_TAG}..${TAG}")
           fi
           echo "$CHANGES" > /tmp/changelog.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
           body_path: /tmp/changelog.md

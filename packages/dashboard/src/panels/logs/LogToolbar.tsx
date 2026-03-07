@@ -84,9 +84,7 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 	const entries = useLogStore((s) => s.entries);
 	const totalCount = entries.length;
 	const filteredCount = useMemo(
-		() =>
-			filterEntries(entries, enabledLevels, processFilter, searchPattern)
-				.length,
+		() => filterEntries(entries, enabledLevels, processFilter, searchPattern).length,
 		[entries, enabledLevels, processFilter, searchPattern],
 	);
 	const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
@@ -101,12 +99,7 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 
 	const handleExport = useCallback((format: "json" | "text") => {
 		const s = useLogStore.getState();
-		const filtered = filterEntries(
-			s.entries,
-			s.enabledLevels,
-			s.processFilter,
-			s.searchPattern,
-		);
+		const filtered = filterEntries(s.entries, s.enabledLevels, s.processFilter, s.searchPattern);
 		let content: string;
 		let mime: string;
 		let ext: string;
@@ -184,18 +177,10 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 
 			{/* Export */}
 			<div className="flex items-center gap-0.5">
-				<button
-					type="button"
-					onClick={() => handleExport("json")}
-					className="glass-button"
-				>
+				<button type="button" onClick={() => handleExport("json")} className="glass-button">
 					JSON
 				</button>
-				<button
-					type="button"
-					onClick={() => handleExport("text")}
-					className="glass-button"
-				>
+				<button type="button" onClick={() => handleExport("text")} className="glass-button">
 					TXT
 				</button>
 			</div>
@@ -238,9 +223,7 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 			</button>
 
 			{/* Entry count */}
-			<span
-				className={`text-xs ml-auto ${isPaused ? "text-yellow-400" : "text-text-muted"}`}
-			>
+			<span className={`text-xs ml-auto ${isPaused ? "text-yellow-400" : "text-text-muted"}`}>
 				{isPaused
 					? "Paused"
 					: filteredCount === totalCount

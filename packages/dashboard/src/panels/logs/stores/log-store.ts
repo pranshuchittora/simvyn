@@ -1,14 +1,7 @@
 import type { LogEntry, LogLevel } from "@simvyn/types";
 import { create } from "zustand";
 
-const ALL_LEVELS: LogLevel[] = [
-	"verbose",
-	"debug",
-	"info",
-	"warning",
-	"error",
-	"fatal",
-];
+const ALL_LEVELS: LogLevel[] = ["verbose", "debug", "info", "warning", "error", "fatal"];
 
 interface LogStore {
 	entries: LogEntry[];
@@ -61,20 +54,14 @@ export const useLogStore = create<LogStore>((set) => ({
 			if (s.isPaused) return s;
 			const newEntries = [...batch].reverse();
 			const combined = [...newEntries, ...s.entries];
-			const trimmed =
-				combined.length > MAX_ENTRIES
-					? combined.slice(0, MAX_ENTRIES)
-					: combined;
+			const trimmed = combined.length > MAX_ENTRIES ? combined.slice(0, MAX_ENTRIES) : combined;
 			return { entries: trimmed };
 		}),
 
 	prependHistory: (batch, cursor, hasMore) =>
 		set((s) => {
 			const combined = [...s.entries, ...batch];
-			const trimmed =
-				combined.length > MAX_ENTRIES
-					? combined.slice(0, MAX_ENTRIES)
-					: combined;
+			const trimmed = combined.length > MAX_ENTRIES ? combined.slice(0, MAX_ENTRIES) : combined;
 			return {
 				entries: trimmed,
 				firstItemIndex: s.firstItemIndex - batch.length,
@@ -97,8 +84,7 @@ export const useLogStore = create<LogStore>((set) => ({
 
 	reset: () => set({ ...initialState }),
 
-	setStreaming: (deviceId) =>
-		set({ streamDeviceId: deviceId, isStreaming: deviceId !== null }),
+	setStreaming: (deviceId) => set({ streamDeviceId: deviceId, isStreaming: deviceId !== null }),
 	pause: () => set({ isPaused: true }),
 	resume: () => set({ isPaused: false }),
 	toggleLevel: (level: LogLevel) =>
@@ -135,15 +121,11 @@ export function filterEntries(
 	if (searchPattern) {
 		try {
 			const re = new RegExp(searchPattern, "i");
-			filtered = filtered.filter(
-				(e) => re.test(e.message) || re.test(e.processName),
-			);
+			filtered = filtered.filter((e) => re.test(e.message) || re.test(e.processName));
 		} catch {
 			const sp = searchPattern.toLowerCase();
 			filtered = filtered.filter(
-				(e) =>
-					e.message.toLowerCase().includes(sp) ||
-					e.processName.toLowerCase().includes(sp),
+				(e) => e.message.toLowerCase().includes(sp) || e.processName.toLowerCase().includes(sp),
 			);
 		}
 	}
