@@ -13,6 +13,7 @@ export interface StartOptions {
 	dashboardDir?: string;
 	modulesDir?: string;
 	modules?: SimvynModule[];
+	version?: string;
 }
 
 export async function startServer(opts: StartOptions = {}): Promise<void> {
@@ -27,11 +28,14 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 	const hasDashboard = existsSync(dashboardDir);
 
 	if (!hasDashboard) {
-		console.log("Dashboard not built yet. Run: npm run build -w @simvyn/dashboard");
+		console.log(
+			"Dashboard not built yet. Run: npm run build -w @simvyn/dashboard",
+		);
 		console.log("Starting server without dashboard...\n");
 	}
 
-	const modulesDir = opts.modulesDir ?? resolve(__dirname, "..", "..", "modules");
+	const modulesDir =
+		opts.modulesDir ?? resolve(__dirname, "..", "..", "modules");
 
 	const app = await createApp({
 		port,
@@ -40,6 +44,7 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 		modules: opts.modules,
 		dashboardDir: hasDashboard ? dashboardDir : undefined,
 		logger: { level: "warn" },
+		version: opts.version,
 	});
 
 	await app.listen({ port, host });
@@ -75,7 +80,9 @@ export async function startServer(opts: StartOptions = {}): Promise<void> {
 	const shutdown = async () => {
 		const P = "\x1b[35m";
 		const R = "\x1b[0m";
-		console.log(`\n${P}  /\\_/\\  ~${R}\n${P} ( o.o )  bye!${R}\n${P}  > ^ <${R}\n`);
+		console.log(
+			`\n${P}  /\\_/\\  ~${R}\n${P} ( o.o )  bye!${R}\n${P}  > ^ <${R}\n`,
+		);
 		await app.close();
 		process.exit(0);
 	};

@@ -23,6 +23,7 @@ export interface AppOptions {
 	modules?: SimvynModule[];
 	dashboardDir?: string;
 	logger?: boolean | object;
+	version?: string;
 }
 
 export interface DeviceManager {
@@ -83,7 +84,7 @@ function createStubProcessManager(): ProcessManager {
 }
 
 export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance> {
-	const { modulesDir, modules, dashboardDir, logger = true } = opts;
+	const { modulesDir, modules, dashboardDir, logger = true, version = "0.0.0" } = opts;
 
 	const fastify = Fastify({ logger });
 
@@ -172,6 +173,33 @@ export async function createApp(opts: AppOptions = {}): Promise<FastifyInstance>
 			uptime: process.uptime(),
 			deviceCount: fastify.deviceManager.devices.length,
 		};
+	});
+
+	fastify.get("/api/update-check", async () => {
+		try {
+			const controller = new AbortController();
+			const timeout = setTimeout(() => controller.abort(), 3000);
+			const res = await fetch("https://registry.npmjs.org/simvyn/latest", {
+				signal: controller.signal,
+			});
+			clearTimeout(timeout);
+			if (!res.ok) return { current: version, latest: null, needsUpdate: false };
+			const data = (await res.json()) as { version: string };
+			const latest = data.version;
+			const l = latest.split(".").map(Number);
+			const c = version.split(".").map(Number);
+			let needsUpdate = false;
+			for (let i = 0; i < 3; i++) {
+				if ((l[i] ?? 0) > (c[i] ?? 0)) {
+					needsUpdate = true;
+					break;
+				}
+				if ((l[i] ?? 0) < (c[i] ?? 0)) break;
+			}
+			return { current: version, latest, needsUpdate };
+		} catch {
+			return { current: version, latest: null, needsUpdate: false };
+		}
 	});
 
 	// Tool Settings API

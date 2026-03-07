@@ -1,11 +1,19 @@
 import type { Device } from "@simvyn/types";
 import { useCallback, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes, useNavigate, useParams } from "react-router";
+import {
+	BrowserRouter,
+	Navigate,
+	Route,
+	Routes,
+	useNavigate,
+	useParams,
+} from "react-router";
 import { Toaster } from "sonner";
 import CommandPalette from "./components/CommandPalette";
 import ModuleShell from "./components/ModuleShell";
 import Sidebar from "./components/Sidebar";
 import TopBar from "./components/TopBar";
+import UpdateBanner from "./components/UpdateBanner";
 import { useWsListener, WsProvider } from "./hooks/use-ws";
 import { useDeviceStore } from "./stores/device-store";
 import { useModuleStore } from "./stores/module-store";
@@ -84,6 +92,7 @@ function AppContent() {
 			<RouterSync />
 			<div className="flex h-screen flex-col bg-bg-base">
 				<TopBar />
+				<UpdateBanner />
 				<div className="flex flex-1 overflow-hidden">
 					<div className="flex items-center">
 						<Sidebar />
@@ -115,8 +124,10 @@ export default function App() {
 							borderRadius: "12px",
 							color: "#e8e8ed",
 							fontSize: "13px",
-							fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif",
-							boxShadow: "0 4px 24px rgba(0, 0, 0, 0.3), inset 0 0.5px 0 rgba(255, 255, 255, 0.06)",
+							fontFamily:
+								"-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, sans-serif",
+							boxShadow:
+								"0 4px 24px rgba(0, 0, 0, 0.3), inset 0 0.5px 0 rgba(255, 255, 255, 0.06)",
 						},
 					}}
 					theme="dark"

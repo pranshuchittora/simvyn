@@ -1,4 +1,5 @@
 import type { LogLevel } from "@simvyn/types";
+import { Pause, Play } from "lucide-react";
 import { useCallback, useMemo, useRef } from "react";
 import { useWs } from "../../hooks/use-ws";
 import { filterEntries, useLogStore } from "./stores/log-store";
@@ -77,10 +78,15 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 	const setSearchPattern = useLogStore((s) => s.setSearchPattern);
 	const setProcessFilter = useLogStore((s) => s.setProcessFilter);
 	const clear = useLogStore((s) => s.clear);
+	const isPaused = useLogStore((s) => s.isPaused);
+	const pause = useLogStore((s) => s.pause);
+	const resume = useLogStore((s) => s.resume);
 	const entries = useLogStore((s) => s.entries);
 	const totalCount = entries.length;
 	const filteredCount = useMemo(
-		() => filterEntries(entries, enabledLevels, processFilter, searchPattern).length,
+		() =>
+			filterEntries(entries, enabledLevels, processFilter, searchPattern)
+				.length,
 		[entries, enabledLevels, processFilter, searchPattern],
 	);
 	const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
@@ -95,7 +101,12 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 
 	const handleExport = useCallback((format: "json" | "text") => {
 		const s = useLogStore.getState();
-		const filtered = filterEntries(s.entries, s.enabledLevels, s.processFilter, s.searchPattern);
+		const filtered = filterEntries(
+			s.entries,
+			s.enabledLevels,
+			s.processFilter,
+			s.searchPattern,
+		);
 		let content: string;
 		let mime: string;
 		let ext: string;
@@ -173,13 +184,40 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 
 			{/* Export */}
 			<div className="flex items-center gap-0.5">
-				<button type="button" onClick={() => handleExport("json")} className="glass-button">
+				<button
+					type="button"
+					onClick={() => handleExport("json")}
+					className="glass-button"
+				>
 					JSON
 				</button>
-				<button type="button" onClick={() => handleExport("text")} className="glass-button">
+				<button
+					type="button"
+					onClick={() => handleExport("text")}
+					className="glass-button"
+				>
 					TXT
 				</button>
 			</div>
+
+			{/* Pause/Resume */}
+			<button
+				type="button"
+				onClick={isPaused ? resume : pause}
+				className="glass-button"
+				style={
+					isPaused
+						? {
+								background: "rgba(234,179,8,0.2)",
+								color: "#fde047",
+								borderColor: "rgba(234,179,8,0.3)",
+							}
+						: undefined
+				}
+				title={isPaused ? "Resume log stream" : "Pause log stream"}
+			>
+				{isPaused ? <Play size={14} /> : <Pause size={14} />}
+			</button>
 
 			{/* Clear buttons */}
 			<button
@@ -200,10 +238,14 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 			</button>
 
 			{/* Entry count */}
-			<span className="text-xs text-text-muted ml-auto">
-				{filteredCount === totalCount
-					? `${totalCount} entries`
-					: `${filteredCount} / ${totalCount} entries`}
+			<span
+				className={`text-xs ml-auto ${isPaused ? "text-yellow-400" : "text-text-muted"}`}
+			>
+				{isPaused
+					? "Paused"
+					: filteredCount === totalCount
+						? `${totalCount} entries`
+						: `${filteredCount} / ${totalCount} entries`}
 			</span>
 		</div>
 	);

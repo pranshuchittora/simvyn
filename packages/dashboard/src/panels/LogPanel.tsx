@@ -17,6 +17,7 @@ function LogPanel() {
 	const clear = useLogStore((s) => s.clear);
 	const reset = useLogStore((s) => s.reset);
 	const setStreaming = useLogStore((s) => s.setStreaming);
+	const isPaused = useLogStore((s) => s.isPaused);
 	const hasMore = useLogStore((s) => s.hasMore);
 	const isLoadingHistory = useLogStore((s) => s.isLoadingHistory);
 
@@ -51,6 +52,7 @@ function LogPanel() {
 				payload: { deviceId: prevDeviceRef.current },
 			});
 			clear();
+			useLogStore.getState().resume();
 		}
 
 		if (selectedDeviceId) {
@@ -78,6 +80,21 @@ function LogPanel() {
 			}
 		};
 	}, [selectedDeviceId, send, clear]);
+
+	// pause/resume: stop or restart the WS stream
+	const wasPausedRef = useRef(false);
+	useEffect(() => {
+		const deviceId = selectedDeviceIdRef.current;
+		if (!deviceId) return;
+		if (isPaused) {
+			send({ channel: "logs", type: "stop-stream", payload: { deviceId } });
+		} else if (wasPausedRef.current) {
+			clear();
+			send({ channel: "logs", type: "start-stream", payload: { deviceId } });
+			send({ channel: "logs", type: "get-history", payload: { deviceId, limit: 500 } });
+		}
+		wasPausedRef.current = isPaused;
+	}, [isPaused, send, clear]);
 
 	const loadMoreHistory = useCallback(() => {
 		if (!selectedDeviceId || !hasMore || isLoadingHistory) return;
@@ -123,7 +140,9 @@ function LogPanel() {
 	const handleStreamStarted = useCallback(
 		(payload: unknown) => {
 			const data = payload as { deviceId: string };
-			setStreaming(data.deviceId);
+			if (!useLogStore.getState().isPaused) {
+				setStreaming(data.deviceId);
+			}
 		},
 		[setStreaming],
 	);

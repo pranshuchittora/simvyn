@@ -22,6 +22,7 @@ async function runStart(
 		open: cliOpts.open,
 		dashboardDir: ctx.dashboardDir,
 		modules: ctx.modules,
+		version: ctx.version,
 	});
 
 	// Non-blocking update check after server is ready
