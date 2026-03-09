@@ -677,7 +677,7 @@ Plans:
   1. User can pause logs, click "Clear", and logs remain paused — no new entries stream in
   2. User can pause logs, click "Purge Device", and logs remain paused after device clears
   3. Resuming after a clear still works correctly — fresh logs are fetched
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 30.1-01-PLAN.md — Fix clear action to preserve isPaused state

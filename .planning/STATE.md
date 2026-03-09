@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 28.1 — Favourite Devices
-**Plan:** 28.1-02 (complete)
+**Phase:** 30.1 — Log Clear Preserves Pause State
+**Plan:** 30.1-01 (complete)
 **Status:** Phase complete
-**Progress:** [█████████░] 94%
+**Progress:** [█████████░] 91%
 
 ## Phase Overview
 
@@ -59,6 +59,7 @@
 | **v1.7 — Real Device Support** | |
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
 | 28.1 Favourite Devices | ✅ Complete (2/2 plans) |
+| 30.1 Log Clear Preserves Pause State | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -155,6 +156,7 @@
 | Phase 28 P04 | 4min | 2 tasks | 4 files |
 | Phase 28.1 P01 | 1min | 2 tasks | 4 files |
 | Phase 28.1 P02 | 2min | 2 tasks | 2 files |
+| Phase 30.1 P01 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -364,6 +366,7 @@
 - Phase 30 added: Log Controls, Release Automation & Update Notifications — log pause/resume with server-side search, GHA workflow dispatch for releases, commit-based release notes, dashboard + CLI update banner
 - Phase 30.1 inserted after Phase 30: Log Clear Preserves Pause State (URGENT) — pause/play should remain in same state even when logs are cleared (GitHub #5)
 - Phase 30.2 inserted after Phase 30: Log Search (URGENT) — search for specific logs and see surrounding context, distinct from filter which hides non-matching entries (GitHub #4)
+- Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -378,10 +381,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-05T09:48:33.419Z
-**Stopped at:** Completed 28.1-02-PLAN.md
-**Context for next session:** Phase 28.1 complete — favourite devices backend + UI fully integrated. Star icons, context menu, Favourites group in DeviceSelector.
+**Last session:** 2026-03-09T22:41:00Z
+**Stopped at:** Completed 30.1-01-PLAN.md
+**Context for next session:** Phase 30.1 complete — log store clear() action no longer resets isPaused. Fixes GitHub issue #5.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-04 — Phase 24 complete, advancing to Phase 25*
+*Last updated: 2026-03-09 — Phase 30.1 complete, log clear preserves pause state*
