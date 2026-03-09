@@ -659,6 +659,29 @@ Plans:
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
 
+### Phase 30.2: Log Search (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Depends on:** Phase 30
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 30.2 to break down)
+
+### Phase 30.1: Log Clear Preserves Pause State (INSERTED)
+
+**Goal:** Clicking "Clear" or "Purge Device" in the log toolbar no longer resets the pause/resume state — if logs were paused, they stay paused after clearing
+**Depends on:** Phase 30
+**Requirements:** LOGFIX-01
+**Success Criteria** (what must be TRUE):
+  1. User can pause logs, click "Clear", and logs remain paused — no new entries stream in
+  2. User can pause logs, click "Purge Device", and logs remain paused after device clears
+  3. Resuming after a clear still works correctly — fresh logs are fetched
+**Plans:** 1 plan
+
+Plans:
+- [ ] 30.1-01-PLAN.md — Fix clear action to preserve isPaused state
+
 ### Phase 28.1: Favourite Devices (INSERTED)
 
 **Goal:** Users can star devices as favourites so they appear at the top of the DeviceSelector dropdown, persisted across sessions, manageable from dashboard and CLI

@@ -362,6 +362,8 @@
 - Favourites section always visible in DeviceSelector with empty hint text — aids discoverability
 - Phase 29 added: Sidebar Expand-on-Hover — animated dock expansion with labels on hover, remove tooltip popovers
 - Phase 30 added: Log Controls, Release Automation & Update Notifications — log pause/resume with server-side search, GHA workflow dispatch for releases, commit-based release notes, dashboard + CLI update banner
+- Phase 30.1 inserted after Phase 30: Log Clear Preserves Pause State (URGENT) — pause/play should remain in same state even when logs are cleared (GitHub #5)
+- Phase 30.2 inserted after Phase 30: Log Search (URGENT) — search for specific logs and see surrounding context, distinct from filter which hides non-matching entries (GitHub #4)
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
