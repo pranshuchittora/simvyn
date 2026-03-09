@@ -1,8 +1,9 @@
 import type { LogLevel } from "@simvyn/types";
-import { Pause, Play } from "lucide-react";
-import { useCallback, useMemo, useRef } from "react";
+import { Ellipsis, Pause, Play } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWs } from "../../hooks/use-ws";
 import { filterEntries, useLogStore } from "./stores/log-store";
+import { useSearchStore } from "./stores/search-store";
 
 const LEVELS: {
 	key: LogLevel;
@@ -88,6 +89,19 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 		[entries, enabledLevels, processFilter, searchPattern],
 	);
 	const searchTimer = useRef<ReturnType<typeof setTimeout>>(null);
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!menuOpen) return;
+		function handleClickOutside(e: MouseEvent) {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setMenuOpen(false);
+			}
+		}
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [menuOpen]);
 
 	const handleSearch = useCallback(
 		(value: string) => {
@@ -230,6 +244,38 @@ export default function LogToolbar({ selectedDeviceId }: LogToolbarProps) {
 						? `${totalCount} entries`
 						: `${filteredCount} / ${totalCount} entries`}
 			</span>
+
+			{/* Three-dot overflow menu */}
+			<div className="relative" ref={menuRef}>
+				<button
+					type="button"
+					onClick={() => setMenuOpen((v) => !v)}
+					className="glass-button px-1.5"
+					title="More actions"
+				>
+					<Ellipsis size={14} />
+				</button>
+				{menuOpen && (
+					<div
+						className="glass-panel absolute right-0 top-full mt-1 py-1 z-50 min-w-[140px]"
+						style={{ borderRadius: 8 }}
+					>
+						<button
+							type="button"
+							className="w-full flex items-center justify-between px-3 py-1.5 text-xs text-text-primary hover:bg-white/[0.06] transition-colors"
+							onClick={() => {
+								useSearchStore.getState().open();
+								setMenuOpen(false);
+							}}
+						>
+							<span>Search</span>
+							<span className="text-text-muted text-[10px]">
+								{navigator.platform.includes("Mac") ? "⌘F" : "Ctrl+F"}
+							</span>
+						</button>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }
