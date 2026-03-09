@@ -79,7 +79,6 @@ export const useLogStore = create<LogStore>((set) => ({
 			firstItemIndex: INITIAL_INDEX,
 			cursor: null,
 			hasMore: true,
-			isPaused: false,
 		}),
 
 	reset: () => set({ ...initialState }),
