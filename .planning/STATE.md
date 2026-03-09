@@ -8,10 +8,10 @@
 
 ## Current Position
 
-**Phase:** 30.1 — Log Clear Preserves Pause State
-**Plan:** 30.1-01 (complete)
+**Phase:** 30.2 — Log Search
+**Plan:** 30.2-01 (complete)
 **Status:** Ready to plan
-**Progress:** [█████████░] 91%
+**Progress:** [█████████░] 92%
 
 ## Phase Overview
 
@@ -60,6 +60,7 @@
 | 28. Real Device Support | ✅ Complete (4/4 plans) |
 | 28.1 Favourite Devices | ✅ Complete (2/2 plans) |
 | 30.1 Log Clear Preserves Pause State | ✅ Complete (1/1 plans) |
+| 30.2 Log Search | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -157,6 +158,7 @@
 | Phase 28.1 P01 | 1min | 2 tasks | 4 files |
 | Phase 28.1 P02 | 2min | 2 tasks | 2 files |
 | Phase 30.1 P01 | 1min | 1 tasks | 1 files |
+| Phase 30.2 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -367,6 +369,8 @@
 - Phase 30.1 inserted after Phase 30: Log Clear Preserves Pause State (URGENT) — pause/play should remain in same state even when logs are cleared (GitHub #5)
 - Phase 30.2 inserted after Phase 30: Log Search (URGENT) — search for specific logs and see surrounding context, distinct from filter which hides non-matching entries (GitHub #4)
 - Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
+- Separate search store (useSearchStore) from log-store filter — search highlights in-place while filter hides entries, both coexist independently
+- highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -381,9 +385,9 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-09T23:02:16.435Z
-**Stopped at:** Phase 30.2 context gathered
-**Context for next session:** Phase 30.1 complete — log store clear() action no longer resets isPaused. Fixes GitHub issue #5.
+**Last session:** 2026-03-09T23:53:30Z
+**Stopped at:** Completed 30.2-01-PLAN.md
+**Context for next session:** Phase 30.2 complete — VS Code-style find-in-page search for log viewer with match highlighting, navigation, and three-dot menu. Fixes GitHub issue #4.
 
 ---
 *State initialized: 2026-02-26*

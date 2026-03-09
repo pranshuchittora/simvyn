@@ -670,7 +670,7 @@ Plans:
   3. User can navigate between matches with Enter/Shift+Enter and arrow buttons, with a "3 of 47" counter
   4. Search and filter work independently — filter hides entries, search highlights within filtered results
   5. Three-dot menu in the log toolbar provides a "Search" option for discoverability
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 30.2-01-PLAN.md — Search store, overlay, text highlighting, match navigation, three-dot menu
