@@ -661,12 +661,19 @@ Plans:
 
 ### Phase 30.2: Log Search (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
+**Goal:** VS Code-style find-in-page search for log entries — highlight matches in-place, navigate between them, show surrounding context. Distinct from filter which hides non-matching entries.
 **Depends on:** Phase 30
-**Plans:** 0 plans
+**Requirements:** LOGSRCH-01, LOGSRCH-02, LOGSRCH-03, LOGSRCH-04, LOGSRCH-05
+**Success Criteria** (what must be TRUE):
+  1. User can press Cmd+F in the Logs panel to open a floating search overlay
+  2. Search highlights matching text in log entries without hiding non-matching entries
+  3. User can navigate between matches with Enter/Shift+Enter and arrow buttons, with a "3 of 47" counter
+  4. Search and filter work independently — filter hides entries, search highlights within filtered results
+  5. Three-dot menu in the log toolbar provides a "Search" option for discoverability
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 30.2 to break down)
+- [ ] 30.2-01-PLAN.md — Search store, overlay, text highlighting, match navigation, three-dot menu
 
 ### Phase 30.1: Log Clear Preserves Pause State (INSERTED)
 
