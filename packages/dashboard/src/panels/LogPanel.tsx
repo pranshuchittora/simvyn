@@ -5,7 +5,9 @@ import { useDeviceStore } from "../stores/device-store";
 import { registerPanel } from "../stores/panel-registry";
 import LogList from "./logs/LogList";
 import LogToolbar from "./logs/LogToolbar";
+import SearchOverlay from "./logs/SearchOverlay";
 import { useLogStore } from "./logs/stores/log-store";
+import { useSearchStore } from "./logs/stores/search-store";
 
 function LogPanel() {
 	const { send } = useWs();
@@ -95,6 +97,18 @@ function LogPanel() {
 		}
 		wasPausedRef.current = isPaused;
 	}, [isPaused, send, clear]);
+
+	// Cmd+F to open search overlay
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if ((e.metaKey || e.ctrlKey) && e.key === "f") {
+				e.preventDefault();
+				useSearchStore.getState().open();
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, []);
 
 	const loadMoreHistory = useCallback(() => {
 		if (!selectedDeviceId || !hasMore || isLoadingHistory) return;
@@ -191,7 +205,8 @@ function LogPanel() {
 			{selectedDeviceId && (
 				<>
 					<LogToolbar selectedDeviceId={selectedDeviceId} />
-					<div className="flex-1 min-h-0">
+					<div className="flex-1 min-h-0 relative">
+						<SearchOverlay />
 						<LogList onLoadMore={loadMoreHistory} />
 					</div>
 				</>
