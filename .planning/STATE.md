@@ -381,8 +381,8 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-09T22:41:00Z
-**Stopped at:** Completed 30.1-01-PLAN.md
+**Last session:** 2026-03-09T23:02:16.435Z
+**Stopped at:** Phase 30.2 context gathered
 **Context for next session:** Phase 30.1 complete — log store clear() action no longer resets isPaused. Fixes GitHub issue #5.
 
 ---
