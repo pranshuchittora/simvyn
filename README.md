@@ -50,9 +50,9 @@ npx simvyn
 
 ## Features
 
-- **Device Management** — Discover, boot, shutdown, erase, create, and clone simulators, emulators, and physical devices
+- **Device Management** — Discover, boot, shutdown, erase, create, and clone simulators, emulators, and physical devices with favourite pinning
 - **App Management** — Install, launch, terminate, uninstall apps via drag-and-drop or CLI
-- **Log Viewer** — Real-time streaming with level filtering, regex search, pagination, and export
+- **Log Viewer** — Real-time streaming with level filtering, find-in-page search (Cmd+F), regex search, pagination, and export
 - **Location Simulation** — Set GPS coordinates, play GPX/KML routes with speed control, save favorites
 - **Device Settings** — Dark mode, locale, permissions, status bar overrides, accessibility presets
 - **Screenshots and Recording** — Capture screenshots and record screen video with history
@@ -81,6 +81,7 @@ Discover all connected iOS Simulators, Android Emulators, and USB-connected phys
 - Boot, shutdown, and erase devices with one click or CLI command
 - Create new iOS simulators with device type and runtime selection
 - Clone and rename existing simulators
+- Pin favourite devices to the top of the device selector
 - Real-time device state updates via WebSocket
 
 ### App Management
@@ -97,15 +98,17 @@ Install, launch, terminate, and uninstall apps on any connected device. Drag and
 
 ### Log Viewer
 
-Stream device logs in real time with powerful filtering. Filter by log level, search with regex patterns, and filter by process name. Export filtered logs for sharing or archival. Paginated history lets you scroll back through thousands of entries without performance issues.
+Stream device logs in real time with powerful filtering. Filter by log level, search with regex patterns, and filter by process name. Use find-in-page search (Cmd+F) to highlight specific entries without hiding surrounding context. Export filtered logs for sharing or archival. Paginated history lets you scroll back through thousands of entries without performance issues.
 
 <p align="center"><img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/docs/assets/log-viewer.png" alt="Log Viewer" width="700" /></p>
 
 - Real-time log streaming via WebSocket
 - Filter by level: debug, info, warning, error, fatal
+- Find-in-page search (Cmd+F) with match highlighting, navigation, and counter
 - Regex search and process name filtering
 - Paginated history with virtual scrolling
 - Export filtered logs to file
+- Pause/resume log streaming while preserving state across clears
 
 ### Location
 
