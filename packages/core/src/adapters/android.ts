@@ -46,12 +46,27 @@ async function getAdbDevices(): Promise<AdbDevice[]> {
 }
 
 async function getEmulatorAvdName(serial: string): Promise<string> {
+	// prefer getprop — adb emu console bridge returns empty on some adb versions (e.g. 35.x)
+	try {
+		const { stdout } = await verboseExec("adb", [
+			"-s",
+			serial,
+			"shell",
+			"getprop",
+			"ro.boot.qemu.avd_name",
+		]);
+		const name = stdout.trim();
+		if (name) return name;
+	} catch {}
+
+	// fallback to emu console for older emulators that may not set the prop
 	try {
 		const { stdout } = await verboseExec("adb", ["-s", serial, "emu", "avd", "name"]);
-		return stdout.trim().split("\n")[0]?.trim() ?? serial;
-	} catch {
-		return serial;
-	}
+		const name = stdout.trim().split(/\r?\n/)[0]?.trim();
+		if (name && name !== "OK" && !name.startsWith("KO")) return name;
+	} catch {}
+
+	return serial;
 }
 
 async function getDeviceProp(serial: string, prop: string): Promise<string> {

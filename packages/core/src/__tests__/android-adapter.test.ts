@@ -91,15 +91,11 @@ describe("Android Adapter", () => {
 	});
 
 	describe("listDevices", () => {
-		it("returns booted emulators with resolved AVD names", async () => {
-			// getAvdList: emulator -list-avds
-			pushExecResponse("Pixel_7_API_34\nPixel_8_API_35\n");
-			// getAdbDevices: adb devices
-			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
-			// getEmulatorAvdName: adb -s emulator-5554 emu avd name
-			pushExecResponse("Pixel_7_API_34\nOK");
-			// getDeviceProp for version: adb -s emulator-5554 shell getprop ro.build.version.release
-			pushExecResponse("14");
+		it("returns booted emulators with resolved AVD names via getprop", async () => {
+			pushExecResponse("Pixel_7_API_34\nPixel_8_API_35\n"); // emulator -list-avds
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n"); // adb devices
+			pushExecResponse("Pixel_7_API_34"); // getprop ro.boot.qemu.avd_name
+			pushExecResponse("14"); // getprop ro.build.version.release
 
 			const devices = await adapter.listDevices();
 			assert.equal(devices.length, 2); // 1 booted + 1 shutdown AVD
@@ -117,10 +113,8 @@ describe("Android Adapter", () => {
 		it("returns physical USB devices", async () => {
 			pushExecResponse(""); // no AVDs
 			pushExecResponse("List of devices attached\nR5CT900ABCD\tdevice\n");
-			// getDeviceProp model
-			pushExecResponse("Samsung Galaxy S24");
-			// getDeviceProp version
-			pushExecResponse("15");
+			pushExecResponse("Samsung Galaxy S24"); // getprop model
+			pushExecResponse("15"); // getprop version
 
 			const devices = await adapter.listDevices();
 			assert.equal(devices.length, 1);
@@ -133,12 +127,63 @@ describe("Android Adapter", () => {
 		it("deduplicates booted AVDs from avd list", async () => {
 			pushExecResponse("Pixel_7\n"); // AVD list
 			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
-			pushExecResponse("Pixel_7\nOK"); // emu avd name
+			pushExecResponse("Pixel_7"); // getprop ro.boot.qemu.avd_name
 			pushExecResponse("14"); // version
 
 			const devices = await adapter.listDevices();
-			// Pixel_7 is booted so should not appear as shutdown avd
 			assert.equal(devices.length, 1);
+			assert.equal(devices[0].state, "booted");
+		});
+
+		it("falls back to emu console when getprop is empty", async () => {
+			pushExecResponse("Pixel_7\n");
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
+			pushExecResponse(""); // getprop empty
+			pushExecResponse("Pixel_7\nOK"); // emu avd name fallback
+			pushExecResponse("14");
+
+			const devices = await adapter.listDevices();
+			assert.equal(devices.length, 1);
+			assert.equal(devices[0].name, "Pixel_7");
+			assert.equal(devices[0].state, "booted");
+		});
+
+		it("falls back to serial when both getprop and emu return empty", async () => {
+			pushExecResponse("Pixel_7\n");
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
+			pushExecResponse(""); // getprop empty
+			pushExecResponse(""); // emu avd name empty
+			pushExecResponse("14");
+
+			const devices = await adapter.listDevices();
+			const booted = devices.find((d) => d.state === "booted")!;
+			assert.equal(booted.name, "emulator-5554");
+			const shutdown = devices.find((d) => d.state === "shutdown")!;
+			assert.equal(shutdown.name, "Pixel_7");
+		});
+
+		it("falls back to serial when emu avd name returns only OK", async () => {
+			pushExecResponse("Pixel_7\n");
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
+			pushExecResponse(""); // getprop empty
+			pushExecResponse("OK"); // emu console artifact only
+			pushExecResponse("14");
+
+			const devices = await adapter.listDevices();
+			const booted = devices.find((d) => d.state === "booted")!;
+			assert.equal(booted.name, "emulator-5554");
+		});
+
+		it("handles \\r\\n line endings from emulator console", async () => {
+			pushExecResponse("Pixel_7\n");
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
+			pushExecResponse(""); // getprop empty
+			pushExecResponse("Pixel_7\r\nOK\r\n"); // emu fallback with \r\n
+			pushExecResponse("14");
+
+			const devices = await adapter.listDevices();
+			assert.equal(devices.length, 1);
+			assert.equal(devices[0].name, "Pixel_7");
 			assert.equal(devices[0].state, "booted");
 		});
 
@@ -159,10 +204,8 @@ describe("Android Adapter", () => {
 
 		it("spawns emulator @name with detached/stdio:ignore", async () => {
 			// Mock the polling — first poll finds the avd
-			// getAdbDevices returns the emulator
-			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n");
-			// getEmulatorAvdName matches
-			pushExecResponse("Pixel_7\nOK");
+			pushExecResponse("List of devices attached\nemulator-5554\tdevice\n"); // adb devices
+			pushExecResponse("Pixel_7"); // getprop ro.boot.qemu.avd_name
 
 			await adapter.boot("avd:Pixel_7");
 
