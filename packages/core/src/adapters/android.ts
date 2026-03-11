@@ -211,27 +211,53 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		async listApps(deviceId: string): Promise<AppInfo[]> {
 			if (deviceId.startsWith("avd:")) throw new Error("Device must be booted for app operations");
-			const { stdout } = await verboseExec("adb", [
-				"-s",
-				deviceId,
-				"shell",
-				"pm",
-				"list",
-				"packages",
-				"-f",
-				"-3",
+			const [listResult, dumpResult] = await Promise.all([
+				verboseExec("adb", ["-s", deviceId, "shell", "pm", "list", "packages", "-f"]),
+				verboseExec("adb", [
+					"-s",
+					deviceId,
+					"shell",
+					"dumpsys package | grep -E 'Package \\[|versionName=|nonLocalizedLabel='",
+				]).catch(() => ({ stdout: "" })),
 			]);
+
+			const meta = new Map<string, { version?: string; label?: string }>();
+			let currentPkg = "";
+			for (const line of dumpResult.stdout.split("\n")) {
+				const pkgMatch = line.match(/Package \[(.+?)\]/);
+				if (pkgMatch) {
+					currentPkg = pkgMatch[1];
+					if (!meta.has(currentPkg)) meta.set(currentPkg, {});
+					continue;
+				}
+				if (!currentPkg || !meta.has(currentPkg)) continue;
+				const entry = meta.get(currentPkg)!;
+				if (!entry.version) {
+					const verMatch = line.match(/versionName=(.+)/);
+					if (verMatch) entry.version = verMatch[1].trim();
+				}
+				if (!entry.label) {
+					const labelMatch = line.match(/nonLocalizedLabel=(.+)/);
+					if (labelMatch && labelMatch[1].trim() !== "null") {
+						entry.label = labelMatch[1].trim();
+					}
+				}
+			}
+
 			const apps: AppInfo[] = [];
-			for (const line of stdout.trim().split("\n")) {
+			for (const line of listResult.stdout.trim().split("\n")) {
 				if (!line) continue;
 				const match = line.match(/^package:(.+)=([^\s=]+)$/);
 				if (!match) continue;
+				const appPath = match[1];
+				const bundleId = match[2];
+				const info = meta.get(bundleId);
 				apps.push({
-					bundleId: match[2],
-					name: match[2],
-					version: "unknown",
-					type: "user",
-					appPath: match[1],
+					bundleId,
+					name: info?.label || bundleId,
+					version: info?.version || "unknown",
+					type: appPath.startsWith("/data/") ? "user" : "system",
+					appPath,
 				});
 			}
 			return apps;

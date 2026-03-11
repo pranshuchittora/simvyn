@@ -268,16 +268,36 @@ describe("Android Adapter", () => {
 	});
 
 	describe("listApps", () => {
-		it("parses pm list packages output", async () => {
+		it("parses packages with names and versions from dumpsys", async () => {
 			pushExecResponse(
 				"package:/data/app/com.example.app-abc==/base.apk=com.example.app\n" +
+					"package:/system/app/Maps/Maps.apk=com.google.android.apps.maps\n" +
 					"package:/data/app/org.test-xyz==/base.apk=org.test\n",
 			);
+			pushExecResponse(
+				"  Package [com.example.app] (abc123):\n" +
+					"    versionName=1.2.3\n" +
+					"    nonLocalizedLabel=Example\n" +
+					"  Package [com.google.android.apps.maps] (def456):\n" +
+					"    versionName=24.16.2\n" +
+					"    nonLocalizedLabel=null\n" +
+					"  Package [org.test] (ghi789):\n" +
+					"    versionName=0.5.0\n" +
+					"    nonLocalizedLabel=Test App\n",
+			);
 			const apps = await adapter.listApps!("emulator-5554");
-			assert.equal(apps.length, 2);
+			assert.equal(apps.length, 3);
 			assert.equal(apps[0].bundleId, "com.example.app");
-			assert.equal(apps[0].appPath, "/data/app/com.example.app-abc==/base.apk");
-			assert.equal(apps[1].bundleId, "org.test");
+			assert.equal(apps[0].name, "Example");
+			assert.equal(apps[0].version, "1.2.3");
+			assert.equal(apps[0].type, "user");
+			assert.equal(apps[1].bundleId, "com.google.android.apps.maps");
+			assert.equal(apps[1].name, "com.google.android.apps.maps");
+			assert.equal(apps[1].version, "24.16.2");
+			assert.equal(apps[1].type, "system");
+			assert.equal(apps[2].name, "Test App");
+			assert.equal(apps[2].version, "0.5.0");
+			assert.equal(apps[2].type, "user");
 			assert.deepEqual(calls[0].args, [
 				"-s",
 				"emulator-5554",
@@ -286,8 +306,16 @@ describe("Android Adapter", () => {
 				"list",
 				"packages",
 				"-f",
-				"-3",
 			]);
+		});
+
+		it("falls back gracefully when dumpsys fails", async () => {
+			pushExecResponse("package:/data/app/com.example.app-abc==/base.apk=com.example.app\n");
+			pushExecError("dumpsys failed");
+			const apps = await adapter.listApps!("emulator-5554");
+			assert.equal(apps.length, 1);
+			assert.equal(apps[0].name, "com.example.app");
+			assert.equal(apps[0].version, "unknown");
 		});
 
 		it("throws for avd: prefix", async () => {

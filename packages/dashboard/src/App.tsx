@@ -87,7 +87,7 @@ function AppContent() {
 				<TopBar />
 				<UpdateBanner />
 				<div className="flex flex-1 overflow-hidden">
-					<div className="flex items-center">
+					<div className="relative flex-shrink-0 w-[76px]">
 						<Sidebar />
 					</div>
 					<ModuleShell />

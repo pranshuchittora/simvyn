@@ -158,8 +158,14 @@ body {
 
 /* Dock sidebar — hover zone wraps the pill so the left margin is part of the target */
 .dock-sidebar-hitarea {
-	padding: 12px 0 12px 12px;
-	align-self: center;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	padding-left: 12px;
+	z-index: 20;
 }
 
 /* Dock sidebar — floating pill (macOS Liquid Glass dock) */
@@ -173,9 +179,9 @@ body {
 	gap: 2px;
 	/* width driven by framer-motion */
 	border-radius: 16px;
-	backdrop-filter: blur(24px) saturate(1.5);
-	-webkit-backdrop-filter: blur(24px) saturate(1.5);
-	background: rgba(40, 40, 55, 0.45);
+	backdrop-filter: blur(40px) saturate(1.4);
+	-webkit-backdrop-filter: blur(40px) saturate(1.4);
+	background: rgba(30, 30, 45, 0.85);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	box-shadow:
 		0 8px 32px rgba(0, 0, 0, 0.3),

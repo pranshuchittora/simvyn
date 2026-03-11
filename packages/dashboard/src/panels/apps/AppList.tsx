@@ -1,3 +1,4 @@
+import { useState } from "react";
 import AppActions from "./AppActions";
 import { type AppInfo, useAppStore } from "./stores/app-store";
 
@@ -12,8 +13,20 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 	const error = useAppStore((s) => s.error);
 	const filter = useAppStore((s) => s.filter);
 	const setFilter = useAppStore((s) => s.setFilter);
+	const [search, setSearch] = useState("");
 
-	const filtered = filter === "all" ? apps : apps.filter((a: AppInfo) => a.type === filter);
+	const searchLower = search.toLowerCase();
+	const filtered = apps.filter((a: AppInfo) => {
+		if (filter !== "all" && a.type !== filter) return false;
+		if (searchLower) {
+			return (
+				a.name.toLowerCase().includes(searchLower) ||
+				a.bundleId.toLowerCase().includes(searchLower) ||
+				a.version.toLowerCase().includes(searchLower)
+			);
+		}
+		return true;
+	});
 
 	const filters: Array<{ label: string; value: "all" | "user" | "system" }> = [
 		{ label: "All", value: "all" },
@@ -35,7 +48,14 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 						{f.label}
 					</button>
 				))}
-				<span className="text-xs text-text-muted ml-auto">
+				<input
+					type="text"
+					value={search}
+					onChange={(e) => setSearch(e.target.value)}
+					placeholder="Search apps..."
+					className="glass-input text-xs ml-auto w-48"
+				/>
+				<span className="text-xs text-text-muted">
 					{filtered.length} app{filtered.length !== 1 ? "s" : ""}
 				</span>
 			</div>
@@ -57,12 +77,14 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 
 			{/* Empty */}
 			{!loading && !error && filtered.length === 0 && (
-				<div className="glass-empty-state">No apps found</div>
+				<div className="glass-empty-state">
+					{search ? "No apps match your search" : "No apps found"}
+				</div>
 			)}
 
 			{/* App table */}
 			{!loading && filtered.length > 0 && (
-				<div className="glass-panel overflow-hidden">
+				<div className="glass-panel overflow-x-auto">
 					<table className="glass-table">
 						<thead>
 							<tr>
@@ -76,11 +98,18 @@ export default function AppList({ deviceId, onRefresh }: AppListProps) {
 						<tbody>
 							{filtered.map((app: AppInfo) => (
 								<tr key={app.bundleId}>
-									<td className="text-text-primary truncate max-w-[180px]">{app.name}</td>
-									<td className="text-text-secondary truncate max-w-[220px] font-mono text-xs">
+									<td className="text-text-primary truncate max-w-[180px]" title={app.name}>
+										{app.name}
+									</td>
+									<td
+										className="text-text-secondary truncate max-w-[220px] font-mono text-xs"
+										title={app.bundleId}
+									>
 										{app.bundleId}
 									</td>
-									<td className="text-text-secondary">{app.version}</td>
+									<td className="text-text-secondary" title={app.version}>
+										{app.version}
+									</td>
 									<td>
 										<span
 											className="glass-badge"

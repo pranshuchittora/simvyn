@@ -58,16 +58,14 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 			>
 				{loading === "uninstall" ? "..." : "Uninstall"}
 			</button>
-			{app.type === "user" && (
-				<button
-					type="button"
-					onClick={() => doAction("clear-data", "clear-data")}
-					disabled={loading !== null}
-					className="glass-button-destructive"
-				>
-					{loading === "clear-data" ? "..." : "Clear Data"}
-				</button>
-			)}
+			<button
+				type="button"
+				onClick={() => doAction("clear-data", "clear-data")}
+				disabled={loading !== null}
+				className="glass-button-destructive"
+			>
+				{loading === "clear-data" ? "..." : "Clear Data"}
+			</button>
 		</div>
 	);
 }
