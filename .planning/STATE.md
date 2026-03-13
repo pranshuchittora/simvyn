@@ -1,3 +1,18 @@
+---
+gsd_state_version: 1.0
+milestone: v1.1
+milestone_name: — Dashboard UX Polish
+status: completed
+stopped_at: Completed 30.3-01-PLAN.md
+last_updated: "2026-03-13T17:22:25.069Z"
+progress:
+  total_phases: 40
+  completed_phases: 36
+  total_plans: 95
+  completed_plans: 87
+  percent: 92
+---
+
 # Project State: Simvyn
 
 ## Project Reference
@@ -8,9 +23,9 @@
 
 ## Current Position
 
-**Phase:** 30.2 — Log Search
-**Plan:** 30.2-01 (complete)
-**Status:** Milestone complete
+**Phase:** 30.3 — Active Device Filter
+**Plan:** 30.3-01 (complete)
+**Status:** Phase complete
 **Progress:** [█████████░] 92%
 
 ## Phase Overview
@@ -61,6 +76,7 @@
 | 28.1 Favourite Devices | ✅ Complete (2/2 plans) |
 | 30.1 Log Clear Preserves Pause State | ✅ Complete (1/1 plans) |
 | 30.2 Log Search | ✅ Complete (1/1 plans) |
+| 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -159,6 +175,7 @@
 | Phase 28.1 P02 | 2min | 2 tasks | 2 files |
 | Phase 30.1 P01 | 1min | 1 tasks | 1 files |
 | Phase 30.2 P01 | 3min | 2 tasks | 5 files |
+| Phase 30.3 P01 | 1min | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -372,6 +389,8 @@
 - Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
 - Separate search store (useSearchStore) from log-store filter — search highlights in-place while filter hides entries, both coexist independently
 - highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
+- DeviceSelector filters to booted-only by default with showAll toggle — always includes selected devices to prevent label showing "No devices"
+- showAll state resets to false on every dropdown open — consistent UX, no stale toggle state
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -386,10 +405,10 @@
 
 ## Session Continuity
 
-**Last session:** 2026-03-09T23:53:30Z
-**Stopped at:** Completed 30.2-01-PLAN.md
-**Context for next session:** Phase 30.2 complete — VS Code-style find-in-page search for log viewer with match highlighting, navigation, and three-dot menu. Fixes GitHub issue #4.
+**Last session:** 2026-03-13T17:22:25.065Z
+**Stopped at:** Completed 30.3-01-PLAN.md
+**Context for next session:** Phase 30.3 complete — DeviceSelector shows only active/booted devices by default with toggle to reveal inactive devices.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-09 — Phase 30.1 complete, log clear preserves pause state*
+*Last updated: 2026-03-13 — Phase 30.3 complete, active device filter in DeviceSelector*

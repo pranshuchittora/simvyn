@@ -668,7 +668,7 @@ Plans:
   1. DeviceSelector dropdown shows only booted/active devices by default — shutdown simulators and emulators are hidden
   2. A toggle at the bottom of the dropdown reveals all devices including shutdown/inactive ones
   3. Currently selected devices remain visible regardless of filter state
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 30.3-01-PLAN.md — Active device filtering with toggle in DeviceSelector dropdown
