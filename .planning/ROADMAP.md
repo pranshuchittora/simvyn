@@ -659,6 +659,20 @@ Plans:
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
 
+### Phase 30.3: Active Device Filter (INSERTED)
+
+**Goal:** DeviceSelector dropdown shows only active (booted) devices by default with a toggle to reveal shutdown/inactive devices — reduces noise for users with many simulators/emulators
+**Requirements:** ADFILT-01, ADFILT-02, ADFILT-03
+**Depends on:** Phase 30
+**Success Criteria** (what must be TRUE):
+  1. DeviceSelector dropdown shows only booted/active devices by default — shutdown simulators and emulators are hidden
+  2. A toggle at the bottom of the dropdown reveals all devices including shutdown/inactive ones
+  3. Currently selected devices remain visible regardless of filter state
+**Plans:** 1 plan
+
+Plans:
+- [ ] 30.3-01-PLAN.md — Active device filtering with toggle in DeviceSelector dropdown
+
 ### Phase 30.2: Log Search (INSERTED)
 
 **Goal:** VS Code-style find-in-page search for log entries — highlight matches in-place, navigate between them, show surrounding context. Distinct from filter which hides non-matching entries.
