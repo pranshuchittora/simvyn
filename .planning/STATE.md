@@ -368,6 +368,7 @@
 - Phase 30 added: Log Controls, Release Automation & Update Notifications — log pause/resume with server-side search, GHA workflow dispatch for releases, commit-based release notes, dashboard + CLI update banner
 - Phase 30.1 inserted after Phase 30: Log Clear Preserves Pause State (URGENT) — pause/play should remain in same state even when logs are cleared (GitHub #5)
 - Phase 30.2 inserted after Phase 30: Log Search (URGENT) — search for specific logs and see surrounding context, distinct from filter which hides non-matching entries (GitHub #4)
+- Phase 30.3 inserted after Phase 30: Active Device Filter — DeviceSelector shows only active devices by default with toggle for shutdown devices (URGENT)
 - Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
 - Separate search store (useSearchStore) from log-store filter — search highlights in-place while filter hides entries, both coexist independently
 - highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
