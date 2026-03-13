@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { Moon, RotateCw, Smartphone, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { LocaleSearchPicker } from "../components/LocaleSearchPicker";
@@ -30,6 +30,7 @@ interface DevUtilsCaps {
 	batterySimulation: boolean;
 	inputInjection: boolean;
 	bugReport: boolean;
+	orientation: boolean;
 }
 
 interface AllCaps extends SettingsCaps, DevUtilsCaps {}
@@ -48,6 +49,7 @@ const DEFAULT_CAPS: AllCaps = {
 	batterySimulation: false,
 	inputInjection: false,
 	bugReport: false,
+	orientation: false,
 };
 
 function DeviceSettingsPanel() {
@@ -57,6 +59,7 @@ function DeviceSettingsPanel() {
 	);
 	const [caps, setCaps] = useState<AllCaps>(DEFAULT_CAPS);
 	const [activeMode, setActiveMode] = useState<"light" | "dark">("dark");
+	const [activeOrientation, setActiveOrientation] = useState("portrait");
 	const [locale, setLocale] = useState("");
 
 	useEffect(() => {
@@ -84,6 +87,25 @@ function DeviceSettingsPanel() {
 				throw new Error(data.error || "Failed to set appearance");
 			}
 			toast.success(`${mode === "dark" ? "Dark" : "Light"} mode enabled`);
+		} catch (err) {
+			toast.error((err as Error).message);
+		}
+	};
+
+	const setOrientation = async (orientation: string) => {
+		if (!selectedDeviceId) return;
+		setActiveOrientation(orientation);
+		try {
+			const res = await fetch("/api/modules/device-settings/orientation", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ deviceId: selectedDeviceId, orientation }),
+			});
+			if (!res.ok) {
+				const data = await res.json();
+				throw new Error(data.error || "Failed to set orientation");
+			}
+			toast.success(`Orientation set to ${orientation}`);
 		} catch (err) {
 			toast.error((err as Error).message);
 		}
@@ -162,6 +184,49 @@ function DeviceSettingsPanel() {
 								<p className="text-xs text-text-muted mt-1">Not available on physical devices</p>
 							</div>
 						)
+					)}
+
+					{/* Orientation (Android) */}
+					{caps.orientation && (
+						<div className="rounded-xl bg-bg-surface/10 border-b border-border p-4 space-y-3">
+							<h2 className="text-sm font-medium text-text-secondary uppercase tracking-wide">
+								Orientation
+							</h2>
+							<div className="glass-tab-bar">
+								{[
+									{
+										key: "portrait",
+										label: "Portrait",
+										icon: <Smartphone size={13} strokeWidth={1.8} />,
+									},
+									{
+										key: "landscape-left",
+										label: "Landscape L",
+										icon: <Smartphone size={13} strokeWidth={1.8} className="rotate-90" />,
+									},
+									{
+										key: "landscape-right",
+										label: "Landscape R",
+										icon: <Smartphone size={13} strokeWidth={1.8} className="-rotate-90" />,
+									},
+									{
+										key: "portrait-upside-down",
+										label: "Upside Down",
+										icon: <RotateCw size={13} strokeWidth={1.8} />,
+									},
+								].map((o) => (
+									<button
+										key={o.key}
+										type="button"
+										onClick={() => setOrientation(o.key)}
+										className={`glass-tab flex items-center gap-1.5 ${activeOrientation === o.key ? "active" : ""}`}
+									>
+										{o.icon}
+										{o.label}
+									</button>
+								))}
+							</div>
+						</div>
 					)}
 
 					{/* Status Bar (iOS) */}

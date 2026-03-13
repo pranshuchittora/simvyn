@@ -258,6 +258,30 @@ export const actionRegistry: ActionDescriptor[] = [
 		isSupported: (adapter) => !!adapter.setIncreaseContrast,
 	},
 	{
+		id: "set-orientation",
+		label: "Set Orientation",
+		description: "Rotate the device to a specific orientation (Android only)",
+		module: "device-settings",
+		params: [
+			{
+				key: "orientation",
+				label: "Orientation",
+				type: "select",
+				required: true,
+				options: [
+					{ label: "Portrait", value: "portrait" },
+					{ label: "Landscape Left", value: "landscape-left" },
+					{ label: "Landscape Right", value: "landscape-right" },
+					{ label: "Portrait Upside Down", value: "portrait-upside-down" },
+				],
+			},
+		],
+		async execute(adapter, deviceId, params) {
+			await adapter.setOrientation!(deviceId, params.orientation as string);
+		},
+		isSupported: (adapter) => !!adapter.setOrientation,
+	},
+	{
 		id: "boot-device",
 		label: "Boot Device",
 		description: "Start a shutdown device",

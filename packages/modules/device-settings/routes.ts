@@ -228,6 +228,28 @@ export async function settingsRoutes(fastify: FastifyInstance) {
 		},
 	);
 
+	fastify.post<{ Body: { deviceId: string; orientation: string } }>(
+		"/orientation",
+		async (req, reply) => {
+			const { deviceId, orientation } = req.body;
+			const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
+			if (!device) return reply.status(404).send({ error: "Device not found" });
+			if (device.state !== "booted")
+				return reply.status(400).send({ error: "Device must be booted" });
+
+			const adapter = fastify.deviceManager.getAdapter(device.platform);
+			if (!adapter?.setOrientation)
+				return reply.status(400).send({ error: "Orientation not supported for this platform" });
+
+			try {
+				await adapter.setOrientation(device.id, orientation);
+				return { success: true };
+			} catch (err) {
+				return reply.status(500).send({ error: (err as Error).message });
+			}
+		},
+	);
+
 	fastify.get<{ Querystring: { deviceId: string } }>("/capabilities", async (req, reply) => {
 		const { deviceId } = req.query;
 		const device = fastify.deviceManager.devices.find((d: Device) => d.id === deviceId);
@@ -251,6 +273,7 @@ export async function settingsRoutes(fastify: FastifyInstance) {
 			batterySimulation: !!adapter?.setBattery,
 			inputInjection: !!adapter?.inputTap,
 			bugReport: !!adapter?.collectBugReport,
+			orientation: !!adapter?.setOrientation,
 			fileSystem: !isIosPhysical,
 			database: !isIosPhysical,
 		};

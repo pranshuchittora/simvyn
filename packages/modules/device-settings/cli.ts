@@ -213,6 +213,46 @@ export function registerSettingsCli(program: Command) {
 				dm.stop();
 			}
 		});
+	settings
+		.command("orientation <device> <orientation>")
+		.description(
+			"Set device orientation (portrait, landscape-left, landscape-right, portrait-upside-down)",
+		)
+		.action(async (deviceId: string, orientation: string) => {
+			const valid = ["portrait", "landscape-left", "landscape-right", "portrait-upside-down"];
+			if (!valid.includes(orientation)) {
+				console.error(`Invalid orientation: ${orientation}`);
+				console.error(`Valid options: ${valid.join(", ")}`);
+				process.exit(1);
+			}
+
+			const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
+			const adapters = await createAvailableAdapters();
+			const dm = createDeviceManager(adapters);
+			try {
+				const devices = await dm.refresh();
+				const target = devices.find((d) => d.id === deviceId || d.id.startsWith(deviceId));
+				if (!target) {
+					console.error(`Device not found: ${deviceId}`);
+					process.exit(1);
+				}
+				if (target.state !== "booted") {
+					console.error("Device must be booted");
+					process.exit(1);
+				}
+
+				const adapter = dm.getAdapter(target.platform);
+				if (!adapter?.setOrientation) {
+					console.error(`Orientation not supported for ${target.platform}`);
+					process.exit(1);
+				}
+
+				await adapter.setOrientation(target.id, orientation);
+				console.log(`Orientation set to ${orientation} on ${target.name}`);
+			} finally {
+				dm.stop();
+			}
+		});
 }
 
 export function registerA11yCli(program: Command) {

@@ -48,7 +48,8 @@ export type PlatformCapability =
 	| "displayOverride"
 	| "batterySimulation"
 	| "inputInjection"
-	| "bugReport";
+	| "bugReport"
+	| "orientation";
 
 export interface CrashLogEntry {
 	id: string;
@@ -131,6 +132,7 @@ export interface PlatformAdapter {
 	setContentSize?(deviceId: string, size: string): Promise<void>;
 	setIncreaseContrast?(deviceId: string, enabled: boolean): Promise<void>;
 	setTalkBack?(deviceId: string, enabled: boolean): Promise<void>;
+	setOrientation?(deviceId: string, orientation: string): Promise<void>;
 	listDeviceTypes?(): Promise<DeviceType[]>;
 	listRuntimes?(): Promise<SimRuntime[]>;
 	createDevice?(name: string, deviceTypeId: string, runtimeId?: string): Promise<string>;

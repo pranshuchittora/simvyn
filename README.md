@@ -54,7 +54,7 @@ npx simvyn
 - **App Management** — Install, launch, terminate, uninstall apps via drag-and-drop or CLI
 - **Log Viewer** — Real-time streaming with level filtering, find-in-page search (Cmd+F), regex search, pagination, and export
 - **Location Simulation** — Set GPS coordinates, play GPX/KML routes with speed control, save favorites
-- **Device Settings** — Dark mode, locale, permissions, status bar overrides, accessibility presets
+- **Device Settings** — Dark mode, locale, orientation, permissions, status bar overrides, accessibility presets
 - **Screenshots and Recording** — Capture screenshots and record screen video with history
 - **Deep Links** — Open URLs and custom schemes, save favorites per app
 - **Database Inspector** — Browse SQLite tables, run SQL queries, view SharedPreferences and NSUserDefaults
@@ -124,7 +124,7 @@ Set precise GPS coordinates on any device using an interactive map or manual inp
 
 ### Device Settings
 
-Toggle dark mode, change locale, manage app permissions, and override status bar appearance. Apply accessibility presets to test your app under different conditions. All settings changes take effect immediately on the target device.
+Toggle dark mode, change locale, rotate device orientation (Android), manage app permissions, and override status bar appearance. Apply accessibility presets to test your app under different conditions. All settings changes take effect immediately on the target device.
 
 <p align="center"><img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/docs/assets/device-settings.png" alt="Device Settings" width="700" /></p>
 
@@ -322,6 +322,7 @@ Every feature is accessible from the command line. Run `simvyn` with no argument
 | `simvyn collections delete <id>`                  | Delete a collection                     |
 | `simvyn collections duplicate <id>`               | Duplicate a collection                  |
 | `simvyn collections apply <name> <devices...>`    | Apply a collection to devices           |
+| `simvyn settings orientation <device> <orient>`   | Set device orientation (Android)        |
 
 ## How It Works
 

@@ -12,6 +12,7 @@ import {
 	Plus,
 	Power,
 	PowerOff,
+	RotateCw,
 	Trash2,
 } from "lucide-react";
 import type { NavigateFunction } from "react-router";
@@ -196,6 +197,46 @@ export function getActions(
 						else toast.error(`Locale change failed on ${name}`);
 					} catch {
 						toast.error("Locale change failed");
+					}
+				}
+			},
+		},
+		{
+			id: "set-orientation",
+			label: "Set Orientation",
+			description: "Rotate device orientation (Android)",
+			icon: <RotateCw size={18} />,
+			steps: [
+				{
+					id: "pick-orientation",
+					type: "parameter",
+					label: "Orientation",
+					placeholder: "portrait, landscape-left, landscape-right, portrait-upside-down",
+					paramKey: "orientation",
+				},
+				{
+					id: "pick-devices",
+					type: "device-select",
+					label: "Select Devices",
+					multi: true,
+					filter: (d) => d.platform === "android" && d.state === "booted",
+				},
+			],
+			execute: async (ctx) => {
+				const orientation = ctx.params.orientation as string;
+				for (const deviceId of ctx.selectedDeviceIds) {
+					try {
+						const res = await fetch("/api/modules/device-settings/orientation", {
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ deviceId, orientation }),
+						});
+						const name =
+							ctx.selectedDeviceNames[ctx.selectedDeviceIds.indexOf(deviceId)] ?? deviceId;
+						if (res.ok) toast.success(`Orientation set to ${orientation} on ${name}`);
+						else toast.error(`Orientation change failed on ${name}`);
+					} catch {
+						toast.error("Orientation change failed");
 					}
 				}
 			},

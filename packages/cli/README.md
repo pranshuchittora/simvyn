@@ -50,7 +50,7 @@ npx simvyn
 - **App Management** — Install, launch, terminate, uninstall apps via drag-and-drop or CLI
 - **Log Viewer** — Real-time log streaming with level filtering, regex search, and export
 - **Location Simulation** — Set GPS coordinates, play GPX/KML routes with speed control, save favorite locations
-- **Device Settings** — Toggle dark mode, manage permissions, override status bar, accessibility presets
+- **Device Settings** — Toggle dark mode, change locale, rotate orientation, manage permissions, override status bar, accessibility presets
 - **Screenshots and Recording** — Capture screenshots and record screen on any device
 - **Deep Links** — Open URLs and custom schemes, save favorites per app
 - **Database Inspector** — Browse SQLite tables, run SQL queries, view SharedPreferences and NSUserDefaults

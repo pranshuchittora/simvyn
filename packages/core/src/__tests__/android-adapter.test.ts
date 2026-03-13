@@ -886,6 +886,103 @@ describe("Android Adapter", () => {
 		});
 	});
 
+	describe("setOrientation", () => {
+		it("sets portrait orientation with two settings put calls", async () => {
+			pushExecResponse(""); // accelerometer_rotation
+			pushExecResponse(""); // user_rotation
+
+			await adapter.setOrientation!("emulator-5554", "portrait");
+
+			assert.equal(calls.length, 2);
+			assert.deepEqual(calls[0].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"accelerometer_rotation",
+				"0",
+			]);
+			assert.deepEqual(calls[1].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"user_rotation",
+				"0",
+			]);
+		});
+
+		it("sets landscape-left with user_rotation 1", async () => {
+			pushExecResponse("");
+			pushExecResponse("");
+
+			await adapter.setOrientation!("emulator-5554", "landscape-left");
+
+			assert.deepEqual(calls[1].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"user_rotation",
+				"1",
+			]);
+		});
+
+		it("sets landscape-right with user_rotation 3", async () => {
+			pushExecResponse("");
+			pushExecResponse("");
+
+			await adapter.setOrientation!("emulator-5554", "landscape-right");
+
+			assert.deepEqual(calls[1].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"user_rotation",
+				"3",
+			]);
+		});
+
+		it("sets portrait-upside-down with user_rotation 2", async () => {
+			pushExecResponse("");
+			pushExecResponse("");
+
+			await adapter.setOrientation!("emulator-5554", "portrait-upside-down");
+
+			assert.deepEqual(calls[1].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"user_rotation",
+				"2",
+			]);
+		});
+
+		it("throws for invalid orientation string", async () => {
+			await assert.rejects(() => adapter.setOrientation!("emulator-5554", "sideways"), {
+				message: /Invalid orientation/,
+			});
+		});
+
+		it("throws for avd: prefix", async () => {
+			await assert.rejects(() => adapter.setOrientation!("avd:Pixel_7", "portrait"), {
+				message: "Device must be booted for orientation operations",
+			});
+		});
+	});
+
 	describe("undefined methods", () => {
 		it("setStatusBar is undefined", () => {
 			assert.equal(adapter.setStatusBar, undefined);
@@ -1411,6 +1508,11 @@ describe("Android Adapter", () => {
 				name: "setTalkBack",
 				call: () => adapter.setTalkBack!(avdId, true),
 				error: "Device must be booted for accessibility operations",
+			},
+			{
+				name: "setOrientation",
+				call: () => adapter.setOrientation!(avdId, "portrait"),
+				error: "Device must be booted for orientation operations",
 			},
 			{
 				name: "addForward",

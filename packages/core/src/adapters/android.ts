@@ -526,6 +526,43 @@ export function createAndroidAdapter(): PlatformAdapter {
 			]);
 		},
 
+		async setOrientation(deviceId: string, orientation: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted for orientation operations");
+			const map: Record<string, string> = {
+				portrait: "0",
+				"landscape-left": "1",
+				"portrait-upside-down": "2",
+				"landscape-right": "3",
+			};
+			const value = map[orientation];
+			if (!value && !["0", "1", "2", "3"].includes(orientation))
+				throw new Error(
+					`Invalid orientation: ${orientation}. Use: portrait, landscape-left, landscape-right, portrait-upside-down`,
+				);
+			const rotation = value ?? orientation;
+			await verboseExec("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"accelerometer_rotation",
+				"0",
+			]);
+			await verboseExec("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"user_rotation",
+				rotation,
+			]);
+		},
+
 		setStatusBar: undefined,
 		clearStatusBar: undefined,
 		setContentSize: undefined,
@@ -741,6 +778,7 @@ export function createAndroidAdapter(): PlatformAdapter {
 				"batterySimulation",
 				"inputInjection",
 				"bugReport",
+				"orientation",
 			];
 		},
 	};

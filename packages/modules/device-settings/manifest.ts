@@ -30,6 +30,7 @@ const deviceSettingsModule: SimvynModule = {
 		"batterySimulation",
 		"inputInjection",
 		"bugReport",
+		"orientation",
 	],
 };
 
