@@ -74,6 +74,7 @@ interface ContextMenuState {
 
 export default function DeviceSelector() {
 	const [open, setOpen] = useState(false);
+	const [showAll, setShowAll] = useState(false);
 	const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -95,7 +96,12 @@ export default function DeviceSelector() {
 	}, []);
 	useWsListener("devices", "device-disconnected", handleDeviceDisconnected);
 
-	const groups = groupDevices(devices);
+	const selectedSet = new Set(selectedDeviceIds);
+	const filteredDevices = showAll
+		? devices
+		: devices.filter((d) => d.state === "booted" || selectedSet.has(d.id));
+	const hiddenCount = devices.length - filteredDevices.length;
+	const groups = groupDevices(filteredDevices);
 
 	useEffect(() => {
 		if (!isMultiSelect && selectedDeviceIds.length > 1) {
@@ -130,7 +136,6 @@ export default function DeviceSelector() {
 		setContextMenu({ x: e.clientX, y: e.clientY, deviceId });
 	};
 
-	const selectedSet = new Set(selectedDeviceIds);
 	const firstDevice = devices.find((d) => d.id === selectedDeviceIds[0]);
 
 	let label: string;
@@ -146,7 +151,10 @@ export default function DeviceSelector() {
 		<div ref={ref} className="relative">
 			<button
 				type="button"
-				onClick={() => setOpen(!open)}
+				onClick={() => {
+					if (!open) setShowAll(false);
+					setOpen(!open);
+				}}
 				className="glass-button flex items-center gap-2 px-3 py-1.5 text-sm"
 			>
 				<span>{label}</span>
@@ -235,8 +243,40 @@ export default function DeviceSelector() {
 						</div>
 					))}
 
+					{filteredDevices.length === 0 && devices.length > 0 && (
+						<div className="px-3 py-4 text-center">
+							<div className="text-sm text-text-muted">No active devices</div>
+							<div className="mt-1 text-xs text-text-muted/60">
+								Toggle below to show inactive devices
+							</div>
+						</div>
+					)}
+
 					{devices.length === 0 && (
 						<div className="px-3 py-4 text-center text-sm text-text-muted">No devices detected</div>
+					)}
+
+					{devices.length > 0 && (
+						<button
+							type="button"
+							onClick={() => setShowAll(!showAll)}
+							className="flex w-full items-center justify-between border-t border-white/5 px-3 py-2 text-xs text-text-muted hover:bg-[rgba(255,255,255,0.05)] cursor-pointer"
+						>
+							<span>
+								{showAll
+									? "Showing all devices"
+									: hiddenCount > 0
+										? `Show ${hiddenCount} inactive device${hiddenCount === 1 ? "" : "s"}`
+										: "Show inactive devices"}
+							</span>
+							<span
+								className={`relative inline-flex h-[18px] w-[32px] shrink-0 items-center rounded-full transition-colors ${showAll ? "bg-accent-blue/40" : "bg-text-muted/20"}`}
+							>
+								<span
+									className={`inline-block h-[14px] w-[14px] rounded-full transition-transform ${showAll ? "translate-x-[16px] bg-accent-blue" : "translate-x-[2px] bg-text-muted/60"}`}
+								/>
+							</span>
+						</button>
 					)}
 				</div>
 			)}
