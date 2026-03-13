@@ -171,6 +171,29 @@ export default function DeviceSelector() {
 
 			{open && (
 				<div className="glass-panel absolute top-full right-0 z-50 mt-2 w-84 max-h-96 overflow-y-auto p-1 shadow-xl shadow-black/30 !backdrop-blur-2xl !bg-[rgba(30,30,45,0.6)]">
+					{devices.length > 0 && (
+						<button
+							type="button"
+							onClick={() => setShowAll(!showAll)}
+							className="flex w-full items-center justify-between border-b border-white/5 px-3 py-2 text-xs text-text-muted hover:bg-[rgba(255,255,255,0.05)] cursor-pointer"
+						>
+							<span>
+								{showAll
+									? "Showing all devices"
+									: hiddenCount > 0
+										? `Show ${hiddenCount} inactive device${hiddenCount === 1 ? "" : "s"}`
+										: "Show inactive devices"}
+							</span>
+							<span
+								className={`relative inline-flex h-[18px] w-[32px] shrink-0 items-center rounded-full transition-colors ${showAll ? "bg-accent-blue/40" : "bg-text-muted/20"}`}
+							>
+								<span
+									className={`inline-block h-[14px] w-[14px] rounded-full transition-transform ${showAll ? "translate-x-[16px] bg-accent-blue" : "translate-x-[2px] bg-text-muted/60"}`}
+								/>
+							</span>
+						</button>
+					)}
+
 					{Object.entries(groups).map(([platform, devs]) => (
 						<div key={platform}>
 							<div className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
@@ -247,36 +270,13 @@ export default function DeviceSelector() {
 						<div className="px-3 py-4 text-center">
 							<div className="text-sm text-text-muted">No active devices</div>
 							<div className="mt-1 text-xs text-text-muted/60">
-								Toggle below to show inactive devices
+								Use the toggle above to show inactive devices
 							</div>
 						</div>
 					)}
 
 					{devices.length === 0 && (
 						<div className="px-3 py-4 text-center text-sm text-text-muted">No devices detected</div>
-					)}
-
-					{devices.length > 0 && (
-						<button
-							type="button"
-							onClick={() => setShowAll(!showAll)}
-							className="flex w-full items-center justify-between border-t border-white/5 px-3 py-2 text-xs text-text-muted hover:bg-[rgba(255,255,255,0.05)] cursor-pointer"
-						>
-							<span>
-								{showAll
-									? "Showing all devices"
-									: hiddenCount > 0
-										? `Show ${hiddenCount} inactive device${hiddenCount === 1 ? "" : "s"}`
-										: "Show inactive devices"}
-							</span>
-							<span
-								className={`relative inline-flex h-[18px] w-[32px] shrink-0 items-center rounded-full transition-colors ${showAll ? "bg-accent-blue/40" : "bg-text-muted/20"}`}
-							>
-								<span
-									className={`inline-block h-[14px] w-[14px] rounded-full transition-transform ${showAll ? "translate-x-[16px] bg-accent-blue" : "translate-x-[2px] bg-text-muted/60"}`}
-								/>
-							</span>
-						</button>
 					)}
 				</div>
 			)}
