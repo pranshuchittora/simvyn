@@ -682,10 +682,10 @@ Plans:
   2. Selecting a content size changes the Android device's font scale immediately via `adb shell settings put system font_scale`
   3. CLI `simvyn a11y content-size` works for Android devices
   4. Collections `set-content-size` action works for Android devices
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
-- [ ] 30.4-01-PLAN.md — Implement Android setContentSize with font_scale mapping + tests
+- [x] 30.4-01-PLAN.md — Implement Android setContentSize with font_scale mapping + tests
 
 ### Phase 30.3: Active Device Filter (INSERTED)
 

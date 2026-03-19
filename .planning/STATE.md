@@ -79,6 +79,7 @@ progress:
 | 29. Sidebar Expand-on-Hover | ✅ Complete |
 | 30. Log Controls, Release & Updates | ✅ Complete (3/3 plans) |
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
+| 30.4 Device Font Size Control | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -178,6 +179,7 @@ progress:
 | Phase 30.1 P01 | 1min | 1 tasks | 1 files |
 | Phase 30.2 P01 | 3min | 2 tasks | 5 files |
 | Phase 30.3 P01 | 1min | 1 tasks | 1 files |
+| Phase 30.4 P01 | 1min | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -395,6 +397,7 @@ progress:
 - highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
 - DeviceSelector filters to booted-only by default with showAll toggle — always includes selected devices to prevent label showing "No devices"
 - showAll state resets to false on every dropdown open — consistent UX, no stale toggle state
+- Android font_scale mapping uses same iOS Dynamic Type size names as canonical identifiers — CONTENT_SIZE_TO_FONT_SCALE record covers all 12 sizes (0.85–3.0)
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -410,8 +413,8 @@ progress:
 ## Session Continuity
 
 **Last session:** 2026-03-19
-**Stopped at:** All phases marked complete
-**Context for next session:** All milestones (v1.0–v1.7) and all phases complete. Project is in a clean, shippable state.
+**Stopped at:** Completed 30.4-01-PLAN.md
+**Context for next session:** Phase 30.4 (Device Font Size Control) complete. Android setContentSize implemented with font_scale mapping.
 
 ---
 *State initialized: 2026-02-26*
