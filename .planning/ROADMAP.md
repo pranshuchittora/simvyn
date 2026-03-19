@@ -672,7 +672,7 @@ Plans:
   2. Failed actions show a toast notification (not silent console.error)
   3. Physical iOS devices get a descriptive error
   4. CLI `simvyn app clear-data` works for iOS devices
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 30.5-01-PLAN.md — Implement iOS clearAppData + toast errors + tests

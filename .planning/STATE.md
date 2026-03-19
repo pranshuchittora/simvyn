@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
 status: planning
-stopped_at: Completed 30.4-01-PLAN.md
-last_updated: "2026-03-19T11:09:20.082Z"
+stopped_at: Completed 30.5-01-PLAN.md
+last_updated: "2026-03-19T11:20:30Z"
 progress:
   total_phases: 42
   completed_phases: 37
@@ -80,6 +80,7 @@ progress:
 | 30. Log Controls, Release & Updates | ✅ Complete (3/3 plans) |
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 | 30.4 Device Font Size Control | ✅ Complete (1/1 plans) |
+| 30.5 Fix iOS Clear App Data | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
@@ -180,6 +181,7 @@ progress:
 | Phase 30.2 P01 | 3min | 2 tasks | 5 files |
 | Phase 30.3 P01 | 1min | 1 tasks | 1 files |
 | Phase 30.4 P01 | 1min | 1 tasks | 2 files |
+| Phase 30.5 P01 | 2min | 1 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -398,6 +400,7 @@ progress:
 - DeviceSelector filters to booted-only by default with showAll toggle — always includes selected devices to prevent label showing "No devices"
 - showAll state resets to false on every dropdown open — consistent UX, no stale toggle state
 - Android font_scale mapping uses same iOS Dynamic Type size names as canonical identifiers — CONTENT_SIZE_TO_FONT_SCALE record covers all 12 sizes (0.85–3.0)
+- iOS clearAppData deletes container contents (readdir+rm) not container itself — preserves sandbox structure for immediate app re-use
 
 ### Research Flags
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
@@ -413,8 +416,8 @@ progress:
 ## Session Continuity
 
 **Last session:** 2026-03-19
-**Stopped at:** Completed 30.4-01-PLAN.md
-**Context for next session:** Phase 30.4 (Device Font Size Control) complete. Android setContentSize implemented with font_scale mapping.
+**Stopped at:** Completed 30.5-01-PLAN.md
+**Context for next session:** Phase 30.5 (Fix iOS Clear App Data) complete. iOS clearAppData implemented via get_app_container + readdir/rm. Dashboard shows toast errors on failed actions.
 
 ---
 *State initialized: 2026-02-26*
