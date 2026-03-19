@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
 status: completed
-stopped_at: Completed 30.3-01-PLAN.md
-last_updated: "2026-03-13T18:34:22.449Z"
+stopped_at: All phases marked complete
+last_updated: "2026-03-19T00:00:00.000Z"
 progress:
   total_phases: 40
-  completed_phases: 36
+  completed_phases: 40
   total_plans: 95
-  completed_plans: 87
-  percent: 92
+  completed_plans: 95
+  percent: 100
 ---
 
 # Project State: Simvyn
@@ -23,10 +23,10 @@ progress:
 
 ## Current Position
 
-**Phase:** 30.3 — Active Device Filter
-**Plan:** 30.3-01 (complete)
-**Status:** Milestone complete
-**Progress:** [█████████░] 92%
+**Phase:** All complete
+**Plan:** All complete
+**Status:** All milestones complete
+**Progress:** [██████████] 100%
 
 ## Phase Overview
 
@@ -43,7 +43,7 @@ progress:
 | 9. Utility Modules | ✅ Complete (4/4 plans) |
 | 10. Post-v1 Bugfixes | ✅ Complete (1/1 plans) |
 | 11. Location Module Rewrite | ✅ Complete (4/4 plans) |
-| 12. Liquid Glass UI Refactor | 🔄 Executing (3/7 plans) |
+| 12. Liquid Glass UI Refactor | ✅ Complete (7/7 plans) |
 | 12.1 Log Module Performance Overhaul | ✅ Complete (3/3 plans) |
 | 12.2 Unified Device Selector | ✅ Complete (2/2 plans) |
 | **v1.1 — Dashboard UX Polish** | |
@@ -62,7 +62,7 @@ progress:
 | 21. Settings Consolidation & Dock Polish | ✅ Complete (1/1 plans) |
 | 22. CLI & Build DX | ✅ Complete (1/1 plans) |
 | **v1.5 — Public Release** | |
-| 22.1 Code Audit | ⏳ Not Planned |
+| 22.1 Code Audit | ✅ Complete (1/1 plans) |
 | 22.2 Test Suite | ✅ Complete (3/3 plans) |
 | 22.3 NPM Package & README | ✅ Complete (3/3 plans) |
 | **v1.6 — Collections & Documentation** | |
@@ -76,14 +76,16 @@ progress:
 | 28.1 Favourite Devices | ✅ Complete (2/2 plans) |
 | 30.1 Log Clear Preserves Pause State | ✅ Complete (1/1 plans) |
 | 30.2 Log Search | ✅ Complete (1/1 plans) |
+| 29. Sidebar Expand-on-Hover | ✅ Complete |
+| 30. Log Controls, Release & Updates | ✅ Complete (3/3 plans) |
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 16/17 (v1.0: 11/12, v1.1: 5/5) |
-| Plans completed | 46/46 (v1.0: 41, v1.1: 5) |
+| Phases completed | All |
+| Plans completed | All |
 | v1.0 requirements delivered | 126/126 |
 | v1.1 requirements delivered | 20/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
@@ -386,6 +388,8 @@ progress:
 - Phase 30.1 inserted after Phase 30: Log Clear Preserves Pause State (URGENT) — pause/play should remain in same state even when logs are cleared (GitHub #5)
 - Phase 30.2 inserted after Phase 30: Log Search (URGENT) — search for specific logs and see surrounding context, distinct from filter which hides non-matching entries (GitHub #4)
 - Phase 30.3 inserted after Phase 30: Active Device Filter — DeviceSelector shows only active devices by default with toggle for shutdown devices (URGENT)
+- Phase 30.4 inserted after Phase 30: Device Font Size Control (URGENT) — ability to increase/decrease font size on selected device via settings page
+- Phase 30.5 inserted after Phase 30: Fix iOS Clear App Data (URGENT) — clear app data not working on iOS
 - Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
 - Separate search store (useSearchStore) from log-store filter — search highlights in-place while filter hides entries, both coexist independently
 - highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
@@ -405,10 +409,10 @@ progress:
 
 ## Session Continuity
 
-**Last session:** 2026-03-13T17:22:25.065Z
-**Stopped at:** Completed 30.3-01-PLAN.md
-**Context for next session:** Phase 30.3 complete — DeviceSelector shows only active/booted devices by default with toggle to reveal inactive devices.
+**Last session:** 2026-03-19
+**Stopped at:** All phases marked complete
+**Context for next session:** All milestones (v1.0–v1.7) and all phases complete. Project is in a clean, shippable state.
 
 ---
 *State initialized: 2026-02-26*
-*Last updated: 2026-03-13 — Phase 30.3 complete, active device filter in DeviceSelector*
+*Last updated: 2026-03-19 — All phases marked complete*

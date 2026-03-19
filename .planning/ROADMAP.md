@@ -17,7 +17,7 @@
 - [x] **Phase 8: Device Settings & Accessibility** — Dark mode, permissions, locale, status bar, accessibility toggles
 - [x] **Phase 9: Utility Modules** — Crash logs, media injection, and clipboard bridge
 - [x] **Phase 11: Location Module Rewrite** — Replace generated location panel with production sim-location code (completed 2026-02-26)
-- [ ] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
+- [x] **Phase 12: Liquid Glass UI Refactor** — Refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - [x] **Phase 12.1: Log Module Performance Overhaul** — Paginated fetching, virtual list, descending order, device clearing, search revamp, unmount cleanup (INSERTED) (completed 2026-02-26)
 - [x] **Phase 12.2: Unified Device Selector** — Single top-bar selector with per-module multi/single select (INSERTED) (completed 2026-02-26)
 
@@ -304,7 +304,7 @@ Plans:
 | 8. Device Settings & Accessibility | 2/2 | Complete | 2026-02-26 |
 | 9. Utility Modules | 4/4 | Complete | 2026-02-26 |
 | 11. Location Module Rewrite | 4/4 | Complete | 2026-02-26 |
-| 12. Liquid Glass UI Refactor | 6/7 | In Progress | - |
+| 12. Liquid Glass UI Refactor | 7/7 | Complete | 2026-03-19 |
 | 12.1 Log Module Performance Overhaul | 3/3 | Complete | 2026-02-26 |
 | 12.2 Unified Device Selector | 2/2 | Complete | 2026-02-26 |
 | **v1.1 — Dashboard UX Polish** | | | |
@@ -336,6 +336,11 @@ Plans:
 | **v1.7 — Real Device Support** | | | |
 | 28. Real Device Support | 4/4 | Complete    | 2026-03-04 |
 | 28.1 Favourite Devices | 2/2 | Complete   | 2026-03-05 |
+| 29. Sidebar Expand-on-Hover | 0/0 | Complete | 2026-03-19 |
+| 30. Log Controls, Release & Updates | 3/3 | Complete | 2026-03-19 |
+| 30.1 Log Clear Preserves Pause | 1/1 | Complete | 2026-03-13 |
+| 30.2 Log Search | 1/1 | Complete | 2026-03-13 |
+| 30.3 Active Device Filter | 1/1 | Complete | 2026-03-13 |
 
 ## Coverage Map
 
@@ -535,16 +540,16 @@ Plans:
   2. Shell components (TopBar, Sidebar, DeviceSelector, ModuleShell) are visually consistent with the glass panels and match the location panel's quality level
   3. main.css design tokens are the single source of truth — no hardcoded colors or backdrop-filter values in individual panel files
   4. The dashboard looks and feels like a native Apple Liquid Glass application with consistent spacing, typography, and animation patterns across all modules
-**Plans:** 6/7 plans executed
+**Plans:** 7/7 plans complete
 
 Plans:
 - [x] 12-01-PLAN.md — Design tokens (lighter palette), 8 new glass utility classes, location-panel.css cleanup
 - [x] 12-02-PLAN.md — Floating macOS Liquid Glass dock + shell components polish
-- [ ] 12-03-PLAN.md — Screenshot, CrashLogs, Media, Clipboard, DeepLinks, Push panels
-- [ ] 12-04-PLAN.md — Device, App, Log panels (tables, drop zones, toolbars)
-- [ ] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)
-- [ ] 12-06-PLAN.md — Settings panel (forms, toggles, permissions)
-- [ ] 12-07-PLAN.md — Visual consistency audit + human verification
+- [x] 12-03-PLAN.md — Screenshot, CrashLogs, Media, Clipboard, DeepLinks, Push panels
+- [x] 12-04-PLAN.md — Device, App, Log panels (tables, drop zones, toolbars)
+- [x] 12-05-PLAN.md — FileSystem + Database panels (tab bars, SQL editor, tables)
+- [x] 12-06-PLAN.md — Settings panel (forms, toggles, permissions)
+- [x] 12-07-PLAN.md — Visual consistency audit + human verification
 
 ### Phase 12.2: Unified Device Selector (INSERTED)
 
@@ -631,12 +636,10 @@ Plans:
 
 ### Phase 29: Sidebar Expand-on-Hover
 
-**Goal:** [To be planned]
+**Goal:** Animated dock expansion with labels on hover
 **Depends on:** Phase 28
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd:plan-phase 29 to break down)
+**Status:** Complete
+**Plans:** 0 plans (completed without formal plans)
 
 ### Phase 30: Log Controls, Release Automation & Update Notifications
 
@@ -651,13 +654,38 @@ Plans:
 **Plans:** 3 plans
 
 Plans:
-- [ ] 30-01-PLAN.md — Log pause/resume toggle (store, toolbar button, LogPanel WS wiring)
-- [ ] 30-02-PLAN.md — Release dispatch GHA workflow + commit-based changelog in releases
-- [ ] 30-03-PLAN.md — Dashboard update banner (server endpoint + dismissible component)
+- [x] 30-01-PLAN.md — Log pause/resume toggle (store, toolbar button, LogPanel WS wiring)
+- [x] 30-02-PLAN.md — Release dispatch GHA workflow + commit-based changelog in releases
+- [x] 30-03-PLAN.md — Dashboard update banner (server endpoint + dismissible component)
 
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*
+
+### Phase 30.5: Fix iOS Clear App Data (INSERTED)
+
+**Goal:** [Urgent work - to be planned]
+**Requirements**: TBD
+**Depends on:** Phase 30
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 30.5 to break down)
+
+### Phase 30.4: Device Font Size Control (INSERTED)
+
+**Goal:** Users can adjust font/text size on Android devices from the device settings panel — the existing iOS content size feature auto-enables for Android once the adapter method is implemented
+**Requirements:** FONTSZ-01
+**Depends on:** Phase 30
+**Success Criteria** (what must be TRUE):
+  1. Content Size dropdown appears in the Accessibility section of Device Settings when an Android device is selected
+  2. Selecting a content size changes the Android device's font scale immediately via `adb shell settings put system font_scale`
+  3. CLI `simvyn a11y content-size` works for Android devices
+  4. Collections `set-content-size` action works for Android devices
+**Plans:** 1 plan
+
+Plans:
+- [ ] 30.4-01-PLAN.md — Implement Android setContentSize with font_scale mapping + tests
 
 ### Phase 30.3: Active Device Filter (INSERTED)
 
