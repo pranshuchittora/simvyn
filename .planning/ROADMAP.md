@@ -664,13 +664,18 @@ Plans:
 
 ### Phase 30.5: Fix iOS Clear App Data (INSERTED)
 
-**Goal:** [Urgent work - to be planned]
-**Requirements**: TBD
+**Goal:** Clear App Data works on iOS simulators by deleting data container contents via host filesystem, with proper toast error feedback in dashboard
+**Requirements:** IOSCLR-01
 **Depends on:** Phase 30
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Clicking "Clear Data" on an iOS simulator app deletes the app's data container contents
+  2. Failed actions show a toast notification (not silent console.error)
+  3. Physical iOS devices get a descriptive error
+  4. CLI `simvyn app clear-data` works for iOS devices
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 30.5 to break down)
+- [ ] 30.5-01-PLAN.md — Implement iOS clearAppData + toast errors + tests
 
 ### Phase 30.4: Device Font Size Control (INSERTED)
 
