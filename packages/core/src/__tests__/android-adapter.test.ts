@@ -983,6 +983,65 @@ describe("Android Adapter", () => {
 		});
 	});
 
+	describe("setContentSize", () => {
+		it("maps medium to font_scale 1", async () => {
+			pushExecResponse("");
+			await adapter.setContentSize!("emulator-5554", "medium");
+			assert.deepEqual(calls[0].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"font_scale",
+				"1",
+			]);
+		});
+
+		it("maps extra-large to font_scale 1.2", async () => {
+			pushExecResponse("");
+			await adapter.setContentSize!("emulator-5554", "extra-large");
+			assert.deepEqual(calls[0].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"font_scale",
+				"1.2",
+			]);
+		});
+
+		it("maps accessibility-large to font_scale 1.7", async () => {
+			pushExecResponse("");
+			await adapter.setContentSize!("emulator-5554", "accessibility-large");
+			assert.deepEqual(calls[0].args, [
+				"-s",
+				"emulator-5554",
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"font_scale",
+				"1.7",
+			]);
+		});
+
+		it("throws for unknown size", async () => {
+			await assert.rejects(() => adapter.setContentSize!("emulator-5554", "huge"), {
+				message: "Unknown content size: huge",
+			});
+		});
+
+		it("throws for avd: prefix", async () => {
+			await assert.rejects(() => adapter.setContentSize!("avd:Pixel_7", "medium"), {
+				message: "Device must be booted to change font scale",
+			});
+		});
+	});
+
 	describe("undefined methods", () => {
 		it("setStatusBar is undefined", () => {
 			assert.equal(adapter.setStatusBar, undefined);
@@ -990,10 +1049,6 @@ describe("Android Adapter", () => {
 
 		it("clearStatusBar is undefined", () => {
 			assert.equal(adapter.clearStatusBar, undefined);
-		});
-
-		it("setContentSize is undefined", () => {
-			assert.equal(adapter.setContentSize, undefined);
 		});
 
 		it("setIncreaseContrast is undefined", () => {
@@ -1513,6 +1568,11 @@ describe("Android Adapter", () => {
 				name: "setOrientation",
 				call: () => adapter.setOrientation!(avdId, "portrait"),
 				error: "Device must be booted for orientation operations",
+			},
+			{
+				name: "setContentSize",
+				call: () => adapter.setContentSize!(avdId, "medium"),
+				error: "Device must be booted to change font scale",
 			},
 			{
 				name: "addForward",

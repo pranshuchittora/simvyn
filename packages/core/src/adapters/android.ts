@@ -78,6 +78,21 @@ async function getDeviceProp(serial: string, prop: string): Promise<string> {
 	}
 }
 
+const CONTENT_SIZE_TO_FONT_SCALE: Record<string, number> = {
+	"extra-small": 0.85,
+	small: 0.9,
+	medium: 1.0,
+	large: 1.1,
+	"extra-large": 1.2,
+	"extra-extra-large": 1.3,
+	"extra-extra-extra-large": 1.4,
+	"accessibility-medium": 1.5,
+	"accessibility-large": 1.7,
+	"accessibility-extra-large": 2.0,
+	"accessibility-extra-extra-large": 2.5,
+	"accessibility-extra-extra-extra-large": 3.0,
+};
+
 export function createAndroidAdapter(): PlatformAdapter {
 	return {
 		platform: "android",
@@ -565,7 +580,22 @@ export function createAndroidAdapter(): PlatformAdapter {
 
 		setStatusBar: undefined,
 		clearStatusBar: undefined,
-		setContentSize: undefined,
+		async setContentSize(deviceId: string, size: string): Promise<void> {
+			if (deviceId.startsWith("avd:"))
+				throw new Error("Device must be booted to change font scale");
+			const scale = CONTENT_SIZE_TO_FONT_SCALE[size];
+			if (scale === undefined) throw new Error(`Unknown content size: ${size}`);
+			await verboseExec("adb", [
+				"-s",
+				deviceId,
+				"shell",
+				"settings",
+				"put",
+				"system",
+				"font_scale",
+				scale.toString(),
+			]);
+		},
 		setIncreaseContrast: undefined,
 
 		async addForward(deviceId: string, local: string, remote: string): Promise<void> {
