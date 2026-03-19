@@ -2,8 +2,13 @@ import assert from "node:assert/strict";
 import { EventEmitter } from "node:events";
 import { beforeEach, describe, it, mock } from "node:test";
 
-// Track all calls to verboseExec and verboseSpawn
+// Track all calls to verboseExec, verboseSpawn, and fs operations
 const calls: { fn: string; args: unknown[] }[] = [];
+
+// Configurable fs mock responses
+let readdirMock: (path: string) => Promise<string[]> = (_path: string) => Promise.resolve([]);
+let rmMock: (path: string, opts?: any) => Promise<void> = (_path: string, _opts?: any) =>
+	Promise.resolve();
 
 // Configurable mock responses — `any` used intentionally for test mock flexibility
 let execMock: (
@@ -46,6 +51,28 @@ function defaultSpawnMock(_cmd: string, _args: string[]) {
 	return createMockProcess();
 }
 
+// We need real fs for most operations (addKeychainCert, collectBugReport, etc.)
+// but mock readdir/rm for clearAppData tests
+const realFs = await import("node:fs/promises");
+
+mock.module("node:fs/promises", {
+	namedExports: {
+		mkdir: realFs.mkdir,
+		mkdtemp: realFs.mkdtemp,
+		readFile: realFs.readFile,
+		stat: realFs.stat,
+		writeFile: realFs.writeFile,
+		readdir(path: string) {
+			calls.push({ fn: "readdir", args: [path] });
+			return readdirMock(path);
+		},
+		rm(path: string, opts?: unknown) {
+			calls.push({ fn: "rm", args: [path, opts] });
+			return rmMock(path, opts);
+		},
+	},
+});
+
 // Register mocks BEFORE importing the adapter
 mock.module("../verbose-exec.js", {
 	namedExports: {
@@ -68,6 +95,8 @@ describe("iOS Adapter", () => {
 		calls.length = 0;
 		execMock = defaultExecMock;
 		spawnMock = defaultSpawnMock;
+		readdirMock = (_path: string) => Promise.resolve([]);
+		rmMock = (_path: string, _opts?: any) => Promise.resolve();
 	});
 
 	describe("isAvailable", () => {
@@ -405,6 +434,52 @@ describe("iOS Adapter", () => {
 			const adapter = createIosAdapter();
 			const info = await adapter.getAppInfo!("dev-1", "com.missing.app");
 			assert.equal(info, null);
+		});
+	});
+
+	describe("clearAppData", () => {
+		it("calls get_app_container then readdir + rm for each entry", async () => {
+			execMock = () => Promise.resolve({ stdout: "/path/to/data/container\n", stderr: "" });
+			readdirMock = () => Promise.resolve(["Documents", "Library", "tmp"]);
+
+			const adapter = createIosAdapter();
+			await adapter.clearAppData!("dev-1", "com.example.app");
+
+			const execCall = calls.find((c) => c.fn === "verboseExec");
+			assert.ok(execCall);
+			assert.deepEqual(execCall!.args[1], [
+				"simctl",
+				"get_app_container",
+				"dev-1",
+				"com.example.app",
+				"data",
+			]);
+
+			const readdirCall = calls.find((c) => c.fn === "readdir");
+			assert.ok(readdirCall);
+			assert.equal(readdirCall!.args[0], "/path/to/data/container");
+
+			const rmCalls = calls.filter((c) => c.fn === "rm");
+			assert.equal(rmCalls.length, 3);
+			assert.equal(rmCalls[0].args[0], "/path/to/data/container/Documents");
+			assert.equal(rmCalls[1].args[0], "/path/to/data/container/Library");
+			assert.equal(rmCalls[2].args[0], "/path/to/data/container/tmp");
+			assert.deepEqual(rmCalls[0].args[1], { recursive: true, force: true });
+		});
+
+		it("throws for physical devices", async () => {
+			const adapter = createIosAdapter();
+			await assert.rejects(() => adapter.clearAppData!("physical:ABCD-1234", "com.example.app"), {
+				message: "Clear app data is not available on physical iOS devices",
+			});
+		});
+
+		it("throws when no data container is found", async () => {
+			execMock = () => Promise.resolve({ stdout: "", stderr: "" });
+			const adapter = createIosAdapter();
+			await assert.rejects(() => adapter.clearAppData!("dev-1", "com.missing.app"), {
+				message: "No data container found for com.missing.app",
+			});
 		});
 	});
 

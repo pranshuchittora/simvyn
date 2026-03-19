@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import type { AppInfo } from "./stores/app-store";
 
 interface AppActionsProps {
@@ -20,13 +21,13 @@ export default function AppActions({ app, deviceId, onRefresh }: AppActionsProps
 			});
 			if (!res.ok) {
 				const data = await res.json().catch(() => ({ error: "Action failed" }));
-				console.error(`${action} failed:`, data.error);
+				toast.error(data.error || "Action failed");
 			}
 			if (action === "uninstall" || action === "clear-data") {
 				onRefresh();
 			}
-		} catch (err) {
-			console.error(`${action} failed:`, err);
+		} catch {
+			toast.error("Action failed");
 		} finally {
 			setLoading(null);
 		}

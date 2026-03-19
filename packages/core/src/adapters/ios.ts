@@ -455,7 +455,23 @@ export function createIosAdapter(): PlatformAdapter {
 			}
 		},
 
-		clearAppData: undefined,
+		async clearAppData(deviceId: string, bundleId: string): Promise<void> {
+			if (isPhysicalDevice(deviceId))
+				throw new Error("Clear app data is not available on physical iOS devices");
+			const { stdout } = await verboseExec("xcrun", [
+				"simctl",
+				"get_app_container",
+				deviceId,
+				bundleId,
+				"data",
+			]);
+			const containerPath = stdout.trim();
+			if (!containerPath) throw new Error(`No data container found for ${bundleId}`);
+			const entries = await readdir(containerPath);
+			await Promise.all(
+				entries.map((entry) => rm(join(containerPath, entry), { recursive: true, force: true })),
+			);
+		},
 
 		async openUrl(deviceId: string, url: string): Promise<void> {
 			if (isPhysicalDevice(deviceId)) {

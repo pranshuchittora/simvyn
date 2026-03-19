@@ -248,7 +248,7 @@ const appManagementModule: SimvynModule = {
 
 		app
 			.command("clear-data <device> <bundle-id>")
-			.description("Clear app data (Android only)")
+			.description("Clear app data")
 			.action(async (deviceId: string, bundleId: string) => {
 				const { createAvailableAdapters, createDeviceManager } = await import("@simvyn/core");
 				const adapters = await createAvailableAdapters();
