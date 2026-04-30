@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
 status: completed
-stopped_at: Completed 30.5-01-PLAN.md
-last_updated: "2026-03-19T11:25:19.502Z"
+stopped_at: Phase 31 UI-SPEC approved
+last_updated: "2026-04-30T20:50:39.194Z"
 progress:
-  total_phases: 42
-  completed_phases: 38
-  total_plans: 97
-  completed_plans: 89
-  percent: 100
+  total_phases: 45
+  completed_phases: 39
+  total_plans: 98
+  completed_plans: 90
+  percent: 92
 ---
 
 # Project State: Simvyn
@@ -186,6 +186,7 @@ progress:
 ## Accumulated Context
 
 ### Key Decisions
+
 - GitHub Actions release workflow uses `npm publish --provenance --ignore-scripts` with separate github-release job depending on publish success
 - HTML `<p align=center>` for README logo/badges — renders correctly on both npm and GitHub
 - tsx loader (`--import tsx`) instead of `--experimental-strip-types` for test runner — mock.module's ESM loader conflicts with type-stripping loader
@@ -350,6 +351,7 @@ progress:
 - Inline Apple/Android SVG paths for platform badges — tiny silhouettes, no icon library dependency
 
 ### Architecture Notes
+
 - Module manifest contract: each module exports Fastify plugin, Commander subcommand, WS namespace, UI panel registration
 - Platform adapters: `PlatformAdapter` interface with iOS and Android implementations
 - DeviceManager singleton with polling + caching + event emission
@@ -362,6 +364,7 @@ progress:
 - Icon system: shared module-icons.tsx exports moduleIconMap/moduleLabelMap — consumed by Sidebar, reusable by command palette and home screen
 
 ### Roadmap Evolution
+
 - Phase 11 added: Location module rewrite — migrate sim-location UI and logic into simvyn dashboard
 - Phase 12 added: Liquid Glass UI refactor — refactor entire dashboard to match Apple's official Liquid Glass design across all module panels
 - Phase 12.1 inserted after Phase 12: Log Module Performance Overhaul (URGENT) — paginated log fetching, virtual list, descending order, device log clearing, search revamp, unmount cleanup
@@ -404,20 +407,23 @@ progress:
 - iOS clearAppData deletes container contents (readdir+rm) not container itself — preserves sandbox structure for immediate app re-use
 
 ### Research Flags
+
 - Phase 1: WebSocket multiplexing approach needs prototyping (single connection vs. multiple)
 - ~~Phase 4: `simctl spawn log stream` output varies by macOS version — needs defensive parsing~~ RESOLVED: using `--style ndjson` eliminates this concern
 - ~~Phase 7: better-sqlite3 WAL-mode locking behavior with actively-written databases~~ RESOLVED: copy-on-write strategy avoids direct access to actively-written databases
 
 ### TODOs
+
 (None)
 
 ### Blockers
+
 (None)
 
 ## Session Continuity
 
-**Last session:** 2026-03-19
-**Stopped at:** Completed 30.5-01-PLAN.md
+**Last session:** 2026-04-30T20:50:39.184Z
+**Stopped at:** Phase 31 UI-SPEC approved
 **Context for next session:** Phase 30.5 (Fix iOS Clear App Data) complete. iOS clearAppData implemented via get_app_container + readdir/rm. Dashboard shows toast errors on failed actions.
 
 ---
