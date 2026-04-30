@@ -669,11 +669,11 @@ Plans:
   3. The server reconstructs uploaded `.app` bundles with path traversal protection before calling the iOS adapter
   4. `.app` bundle uploads are rejected with clear errors for Android and physical iOS devices
   5. Documentation and CLI help mention iOS simulator `.app` bundle support without overstating platform support
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 
 Plans:
 **Wave 1**
-- [ ] 31-01-PLAN.md — Backend app-bundle upload protocol and safe reconstruction
+- [x] 31-01-PLAN.md — Backend app-bundle upload protocol and safe reconstruction
 
 **Wave 2** *(blocked on Wave 1 completion)*
 - [ ] 31-02-PLAN.md — Dashboard .app bundle browse/drop support and docs
