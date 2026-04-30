@@ -658,6 +658,16 @@ Plans:
 - [x] 30-02-PLAN.md — Release dispatch GHA workflow + commit-based changelog in releases
 - [x] 30-03-PLAN.md — Dashboard update banner (server endpoint + dismissible component)
 
+### Phase 31: iOS Simulator .app Install Support
+
+**Goal:** Users can install iOS simulator `.app` bundles through the same drag-and-drop/file-picker install flow that currently accepts `.ipa` and `.apk` files
+**Requirements:** TBD
+**Depends on:** Phase 30.5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 31 to break down)
+
 ---
 *Roadmap created: 2026-02-26*
 *Last updated: 2026-03-04 — v1.6 milestone phases 23-27 added*

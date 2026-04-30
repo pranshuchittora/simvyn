@@ -394,6 +394,7 @@ progress:
 - Phase 30.3 inserted after Phase 30: Active Device Filter — DeviceSelector shows only active devices by default with toggle for shutdown devices (URGENT)
 - Phase 30.4 inserted after Phase 30: Device Font Size Control (URGENT) — ability to increase/decrease font size on selected device via settings page
 - Phase 30.5 inserted after Phase 30: Fix iOS Clear App Data (URGENT) — clear app data not working on iOS
+- Phase 31 added: iOS Simulator .app Install Support — allow `.app` bundles for iOS simulators in the drag-and-drop/file-picker install flow
 - Log store clear() removes isPaused: false — resume() handles isPaused independently, reset() still resets via initialState spread
 - Separate search store (useSearchStore) from log-store filter — search highlights in-place while filter hides entries, both coexist independently
 - highlightText helper uses regex split + mark elements with amber/gold inline styles — active match gets stronger highlight with box-shadow ring
