@@ -4,7 +4,7 @@ milestone: v1.1
 milestone_name: — Dashboard UX Polish
 status: executing
 stopped_at: Phase 31 UI-SPEC approved
-last_updated: "2026-04-30T20:57:11.604Z"
+last_updated: "2026-04-30T21:01:57.504Z"
 progress:
   total_phases: 45
   completed_phases: 39
@@ -23,9 +23,11 @@ progress:
 
 ## Current Position
 
+Phase: 31 (iOS Simulator .app Install Support) — EXECUTING
+Plan: 1 of 2
 **Phase:** 31 — iOS Simulator .app Install Support
 **Plan:** 31-01-PLAN.md
-**Status:** Ready to execute
+**Status:** Executing Phase 31
 **Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
