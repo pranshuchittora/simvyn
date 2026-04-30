@@ -170,6 +170,7 @@ export default function InstallDropZone({
 				return { field, relativePath: bundleFile.relativePath };
 			});
 
+			// Keep these field names aligned with packages/modules/app-management/routes.ts.
 			formData.append("uploadType", "app-bundle");
 			formData.append("bundleName", bundleName);
 			formData.append("manifest", JSON.stringify(manifest));
