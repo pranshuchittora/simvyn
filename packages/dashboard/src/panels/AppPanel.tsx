@@ -8,7 +8,10 @@ import { useAppStore } from "./apps/stores/app-store";
 
 function AppPanel() {
 	const { send } = useWs();
-	const selectedDeviceId = useDeviceStore((s) => s.selectedDeviceIds[0] ?? null);
+	const selectedDevice = useDeviceStore((s) =>
+		s.devices.find((d) => d.id === s.selectedDeviceIds[0]),
+	);
+	const selectedDeviceId = selectedDevice?.id ?? null;
 	const fetchApps = useAppStore((s) => s.fetchApps);
 
 	// fetch apps when device changes
@@ -54,17 +57,24 @@ function AppPanel() {
 			</div>
 
 			{/* No device selected */}
-			{!selectedDeviceId && (
+			{!selectedDevice && (
 				<div className="glass-empty-state">
 					<p className="text-text-secondary">Select a booted device to manage apps</p>
 				</div>
 			)}
 
 			{/* Device selected */}
-			{selectedDeviceId && (
+			{selectedDevice && (
 				<>
-					<InstallDropZone deviceId={selectedDeviceId} onInstallComplete={handleRefresh} />
-					<AppList deviceId={selectedDeviceId} onRefresh={handleRefresh} />
+					<InstallDropZone
+						deviceId={selectedDevice.id}
+						devicePlatform={selectedDevice.platform}
+						isPhysicalIos={
+							selectedDevice.platform === "ios" && selectedDevice.id.startsWith("physical:")
+						}
+						onInstallComplete={handleRefresh}
+					/>
+					<AppList deviceId={selectedDevice.id} onRefresh={handleRefresh} />
 				</>
 			)}
 		</div>

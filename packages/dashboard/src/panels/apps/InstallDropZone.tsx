@@ -2,6 +2,8 @@ import { useCallback, useRef, useState } from "react";
 
 interface InstallDropZoneProps {
 	deviceId: string;
+	devicePlatform: "ios" | "android";
+	isPhysicalIos: boolean;
 	onInstallComplete: () => void;
 }
 
