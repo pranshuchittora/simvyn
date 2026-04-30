@@ -69,7 +69,7 @@ const appManagementModule: SimvynModule = {
 
 		app
 			.command("install <device> <path>")
-			.description("Install an IPA or APK on a device")
+			.description("Install an IPA, APK, or iOS simulator .app bundle on a device")
 			.action(async (deviceId: string, appPath: string) => {
 				const { stat } = await import("node:fs/promises");
 				const { basename } = await import("node:path");

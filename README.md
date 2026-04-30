@@ -86,11 +86,11 @@ Discover all connected iOS Simulators, Android Emulators, and USB-connected phys
 
 ### App Management
 
-Install, launch, terminate, and uninstall apps on any connected device. Drag and drop IPA or APK files directly onto the dashboard. View detailed app information and clear app data without manual adb or simctl commands.
+Install, launch, terminate, and uninstall apps on any connected device. Drag and drop IPA, APK, or iOS simulator .app bundles directly onto the dashboard. View detailed app information and clear app data without manual adb or simctl commands.
 
 <p align="center"><img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/docs/assets/app-management.png" alt="App Management" width="700" /></p>
 
-- Drag-and-drop IPA and APK installation
+- Drag-and-drop IPA, APK, and iOS simulator .app installation
 - Launch, terminate, and uninstall apps by bundle ID
 - View app details including version, size, and permissions
 - Clear app data on Android devices
@@ -282,47 +282,47 @@ simvyn collections apply <name> <devices...>    # Apply a collection to devices
 
 Every feature is accessible from the command line. Run `simvyn` with no arguments to start the dashboard, or use any command below for headless operation.
 
-| Command                                           | Description                             |
-| ------------------------------------------------- | --------------------------------------- |
-| `simvyn`                                          | Start the dashboard (default)           |
-| `simvyn device list`                              | List all devices                        |
-| `simvyn device boot <device>`                     | Boot a device                           |
-| `simvyn device shutdown <device>`                 | Shutdown a device                       |
-| `simvyn device erase <device>`                    | Erase device content and settings       |
-| `simvyn device create <name> <type> <runtime>`    | Create a new iOS simulator              |
-| `simvyn device clone <device> <name>`             | Clone an iOS simulator                  |
-| `simvyn device rename <device> <name>`            | Rename an iOS simulator                 |
-| `simvyn device delete <device>`                   | Delete an iOS simulator                 |
-| `simvyn location set <device> <lat> <lng>`        | Set GPS coordinates                     |
-| `simvyn location route <device> <file>`           | Play a GPX/KML route                    |
-| `simvyn location clear <device>`                  | Clear simulated location                |
-| `simvyn app list <device>`                        | List installed apps                     |
-| `simvyn app install <device> <path>`              | Install an IPA or APK                   |
-| `simvyn app uninstall <device> <bundle-id>`       | Uninstall an app                        |
-| `simvyn app launch <device> <bundle-id>`          | Launch an app                           |
-| `simvyn app terminate <device> <bundle-id>`       | Terminate an app                        |
-| `simvyn app info <device> <bundle-id>`            | Show app details                        |
-| `simvyn app clear-data <device> <bundle-id>`      | Clear app data (Android)                |
-| `simvyn logs <device>`                            | Stream device logs                      |
-| `simvyn screenshot <device>`                      | Capture a screenshot                    |
-| `simvyn record <device>`                          | Record the screen                       |
-| `simvyn link <device> <url>`                      | Open a deep link                        |
-| `simvyn push <device>`                            | Send a push notification                |
-| `simvyn fs ls <device> <bundle-id> [path]`        | List files in app sandbox               |
-| `simvyn fs pull <device> <bundle-id> <path>`      | Download a file                         |
-| `simvyn fs push <device> <bundle-id> <src> <dst>` | Upload a file                           |
-| `simvyn db list <device> <bundle-id>`             | List databases                          |
-| `simvyn db query <device> <bundle-id> <db> <sql>` | Run a SQL query                         |
-| `simvyn db prefs <device> <bundle-id>`            | View SharedPreferences / NSUserDefaults |
-| `simvyn keychain add <device> <cert>`             | Add a root certificate                  |
-| `simvyn keychain reset <device>`                  | Reset the keychain                      |
-| `simvyn collections list`                         | List all collections                    |
-| `simvyn collections show <id>`                    | Show collection details                 |
-| `simvyn collections create <name>`                | Create a new collection                 |
-| `simvyn collections delete <id>`                  | Delete a collection                     |
-| `simvyn collections duplicate <id>`               | Duplicate a collection                  |
-| `simvyn collections apply <name> <devices...>`    | Apply a collection to devices           |
-| `simvyn settings orientation <device> <orient>`   | Set device orientation (Android)        |
+| Command                                           | Description                                |
+| ------------------------------------------------- | ------------------------------------------ |
+| `simvyn`                                          | Start the dashboard (default)              |
+| `simvyn device list`                              | List all devices                           |
+| `simvyn device boot <device>`                     | Boot a device                              |
+| `simvyn device shutdown <device>`                 | Shutdown a device                          |
+| `simvyn device erase <device>`                    | Erase device content and settings          |
+| `simvyn device create <name> <type> <runtime>`    | Create a new iOS simulator                 |
+| `simvyn device clone <device> <name>`             | Clone an iOS simulator                     |
+| `simvyn device rename <device> <name>`            | Rename an iOS simulator                    |
+| `simvyn device delete <device>`                   | Delete an iOS simulator                    |
+| `simvyn location set <device> <lat> <lng>`        | Set GPS coordinates                        |
+| `simvyn location route <device> <file>`           | Play a GPX/KML route                       |
+| `simvyn location clear <device>`                  | Clear simulated location                   |
+| `simvyn app list <device>`                        | List installed apps                        |
+| `simvyn app install <device> <path>`              | Install an IPA, APK, or iOS simulator .app |
+| `simvyn app uninstall <device> <bundle-id>`       | Uninstall an app                           |
+| `simvyn app launch <device> <bundle-id>`          | Launch an app                              |
+| `simvyn app terminate <device> <bundle-id>`       | Terminate an app                           |
+| `simvyn app info <device> <bundle-id>`            | Show app details                           |
+| `simvyn app clear-data <device> <bundle-id>`      | Clear app data (Android)                   |
+| `simvyn logs <device>`                            | Stream device logs                         |
+| `simvyn screenshot <device>`                      | Capture a screenshot                       |
+| `simvyn record <device>`                          | Record the screen                          |
+| `simvyn link <device> <url>`                      | Open a deep link                           |
+| `simvyn push <device>`                            | Send a push notification                   |
+| `simvyn fs ls <device> <bundle-id> [path]`        | List files in app sandbox                  |
+| `simvyn fs pull <device> <bundle-id> <path>`      | Download a file                            |
+| `simvyn fs push <device> <bundle-id> <src> <dst>` | Upload a file                              |
+| `simvyn db list <device> <bundle-id>`             | List databases                             |
+| `simvyn db query <device> <bundle-id> <db> <sql>` | Run a SQL query                            |
+| `simvyn db prefs <device> <bundle-id>`            | View SharedPreferences / NSUserDefaults    |
+| `simvyn keychain add <device> <cert>`             | Add a root certificate                     |
+| `simvyn keychain reset <device>`                  | Reset the keychain                         |
+| `simvyn collections list`                         | List all collections                       |
+| `simvyn collections show <id>`                    | Show collection details                    |
+| `simvyn collections create <name>`                | Create a new collection                    |
+| `simvyn collections delete <id>`                  | Delete a collection                        |
+| `simvyn collections duplicate <id>`               | Duplicate a collection                     |
+| `simvyn collections apply <name> <devices...>`    | Apply a collection to devices              |
+| `simvyn settings orientation <device> <orient>`   | Set device orientation (Android)           |
 
 ## How It Works
 

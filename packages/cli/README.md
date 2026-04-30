@@ -78,6 +78,8 @@ simvyn push <device> --payload payload.json # Send push notification
 simvyn device create <name> <type> <runtime> # Create iOS simulator
 ```
 
+The app install command accepts APK, IPA, and iOS simulator .app bundle paths.
+
 ## How It Works
 
 simvyn wraps `xcrun simctl` (iOS Simulators), `xcrun devicectl` (iOS physical devices), and `adb` (Android) behind a unified interface. No SDK required — works with any app, no code changes needed. The web dashboard communicates with a local Fastify server over WebSocket for real-time device state and log streaming.

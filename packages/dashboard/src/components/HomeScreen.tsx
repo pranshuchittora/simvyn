@@ -7,7 +7,7 @@ const tips = [
 	"Take a screenshot instantly — open the command palette and type 'screenshot'",
 	"Toggle dark mode on any device right from the command palette",
 	"Stream real-time logs with level filtering in the Logs module",
-	"Drag and drop an IPA or APK into the Apps module to install it",
+	"Drag and drop an IPA, APK, or iOS .app bundle into the Apps module to install it",
 	"Set GPS coordinates on multiple simulators at once with the Location module",
 	"Browse app sandboxes and edit files in-place with the File System module",
 	"Inspect SQLite databases and run queries in the Database module",
