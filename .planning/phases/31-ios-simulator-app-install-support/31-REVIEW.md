@@ -44,6 +44,7 @@ No open critical, warning, or info findings remain.
 
 - `npm run build -w @simvyn/dashboard` - passed
 - `npm run lint` - passed
+- `npm test` - passed when rerun outside the sandbox; the first sandboxed run failed only because storage tests could not write to `/Users/pranshu/.simvyn`
 - `node --import tsx --test packages/modules/app-management/upload-utils.test.ts` - passed
 - `npx tsc --noEmit --target ES2023 --module NodeNext --moduleResolution NodeNext --strict --skipLibCheck packages/modules/app-management/routes.ts packages/modules/app-management/upload-utils.ts` - passed
 
