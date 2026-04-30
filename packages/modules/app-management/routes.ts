@@ -1,16 +1,23 @@
 import { createWriteStream } from "node:fs";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, rename, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { pipeline } from "node:stream/promises";
 import multipart from "@fastify/multipart";
 import type {} from "@simvyn/server";
 import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
+import {
+	AppBundleUploadError,
+	assertSafeAppBundleName,
+	parseAppBundleManifest,
+	resolveBundleFilePath,
+	validateAppBundleManifest,
+} from "./upload-utils.js";
 
 export async function appRoutes(fastify: FastifyInstance) {
 	await fastify.register(multipart, {
-		limits: { fileSize: 500_000_000 },
+		limits: { fileSize: 500_000_000, files: 5000, fields: 3, parts: 5005 },
 	});
 
 	fastify.get<{ Params: { deviceId: string } }>("/list/:deviceId", async (req, reply) => {
@@ -43,17 +50,86 @@ export async function appRoutes(fastify: FastifyInstance) {
 		if (!adapter?.installApp)
 			return reply.status(400).send({ error: "Not supported for this platform" });
 
-		const data = await req.file();
-		if (!data) return reply.status(400).send({ error: "No file uploaded" });
-
 		const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-upload-"));
-		const filePath = join(tmpDir, data.filename);
 
 		try {
-			await pipeline(data.file, createWriteStream(filePath));
-			await adapter.installApp(device.id, filePath);
+			let uploadType = "";
+			let bundleName = "";
+			let manifest = "";
+			let singleFilePath: string | undefined;
+			const uploadedBundleFiles = new Map<string, string>();
+
+			for await (const part of req.parts()) {
+				if (part.type === "field") {
+					if (part.fieldname === "uploadType") {
+						uploadType = String(part.value ?? "");
+					} else if (part.fieldname === "bundleName") {
+						bundleName = String(part.value ?? "");
+					} else if (part.fieldname === "manifest") {
+						manifest = String(part.value ?? "");
+					} else {
+						throw new AppBundleUploadError("Unexpected upload field: " + part.fieldname);
+					}
+					continue;
+				}
+
+				if (part.fieldname === "file") {
+					if (singleFilePath) {
+						throw new AppBundleUploadError("Duplicate upload field: file");
+					}
+					const filename = basename(part.filename) || "upload";
+					singleFilePath = join(tmpDir, filename);
+					await pipeline(part.file, createWriteStream(singleFilePath));
+					continue;
+				}
+
+				if (/^bundle-file-\d+$/.test(part.fieldname)) {
+					if (uploadedBundleFiles.has(part.fieldname)) {
+						throw new AppBundleUploadError("Duplicate uploaded file for " + part.fieldname);
+					}
+					const stagingDir = join(tmpDir, "parts");
+					await mkdir(stagingDir, { recursive: true });
+					const stagingPath = join(stagingDir, part.fieldname);
+					await pipeline(part.file, createWriteStream(stagingPath));
+					uploadedBundleFiles.set(part.fieldname, stagingPath);
+					continue;
+				}
+
+				throw new AppBundleUploadError("Unexpected upload field: " + part.fieldname);
+			}
+
+			if (uploadType === "app-bundle") {
+				if (device.platform !== "ios" || device.id.startsWith("physical:")) {
+					throw new AppBundleUploadError(".app bundles can only be installed on iOS simulators");
+				}
+
+				const safeBundleName = assertSafeAppBundleName(bundleName);
+				const entries = parseAppBundleManifest(manifest);
+				validateAppBundleManifest(entries);
+
+				const bundleRoot = join(tmpDir, safeBundleName);
+				for (const entry of entries) {
+					const stagedPath = uploadedBundleFiles.get(entry.field);
+					if (!stagedPath) {
+						throw new AppBundleUploadError("Missing uploaded file for " + entry.field);
+					}
+
+					const destination = resolveBundleFilePath(bundleRoot, entry.relativePath);
+					await mkdir(dirname(destination), { recursive: true });
+					await rename(stagedPath, destination);
+				}
+
+				await adapter.installApp(device.id, bundleRoot);
+				return { success: true };
+			}
+
+			if (!singleFilePath) throw new AppBundleUploadError("No file uploaded");
+			await adapter.installApp(device.id, singleFilePath);
 			return { success: true };
 		} catch (err) {
+			if (err instanceof AppBundleUploadError) {
+				return reply.status(err.statusCode).send({ error: err.message });
+			}
 			return reply.status(500).send({ error: (err as Error).message });
 		} finally {
 			await rm(tmpDir, { recursive: true, force: true }).catch(() => {});
