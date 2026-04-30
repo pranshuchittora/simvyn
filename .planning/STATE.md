@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
-status: executing
-stopped_at: Completed 31-02-PLAN.md
+status: milestone_complete
+stopped_at: Completed Phase 31 execution
 last_updated: "2026-04-30T21:18:11.190Z"
 progress:
   total_phases: 45
-  completed_phases: 40
+  completed_phases: 41
   total_plans: 100
   completed_plans: 92
   percent: 92
@@ -23,11 +23,11 @@ progress:
 
 ## Current Position
 
-Phase: 31 (iOS Simulator .app Install Support) — VERIFYING
+Phase: 31 (iOS Simulator .app Install Support) — COMPLETE
 Plan: 2 of 2
 **Phase:** 31 — iOS Simulator .app Install Support
-**Plan:** 31-02-PLAN.md
-**Status:** Plans complete; verification pending
+**Plan:** Complete
+**Status:** Milestone complete; Phase 31 manual UAT pending
 **Progress:** [█████████░] 92%
 
 ## Phase Overview
@@ -83,13 +83,13 @@ Plan: 2 of 2
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 | 30.4 Device Font Size Control | ✅ Complete (1/1 plans) |
 | 30.5 Fix iOS Clear App Data | ✅ Complete (1/1 plans) |
-| 31. iOS Simulator .app Install Support | ✅ Plans Complete (2/2 plans) |
+| 31. iOS Simulator .app Install Support | ✅ Complete (2/2 plans; UAT pending) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | 39/45 |
+| Phases completed | 41/45 |
 | Plans completed | 92/100 |
 | v1.0 requirements delivered | 126/126 |
 | v1.1 requirements delivered | 20/20 |
@@ -426,8 +426,8 @@ Plan: 2 of 2
 ## Session Continuity
 
 **Last session:** 2026-04-30T21:18:11.163Z
-**Stopped at:** Completed 31-02-PLAN.md
-**Context for next session:** Phase 30.5 (Fix iOS Clear App Data) complete. iOS clearAppData implemented via get_app_container + readdir/rm. Dashboard shows toast errors on failed actions.
+**Stopped at:** Completed Phase 31 execution
+**Context for next session:** Phase 31 implementation and automated verification are complete. Manual UAT remains pending in `31-HUMAN-UAT.md` for real `.app` bundle install, wrong-platform rejection, and missing `Info.plist`.
 
 ---
 *State initialized: 2026-02-26*
