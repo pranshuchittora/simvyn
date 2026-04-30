@@ -16,7 +16,7 @@
 		"@fastify/websocket": "^11.2.0",
 		"@simvyn/core": "*",
 		"@simvyn/types": "*",
-		"fastify": "^5.7.4",
+		"fastify": "^5.8.5",
 		"fastify-plugin": "^5.1.0"
 	}
 }
