@@ -210,6 +210,10 @@ export default function InstallDropZone({
 			);
 
 			if (appDirectories.length === 1) {
+				if (devicePlatform !== "ios" || isPhysicalIos) {
+					setStatus(`Error: ${APP_BUNDLE_PLATFORM_ERROR}`);
+					return;
+				}
 				try {
 					const bundleFiles = await collectBundleFiles(appDirectories[0]);
 					await uploadAppBundle(appDirectories[0].name, bundleFiles);
@@ -230,7 +234,7 @@ export default function InstallDropZone({
 
 			setStatus(`Error: ${PACKAGE_ERROR}`);
 		},
-		[handleFile, uploadAppBundle],
+		[devicePlatform, handleFile, isPhysicalIos, uploadAppBundle],
 	);
 
 	function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {

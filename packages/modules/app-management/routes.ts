@@ -51,6 +51,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 			return reply.status(400).send({ error: "Not supported for this platform" });
 
 		const tmpDir = await mkdtemp(join(tmpdir(), "simvyn-upload-"));
+		const supportsAppBundleUpload = device.platform === "ios" && !device.id.startsWith("physical:");
 
 		try {
 			let uploadType = "";
@@ -63,6 +64,11 @@ export async function appRoutes(fastify: FastifyInstance) {
 				if (part.type === "field") {
 					if (part.fieldname === "uploadType") {
 						uploadType = String(part.value ?? "");
+						if (uploadType === "app-bundle" && !supportsAppBundleUpload) {
+							throw new AppBundleUploadError(
+								".app bundles can only be installed on iOS simulators",
+							);
+						}
 					} else if (part.fieldname === "bundleName") {
 						bundleName = String(part.value ?? "");
 					} else if (part.fieldname === "manifest") {
@@ -84,6 +90,9 @@ export async function appRoutes(fastify: FastifyInstance) {
 				}
 
 				if (/^bundle-file-\d+$/.test(part.fieldname)) {
+					if (!supportsAppBundleUpload) {
+						throw new AppBundleUploadError(".app bundles can only be installed on iOS simulators");
+					}
 					if (uploadedBundleFiles.has(part.fieldname)) {
 						throw new AppBundleUploadError("Duplicate uploaded file for " + part.fieldname);
 					}
@@ -99,7 +108,7 @@ export async function appRoutes(fastify: FastifyInstance) {
 			}
 
 			if (uploadType === "app-bundle") {
-				if (device.platform !== "ios" || device.id.startsWith("physical:")) {
+				if (!supportsAppBundleUpload) {
 					throw new AppBundleUploadError(".app bundles can only be installed on iOS simulators");
 				}
 
