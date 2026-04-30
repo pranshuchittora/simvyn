@@ -663,10 +663,20 @@ Plans:
 **Goal:** Users can install iOS simulator `.app` bundles through the same drag-and-drop/file-picker install flow that currently accepts `.ipa` and `.apk` files
 **Requirements:** TBD
 **Depends on:** Phase 30.5
-**Plans:** 0 plans
+**Success Criteria** (what must be TRUE):
+  1. Existing dashboard `.ipa` and `.apk` installs continue using the same file upload flow
+  2. Users can browse or drag/drop an iOS simulator `.app` bundle directory in the App Management panel
+  3. The server reconstructs uploaded `.app` bundles with path traversal protection before calling the iOS adapter
+  4. `.app` bundle uploads are rejected with clear errors for Android and physical iOS devices
+  5. Documentation and CLI help mention iOS simulator `.app` bundle support without overstating platform support
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd-plan-phase 31 to break down)
+**Wave 1**
+- [ ] 31-01-PLAN.md — Backend app-bundle upload protocol and safe reconstruction
+
+**Wave 2** *(blocked on Wave 1 completion)*
+- [ ] 31-02-PLAN.md — Dashboard .app bundle browse/drop support and docs
 
 ---
 *Roadmap created: 2026-02-26*

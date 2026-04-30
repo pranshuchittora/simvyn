@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
-status: completed
+status: executing
 stopped_at: Phase 31 UI-SPEC approved
-last_updated: "2026-04-30T20:50:39.194Z"
+last_updated: "2026-04-30T20:57:11.604Z"
 progress:
   total_phases: 45
   completed_phases: 39
-  total_plans: 98
+  total_plans: 100
   completed_plans: 90
-  percent: 92
+  percent: 90
 ---
 
 # Project State: Simvyn
@@ -19,14 +19,14 @@ progress:
 
 **Core Value:** Developers can control and inspect any iOS simulator or Android emulator/device from a single unified dashboard without modifying their app code.
 
-**Current Focus:** Milestone v1.7 — Real Device Support
+**Current Focus:** Phase 31 — iOS Simulator .app Install Support
 
 ## Current Position
 
-**Phase:** All complete
-**Plan:** All complete
-**Status:** Milestone complete
-**Progress:** [██████████] 100%
+**Phase:** 31 — iOS Simulator .app Install Support
+**Plan:** 31-01-PLAN.md
+**Status:** Ready to execute
+**Progress:** [░░░░░░░░░░] 0%
 
 ## Phase Overview
 
@@ -81,13 +81,14 @@ progress:
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 | 30.4 Device Font Size Control | ✅ Complete (1/1 plans) |
 | 30.5 Fix iOS Clear App Data | ✅ Complete (1/1 plans) |
+| 31. iOS Simulator .app Install Support | ⏳ Ready to execute (0/2 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
-| Phases completed | All |
-| Plans completed | All |
+| Phases completed | 39/45 |
+| Plans completed | 90/100 |
 | v1.0 requirements delivered | 126/126 |
 | v1.1 requirements delivered | 20/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |

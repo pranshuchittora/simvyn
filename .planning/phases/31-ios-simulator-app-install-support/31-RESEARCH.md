@@ -1,6 +1,7 @@
 # Phase 31: iOS Simulator .app Install Support - Research
 
 **Researched:** 2026-05-01
+**Revalidated:** 2026-05-01 via `$gsd-plan-phase 31 --research`
 **Domain:** Dashboard app install upload flow, Fastify multipart handling, iOS simulator app bundle install
 **Confidence:** HIGH
 
@@ -210,4 +211,3 @@ Use two plans:
 2. Dashboard directory selection/drop support plus documentation updates.
 
 The backend plan should be Wave 1 because it defines the multipart protocol and security validation. The dashboard/docs plan can depend on Wave 1 and should use exactly that protocol.
-
