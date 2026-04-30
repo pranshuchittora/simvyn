@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: — Dashboard UX Polish
 status: executing
-stopped_at: Completed 31-01-PLAN.md
-last_updated: "2026-04-30T21:11:52.415Z"
+stopped_at: Completed 31-02-PLAN.md
+last_updated: "2026-04-30T21:18:11.190Z"
 progress:
   total_phases: 45
-  completed_phases: 39
+  completed_phases: 40
   total_plans: 100
-  completed_plans: 91
-  percent: 91
+  completed_plans: 92
+  percent: 92
 ---
 
 # Project State: Simvyn
@@ -23,12 +23,12 @@ progress:
 
 ## Current Position
 
-Phase: 31 (iOS Simulator .app Install Support) — EXECUTING
+Phase: 31 (iOS Simulator .app Install Support) — VERIFYING
 Plan: 2 of 2
 **Phase:** 31 — iOS Simulator .app Install Support
 **Plan:** 31-02-PLAN.md
-**Status:** Executing Phase 31
-**Progress:** [█████████░] 91%
+**Status:** Plans complete; verification pending
+**Progress:** [█████████░] 92%
 
 ## Phase Overview
 
@@ -83,14 +83,14 @@ Plan: 2 of 2
 | 30.3 Active Device Filter | ✅ Complete (1/1 plans) |
 | 30.4 Device Font Size Control | ✅ Complete (1/1 plans) |
 | 30.5 Fix iOS Clear App Data | ✅ Complete (1/1 plans) |
-| 31. iOS Simulator .app Install Support | ⏳ In Progress (1/2 plans) |
+| 31. iOS Simulator .app Install Support | ✅ Plans Complete (2/2 plans) |
 
 ## Performance Metrics
 
 | Metric | Value |
 |--------|-------|
 | Phases completed | 39/45 |
-| Plans completed | 91/100 |
+| Plans completed | 92/100 |
 | v1.0 requirements delivered | 126/126 |
 | v1.1 requirements delivered | 20/20 |
 | Phase 01 P02 | 3min | 3 tasks | 10 files |
@@ -425,8 +425,8 @@ Plan: 2 of 2
 
 ## Session Continuity
 
-**Last session:** 2026-04-30T21:11:48.048Z
-**Stopped at:** Completed 31-01-PLAN.md
+**Last session:** 2026-04-30T21:18:11.163Z
+**Stopped at:** Completed 31-02-PLAN.md
 **Context for next session:** Phase 30.5 (Fix iOS Clear App Data) complete. iOS clearAppData implemented via get_app_container + readdir/rm. Dashboard shows toast errors on failed actions.
 
 ---
