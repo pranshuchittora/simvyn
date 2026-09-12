@@ -16,7 +16,7 @@
 		"start": "npx tsx packages/cli/src/index.ts",
 		"build": "npm run build -w @simvyn/dashboard",
 		"build:cli": "npm run bundle -w simvyn && rm -rf packages/cli/dist/dashboard && cp -r dist/dashboard packages/cli/dist/dashboard",
-		"build:release": "npm run build && npm run build:cli && cp README.md packages/cli/README.md",
+		"build:release": "npm run build && npm run build:cli && cp README.md LICENSE packages/cli/",
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
 		"format": "prettier --write .",
