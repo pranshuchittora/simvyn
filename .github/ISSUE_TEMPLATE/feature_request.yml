@@ -1,0 +1,85 @@
+name: Feature Request
+description: Suggest a new capability or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement. Please describe the problem you're
+        trying to solve, not just the solution you have in mind — it often opens
+        up better options.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched [existing issues](https://github.com/pranshuchittora/simvyn/issues) and didn't find a duplicate
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: What are you trying to do today, and where does simvyn get in the way?
+      placeholder: I test deep links across 6 devices and have to re-enter the URL for each one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would you like simvyn to do?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Which surface does this affect?
+      multiple: true
+      options:
+        - CLI
+        - Web dashboard
+        - Both
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: Related module
+      description: Which existing module is this closest to?
+      options:
+        - Device Management
+        - App Management
+        - Log Viewer
+        - Location
+        - Device Settings
+        - Screenshots and Recording
+        - Deep Links
+        - Database Inspector
+        - File Browser
+        - Push Notifications
+        - Collections
+        - Crash Logs
+        - Clipboard
+        - Media
+        - Tool Settings
+        - New module
+        - Not sure
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Other tools or workarounds you're using today.
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I'd be willing to open a PR for this

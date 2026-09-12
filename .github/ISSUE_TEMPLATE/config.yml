@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/pranshuchittora/simvyn/security/advisories/new
+    about: Please report security issues privately, never as a public issue.
+  - name: Documentation
+    url: https://github.com/pranshuchittora/simvyn#readme
+    about: CLI reference, module guides, and platform support matrix.
+  - name: Contributing guide
+    url: https://github.com/pranshuchittora/simvyn/blob/main/CONTRIBUTING.md
+    about: Development setup, project structure, and how to add a module.
