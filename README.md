@@ -9,8 +9,11 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/v/simvyn" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/l/simvyn" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/v/simvyn?color=cb3837&logo=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/simvyn"><img src="https://img.shields.io/npm/dm/simvyn?color=cb3837&logo=npm" alt="npm downloads" /></a>
+  <a href="https://github.com/pranshuchittora/simvyn/actions/workflows/ci.yml"><img src="https://github.com/pranshuchittora/simvyn/actions/workflows/ci.yml/badge.svg" alt="CI status" /></a>
+  <a href="https://github.com/pranshuchittora/simvyn/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/simvyn?color=blue" alt="MIT License" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/simvyn?color=5FA04E&logo=node.js&logoColor=white" alt="Node version" /></a>
 </p>
 
 <p align="center">
@@ -20,6 +23,20 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/pranshuchittora/simvyn/main/assets/demo.gif" alt="simvyn demo" />
 </p>
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Features](#features)
+- [Module Showcases](#module-showcases)
+- [Collections Guide](#collections-guide)
+- [CLI Reference](#cli-reference)
+- [How It Works](#how-it-works)
+- [Supported Platforms](#supported-platforms)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
 
 ## Quick Start
 
@@ -345,6 +362,36 @@ Physical devices connected via USB are discovered automatically alongside simula
 
 **iOS physical devices** require Xcode 15+ and use `xcrun devicectl` under the hood. Supported features include device discovery, app install/uninstall/launch/terminate, app listing, deep links, and file copy. Many features that rely on `simctl` (screenshots, screen recording, location simulation, clipboard, appearance, status bar, push notifications) are not available on physical iOS devices. Unsupported controls are disabled with tooltips explaining why. Collections automatically skip steps that don't apply to physical devices.
 
+## Contributing
+
+Contributions are welcome — bug fixes, new modules, platform coverage, and docs alike.
+
+Start with the **[Contributing Guide](https://github.com/pranshuchittora/simvyn/blob/main/CONTRIBUTING.md)**, which covers development setup, the project layout, how to add a module, and the checks CI runs.
+
+- [Report a bug](https://github.com/pranshuchittora/simvyn/issues/new?template=bug_report.yml)
+- [Request a feature](https://github.com/pranshuchittora/simvyn/issues/new?template=feature_request.yml)
+- [Code of Conduct](https://github.com/pranshuchittora/simvyn/blob/main/CODE_OF_CONDUCT.md)
+- [Changelog](https://github.com/pranshuchittora/simvyn/blob/main/CHANGELOG.md)
+
+```bash
+git clone https://github.com/pranshuchittora/simvyn.git
+cd simvyn
+npm install
+npm run dev
+```
+
+## Security
+
+simvyn is a local developer tool and is not designed to be exposed to untrusted networks.
+
+Please report vulnerabilities privately through [GitHub Security Advisories](https://github.com/pranshuchittora/simvyn/security/advisories/new) rather than as a public issue. See the [Security Policy](https://github.com/pranshuchittora/simvyn/blob/main/SECURITY.md) for scope and what to include.
+
+Every release is published to npm with [provenance](https://docs.npmjs.com/generating-provenance-statements) via trusted publishing, so you can verify a tarball back to the commit that built it:
+
+```bash
+npm audit signatures
+```
+
 ## License
 
-MIT
+[MIT](https://github.com/pranshuchittora/simvyn/blob/main/LICENSE) © [Pranshu Chittora](https://github.com/pranshuchittora)
