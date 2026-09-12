@@ -29,10 +29,12 @@ If you are planning a large change, please open an issue first so we can agree o
 
 **Requirements**
 
-- Node.js >= 22.12.0 (the repo is developed and tested on Node 24)
+- Node.js 22.22.1+, 24.11.0+, or 26+ (the repo is developed and tested on Node 24; the build tools do not support Node 23 or 25)
 - macOS for full iOS + Android support; Linux supports Android only
 - Xcode with Command Line Tools for iOS Simulators, Xcode 15+ for physical iOS devices
 - Android SDK platform tools (`adb`) on your `PATH` for Android
+
+The published CLI requires Node.js 22 (22.14.0+) or 24+ for its native SQLite dependency. The higher development minimum comes from lint-staged and tsdown.
 
 **Install and run**
 

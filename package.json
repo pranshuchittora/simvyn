@@ -16,7 +16,7 @@
 		"start": "npx tsx packages/cli/src/index.ts",
 		"build": "npm run build -w @simvyn/dashboard",
 		"build:cli": "npm run bundle -w simvyn && rm -rf packages/cli/dist/dashboard && cp -r dist/dashboard packages/cli/dist/dashboard",
-		"build:release": "npm run build && npm run build:cli && cp README.md LICENSE packages/cli/",
+		"build:release": "npm run build && npm run build:cli && node scripts/prepare-package.mjs",
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
 		"format": "prettier --write .",
@@ -31,15 +31,15 @@
 		"*.{ts,tsx,js,jsx,json,css,md,yml,yaml}": "prettier --write"
 	},
 	"engines": {
-		"node": ">=22.12.0"
+		"node": "^22.22.1 || ^24.11.0 || >=26.0.0"
 	},
 	"devDependencies": {
-		"lint-staged": "^16.3.2",
-		"oxlint": "^1.50.0",
-		"prettier": "^3.8.1",
-		"simple-git-hooks": "^2.13.1",
-		"tsup": "^8.5.1",
-		"tsx": "^4.21.0",
-		"typescript": "^5.9.3"
+		"lint-staged": "^17.5.1",
+		"oxlint": "^1.82.0",
+		"prettier": "^3.9.6",
+		"simple-git-hooks": "^2.14.0",
+		"tsdown": "^0.23.0",
+		"tsx": "^4.23.13",
+		"typescript": "^7.0.2"
 	}
 }

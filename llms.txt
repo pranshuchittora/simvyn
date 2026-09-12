@@ -1,0 +1,24 @@
+# simvyn
+
+> Local mobile developer tools for iOS Simulators, Android Emulators, and supported physical devices, available through a web dashboard and CLI.
+
+This index links to human-readable and agent-readable documentation. It does not install a skill or register tools. Device capabilities vary by platform and build type; read the installed CLI's help and the platform reference before running commands.
+
+## Start here
+
+- [README and installation](https://github.com/pranshuchittora/simvyn/blob/main/README.md): Requirements, dashboard features, and CLI overview.
+- [Agent setup](https://github.com/pranshuchittora/simvyn/blob/main/docs/agents.md): Pi and portable skill installation, local checkout testing, output handling, and known limitations.
+- [simvyn Agent Skill](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/SKILL.md): Entry point for agents using the existing CLI through their terminal tool.
+
+## Task references
+
+- [CLI commands](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/references/cli.md): Arguments and supported outputs.
+- [Platform capabilities](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/references/platforms.md): Simulator, emulator, and physical-device constraints.
+- [Workflow recipes](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/references/recipes.md): Practical device and application workflows.
+- [Automation](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/references/automation.md): Bounded processes, verification, and Collections limitations.
+
+## Project
+
+- [Contributing](https://github.com/pranshuchittora/simvyn/blob/main/CONTRIBUTING.md): Development setup and contribution checks.
+- [Security](https://github.com/pranshuchittora/simvyn/blob/main/SECURITY.md): Local-tool scope and vulnerability reporting.
+- [Releases](https://github.com/pranshuchittora/simvyn/releases): Published release history.

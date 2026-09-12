@@ -56,7 +56,7 @@ describe("verboseSpawn", () => {
 
 	it("calls spawn and returns a ChildProcess", () => {
 		const cp = verboseSpawn("echo", ["test"]);
-		assert.ok(cp.pid !== undefined || cp.pid === undefined); // process created
+		assert.equal(typeof cp.pid, "number");
 		assert.equal(typeof cp.kill, "function");
 		cp.kill();
 	});

@@ -15,6 +15,6 @@
 		"@simvyn/types": "*"
 	},
 	"devDependencies": {
-		"@types/node": "^25.3.0"
+		"@types/node": "^22.20.2"
 	}
 }

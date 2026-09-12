@@ -8,6 +8,6 @@
 		"@simvyn/core": "*",
 		"@simvyn/server": "*",
 		"@simvyn/types": "*",
-		"@fastify/multipart": "^9.4.0"
+		"@fastify/multipart": "^10.1.1"
 	}
 }

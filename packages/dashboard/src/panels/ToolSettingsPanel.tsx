@@ -1,4 +1,4 @@
-import { Bug, Check, ChevronDown, Copy, ExternalLink, Github, Heart } from "lucide-react";
+import { Bug, Check, ChevronDown, Copy, ExternalLink, GitFork, Heart } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { ConsoleEntry } from "../stores/console-capture";
@@ -340,7 +340,7 @@ function ToolSettingsPanel() {
 						rel="noopener noreferrer"
 						className="glass-button inline-flex items-center gap-1.5"
 					>
-						<Github size={12} />
+						<GitFork size={12} />
 						GitHub
 						<ExternalLink size={10} className="opacity-50" />
 					</a>

@@ -454,29 +454,25 @@ export function getActions(
 			},
 		},
 
-		...(collections ?? []).map(
-			(col): MultiStepAction => ({
-				id: `collection:${col.id}`,
-				label: `Apply: ${col.name}`,
-				description: `Run ${col.steps.length} step collection`,
-				icon: <Layers size={18} />,
-				steps: [
-					{ id: "pick-devices", type: "device-select", label: "Select Devices", multi: true },
-				],
-				execute: async (ctx) => {
-					const res = await fetch(`/api/modules/collections/${col.id}/execute`, {
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ deviceIds: ctx.selectedDeviceIds }),
-					});
-					if (res.ok) {
-						toast.success(`Applying "${col.name}"...`);
-					} else {
-						const data = await res.json().catch(() => ({ error: "Apply failed" }));
-						toast.error(data.error || "Apply failed");
-					}
-				},
-			}),
-		),
+		...(collections ?? []).map((col): MultiStepAction => ({
+			id: `collection:${col.id}`,
+			label: `Apply: ${col.name}`,
+			description: `Run ${col.steps.length} step collection`,
+			icon: <Layers size={18} />,
+			steps: [{ id: "pick-devices", type: "device-select", label: "Select Devices", multi: true }],
+			execute: async (ctx) => {
+				const res = await fetch(`/api/modules/collections/${col.id}/execute`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ deviceIds: ctx.selectedDeviceIds }),
+				});
+				if (res.ok) {
+					toast.success(`Applying "${col.name}"...`);
+				} else {
+					const data = await res.json().catch(() => ({ error: "Apply failed" }));
+					toast.error(data.error || "Apply failed");
+				}
+			},
+		})),
 	];
 }

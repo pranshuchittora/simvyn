@@ -35,6 +35,11 @@ Thumbs.db
 *.tgz
 .npmrc
 
+# Agent documentation copied into the npm package by build:release
+/packages/cli/skills/
+/packages/cli/docs/
+/packages/cli/llms.txt
+
 # Test / Coverage
 coverage/
 .nyc_output/

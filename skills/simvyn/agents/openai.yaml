@@ -1,0 +1,4 @@
+interface:
+  display_name: "Simvyn"
+  short_description: "Operate mobile simulators and connected devices"
+  default_prompt: "Use $simvyn to inspect my mobile development devices and complete the requested debugging workflow."
