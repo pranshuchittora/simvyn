@@ -43,3 +43,6 @@ coverage/
 *.log
 tmp/
 .tmp/
+
+.claude
+.codex
