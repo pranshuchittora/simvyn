@@ -3,6 +3,16 @@ import type { Device } from "@simvyn/types";
 import type { FastifyInstance } from "fastify";
 import { createPlaybackEngine, type PlaybackEngine } from "./playback.js";
 
+function getRequestedDeviceIds(data: any): string[] | undefined {
+	if (Array.isArray(data.deviceIds)) {
+		return data.deviceIds.filter((id: unknown): id is string => typeof id === "string");
+	}
+	if (typeof data.deviceId === "string") {
+		return [data.deviceId];
+	}
+	return undefined;
+}
+
 export function registerLocationWsHandler(fastify: FastifyInstance) {
 	const { wsBroker, deviceManager, processManager } = fastify;
 
@@ -12,12 +22,25 @@ export function registerLocationWsHandler(fastify: FastifyInstance) {
 		const data = payload as any;
 
 		if (type === "set-location") {
-			const { lat, lon, deviceIds } = data;
-			const targets = deviceIds?.length
-				? deviceManager.devices.filter((d: Device) => deviceIds.includes(d.id))
+			const { lat, lon } = data;
+			const requestedDeviceIds = getRequestedDeviceIds(data);
+			const targets = requestedDeviceIds?.length
+				? deviceManager.devices.filter((d: Device) => requestedDeviceIds.includes(d.id))
 				: deviceManager.devices.filter((d: Device) => d.state === "booted");
 
 			const results: Array<{ deviceId: string; success: boolean; error?: string }> = [];
+			if (requestedDeviceIds?.length) {
+				const targetIds = new Set(targets.map((d: Device) => d.id));
+				for (const requestedId of requestedDeviceIds) {
+					if (!targetIds.has(requestedId)) {
+						results.push({
+							deviceId: requestedId,
+							success: false,
+							error: `Device not found: ${requestedId}`,
+						});
+					}
+				}
+			}
 
 			Promise.all(
 				targets.map(async (device: Device) => {

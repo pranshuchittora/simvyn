@@ -257,6 +257,13 @@ describe("Android Adapter", () => {
 				"37.7749",
 			]);
 		});
+
+		it("rejects physical Android devices before using emulator geo commands", async () => {
+			await assert.rejects(() => adapter.setLocation!("R5CT900ABCD", 37.7749, -122.4194), {
+				message: "Location simulation is not available on physical Android devices",
+			});
+			assert.equal(calls.length, 0);
+		});
 	});
 
 	describe("clearLocation", () => {
@@ -264,6 +271,13 @@ describe("Android Adapter", () => {
 			pushExecResponse("OK");
 			await adapter.clearLocation!("emulator-5554");
 			assert.deepEqual(calls[0].args, ["-s", "emulator-5554", "emu", "geo", "fix", "0", "0"]);
+		});
+
+		it("rejects physical Android devices before using emulator geo commands", async () => {
+			await assert.rejects(() => adapter.clearLocation!("R5CT900ABCD"), {
+				message: "Location simulation is not available on physical Android devices",
+			});
+			assert.equal(calls.length, 0);
 		});
 	});
 

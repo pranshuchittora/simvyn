@@ -22,7 +22,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"lint": "oxlint .",
-		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts"
+		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts packages/modules/location/**/*.test.ts"
 	},
 	"simple-git-hooks": {
 		"pre-commit": "npx lint-staged"
