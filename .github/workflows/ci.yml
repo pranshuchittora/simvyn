@@ -25,5 +25,8 @@ jobs:
       - name: Format check
         run: npm run format:check
 
+      - name: Typecheck Pi extension
+        run: npm run typecheck:pi
+
       - name: Test
         run: npm test

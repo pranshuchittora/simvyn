@@ -35,8 +35,10 @@ Thumbs.db
 *.tgz
 .npmrc
 
-# Agent documentation copied into the npm package by build:release
+# Agent documentation and Pi resources copied into the npm package by build:release
 /packages/cli/skills/
+/packages/cli/extensions/
+/packages/cli/prompts/
 /packages/cli/docs/
 /packages/cli/llms.txt
 

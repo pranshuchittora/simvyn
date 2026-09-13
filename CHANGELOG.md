@@ -26,6 +26,9 @@ Per-release notes with full commit lists are published on the
 
 ### Added
 
+- **Pi** — a native extension with `simvyn`, `simvyn_screenshot`, `simvyn_logs`, and
+  `simvyn_record` tools and a `/simvyn` dashboard command, plus `/simvyn-repro`,
+  `/simvyn-screen`, and `/simvyn-logs` prompt templates. Requires Pi 0.74 or later
 - `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and `SECURITY.md`
 - Issue forms and a pull request template
 - MIT License file and README license section
@@ -34,6 +37,7 @@ Per-release notes with full commit lists are published on the
 
 - Releases now publish to npm via [trusted publishing](https://docs.npmjs.com/trusted-publishers)
   with OIDC instead of a long-lived `NPM_TOKEN`
+- The npm package no longer ships dashboard source maps, roughly halving its unpacked size
 
 ## [2.6.8] and earlier
 

@@ -6,7 +6,7 @@ license: MIT
 
 # Simvyn
 
-Use Simvyn to inspect or operate the user's mobile development environment. This is a CLI workflow skill; it does not register MCP tools or a native Pi extension.
+Use Simvyn to inspect or operate the user's mobile development environment. This is a CLI workflow skill and does not register MCP tools. When the `simvyn`, `simvyn_screenshot`, `simvyn_logs`, and `simvyn_record` tools are available, as in Pi with the simvyn package installed, prefer them over the launcher: they resolve the CLI, bound log and recording captures, and return screenshots as images. The references below apply to both.
 
 Requires Node.js 22 (22.14.0+) or 24+ and an installed or built Simvyn CLI. macOS supports iOS and Android; Linux supports Android. iOS requires Xcode and simulator runtimes; Android requires adb and configured devices or emulators. See the platform reference for operation-specific requirements.
 

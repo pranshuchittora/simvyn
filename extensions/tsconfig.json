@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"types": ["node"],
+		"target": "ES2023",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"allowImportingTsExtensions": true,
+		"skipLibCheck": true,
+		"noEmit": true
+	},
+	"include": ["**/*.ts"]
+}
