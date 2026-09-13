@@ -19,10 +19,11 @@
 		"build:release": "npm run build && npm run build:cli && node scripts/prepare-package.mjs",
 		"build:all": "npm run build --workspaces --if-present",
 		"typecheck": "npx tsc --build",
+		"typecheck:pi": "tsc -p extensions",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"lint": "oxlint .",
-		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts packages/modules/location/**/*.test.ts"
+		"test": "node --import tsx --test --experimental-test-module-mocks packages/core/src/__tests__/**/*.test.ts packages/modules/location/**/*.test.ts extensions/**/*.test.ts"
 	},
 	"simple-git-hooks": {
 		"pre-commit": "npx lint-staged"
@@ -34,12 +35,15 @@
 		"node": "^22.22.1 || ^24.11.0 || >=26.0.0"
 	},
 	"devDependencies": {
+		"@earendil-works/pi-ai": "*",
+		"@earendil-works/pi-coding-agent": "*",
 		"lint-staged": "^17.5.1",
 		"oxlint": "^1.82.0",
 		"prettier": "^3.9.6",
 		"simple-git-hooks": "^2.14.0",
 		"tsdown": "^0.23.0",
 		"tsx": "^4.23.13",
+		"typebox": "^1.3.30",
 		"typescript": "^7.0.2"
 	}
 }

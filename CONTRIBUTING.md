@@ -83,6 +83,7 @@ These are the same checks CI runs on every pull request, so run them before push
 ```bash
 npm run lint          # oxlint
 npm run format:check  # prettier
+npm run typecheck:pi  # Pi extension types
 npm test              # node:test
 ```
 
@@ -94,11 +95,11 @@ npm run format
 
 A `pre-commit` hook runs Prettier over staged files via lint-staged, so formatting is usually handled for you.
 
-> **Note:** `npm run typecheck` currently reports pre-existing project-reference errors across the monorepo and is not part of CI. Don't be alarmed if it fails on a clean checkout — please don't mix unrelated `tsconfig` fixes into a feature PR.
+> **Note:** `npm run typecheck` currently reports pre-existing project-reference errors across the monorepo and is not part of CI. It can also write `.js` files next to sources outside the referenced projects, so delete any it leaves behind. Don't be alarmed if it fails on a clean checkout — please don't mix unrelated `tsconfig` fixes into a feature PR. `npm run typecheck:pi` checks the Pi extension on its own and does not write files.
 
 ### Tests
 
-Tests use the built-in Node test runner. The suite currently covers `packages/core` and the location module:
+Tests use the built-in Node test runner. The suite currently covers `packages/core`, the location module, and the Pi extension's process handling:
 
 ```bash
 npm test

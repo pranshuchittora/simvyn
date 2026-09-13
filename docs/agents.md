@@ -2,26 +2,43 @@
 
 The simvyn skill helps a coding agent operate iOS Simulators, Android Emulators, and supported physical devices through the existing CLI. It covers device selection, app operations, screenshots, device settings, sandbox inspection, logs, and saved Collections. No application SDK integration is needed for these commands; individual operations still depend on the device and build type.
 
-This is a portable instruction package with a CLI launcher and detailed references. The agent needs a terminal tool and access to your local developer tools. Installing the skill does not add an MCP server, register new tool APIs, or grant additional permissions.
+The portable skill is an instruction package with a CLI launcher and detailed references. The agent needs a terminal tool and access to your local developer tools. Installing the skill does not add an MCP server, register new tool APIs, or grant additional permissions. The Pi package adds a native extension on top of the same skill.
 
 ## Install for Pi
 
-With Pi already installed, use a simvyn npm release that contains `skills/simvyn/`:
+With Pi 0.74 or later installed:
 
 ```bash
 pi install npm:simvyn
 pi list
 ```
 
-Start a new Pi session and invoke:
+The npm package bundles the CLI and gives Pi three kinds of resources:
+
+| Resource         | Provides                                                                                            |
+| ---------------- | --------------------------------------------------------------------------------------------------- |
+| Extension        | `simvyn`, `simvyn_screenshot`, `simvyn_logs`, and `simvyn_record` tools, plus the `/simvyn` command |
+| Skill            | `/skill:simvyn` and the references linked from it                                                   |
+| Prompt templates | `/simvyn-repro`, `/simvyn-screen`, and `/simvyn-logs`                                               |
+
+The extension finds the CLI inside that installation, so a separate global `simvyn` executable is unnecessary:
+
+- `simvyn` runs a CLI command from an argument array with a timeout and truncated output. It rejects `start`, `logs`, `record`, `upgrade`, and argument lists without a subcommand, which would start the dashboard.
+- `simvyn_screenshot` captures a booted simulator or Android device and returns the image to the model.
+- `simvyn_logs` streams logs for a fixed number of seconds, stops the stream, and saves the full JSON Lines capture to a file.
+- `simvyn_record` records the screen for a fixed number of seconds and returns the MP4 path.
+- `/simvyn` starts the dashboard in the background and opens it in your browser; `/simvyn stop` and `/simvyn status` manage it. The dashboard keeps running across `/new`, `/resume`, `/fork`, and `/reload`, and stops when Pi exits.
+
+Start a new Pi session and describe the device work, or use a template or the skill:
 
 ```text
+/simvyn-screen check the login form layout
 /skill:simvyn List the available devices and explain which can capture screenshots. Do not change device state.
 ```
 
-Pi reads the package's declared skill resources. The included launcher finds the CLI inside that installation, so a separate global `simvyn` executable is unnecessary. Use `pi install npm:simvyn@<version>` to select a particular skill-bearing release, replacing `<version>` with its published version. Pi also supports project-scoped installation with `-l`. See the official [Pi package documentation](https://pi.dev/docs/latest/packages) for scope, updates, and removal, and [Pi skills documentation](https://pi.dev/docs/latest/skills) for loading skills.
+Use `pi config` to turn off the extension, skill, or individual prompt templates. Use `pi install npm:simvyn@<version>` to pin a release, replacing `<version>` with its published version, and `-l` for a project-scoped installation. Pi versions before 0.74 load the skill and prompt templates but not the extension. See the official [Pi package documentation](https://pi.dev/docs/latest/packages) for scope, updates, and removal, and [Pi skills documentation](https://pi.dev/docs/latest/skills) for loading skills.
 
-The npm command installs the published package, not uncommitted changes in this repository. If the current release does not include the skill yet, use the checkout instructions below.
+The npm command installs the published package, not uncommitted changes in this repository. If the current release does not include these resources yet, use the checkout instructions below.
 
 ## Install the portable skill for another agent
 
@@ -45,19 +62,20 @@ npm ci
 npm run build:release
 ```
 
-For a single Pi session, load the source skill directly:
+For a single Pi session, load the checkout's extension, skill, and prompt templates directly, or only its skill with `--skill`:
 
 ```bash
+pi -e /absolute/path/to/simvyn
 pi --skill /absolute/path/to/simvyn/skills/simvyn/SKILL.md
 ```
 
-To exercise the assembled npm package's skill resources through Pi instead:
+To exercise the assembled npm package's resources through Pi instead:
 
 ```bash
 pi install /absolute/path/to/simvyn/packages/cli
 ```
 
-Use an absolute path to your checkout. Pi references a local package in place; it does not fetch the released npm version or build the checkout for you. Rebuild after changing CLI source or the skill files copied into the release layout. Use one installation route at a time to avoid loading two skills with the same name.
+Use an absolute path to your checkout. Pi references a local package in place; it does not fetch the released npm version or build the checkout for you. Rebuild after changing CLI source or the skill, extension, or prompt files copied into the release layout. Use one installation route at a time to avoid duplicate skills, tools, and commands.
 
 For another compatible agent, install from the local repository:
 
@@ -121,7 +139,7 @@ For app data, start with `simvyn db list DEVICE_ID com.example.app`, then a smal
 
 Only device listing and log streaming expose `--json`. Avoid verbose output when parsing structured stdout. Inspect the command's exit status and stderr as well as its output; a returned path is not a substitute for checking the artifact exists and can be opened.
 
-Logs stream until stopped. Use an agent process tool or subprocess supervisor to start:
+Logs stream until stopped. In Pi, the `simvyn_logs` and `simvyn_record` tools apply the pattern below for you. Elsewhere, use an agent process tool or subprocess supervisor to start:
 
 ```bash
 simvyn logs DEVICE_ID --level warning --filter 'MyApp|Payment' --json
@@ -148,13 +166,13 @@ Use the [full platform reference](../skills/simvyn/references/platforms.md) and 
 
 ## Discovery and maintenance
 
-The npm package's `pi-package` keyword and `pi.skills` manifest describe its Pi resources. The portable `skills/simvyn/SKILL.md` supplies a name and task-specific description that compatible agents can discover after installation. Neither metadata nor a package keyword guarantees that an agent will load it for every task; invoke the skill explicitly when necessary.
+The npm package's `pi-package` keyword and `pi` manifest describe its Pi resources. The portable `skills/simvyn/SKILL.md` supplies a name and task-specific description that compatible agents can discover after installation. Neither metadata nor a package keyword guarantees that an agent will load it for every task; invoke the skill explicitly when necessary.
 
 ### Publish to the Pi package catalog
 
-The [Pi package catalog](https://pi.dev/packages) lists npm packages with the `pi-package` keyword. Simvyn declares that keyword in `packages/cli/package.json`, along with `pi.skills: ["./skills"]` and a `pi.image` preview URL, following the official [package and gallery requirements](https://pi.dev/docs/latest/packages#gallery-metadata).
+The [Pi package catalog](https://pi.dev/packages) lists npm packages with the `pi-package` keyword. Simvyn declares that keyword in `packages/cli/package.json`, along with `pi.extensions`, `pi.skills`, and `pi.prompts` entries and a `pi.image` preview URL, following the official [package and gallery requirements](https://pi.dev/docs/latest/packages#gallery-metadata). The extension imports `@earendil-works/pi-ai`, `@earendil-works/pi-coding-agent`, and `typebox` from Pi at runtime; they are optional peer dependencies so that `npm install -g simvyn` does not install Pi.
 
-The existing npm release workflow runs `npm run build:release`, which copies the canonical skill and agent guide into the CLI package before packing and publishing. Release these changes under a new npm version through that workflow; an already published version cannot be reused. The published package must contain `skills/simvyn/SKILL.md`, its launcher, and its references.
+The existing npm release workflow runs `npm run build:release`, which copies the canonical skill, extension, prompt templates, and agent guide into the CLI package before packing and publishing. Release these changes under a new npm version through that workflow; an already published version cannot be reused. The published package must contain `extensions/simvyn/`, `prompts/`, `skills/simvyn/SKILL.md`, the skill launcher, and its references.
 
 After the release, inspect the published metadata:
 
@@ -162,10 +180,10 @@ After the release, inspect the published metadata:
 npm view simvyn version keywords pi --json
 ```
 
-Confirm that the output includes `pi-package` and the skill path, search the catalog for `simvyn`, and verify installation with `pi install npm:simvyn`. A local package test verifies skill loading; catalog visibility must be checked after the npm release is indexed.
+Confirm that the output includes `pi-package` and the extension, skill, and prompt paths, search the catalog for `simvyn`, and verify installation with `pi install npm:simvyn`. A local package test verifies resource loading; catalog visibility must be checked after the npm release is indexed.
 
 ### Maintain the skill and documentation
 
 The root [llms.txt](../llms.txt) is a small linked documentation index for tools or people that choose to read it. It does not install the skill or cause automatic tool registration.
 
-The canonical skill lives in [`skills/simvyn/`](../skills/simvyn/SKILL.md). Keep its launcher and references aligned with the CLI, and rebuild the release layout before testing the packaged copy. Report the CLI version, selected device, commands attempted, observed results, and artifact paths when handing work back to a developer.
+The canonical skill lives in [`skills/simvyn/`](../skills/simvyn/SKILL.md), the Pi extension in [`extensions/simvyn/`](../extensions/simvyn/index.ts), and the prompt templates in [`prompts/`](../prompts). Keep the launcher, references, and extension aligned with the CLI, run `npm run typecheck:pi` and `npm test` after changing the extension, and rebuild the release layout before testing the packaged copy. Report the CLI version, selected device, commands attempted, observed results, and artifact paths when handing work back to a developer.

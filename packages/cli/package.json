@@ -14,7 +14,10 @@
 	},
 	"files": [
 		"dist/",
+		"!dist/**/*.map",
 		"skills/",
+		"extensions/",
+		"prompts/",
 		"docs/agents.md",
 		"llms.txt",
 		"README.md",
@@ -45,7 +48,9 @@
 		"cli",
 		"ai-agents",
 		"agent-skills",
-		"pi-package"
+		"pi-package",
+		"pi",
+		"pi-coding-agent"
 	],
 	"license": "MIT",
 	"author": "Pranshu Chittora",
@@ -72,9 +77,31 @@
 		"fastify-plugin": "^6.0.0",
 		"open": "^11.0.3"
 	},
+	"peerDependencies": {
+		"@earendil-works/pi-ai": "*",
+		"@earendil-works/pi-coding-agent": "*",
+		"typebox": "*"
+	},
+	"peerDependenciesMeta": {
+		"@earendil-works/pi-ai": {
+			"optional": true
+		},
+		"@earendil-works/pi-coding-agent": {
+			"optional": true
+		},
+		"typebox": {
+			"optional": true
+		}
+	},
 	"pi": {
+		"extensions": [
+			"./extensions"
+		],
 		"skills": [
 			"./skills"
+		],
+		"prompts": [
+			"./prompts"
 		],
 		"image": "https://raw.githubusercontent.com/pranshuchittora/simvyn/main/assets/banner.png"
 	}

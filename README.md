@@ -70,7 +70,7 @@ npx simvyn
 
 simvyn includes a portable [Agent Skill](https://github.com/pranshuchittora/simvyn/blob/main/skills/simvyn/SKILL.md) for discovering devices, running supported CLI commands, capturing screenshots, inspecting app data, and collecting bounded logs. It teaches an agent to use the CLI with explicit device IDs and platform limits. The skill uses the agent's existing terminal tool; it does not register an MCP server or new agent tools.
 
-**Pi:** install a release that includes the skill, then open Pi and invoke `/skill:simvyn`:
+**Pi:** the npm package is a [Pi package](https://pi.dev/packages/simvyn). Along with the skill, it adds `simvyn`, `simvyn_screenshot`, `simvyn_logs`, and `simvyn_record` tools, a `/simvyn` command that runs the dashboard, and `/simvyn-repro`, `/simvyn-screen`, and `/simvyn-logs` prompt templates. It requires Pi 0.74 or later:
 
 ```bash
 pi install npm:simvyn
@@ -83,7 +83,7 @@ npm install -g simvyn
 npx skills add pranshuchittora/simvyn --skill simvyn --agent codex --yes
 ```
 
-The GitHub command requires these skill files to be present on the default branch; the Pi command requires them in the published npm release. For unreleased changes, use the [local checkout instructions](https://github.com/pranshuchittora/simvyn/blob/main/docs/agents.md#test-an-unreleased-checkout).
+The GitHub command requires these skill files to be present on the default branch; the Pi command requires the Pi resources in the published npm release. For unreleased changes, use the [local checkout instructions](https://github.com/pranshuchittora/simvyn/blob/main/docs/agents.md#test-an-unreleased-checkout).
 
 See the [agent setup and workflow guide](https://github.com/pranshuchittora/simvyn/blob/main/docs/agents.md) for the bundled launcher, supported outputs, noninteractive operation, and current limitations. A compact [documentation index](https://github.com/pranshuchittora/simvyn/blob/main/llms.txt) is also available for tools that accept documentation URLs.
 
